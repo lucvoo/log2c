@@ -2,7 +2,7 @@
 %%
 
 :- module(vars, [get_lv/4, set_lv/4, vars/3, vars/2]).
-%% :- use_module(aux).
+:- use_module(var_util).
 
 %% variables manipulations
 
@@ -43,17 +43,17 @@ temp_vars(H,B,Pv,Tt,Tv)	:- to_list(B,Lg), Lg=[G1|Qg],
 		   get_void((H,B),Tv),
 		   maplist_free_vars([(H,G1)|Qg],LLv),
 		   free_variables(LLv,L1),
-		   subtract_(L1,Tv,L2),
+		   subtract_v(L1,Tv,L2),
 		   sublist_var1(LLv,L2,Tt),
-		   subtract_(L2,Tt,Pv).
+		   subtract_v(L2,Tt,Pv).
 
 temp_vars(Q,Pv)	:- to_list(Q,Lg),
 		   maplist_free_vars(Lg,LLv),
 		   free_variables(LLv,Pv).
 
-var1([E|Q],V)	:- member_(V,E) -> var2(Q,V)
+var1([E|Q],V)	:- member_v(V,E) -> var2(Q,V)
 				;  var1(Q,V).
-var2([E|Q],V)	:- member_(V,E) -> fail
+var2([E|Q],V)	:- member_v(V,E) -> fail
 			        ;  var2(Q,V).
 var2([],_).
 
@@ -81,26 +81,6 @@ keep_void([_|Qi],Qo)		:- keep_void(Qi,Qo).
 keep_void([],[]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-member_(E,[F|_])	:- E==F.
-member_(E,[_|Q])	:- member_(E,Q).
-
-member__([F|_],E)	:- E==F, !.
-member__([_|Q],E)	:- member__(Q,E).
-
-member_chk(E,[F|_])	:- E==F, !.
-member_chk(E,[_|Q])	:- member_chk(E,Q).
-
-subtract_([],_,[]).
-subtract_([E|Q],D,O)	:- ( member_chk(E,D) -> O=Qo; O=[E|Qo] ),
-			   subtract_(Q,D,Qo).
-
-list_to_set_([],[])	:- !.
-list_to_set_([E|Q],L)	:- ( member_chk(E,Q) -> L=Qo; L=[E|Qo] ),
-		           list_to_set_(Q,Qo).
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 maplist_free_vars([],[]).
 maplist_free_vars([A|X],[B|Y])	:- free_variables(A,B),
 				   maplist_free_vars(X,Y).

@@ -28,6 +28,3 @@ sublist(G,[A|X],R)	:- call(G,A,B), !,
 			   sublist(G,X,Y).
 sublist(G,[_|X],R)	:- sublist(G,X,R).
 sublist(_,[],[]).
-
-%% forall(Cond, Action) :-
-%%         \+ (Cond, \+ Action).

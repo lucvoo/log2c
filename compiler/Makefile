@@ -20,6 +20,7 @@ SRC = \
 	trans.pl \
 	util.pl \
 	vars.pl \
+	var_util.pl \
 
 
 GEN     = pl-ext.pl

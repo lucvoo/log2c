@@ -121,6 +121,7 @@ del_all :- del_labels,
 	   '$erase_records'(indent), '$erase_records'(preds),
 	   '$erase_records'(export_pred), '$erase_records'(used_modules),
 	   '$erase_records'(module_compiled),
+	   '$erase_records'(determinism),
 	   flag(indent,_,0), new_indent(0).
 
 del_labels	:- current_flag(K), atom(K), concat(label_,_,K), flag(K,_,0), fail.

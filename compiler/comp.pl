@@ -1,6 +1,9 @@
 %% Copyright (c) 1997 Luc Van Oostenryck. All rights reserved.
 %%
 
+:- initialization(op(1200,xfx,':+')).
+:- initialization(op( 900, fy,'+>')).
+
 :- use_module([my_dcg]).
 :- use_module(swi).
 term_expansion(I,O)	:- translate(I,O).
