@@ -1,5 +1,7 @@
-%% Copyright (c) 1997 Luc Van Oostenryck. All rights reserved.
-%%
+/****************************************************************/
+/* Copyright (c) 1998 Luc Van Oostenryck. All rights reserved.	*/
+/*								*/
+/****************************************************************/
 
 %% :- use_module([my_dcg]).
 %% :- use_module(swi).
@@ -65,15 +67,15 @@ comp_user(Opt)	:- flag(current_module,_,user),
 open_files(Name,C,H,M)	:- module_extension(c,  Name, C),
 			   module_extension(mod,Name, M),
 			   module_extension(h,  Name, H),
-			   open(C,   write,c),
-			   open(M,write,mod),
-			   open(H,write,h).
+			   open(C,write,_,[alias(c)]),
+			   open(M,write,_,[alias(mod)]),
+			   open(H,write,_,[alias(h)]).
 
 close_h	:- format(h,'~n#endif~n',[]),
 	   close(h).
 link_file(Name)	:- flag(input_file,_,Name),
 		   module_extension('lnk.c', Name,File_Lnk),
-		   open(File_Lnk,write,lnk),
+		   open(File_Lnk,write,_,[alias(lnk)]),
 		   set_output(lnk),
 		   format('#include <Prolog.h>\n#include <pl-trad.h>\n\n'),
 		   code_anf(Name),
@@ -370,10 +372,10 @@ code_Q(Q)	:- trans_term(Q,Qt),
 		   del(vars_list).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-code_binding(B)	:+ +> g0('\n\nconst char *freevar[] =\n{'),
-		   mapl(binding,B),
+code_binding(Bs)   :+ +> g0('\n\nconst char *PL_freevar[] =\n{'),
+		   mapl(binding,Bs),
 	           +> g0('};\n'),
-	           +> g0('int nbr_fv=sizeof(freevar)/sizeof(freevar[0]);\n\n').
+	           +> g0('int PL_nbr_fv = sizeof(PL_freevar)/sizeof(PL_freevar[0]);\n\n').
 
 binding(N=var(_,I))	:+ J is I-1,
 	                  +> g0('  [~w] "~w",',[J,N]).

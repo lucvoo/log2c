@@ -38,7 +38,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-foreign_pred(PI,C,D)	:- foreign_pred_builtin(PI,C,D).
+foreign_pred(P/I,C,D)	:- foreign_pred_builtin(P,I,C,D).
 foreign_pred(PI,C,D)	:- recorded(reg_foreign, reg_foreign(PI,C,D)).
 
 
@@ -72,7 +72,8 @@ file_type(F,T)	:- file_base_name(F,Name),
                      ;  warning('~w : may not be a Prolog file',[F])
                    ),
 		   open(F,read,S), set_input(S),
-		   stream_position(S,P,P),
+%%		   stream_position(S,P,P),
+		   stream_property(S,position(P)),
 		   read(R), 
 		   ( R=':-'(module(M,L))
                      -> ( module_extension(pl,M,Name)
@@ -81,7 +82,7 @@ file_type(F,T)	:- file_base_name(F,Name),
 			),
                         T=module(M,L)
                      ;
-		     stream_position(S,_,P),
+		     set_stream_position(S,P),
                      T=user
 		   ),
 		   flag(input_file,_,Base).
@@ -106,7 +107,7 @@ readclauses(F,I,O)	:- open(F,read,S,[]),
 			   readclauses_(S,I,O),
 			   close(S).
 
-readclauses_(S,I,O)	:- read_variables(S,T,V),
+readclauses_(S,I,O)	:- read_term(S,T,[variable_names(V)]),
 			   ( T==end_of_file
 			     -> I=O
 			     ;  expand_term(T,Tx),
@@ -251,7 +252,6 @@ anf4(E)		:- functor(E,F,N), E=..[F|L],
 anf4(_).
 
 
-%% anf_rec_atom(A)	:- recorded(anf_rec_atom,A), !.
 anf_rec_atom(A)	:- recorda(anf_rec_atom,A).
 
 anf_rec_fun(F)	:- ( fail %% recorded(anf_rec_fun,F)
@@ -273,55 +273,6 @@ anf_get_erase(K,S)	:- '$recorded_all'(K,L), sort(L,S),
 anf_get_atom(A)	:- anf_get_erase(anf_rec_atom,A).
 anf_get_fun(F)	:- anf_get_erase(anf_rec_fun,F).
 anf_get_pred(P)	:- anf_get_erase(anf_rec_pred,P).
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% a_n_f(G,Q,A,F,P):- flag(current_module,N,N),
-%% 		   ( N\=0 -> Ia=[N] ;  Ia=[] ),
-%% 		   anf2([cl([],Q)],Ia,Ta,[],Tf),
-%% 		   anf1(G,Ta,La,Tf,Lf,[],Lp), 
-%% 		   anf(La,A,Lf,F,Lp,P).
-%% 
-%% anf(Ia,A,If,F,Ip,P)	:- flag(current_module,M,M),
-%% 			   ( M==system
-%% 			     -> foreign_preds(Fps),
-%% 			        get_atoms(Fps,Pa),
-%% 			        append(Pa,Ia,Oa),
-%% 			        append(Fps,Ip,Op)
-%% 			     ;  Oa=Ia, Op=Ip
-%% 			   ),
-%% 			   Of=If,
-%% 		           sort(Oa,A),
-%%                            sort(Of,F),
-%% 		           sort(Op,P).
-%% 
-%% get_atoms([],[]).
-%% get_atoms([F/_|Q],[F/A])	:- get_atoms(Q,A).
-%% 
-%% anf_ndet([],[]).
-%% anf_ndet([F/_|Q],[F|A])	:- anf_ndet(Q,A).
-%% 
-%% anf1([],A,A,F,F,P,P)		:- !.
-%% anf1([pr(F,N,L)|Q],Ai,Ao,Fi,Fo,Pi,[(F/N)|Po])
-%% 				:- anf2(L,[F|Ai],At,Fi,Ft),
-%% 				   anf1(Q,At,Ao,Ft,Fo,Pi,Po).
-%% 
-%% 
-%% anf2([],A,A,F,F)		:- !.
-%% anf2([cl(H,G)|Q],Ai,Ao,Fi,Fo)	:- to_list(G,L),
-%% 				   anf3(L,Ai,At,Fi,Ft),
-%% 				   anf3(H,At,As,Ft,Fs),
-%% 				   anf2(Q,As,Ao,Fs,Fo).
-%% 
-%% anf3([],A,A,F,F)		:- !.
-%% anf3([E|Q],Ai,Ao,Fi,Fo)		:- atom(E), !,
-%% 				   anf3(Q,[E|Ai],Ao,Fi,Fo).
-%% anf3([E|Q],Ai,Ao,Fi,Fo)		:- ( var(E); integer(E) ), !,
-%% 				   anf3(Q,Ai,Ao,Fi,Fo).
-%% anf3([E|Q],Ai,Ao,Fi,Fo)		:- anf4(E,Ai,At,Fi,Ft),
-%% 				   anf3(Q,At,Ao,Ft,Fo).
-%% 
-%% anf4(E,Ai,Ao,Fi,Fo)		:- functor(E,F,N), E=..[F|L],
-%% 				   anf3(L,[F|Ai],Ao,[(F/N)|Fi],Fo).
-%% anf4(_).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% variants of map and maplist

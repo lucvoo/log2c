@@ -19,6 +19,7 @@ init_all		:- init_hash,
 
 comp_file(File)		:- comp_file(File,[]).
 comp_file(File,Opt)	:- init_all,
+			   flag(current_source_file,_,File),
 			   file_type(File,Type),
 			   ( Type=user -> comp_user(Opt) ;
 			     Type=module(M,X) -> comp_module(M,X,Opt)
@@ -372,10 +373,10 @@ code_Q(Q)	:- trans_term(Q,Qt),
 		   del(vars_list).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-code_binding(B)	:+ +> g0('\n\nconst char *freevar[] =\n{'),
-		   mapl(binding,B),
+code_binding(Bs)   :+ +> g0('\n\nconst char *PL_freevar[] =\n{'),
+		   mapl(binding,Bs),
 	           +> g0('};\n'),
-	           +> g0('int nbr_fv=sizeof(freevar)/sizeof(freevar[0]);\n\n').
+	           +> g0('int PL_nbr_fv = sizeof(PL_freevar)/sizeof(PL_freevar[0]);\n\n').
 
 binding(N=var(_,I))	:+ J is I-1,
 	                  +> g0('  [~w] "~w",',[J,N]).

@@ -40,8 +40,8 @@ struct timeval t0, t1;
 time__t t0, t1;
 #endif	// TIME_OF_DAY
 
-int nbr_fv;
-void **jump_table;
+int PL_nbr_fv;
+// void **PL_jump_table;
 
 #include "pl-inline.h"
 #include "pl-pred.h"

@@ -171,8 +171,6 @@ inline(X == Y)	:+ Y=intg(I),
 
 inline(X == Y)	:+ std_eq(==, X, Y).
 inline(X \== Y)	:+ std_eq(\==, X, Y).
-%% inline(X == Y)	:+ std_cmp(==, X, Y).
-%% inline(X \== Y)	:+ std_cmp(\==, X, Y).
 inline(X @< Y)	:+ std_cmp(@<, X, Y).
 inline(X @> Y)	:+ std_cmp(@>, X, Y).
 inline(X @=< Y)	:+ std_cmp(@=<, X, Y).

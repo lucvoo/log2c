@@ -32,8 +32,8 @@
 #define NDET(P,A,F)	int F##(PL_PROTO_N(A)
 
 #else
-#define DET(F,N,C)      foreign_pred_builtin(F/N,C,det).
-#define NDET(F,N,C)     foreign_pred_builtin(F/N,C,ndet).
+#define DET(F,N,C)      foreign_pred_builtin(F,N,C,det).
+#define NDET(F,N,C)     foreign_pred_builtin(F,N,C,ndet).
 #endif
 
 

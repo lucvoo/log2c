@@ -6,6 +6,7 @@
 
 :- use_module([aux, addr, atoms, map_name]).
 :- use_module(modules).
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 trad([call_(F,N,L), fl(L), restore|Q])	:- execute(F,N), !,
 					   trad(Q).
@@ -103,44 +104,6 @@ wrt_(void,V)		:- g('(~w)->val=__var();',[V]).
 wrt_(ref(I),V)		:- g('(~w)->celp=FP[~w].celp;',[V,I]).
 wrt_(ref_t(I),V)	:- g('(~w)->celp=TMP_~w;',[V,I]).
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% trad_off(E)		:- flag(hp,_,0),
-%% 			   tradoff([u(E,0)]),
-%% 			   flag(hp,HP,0),
-%% 			   g('HP+=~d;',[HP]).
-%% 
-%% tradoff([])	:- ( recorded(offset,w(struct(F,N,L),A),R)
-%% 		     -> erase(R),
-%% 		        flag(hp,HP,HP+1),
-%% 		        g('HP[~d].celp=(HP+~d);',[A,HP]),
-%% 		        offset(struct(F,N,L),HP)
-%% 		     ;  true
-%% 		   ).
-%% 
-%% tradoff([u(struct(F,N,L),_)])	:-
-%% 			   flag(hp,HP,HP+1),
-%% 			   offset(struct(F,N,L),HP), !.
-%% tradoff([u(struct(F,N,L),_)|Q]) :- Q\=[],
-%% 			   flag(hp,HP,HP+1),
-%% 			   recorda(offset,w(struct(F,N,L),HP)),
-%% 			   tradoff(Q).
-%% tradoff([u(E,_)|Q])	:- flag(hp,HP,HP+1),
-%% 			   offset(E,HP),
-%% 			   tradoff(Q).
-%% 
-%% 
-%% offset(struct(F,A,L),O)	:- map_atom(F,Fm),
-%% 			   g('HP[~w].val=__fun(FUN(~w,~d));',[O,Fm,A]),
-%% 			   tradoff(L),
-%% 			   !.
-%% offset(atom(A),O)	:- map_atom(A,Am),
-%% 			   g('HP[~w].val=__atom(ATOM(~w));',[O,Am]).
-%% offset(intg(N),O)	:- g('HP[~w].val=__intg(~w);',[O,N]).
-%% offset(var(I),O)	:- g('HP[~w].val=__var(); FP[~w].celp=HP+(~w);',[O,I,O]).
-%% offset(var_t(I),O)	:- g('HP[~w].val=__var(); TMP_~w=HP+(~w);',[O,I,O]).
-%% offset(void,O)		:- g('HP[~w].val=__var();',[O]).
-%% offset(ref(I),O)	:- g('HP[~w].celp=FP[~w].celp;',[O,I]).
-%% offset(ref_t(I),O)	:- g('HP[~w].celp=TMP_~w;',[O,I]).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 trad_off(E)		:- flag(hp,_,0),
 			   tradoff([u(E,0)]),
@@ -292,11 +255,6 @@ saveargs(N)     :- comm(saveargs,N),
                    g('FP[~w+4].celp=ARG_~w;',[I,I]), fail;
                    true.
 
-%% restoreargs(N)	:- comm(restoreargs,N),
-%% 		   between(1,N,I),
-%% 		   g('ARG_~w=FP[~w+4].celp;',[I,I]), fail;
-%% 		   true.
-
 cut		:- g('cut();').
 cut_deep	:- g('cut_deep();').
 cut_1		:- g('cut_1();').
@@ -305,27 +263,6 @@ jump(L)		:- g('goto ~w;',[L]).
 alt_0(L)	:- g('alt_0(&&~w);',[L]).
 alt_1(L)	:- g('alt_1(&&~w);',[L]).
 alt_2		:- g('alt_2();').
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%% op_i(Op)	:- map_fun(Op/2,Name), comm(Name),
-%% 		   g('SP--;'),
-%% 		   g('SP->intg=(SP)->intg ~w (SP+1)->intg;',[Op]).
-%% op_i_pre(Op,I)	:- map_fun(Op/2,Name), comm(Name),
-%% 		   g('SP->intg=~w ~w (SP)->intg;',[I,Op]).
-%% op_i_post(Op,I)	:- map_fun(Op/2,Name), comm(Name),
-%% 		   g('SP->intg=(SP)->intg ~w ~w;',[Op,I]).
-%% op_i(Op,I,J)	:- map_fun(Op/2,Name), comm(Name),
-%% 		   g('SP++;'),
-%% 		   g('SP->intg=~w ~w ~w;',[I,Op,J]).
-               
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%% op_i(N,Op,J)	:- map_fun(Op/2,Name), comm(Name),
-%% 		   g('~w=~w ~w;',[N,Op,J]).
-%% op_i(N,Op,I,J)	:- integer(I), integer(J),
-%% 		   map_fun(Op/2,Name), comm(Name),
-%% 		   g('~w=~w ~w ~w;',[N,I,Op,J]).
-               
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 save_push(S,P,I,O)	:- get_arg(I,L,Q),
 			   save(S,L,O,T), T=[P|Q].

@@ -15,9 +15,6 @@
 member_v(E,[F|_])	:- E==F.
 member_v(E,[_|Q])	:- member_v(E,Q).
 
-%% member__([F|_],E)	:- E==F, !.
-%% member__([_|Q],E)	:- member__(Q,E).
-
 memberchk_v(E,[F|_])	:- E==F, !.
 memberchk_v(E,[_|Q])	:- memberchk_v(E,Q).
 

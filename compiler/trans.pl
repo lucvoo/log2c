@@ -24,7 +24,6 @@ trans(A,X)		:- atom(A), X=atom(A).
 trans(A,X)		:- integer(A), X=intg(A).
 trans(A,A)		:- var(A).
 %% trans(A,X)		:- float(A), X=float(A).
-%% trans(A,X)		:- string(A), X=string(A).
 trans(T,X)		:- fun(T,F,N,A),
 			   maplist(trans,A,At),
 			   X=fun(F,N,At).

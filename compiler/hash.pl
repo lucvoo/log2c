@@ -8,32 +8,34 @@
 		, init_hash/0
 		]).
 
-%% :- use_module([hpjw]).
 :- use_module([atoms,map_name,aux,modules,util]).
 
 %% initalize default hash-table size.
-init_hash	:- flag(atoms_hash_size,_,1024),
+init_hash	:- flag(atoms_hash_size,_,2048),
 		   flag(funs_hash_size,_,1024),
-		   flag(jmps_all_hash_size,_,32),
-		   flag(jmps_pub_hash_size,_,16),
-		   flag(mods_hash_size,_,16).
+		   flag(jmps_all_hash_size,_,128),
+		   flag(jmps_pub_hash_size,_,32),
+		   flag(mods_hash_size,_,32).
 
 
 init_hash_atoms(As)	:- flag(atoms_hash_size,HS,HS),
+			   length(As,N),
 			   fill(HS,[],L), 
 			   V=..[vec|L],
 			   hash_atom_(As,HS,V),
-			   hash_atom_vec(V).
+			   hash_atom_vec(V,HS,N).
 
 hash_atom_([],_,_).
 hash_atom_([A|Q],HS,V)	:- hpjw(A,H_), H is (H_ mod HS)+1,
 			   arg(H,V,E), setarg(H,V,[A|E]),
 			   hash_atom_(Q,HS,V).
 			   
-hash_atom_vec(V)	:- V=..[vec|L], map(hash_atom_list,L), nl,
-			   format('atom_t atoms[]=\n{\n'),
-			   map(hash_atom_tab,L),
-			   format('};\nint hash_atoms_size=sizeof(atoms)/sizeof(atoms[0]);\n\n').
+hash_atom_vec(V,HS,N)	:-
+		V=..[vec|L], map(hash_atom_list,L), nl,
+		format('atom_t PL_atoms[]=\n{\n'),
+		map(hash_atom_tab,L),
+		format('};\nint PL_atoms_hash_size = ~d;\n',[HS]),
+		format('int PL_atoms_count = ~d;\n\n', [N]).
 
 hash_atom_list([]).
 hash_atom_list([A])	:- print_atom_list(A,0).
@@ -50,21 +52,24 @@ hash_atom_tab([E|_])	:- map_atom(E,Em),
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 init_hash_funs(Fs)	:- flag(funs_hash_size,HS,HS),
+			   length(Fs, N),
 			   fill(HS,[],L), 
 			   V=..[vec|L],
 			   hash_fun_(Fs,HS,V),
-			   hash_fun_vec(V).
+			   hash_fun_vec(V,HS,N).
 
 hash_fun_([],_,_).
-hash_fun_([(F/N)|Q],HS,V)
-			:- hpjw(F,H_), H is ((H_ +N) mod HS)+1,
-			   arg(H,V,E), setarg(H,V,[(F/N)|E]),
-			   hash_fun_(Q,HS,V).
+hash_fun_([(F/N)|Q],HS,V)	:-
+		hpjw(F,H_), H is ((H_ +N) mod HS)+1,
+		arg(H,V,E), setarg(H,V,[(F/N)|E]),
+		hash_fun_(Q,HS,V).
 			   
-hash_fun_vec(V)		:- V=..[vec|L], map(hash_fun_list,L), nl,
-			   format('fun_t funs[]=\n{\n'),
-			   map(hash_fun_tab,L),
-			   format('};\nint hash_funs_size=sizeof(funs)/sizeof(funs[0]);\n\n').
+hash_fun_vec(V,HS,N)	:-
+		V=..[vec|L], map(hash_fun_list,L), nl,
+		format('fun_t PL_funs[~d]=\n{\n',[HS]),
+		map(hash_fun_tab,L),
+		format('};\nint PL_funs_hash_size = ~d;\n',[HS]),
+		format('int PL_funs_count = ~d;\n\n',[N]).
 
 hash_fun_list([]).
 hash_fun_list([F])	:- print_fun_list(F,0).
@@ -81,21 +86,21 @@ hash_fun_tab([F/N|_])	:- map_atom(F,Fm),
 			   format('  FUN(~w,~w),\n',[Fm,N]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-init_hash_jmps		:- flag(current_module,M,M),
-			   map_atom(M,Mm),
-			   '$recorded_all'(export_pred,Ppub),
-			   findall(P,find_pred(P), Pall_),
-			   sort(Pall_,Pall),
-			   map(decl_pred,Pall), nl,
-			   
-			   flag(jmps_pub_hash_size,Hp,Hp),
-			   concat('JMP_pub',Mm,Tp),
-			   hash_jmp(Hp,Ppub,Tp),
+init_hash_jmps	:- flag(current_module,M,M),
+		   map_atom(M,Mm),
+		   '$recorded_all'(export_pred,Ppub),
+		   findall(P,find_pred(P), Pall_),
+		   sort(Pall_,Pall),
+		   map(decl_pred,Pall), nl,
+		   
+		   flag(jmps_pub_hash_size,Hp,Hp),
+		   concat('JMP_pub',Mm,Tp),
+		   hash_jmp(Hp,Ppub,Tp),
 
-			   flag(jmps_all_hash_size,Ha,Ha),
-			   concat('JMP_all',Mm,Ta),
-			   hash_jmp(Ha,Pall,Ta),
-			   format('module_t module~w = { __FILE__, ATOM(~w), {~w_tab, ~w}, {~w_tab, ~w}};\n',[Mm,Mm,Tp,Hp,Ta,Ha]).
+		   flag(jmps_all_hash_size,Ha,Ha),
+		   concat('JMP_all',Mm,Ta),
+		   hash_jmp(Ha,Pall,Ta),
+		   format('module_t module~w = { __FILE__, ATOM(~w), {~w_tab, ~w}, {~w_tab, ~w}};\n',[Mm,Mm,Tp,Hp,Ta,Ha]).
 
 find_pred(P)	:- recorded(preds,P).
 find_pred(P)	:- recorded(module_export,module_export(_,P)).
@@ -166,7 +171,7 @@ hash_mods_list([A,B|Q])	:- hash_mods_list([B|Q]),
 			   print_mods_list(A,Nxt).
 
 print_mods_list(A,Nxt)	:- map_atom(A,Am),
-   format('static modules_t MODULE_~w={ ATOM(~w), &module~w ,~w};\n',[Am,Am,Am,Nxt]).
+	format('static modules_t MODULE_~w={ ATOM(~w), &module~w ,~w};\n',[Am,Am,Am,Nxt]).
 
 hash_mods_tab([])	:- format('  0,\n').
 hash_mods_tab([E|_])	:- map_atom(E,Em),

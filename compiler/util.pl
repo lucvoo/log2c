@@ -84,60 +84,77 @@ get_query(I,Q,B,O)	:- select(I,q(Lq),O), check_query(Lq,Q,B), !.
 get_query(_,_,_,_)	:- fatal('no query given').
 
 check_query([cl(B,Q)],Q,B).
-check_query(_L ,_Q,_B)	:- %% format(user_error, ' L = ~w Q = ~w B = ~w\n', [ _L, _Q, _B]),
-			   fatal('several queries given').
+check_query(_L ,_Q,_B)	:-
+	%% format(user_error, ' L = ~w Q = ~w B = ~w\n', [ _L, _Q, _B]),
+	fatal('several queries given').
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-anf_module(La,Lf,Lp)	:- flag(current_module,M,M),
-			   module_extension(h,M,H),
-			   format('#include <Prolog.h>\n#include <pl-trad.h>\n\n',[]),
-			   format('#include "~w"~n~n',[H]),
-			   map_atom(M,Mm),
-			   format(h,'#ifndef MODULE~w_H_~n#define MODULE~w_H_~n~n',[Mm,Mm]),
-			   used_modules(Ms),
-			   map(include_module,Ms),
-			   nl,
-			   flag(max_arg,_,0),
-			   decl_atoms(La),
-			   decl_funs(Lf),
-			   init_preds(Lp),
-			   init_args.
+anf_module(La,Lf,Lp)	:-
+	flag(current_module,M,M),
+	module_extension(h,M,H),
+	format('#include <Prolog.h>\n'),
+	format('#include <pl-trad.h>\n\n',[]),
+	format('#include "~w"~n~n',[H]),
+	map_atom(M,Mm),
+	format(h,'#ifndef MODULE~w_H_\n',[Mm]),
+	format(h,'#define MODULE~w_H_\n\n',[Mm]),
+	used_modules(Ms),
+	map(include_module,Ms),
+	nl,
+	flag(max_arg,_,0),
+	decl_atoms(La),
+	decl_funs(Lf),
+	init_preds(Lp),
+	init_args.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-init_args		:- nl,
-			   flag(max_arg,A,A),
-			   between(1,A,I),
-			   format('cell_t *ARG_~w;\n',[I]), fail; true,
-			   nl,
-			   flag(max_tmp,T,T),
-			   between(1,T,I),
-			   format('cell_t *TMP_~w;\n',[I]), fail; true,
-			   nl.
-init_preds([F|Q])	:- recorda(preds,F),
-			   map_pred(F,Pm),
-	                   format(h,'extern void PRED~w;\n',Pm),
-			   init_preds(Q).
+init_args :-
+	nl,
+	flag(max_arg,A,A),
+	( between(1,A,I),
+	  format('cell_t *ARG_~w;\n',[I]),
+	  fail
+        ; true
+	),
+	nl,
+	flag(max_tmp,T,T),
+	( between(1,T,I),
+	  format('cell_t *TMP_~w;\n',[I]),
+	  fail
+	; true
+	),
+	nl.
+
+init_preds([F|Q]) :-
+	recorda(preds,F),
+	map_pred(F,Pm),
+	format(h,'extern void PRED~w;\n',Pm),
+	init_preds(Q).
 init_preds([]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-decl_export_mod(export(X,L))	:- flag(current_module,M,M),
-				   map(decl_exp_mod(M,X),L).
+decl_export_mod(export(X,L)) :-
+	flag(current_module,M,M),
+	map(decl_exp_mod(M,X),L).
 
-decl_exp_mod(M,X,P)	:- map_pred(P,M,Pm),
-			   map_pred(P,X,Px),
-			   format(h,'#define PRED~w PRED~w~n',[Pm,Px]).
+decl_exp_mod(M,X,P) :-
+	map_pred(P,M,Pm),
+	map_pred(P,X,Px),
+	format(h,'#define PRED~w PRED~w~n',[Pm,Px]).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-decl_preds(X)	:- '$recorded_all'(export_pred,P),
-		   append(X,P,T), sort(T,L),
-		   map(decl_pred,L),
-		   nl.
+decl_preds(X)	:-
+	'$recorded_all'(export_pred,P),
+	append(X,P,T), sort(T,L),
+	map(decl_pred,L),
+	nl.
 
-decl_pred(P)	:- import_from_module(P,M),
-		   map_pred(P,M,Pm),
-		   format(h,'extern void PRED~w;\n',Pm).
+decl_pred(P)	:-
+	import_from_module(P,M),
+	map_pred(P,M,Pm),
+	format(h,'extern void PRED~w;\n',Pm).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -157,17 +174,21 @@ decl_funs_(F/N)	:- map_atom(F,Fm),
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-init_jmp_tbl(import,M)	:- map_atom(M,Mm),
-			   format('&module~w, ',Mm).
+init_jmp_tbl(import,M) :-
+	map_atom(M,Mm),
+	format('&module~w, ',Mm).
 
-init_jmp_tbl(pub,FN)	:- \+ exported(FN), !.
-init_jmp_tbl(_,F/N)	:- map_atom(F,Fm),
-			   format('{ FUN(~w,~d), &&~w_~d_1}, ',[Fm,N,Fm,N]).
+init_jmp_tbl(pub,FN)	:-
+	\+ exported(FN), !.
+init_jmp_tbl(_,F/N)	:-
+	map_atom(F,Fm),
+	format('{ FUN(~w,~d), &&~w_~d_1}, ',[Fm,N,Fm,N]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-decl_import_mod(M)	:- map_atom(M,Mm),
-			   format('extern module_t module~w;\n',Mm).
+decl_import_mod(M)	:-
+	map_atom(M,Mm),
+	format('extern module_t module~w;\n',Mm).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -176,12 +197,13 @@ max_tmp(T)	:- free_variables(T,L),
 		   flag(max_tmp,O,max(O,N)).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-add_module(M,I,A,Arg)	:- add_module(1,I,M,A,Arg).
+add_module(M,I,A,Arg)	:- add_mod_(1,I,M,A,Arg).
 
-add_module(_,_,_,[],[]).
-add_module(I,I,M,[A|X],[fun((:),2,[atom(M),A])|X])	:- !.
-add_module(I,N,M,[A|X],[A|Y])	:- succ(I,J),
-				   add_module(J,N,M,X,Y).
+add_mod_(_,_,_,[],[]).
+add_mod_(I,I,M,[A|X],[fun((:),2,[atom(M),A])|X]) :- !.
+add_mod_(I,N,M,[A|X],[A|Y]) :-
+	succ(I,J),
+	add_mod_(J,N,M,X,Y).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -197,21 +219,29 @@ directive(register_foreign,3).
 
 
 do_directive(module_transparent(P))	:-
-		do_directive(meta(P)).
+	do_directive(meta(P)).
 do_directive(meta_pred(P,A))		:-
-		recordz(meta_pred,meta_pred(P,A)), recordz(meta,P).
-do_directive(meta(P))		:- recordz(meta,P).
-do_directive(meta((P,L)))	:- recordz(meta,P), do_directive(meta(L)).
-do_directive(op(P,T,N))		:- op(P,T,N).
-do_directive(use_module(M))	:- recorda(use_module,M).
-do_directive(reexport(M))	:-
-		recorda(export_module,M), recorda(use_module,M).
+	recordz(meta_pred,meta_pred(P,A)),
+	recordz(meta,P).
+do_directive(meta(P))			:-
+	recordz(meta,P).
+do_directive(meta((P,L)))		:-
+	recordz(meta,P),
+	do_directive(meta(L)).
+do_directive(op(P,T,N))			:-
+	op(P,T,N).
+do_directive(use_module(M))		:-
+	recorda(use_module,M).
+do_directive(reexport(M))		:-
+	recorda(export_module,M),
+	recorda(use_module,M).
 do_directive(register_foreign(T,C,D))	:-
-		recorda(reg_foreign,reg_foreign(T,C,D)).
+	recorda(reg_foreign,reg_foreign(T,C,D)).
 %% DEBUG do_directive(determinism(P,D))	:-
-%% 		recorda(determinism,determinism(P,D)).
+%% DEBUG 	recorda(determinism,determinism(P,D)).
+do_directive(D)			:-
+	recordz(directive,D).
 
-do_directive(D)			:- recordz(directive,D).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 meta_pred(P,I)		:- recorded(meta_pred,meta_pred(P,I)).
 meta_pred(maplist/3,1).
@@ -226,6 +256,7 @@ meta_pred(mapli/4,2).
 meta_pred(mapli/5,2).
 meta_pred(call/1,1).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-include_module(M)	:- module_extension(h,M,H),
-			   format('#include "~w"\n',[H]).
+include_module(M) :-
+	module_extension(h,M,H),
+	format('#include "~w"\n',[H]).
 

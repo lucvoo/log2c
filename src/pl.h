@@ -40,21 +40,25 @@ register tr_t *TP asm ("%ecx");
 extern tr_t *TP;
 #endif
 
-extern cell_t  *SHP;
-extern pl_stack_t    *STK;
-extern cell_t   *H_STK;
-extern tr_t    *TR_STK;
-extern cell_t  *SH_STK;
+extern cell_t		*SHP;
+extern pl_stack_t	*STK;
+extern cell_t		*H_STK;
+extern tr_t		*TR_STK;
+extern cell_t		*SH_STK;
 
-extern void *PC;
 
-extern int hash_atoms_size;	// must be a power of two for dynamic hashing
-extern atom_t atoms[];
-extern int hash_funs_size;	// must be a power of two for dynamic hashing
-extern fun_t  funs[];
+// must be a power of two for dynamic hashing
+extern int PL_atoms_hash_size;
+extern int PL_atoms_count;
+extern atom_t PL_atoms[];
 
-extern int nbr_fv;
-extern const char *freevar[];
+// must be a power of two for dynamic hashing
+extern int PL_funs_hash_size;
+extern int PL_funs_count;
+extern fun_t  PL_funs[];
+
+extern int PL_nbr_fv;
+extern const char *PL_freevar[];
 
 #include "ATOMS.h"
 

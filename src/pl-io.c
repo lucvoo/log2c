@@ -751,6 +751,38 @@ int pl_stream_position(term_t s, term_t old, term_t new)
 }
 
 
+int pl_set_stream_position(term_t s, term_t new)
+{ long char_no, line_no, col_no;
+  long told;
+  pl_stream S;
+  Spos_t *p;
+
+  S=IOStream(s);			// FIXME : check return value
+  told=Stell(S);
+  p=Sget_pos(S);
+    
+  new=deref(new);
+
+  if ( !isfun(FUN(str_pos,3),new) ||
+       !PL_get_long(new+1, &char_no) ||
+       !PL_get_long(new+2, &line_no) ||
+       !PL_get_long(new+3, &col_no) )
+  { PL_warning("stream_position/3: Invalid position specifier");
+  }
+
+  if ( Sseek(S, char_no, SF_SEEK_SET) < 0 )
+  { PL_warning("Failed to set stream position");
+  }
+
+  if (p)
+  { p->char_no=char_no;
+    p->line_no=line_no;
+    p->col_no=col_no;
+  }
+  succeed;
+}
+
+
 int pl_line_count(term_t s, term_t cnt)
 { pl_stream S=IOStream(s);
   Spos_t *p;

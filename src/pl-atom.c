@@ -17,8 +17,9 @@ atom_t add_atom(const char *s, hash_t H, hash_t h)
   a->atom.val=((ato_tag<<29)+(uint) a);
   a->name=s;
   a->hash=H;
-  a->next=atoms[h];
-  atoms[h]=a;
+  a->next=PL_atoms[h];
+  PL_atoms[h]=a;
+  PL_atoms_count++;
 
   return(a);
 }
@@ -29,9 +30,9 @@ atom_t lookup_atom(const char *s)
   const char *copy;
 
   H=hpjw(s);
-  h=H % hash_atoms_size;
+  h=H % PL_atoms_hash_size;
 
-  for (a=atoms[h];a!=0;a=a->next)
+  for (a=PL_atoms[h];a!=0;a=a->next)
     { if (streq(s,a->name))
         return(a);
     }
@@ -54,7 +55,7 @@ int pl_current_atom(cell_t *c, control_t ctrl)
 
 	ctxt=AllocCtxt(*ctxt);
 	h=0;
-	atom=atoms[h];
+	atom=PL_atoms[h];
 	break;
     case NEXT_CALL:
 	ctxt=GetCtxt(ctrl);
@@ -65,7 +66,7 @@ int pl_current_atom(cell_t *c, control_t ctrl)
 	fail;
   }
 
-  for (;h<hash_atoms_size; atom=atoms[++h])
+  for (;h<PL_atoms_hash_size; atom=PL_atoms[++h])
     if (atom)
       { PL_unify_atom(c,atom);	// Always succeed since c is a var !
         ctxt->hash=h;

@@ -91,9 +91,9 @@ int unify(register cell_t *d1, register cell_t *d2)
 void write_binding(void)
 { int i, flag=0;
 
-  for (i=0; i<nbr_fv; i++)
-    if (freevar[i] && freevar[i][0]!='_')
-      { Sprintf("\n%s = ",freevar[i]);
+  for (i=0; i<PL_nbr_fv; i++)
+    if (PL_freevar[i] && PL_freevar[i][0]!='_')
+      { Sprintf("\n%s = ",PL_freevar[i]);
         pl_write(STK[i+6].celp);
         flag=1;
       }
