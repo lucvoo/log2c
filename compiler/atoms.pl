@@ -128,6 +128,9 @@ functors(F)	:- L =	[ (*)/2 , (+)/2 , (-)/1 , (-)/2 , (.)/2 , (,)/2
 			, position/1, end_of_stream/1
 			, eof_action/1, reposition/1
 
+		%% pl-network.c
+			, ip/4
+
 		%% pl-time.c
 			, dt/6
                        ],
