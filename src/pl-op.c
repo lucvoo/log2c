@@ -254,7 +254,7 @@ void init_ops(void)
   add_operator(700,OP_XFX,ATOM(strick_equals));
   add_operator(700,OP_XFX,ATOM(unify));
   add_operator(700,OP_XFX,ATOM(univ));
-  add_operator(900,OP_FY,ATOM(_not));
+//  add_operator(900,OP_FY,ATOM(_not));
   add_operator(900,OP_FY,ATOM(not_provable));
   add_operator(900,OP_FY,ATOM(__2B_3E));
   add_operator(1000,OP_XFY,ATOM(comma));

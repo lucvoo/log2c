@@ -67,15 +67,15 @@ comp_user(Opt)	:- flag(current_module,_,user),
 open_files(Name,C,H,M)	:- module_extension(c,  Name, C),
 			   module_extension(mod,Name, M),
 			   module_extension(h,  Name, H),
-			   open(C,   write,c),
-			   open(M,write,mod),
-			   open(H,write,h).
+			   open(C,write,_,[alias(c)]),
+			   open(M,write,_,[alias(mod)]),
+			   open(H,write,_,[alias(h)]).
 
 close_h	:- format(h,'~n#endif~n',[]),
 	   close(h).
 link_file(Name)	:- flag(input_file,_,Name),
 		   module_extension('lnk.c', Name,File_Lnk),
-		   open(File_Lnk,write,lnk),
+		   open(File_Lnk,write,_,[alias(lnk)]),
 		   set_output(lnk),
 		   format('#include <Prolog.h>\n#include <pl-trad.h>\n\n'),
 		   code_anf(Name),

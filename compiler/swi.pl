@@ -6,11 +6,11 @@
 	       , '$erase_records'/1
 	       , '$mangle'/2
 	       , map/2
-	       , atom_codes/2
+%	       , atom_codes/2
                ]).
 
 %% ISO compability
-atom_codes(A,C)	:- atom_chars(A,C).
+%% atom_codes(A,C)	:- atom_chars(A,C).
 
 report(T)	:- write(user_error,T),
 		   put(user_error,'\n').

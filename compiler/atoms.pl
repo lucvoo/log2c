@@ -9,66 +9,8 @@
 
 :- index(map_atom(1,1)).
 
-%% map_atom((/\),	and).
-%% map_atom((=:=),	ar_equals).
-%% map_atom((>),	ar_larger).
-%% map_atom((>=),	ar_larger_equal).
-%% map_atom((=\=),	ar_not_equal).
-%% map_atom((<),	ar_smaller).
-%% map_atom((=<),	ar_smaller_equal).
-%% map_atom((=@=),	at_equals).
-%% map_atom((@>),	at_larger).
-%% map_atom((@>=),	at_larger_equal).
-%% map_atom((\=@=),at_not_equals).
-%% map_atom((@<),	at_smaller).
-%% map_atom((@=<),	at_smaller_equal).
-%% map_atom((|),	bar).
-%% map_atom((,),	comma).
-%% map_atom(({}),	curl).
-%% map_atom((//),	div).
-%% map_atom((/),	divide).
-%% map_atom((.),	dot).
-%% map_atom((**),	doublestar).
-%% map_atom((-->),	grammar).
-%% map_atom((^),	hat).
-%% map_atom((->),	ifthen).
-%% map_atom((<<),	lshift).
-%% map_atom((-),	minus).
-%% map_atom((:),	module).
-%% map_atom(([]),	nil).
-%% map_atom((\+),	not_provable).
-%% map_atom((\==),	not_strick_equals).
-%% map_atom((\=),	not_unifiable).
-%% map_atom((?),	obtain).
-%% map_atom((\/),	or).
-%% map_atom((+),	plus).
-%% map_atom((:-),	prove).
-%% map_atom((?-),	query).
-%% map_atom((>>),	rshift).
-%% map_atom((;),	semicolon).
-%% map_atom((*->),	softcut).
-%% map_atom((*),	star).
-%% map_atom((==),	strick_equals).
-%% map_atom((=),	unify).
-%% map_atom((=..),	univ).
-%% map_atom((\),	backslash).
-%% map_atom('$stream_position',	str_pos).
 
 map_atom(A,N)	:- '$mangle'(A,N).
-
-%% map_atom(A,N)	:- !, atom(A), 'C_id'(A,N).
-%% 
-%% 'C_id'(A,Ma)	:- atom_codes(A,L), c_id(L,Ml), !, atom_codes(Ma,[0'_|Ml]).
-%% 
-%% c_id([],[])	:- !.
-%% c_id([0'_|Q],[0'_,0'_|Mq])	:- !, c_id(Q,Mq).
-%% c_id([C|Q],[C|Mq])	:- is_csym(C), !, c_id(Q,Mq).
-%% c_id([C|Q],M)		:- _A is C//16, hex_digit(_A,A),
-%% 			   _B is C mod 16, hex_digit(_B,B),
-%% 			   M=[0'_,A,B|Mq], c_id(Q,Mq).
-%% 
-%% hex_digit(V,D)	:- between(0,9,V), D is V + 0'0.
-%% hex_digit(V,D)	:- between(10,15,V), D is V + (0'A-10).
 
 
 atoms(A):- L = [ []

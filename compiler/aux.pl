@@ -91,9 +91,11 @@ file_type(F,T)	:- file_base_name(F,Name),
 read_module(L)	:- current_input(S),
 		   readclauses_(S,C,[]),
 		   flag(current_module,M,M),
-		   ( M==system       -> L=C;
-                     concat('$',_,M) -> L=C;
-		                        L=[(:- use_module(system))|C]
+		   ( M==system
+		     -> L=C;
+		     concat('$',_,M)
+		     -> L=C;
+		     L=[(:- use_module(system))|C]
 		   ),
 		   set_input(user_input).
 

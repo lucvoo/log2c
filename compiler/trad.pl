@@ -54,7 +54,10 @@ u_r(ref_t(N),V)		:- g('if (!unify(TMP_~w,~w)) goto backtrack;',[N,V]).
 u_r(struct(F,N,L),V)	:- comm(u_r(struct)),
 			   unify(struct(F,N,L),deref(V)).
 
-unify(struct(F,N,L),V)	:- ( atom(V), (concat('ARG_',_,V);concat('TMP_',_,V))
+unify(struct(F,N,L),V)	:- ( atom(V),
+			     (concat('ARG_',_,V);
+			      concat('TMP_',_,V)
+			     )
 			     -> Vn=V,
 			        g('{ if (is_var(~w))',[Vn])
 			     ;  gensym('v_',Vn),
