@@ -14,6 +14,7 @@ SRC = \
 
 PL_LIB	= ${src_dir}/${PLLIB}
 PL_C	= ${comp_dir}/${PLC}
+PLC1	= ${comp_dir}/${PLC}
 PLS	= $(wildcard *.pl)
 TRASH	= 
 CLEAN	= ${TRASH} $(PLS:%.pl=%.{c,h,o,mod,lnk.c,lnk.o}) $(PLS:%.pl=%)
@@ -25,9 +26,9 @@ FORCE: ;
 
 all: ${PLC}
 
-${PL_LIB}: FORCE
+${PL_LIB}:
 	@${MAKE} -C ${src_dir} $(notdir $@)
-${PL_C}: FORCE
+${PLC1}:
 	@${MAKE} -C ${comp_dir} $(notdir $@)
 
 ${COMP}: $*.mod
@@ -36,10 +37,9 @@ ${PROG}: ${PROG}.pl ${PROG}.mod ${MODULES} ${PROG}.lnk.o ${PL_LIB}
 	${CC} ${CFLAGS} $(filter %.o %.a,$^) ${LIBS} -o $@
 	-rm -f $@.mod # $@.lnk.c $@.c
 
-%: %.pl ${PL_C} ${PL_LIB}
-	pl -x ${PL_C} -g "comp_file('$*.pl')" -t halt -L8192
+%: %.pl ${PLC1} ${PL_LIB}
+	pl -x ${PLC1} -g "comp_file('$*.pl')" -t halt -L8192
 
-# %.mod: %.pl ${PL_C}
-%.mod: %.pl
-	pl -x ${PL_C} -g "comp_file('$*.pl')" -t halt -L8192
+%.mod: %.pl ${PLC1}
+	pl -x ${PLC1} -g "comp_file('$*.pl')" -t halt -L8192
 ########################################################################

@@ -4,7 +4,7 @@
 /****************************************************************/
 
 #include "Prolog.h"
-#include <malloc.h>
+#include <stdlib.h>			// for malloc(3)
 #include "pl-string.h"
 #include "pl-ctype.h"
 #include "pl-fli.h"

@@ -12,7 +12,6 @@
 #include "pl-string.h"
 #include "pl-buffer.h"
 #include "pl-hash.h"
-#include <malloc.h>
 #include <stdlib.h>	// for qsort()
 
 int lengthList(term_t l)

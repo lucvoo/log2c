@@ -9,6 +9,7 @@ include	../Make.common
 
 PL_LIB	= ${src_dir}/${PLLIB}
 PL_C	= ${comp_dir}/${PLC}
+PLC1	= ../phase_1/${PLC}
 PLS	= $(wildcard *.pl)
 TRASH	= core
 CLEAN	= ${TRASH} $(PLS:%.pl=%.{c,h,o,mod,lnk.c,lnk.o}) $(PLS:%.pl=%)
@@ -18,12 +19,12 @@ CLEAN	= ${TRASH} $(PLS:%.pl=%.{c,h,o,mod,lnk.c,lnk.o}) $(PLS:%.pl=%)
 
 FORCE: ;
 
-all: ${PLC}
+all: ${PLC1} ${PLC}
 
-${PL_LIB}: FORCE
-	@${MAKE} -C ${src_dir} $(notdir $@)
-${PL_C}: FORCE
-	@${MAKE} -C ${comp_dir} $(notdir $@)
+
+${PLC1}:
+	@${MAKE} -C ../phase_1 ${PLC}
+	touch .plc1
 
 ${COMP}: $*.mod
 
@@ -38,10 +39,10 @@ ${PROG}: ${PROG}.pl ${PROG}.mod ${MODULES} ${PROG}.lnk.o ${PL_LIB}
 # %.mod: %.pl
 # 	echo "'$*.pl'." | ../phase_1/plc
 
-%: %.pl ${PL_C} ${PL_LIB}
-	../phase_1/plc $*.pl
+%: %.pl ${PLC1}
+	${PLC1} $*.pl
 
-%.mod: %.pl
+%.mod: %.pl .plc1
 	../phase_1/plc $*.pl
 ########################################################################
 

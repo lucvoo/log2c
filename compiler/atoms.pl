@@ -54,7 +54,7 @@ atoms(A):- L = [ []
 		, none, execute, exist
 
 		%% diverse
-		, '.' , [], '$VAR'
+		, '.', [], '$VAR', '$VARNAME', '%'
 
 		%% pl-write.c
 		, quoted

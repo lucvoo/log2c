@@ -63,45 +63,31 @@ char *varName(term_t t)
 
 //#####################################################################
 
-#define AT_LOWER	0
-#define AT_QUOTE	1
-#define AT_FULLSTOP	2
-#define AT_SYMBOL	3
-#define AT_SOLO		4
-#define AT_SPECIAL	5
-
-
 static inline
-int atomType(atom_t a)
+int NeedQuote(atom_t a)
 { const char *s = PL_atom_chars(a);
 
   if (isLower(*s))
-  { const char *s2;
-
-    for(s2 = s; *s2 && isAlphaNum_(*s2); )
-      s2++;
-    return(*s2 == '\0' ? AT_LOWER : AT_QUOTE);
+  { for( ; *s && isAlphaNum_(*s); )
+      s++;
+    return(*s != '\0');
   }
 
-  if (a==ATOM(dot))
-    return AT_FULLSTOP;
+  if (a == ATOM(dot) || a == ATOM(percent))
+    return(1);
+  if (a == ATOM(comma) || a == ATOM(nil) || a == ATOM(curl))
+    return(0);
   
   if (isSymbol(*s))
-  { const char *s2;
-
-    for(s2 = s; *s2 && isSymbol(*s2); )
-      s2++;
-    return(*s2 == '\0' ? AT_SYMBOL : AT_QUOTE);
+  { for( ; *s && isSymbol(*s); )
+      s++;
+    return(*s != '\0');
   }
 
-					/* % should be quoted! */
-  if ((isSolo(*s) || *s == ',') && s[1] == '\0' && s[0] != '%' )
-    return AT_SOLO;
-
-  if ( a == ATOM(nil) || a == ATOM(curl) )
-    return AT_SPECIAL;
-  
-  return AT_QUOTE;
+  if (isSolo(s[0]) && s[1] == '\0')
+    return(0);
+  else 
+    return(1);
 }
 
 //#####################################################################
@@ -135,7 +121,7 @@ bool PutOpenToken(pl_stream S, int c)
   if ( lastc != -1 &&
        ( (isAlphaNum_(lastc) && isAlphaNum_(c)) ||
          (isSymbol(lastc) && isSymbol(c)) ||
-         c == '('		/* ) */
+         c == '('
        )
      )
   { return Putc(S,' ');
@@ -205,24 +191,14 @@ int WriteQuoted(pl_stream S, const char *s, int quote, const w_opt *opt)
 
 static int
 WriteAtom(pl_stream S, atom_t a, const w_opt *opt)
-{ if (Options(OPT_QUOT))
-  { switch( atomType(a) )
-    { case AT_LOWER:
-      case AT_SYMBOL:
-      case AT_SOLO:
-      case AT_SPECIAL:
-		PutToken(S,PL_atom_chars(a));
-		break;
-      case AT_QUOTE:
-      case AT_FULLSTOP:
-      default: WriteQuoted(S, PL_atom_chars(a), '\'', opt);
-    }
-  }
+{ if (Options(OPT_QUOT) && NeedQuote(a))
+    WriteQuoted(S, PL_atom_chars(a), '\'', opt);
   else
     PutToken(S,PL_atom_chars(a));
 
   succeed;
 }
+
 
 inline static
 void WritePrimitive(pl_stream S, term_t t, const w_opt *opt)
@@ -270,86 +246,6 @@ void WritePrimitive(pl_stream S, term_t t, const w_opt *opt)
 }
 
 
-static
-int Display(pl_stream S, term_t term, w_opt *opt)
-{ term_t t;
-
-  t=deref(term);
-  if (is_fun(t))
-  { fun_t f=get_fun(t);
-    atom_t name=f->functor;
-    int   arity=f->arity;
-
-    if (name == ATOM(comma))
-      Puts(S, "','");
-    else
-      WriteAtom(S, name, opt);
-
-    Putc(S, '(');
-    Display(S, ++t, opt);
-    for(--arity;arity>0; --arity)
-    { Puts(S, ", ");
-      Display(S, ++t, opt);
-    }
-    Putc(S, ')');
-  }
-  else
-    WritePrimitive(S, t, opt);
-
-  succeed;
-}
-
-static
-int display(pl_stream S, term_t t, int quote)
-{ w_opt opt;
-
-  opt.max_depth		= LONG_MAX;
-  opt.bind		= 0;
-  opt.flags		= 0;
-  if (status.char_esc)
-    opt.flags |= OPT_ESC;
-  if (quote)
-    opt.flags |= OPT_QUOT;
-
-  return Display(S, t, &opt);
-}
-
-#if 0
-int pl_display(term_t term)
-{  
-  return display(OutStream(), term, 0);
-}
-
-int pl_displayq(term_t term)
-{
-  return display(OutStream(), term, 1);
-}
-
-int pl_display2(term_t stream, term_t term)
-{ pl_stream S=Output_Stream(stream);
-
-  if (!S) fail;
-  return display(S, term, 0);
-}
-
-int pl_displayq2(term_t stream, term_t term)
-{ pl_stream S=Output_Stream(stream);
-
-  if (!S) fail;
-  return display(S, term, 1);
-}
-
-int PL_display(pl_stream S, term_t t)
-{
-  return display(S, t, 0);
-}
-
-int PL_displayq(pl_stream S, term_t t)
-{
-  return display(S, t, 1);
-}
-#endif
-
 static int priorityOperator(atom_t atom)
 { int type, priority;
   int result = 0;
@@ -364,25 +260,8 @@ static int priorityOperator(atom_t atom)
   return result;
 }
 
+
 // FIXME : stuff picked from SWI-Prolog
-/*  write a term. The 'enviroment' precedence is prec.
- ** Sun Apr 17 12:48:09 1988  jan@swivax.UUCP (Jan Wielemaker)
- */
-
-inline static
-bool needSpace(atom_t a1, atom_t a2)
-{ if ( a1 && a2 )
-  { int t1 = atomType(a1);
-    int t2 = atomType(a2);
-
-    if ( (t1 == AT_SYMBOL && t2 == AT_LOWER) ||
-	 (t1 == AT_LOWER  && t1 == AT_SYMBOL) )
-      fail;
-  }
-
-  succeed;
-}
-
 static
 bool WriteTerm(pl_stream S, term_t t,
 	int prec, int depth, const w_opt *opt)
@@ -392,7 +271,7 @@ bool WriteTerm(pl_stream S, term_t t,
   atom_t a;
   char short_buf[33];
 
-  if (depth > opt->max_depth)
+  if (depth >= opt->max_depth)
   { Puts(S, "...");
     succeed;
   }
@@ -458,7 +337,7 @@ bool WriteTerm(pl_stream S, term_t t,
         }
       }
 
-      if ( functor == ATOM(namevar) &&	/* $VAR/1 */
+      if ( functor == ATOM(namevar) &&	/* $VARNAME/1 */
 	   Options(OPT_NAMV) )
       { atom_t a;
 
@@ -584,7 +463,7 @@ bool WriteTerm(pl_stream S, term_t t,
 
 inline static
 int writeTerm(pl_stream S, term_t t,
-		int prec, int quote, int display)
+		int numvars, int quote, int display)
 { w_opt opt;
   
   opt.bind	= 0;
@@ -597,40 +476,36 @@ int writeTerm(pl_stream S, term_t t,
     opt.flags |= OPT_ESC;
   if (quote)
     opt.flags |= OPT_QUOT;
+  if (numvars)
+    opt.flags |= OPT_NUMV;
 
   lastc = -1;
-  return WriteTerm(S, t, prec, 0, &opt);
+  return WriteTerm(S, t, 1200, 0, &opt);
 }
 
 int PL_write(pl_stream S, term_t t)
-{ return(writeTerm(S, t, 1200, 0, 0)); }
+{ return(writeTerm(S, t, 1, 0, 0)); }
 
 int PL_writeq(pl_stream S, term_t t)
 {
-  return(writeTerm(S, t, 1200, 1, 0));
+  return(writeTerm(S, t, 1, 1, 0));
 }
 
 int pl_write(term_t t)
-{ writeTerm(OutStream(), t, 1200, 0, 0);
+{ writeTerm(OutStream(), t, 1, 0, 0);
   succeed;
 }
 
 int pl_write_ln(term_t t)
 { pl_stream S=OutStream();
 
-  writeTerm(S, t, 1200, 0, 0);
+  writeTerm(S, t, 1, 0, 0);
   Sputc(S,'\n');
   succeed;
 }
 
-int pl_report(term_t t)
-{ writeTerm(Stderr, t, 1200, 0, 0);
-  Sputc(Stderr,'\n');
-  succeed;
-}
-
 int pl_writeq(term_t t)
-{ writeTerm(OutStream(), t, 1200, 1, 0);
+{ writeTerm(OutStream(), t, 1, 1, 0);
   succeed;
 }
 
@@ -638,7 +513,7 @@ int pl_write2(term_t stream, term_t t)
 { pl_stream S=Output_Stream(stream);
 
   if (!S) fail;
-  writeTerm(S, t, 1200, 0, 0);
+  writeTerm(S, t, 1, 0, 0);
   succeed;
 }
 
@@ -646,17 +521,13 @@ int pl_writeq2(term_t stream, term_t term)
 { pl_stream S=Output_Stream(stream);
 
   if (!S) fail;
-  writeTerm(S, term, 1200, 1, 0);
+  writeTerm(S, term, 1, 1, 0);
   succeed;
 }
+
 
 int pl_display(term_t t)
-{ writeTerm(OutStream(), t, 1200, 0, 1);
-  succeed;
-}
-
-int pl_displayq(term_t t)
-{ writeTerm(OutStream(), t, 1200, 1, 1);
+{ writeTerm(OutStream(), t, 0, 0, 1);
   succeed;
 }
 
@@ -664,27 +535,40 @@ int pl_display2(term_t stream, term_t term)
 { pl_stream S=Output_Stream(stream);
 
   if (!S) fail;
-  writeTerm(S, term, 1200, 0, 1);
+  writeTerm(S, term, 0, 0, 1);
   succeed;
 }
 
-int pl_displayq2(term_t stream, term_t term)
+int pl_write_canonical(term_t t)
+{ writeTerm(OutStream(), t, 0, 1, 1);
+  succeed;
+}
+
+int pl_write_canonical2(term_t stream, term_t term)
 { pl_stream S=Output_Stream(stream);
 
   if (!S) fail;
-  writeTerm(S, term, 1200, 1, 1);
+  writeTerm(S, term, 0, 1, 1);
   succeed;
 }
 
+// Back-compatibility
+int pl_displayq(term_t t)
+{ return pl_write_canonical(t); }
+
+int pl_displayq2(term_t stream, term_t t)
+{ return pl_write_canonical2(stream, t); }
+
+
 int PL_display(pl_stream S, term_t t)
-{ return writeTerm(S, t, 1200, 0, 1);
+{ return writeTerm(S, t, 0, 0, 1);
 }
 
 int PL_displayq(pl_stream S, term_t t)
-{ return writeTerm(S, t, 1200, 1, 1);
+{ return writeTerm(S, t, 0, 1, 1);
 }
 
-
+// FIXME : move this to pl-io.c
 int PL_puts(char *s)
 { pl_stream S=OutStream();
   Sputs(S,s);
@@ -692,15 +576,32 @@ int PL_puts(char *s)
 }
 
 
+// FIXME : use max_depth = 5
+int pl_report(term_t t)
+{ writeTerm(Stderr, t, 1, 0, 0);
+  Sputc(Stderr,'\n');
+  succeed;
+}
+
 #include "pl-atom.h"
+#include <stdlib.h>			// for free(3)
 
 int pl_warn(const char *fmt)
-{ static char buf[2048];
-  term_t term;
+{ term_t term;
+#ifdef	HAVE_ASPRINTF
+  char  *buf;
+
+  asprintf(&buf, "[Warning: %s ]\n", fmt);
+  term=(term_t)lookup_atom(buf);
+  free(buf);
+#else
+  static char buf[2048];		// FIXME : very dangerous
 
   sprintf(buf, "[Warning: %s ]\n", fmt);
   term=(term_t)lookup_atom(buf);
-  writeTerm(Stderr, term, 1200, 0, 0);
+#endif
+
+  writeTerm(Stderr, term, 0, 0, 0);
   Sputc(Stderr,'\n');
 
   succeed;
@@ -781,7 +682,7 @@ int PL_write_term(pl_stream S,term_t term, term_t options,
     fail; 
   
   lastc = -1;
-  return WriteTerm(S, term, 1200, 0, &opt);
+  return WriteTerm(S, term, 0, 0, &opt);
 }
 
 int pl_write_term(term_t term, term_t options)

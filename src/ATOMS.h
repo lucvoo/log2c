@@ -41,6 +41,7 @@
 #define ATOM_numbervar 		 ATOM___24VAR
 #define ATOM_obtain 		 ATOM___3F
 #define ATOM_or 		 ATOM___5C_2F
+#define ATOM_percent 		 ATOM___25
 #define ATOM_plus 		 ATOM___2B
 #define ATOM_prove 		 ATOM___3A_2D
 #define ATOM_query 		 ATOM___3F_2D
@@ -164,6 +165,7 @@ extern atom__t ATOM_not_strick_equals;
 extern atom__t ATOM_not_unifiable;
 extern atom__t ATOM_numbervar;
 extern atom__t ATOM_or;
+extern atom__t ATOM_percent;
 extern atom__t ATOM_plus;
 extern atom__t ATOM_prove;
 extern atom__t ATOM_rshift;
