@@ -372,7 +372,7 @@ code_Q(Q)	:- trans_term(Q,Qt),
 		   del(vars_list).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-code_binding(B)	:+ +> g0('\n\nchar *freevar[] =\n{'),
+code_binding(B)	:+ +> g0('\n\nconst char *freevar[] =\n{'),
 		   mapl(binding,B),
 	           +> g0('};\n'),
 	           +> g0('int nbr_fv=sizeof(freevar)/sizeof(freevar[0]);\n\n').

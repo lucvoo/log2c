@@ -5,10 +5,11 @@ CC 	= gcc
 
 #DEBUG=1
 
-CFLAGS_WARN = -Wall
-CFLAGS_ALL  = -I. -I${inc_dir} -fno-builtin -funsigned-char
+CFLAGS_WARN = -Wall -Wwrite-strings -Wstrict-prototypes # -Wmissing-prototypes
+CFLAGS_ALL  = -fno-builtin -funsigned-char
 CFLAGS_REG1 = -ffixed-%ebx
 CFLAGS_REG2 = -ffixed-%esi -ffixed-%edi
+IFLAGS = -I. -I${inc_dir}
 
 ifdef DEBUG
 CFLAGS_OPT  = -O2 -g -DPL_DEBUG=1
@@ -19,7 +20,7 @@ CFLAGS_OPT  = -O2 -g -fomit-frame-pointer #-march=i686
 endif
 
 CFLAGS	= ${CFLAGS_WARN} ${CFLAGS_ALL} ${CFLAGS_OPT} \
-	  ${CFLAGS_REG1} ${CFLAGS_REG2}
+	  ${CFLAGS_REG1} ${CFLAGS_REG2} ${IFLAGS}
 
 
 PLLIB	= libpl.a
@@ -32,7 +33,7 @@ PLC	= plc
 %.o: %.mod
 
 ##
-.SUFFIXES: .c .o .s .i .mod .lnk.c .pl
+.SUFFIXES: .c .o .s .i .mod .lnk.c .pl .h_
 
 .%.d: %.c $(HDR)
 	@$(CC) -MM $(CFLAGS) $*.c | sed "/: /s/[^\.]*/&.s &/" > $@
@@ -48,6 +49,8 @@ PLC	= plc
 %.sa: %.c ${$*.dep}
 	$(CC) $(CFLAGS) -shared -Wl,-soname,$*.so -o $@ $(filter %.c,$^)
 
+%.h_: %.c ${$*.dep}
+	cproto ${IFLAGS} -o $@ $*.c 
 ########################################################################
 
 all: ;
