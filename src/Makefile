@@ -59,4 +59,11 @@ ${PLLIB}: ${OBJS}
 ########################################################################
 # Dependencies
 
+pl-version.h:
+	echo "#ifndef	PL_VERSION_H_"			>  $@
+	echo						>> $@
+	echo "#define	PL_VERSION	${PL_VERSION}"	>> $@
+	echo						>> $@
+	echo "#endif"					>> $@
+
 -include ${SRC:%.c=.%.d}
