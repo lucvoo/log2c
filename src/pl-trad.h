@@ -11,6 +11,7 @@
 
 void pl_exit(int);
 
+#define	PL_ARG(n)	PL_ARGS[n]
 
 #define	FAILED			\
 	printf("No\n");		\

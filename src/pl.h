@@ -47,6 +47,9 @@ extern tr_t		*TR_STK;
 extern cell_t		*SH_STK;
 
 
+extern cell_t *PL_ARGS[PL_MAX_ARGS];
+
+
 // must be a power of two for dynamic hashing
 extern int	PL__atoms_hash_size;
 extern int	PL__atoms_count;

@@ -21,7 +21,7 @@ addr(ref_t(I),R)	:- concat_atom(['TMP_',I],R).
 mem_arg(N,A)		:- flag(arg,F,F),
 			   mem_arg_(F,N,A).
 
-mem_arg_(arg,N,A)	:- concat_atom(['ARG_',N],A).
+mem_arg_(arg,N,A)	:- concat_atom(['PL_ARG(',N,')'],A).
 mem_arg_(fp4,N,A)	:- concat_atom(['FP[',N,'+4].celp'],A).
 
 %%%%%%%%

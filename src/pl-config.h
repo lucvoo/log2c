@@ -33,6 +33,7 @@
 
 #define MAX_RING_BUFFER	4
 
+#define	PL_MAX_ARGS	256
 
 
 // FIXME : should be done by configure & C°

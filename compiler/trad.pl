@@ -35,12 +35,12 @@ putref_t_m(V,I)	:- concat_atom(['putref_m(TMP_',I,')'],V).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 load_(N,struct(F,Ar,L))	:- comm(load_(struct)),
-			   concat_atom(['ARG_',N],Addr),
+			   concat_atom(['PL_ARG(',N,')'],Addr),
 			   wrt__(struct(F,Ar,L),Addr).
 load_(N,E)		:- addr(E,A),
 			   ( (E=ref(_); E=ref_t(_)) 
-			     -> g('ARG_~w=deref(~w);',[N,A])
-			     ;  g('ARG_~w=~w;',[N,A])
+			     -> g('PL_ARG(~w)=deref(~w);',[N,A])
+			     ;  g('PL_ARG(~w)=~w;',[N,A])
 			   ).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -57,7 +57,7 @@ u_r(struct(F,N,L),V)	:- comm(u_r(struct)),
 			   unify(struct(F,N,L),deref(V)).
 
 unify(struct(F,N,L),V)	:- ( atom(V),
-			     (concat('ARG_',_,V);
+			     (concat('PL_ARG(',_,V);
 			      concat('TMP_',_,V)
 			     )
 			     -> Vn=V,
@@ -269,7 +269,7 @@ halt_		:- g0('\n\thalt_();\n').
 
 saveargs(N)     :- comm(saveargs,N),
                    between(1,N,I),
-                   g('FP[~w+4].celp=ARG_~w;',[I,I]), fail;
+                   g('FP[~w+4].celp=PL_ARG(~w);',[I,I]), fail;
                    true.
 
 cut		:- g('cut();').
@@ -291,8 +291,9 @@ get_arg(Q,[],Q).
 
 save(0,_,T,T).
 save(S,L,O,T)	:- succ(S1,S), save(S1,L,O,Q),
+		   G=g('FP[4+~w].celp=PL_ARG(~w);',[S,S]),
 		   ( member(get_(S,V),L)
-		     -> Q=[g('FP[4+~w].celp=ARG_~w;',[S,S]),get_(S,V)|T]
-		     ;  Q=[g('FP[4+~w].celp=ARG_~w;',[S,S])|T]
+		     -> Q=[G,get_(S,V)|T]
+		     ;  Q=[G|T]
 		   ).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -7,25 +7,7 @@
 #include "pl-fli.h"
 #include "pl-write.h"
 
-extern cell_t *ARGS[17] asm("ARG_0");
-cell_t *ARG_0 = 0;
-cell_t *ARG_1 = 0;
-cell_t *ARG_2 = 0;
-cell_t *ARG_3 = 0;
-cell_t *ARG_4 = 0;
-cell_t *ARG_5 = 0;
-cell_t *ARG_6 = 0;
-cell_t *ARG_7 = 0;
-cell_t *ARG_8 = 0;
-cell_t *ARG_9 = 0;
-cell_t *ARG_10 = 0;
-cell_t *ARG_11 = 0;
-cell_t *ARG_12 = 0;
-cell_t *ARG_13 = 0;
-cell_t *ARG_14 = 0;
-cell_t *ARG_15 = 0;
-cell_t *ARG_16 = 0;
-
+cell_t *PL_ARGS[PL_MAX_ARGS] = { 0 };
 
 extern modules_t *PL__modules[];
 extern module_t module_system;
@@ -109,8 +91,8 @@ void *PL_call(term_t clos, int extra, term_t *args)
     PL_warning("PL_call : fail");
   }
    
-  for (n=1;n<=arity;n++) ARGS[n]=deref(t+n);
-  for (n=0;n<extra;n++)  ARGS[arity+1+n]=args[n];
+  for (n=1;n<=arity;n++) PL_ARGS[n]=deref(t+n);
+  for (n=0;n<extra;n++)  PL_ARGS[arity+1+n]=args[n];
 
   return(proc);
 }
@@ -133,9 +115,9 @@ void *PL_apply(term_t clos, term_t list)
   }
    
   for (n=1;n<=arity;n++)
-    ARGS[n]=deref(t+n);
+    PL_ARGS[n]=deref(t+n);
   for (n=0;n<extra;n++)
-  { ARGS[arity+1+n]=deref(list+1);
+  { PL_ARGS[arity+1+n]=deref(list+1);
     list=deref(list+2);
   }
 

@@ -32,10 +32,10 @@ make_f_args_(N,A)	:- M is N-1,
 			   concat_atom([B,'FP[',N4,'].celp, '],A).
 		   
 make_ARGs(0,'')		:- !.
-make_ARGs(1,'ARG_1')	:- !.
+make_ARGs(1,'PL_ARG(1)')	:- !.
 make_ARGs(N,A)		:- M is N-1,
 			   make_ARGs(M,B),
-			   concat_atom([B,', ARG_',N],A).
+			   concat_atom([B,', PL_ARG(',N,')'],A).
 		   
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -104,7 +104,6 @@ anf_module(La,Lf,Lp)	:-
 	used_modules(Ms),
 	map(util:include_module,Ms),
 	nl,
-	flag(max_arg,_,0),
 	decl_atoms(La),
 	decl_funs(Lf),
 	init_preds(Lp),
@@ -113,13 +112,6 @@ anf_module(La,Lf,Lp)	:-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 init_args :-
-	nl,
-	flag(max_arg,A,A),
-	( between(1,A,I),
-	  format('cell_t *ARG_~w;\n',[I]),
-	  fail
-        ; true
-	),
 	nl,
 	flag(max_tmp,T,T),
 	( between(1,T,I),
@@ -171,8 +163,7 @@ decl_funs(Fs)	:- map(util:decl_funs_,Fs),
 
 decl_funs_(F/N)	:- map_atom(F,Fm),
 		   format(h,'extern fun__t FUN_~w_~d;\n',[Fm,N]),
-		   format(mod,'~q.\n',[funs(F/N)]),
-		   flag(max_arg,O,max(O,N)).
+		   format(mod,'~q.\n',[funs(F/N)]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
