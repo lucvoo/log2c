@@ -38,8 +38,8 @@ ${PROG}: ${PROG}.pl ${PROG}.mod ${MODULES} ${PROG}.lnk.o ${PL_LIB}
 	-rm -f $@.mod # $@.lnk.c $@.c
 
 %: %.pl ${PLC1} ${PL_LIB}
-	pl -x ${PLC1} -g "compile('$*.pl',[])" -t halt -L8192
+	pl -x ${PLC1} -g "compile('$*.pl')" -t halt -L8192
 
 %.mod: %.pl ${PLC1}
-	pl -x ${PLC1} -g "compile('$*.pl',[])" -t halt -L8192
+	pl -x ${PLC1} -g "compile('$*.pl')" -t halt -L8192
 ########################################################################

@@ -198,9 +198,9 @@ code__Pr(pr(F,A,[C|Q]))	:+ code_C(F,A,C,middle),
 			   code__Pr(pr(F,A,Q)).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 code_FPr	:+ ndet_pred(full,Ln),
-		   mapl(comp:code_FPr_ndet,Ln),
+		   mapl(code_FPr_ndet,Ln),
 		   det_pred(full,Ld),
-		   mapl(comp:code_FPr_det,Ld).
+		   mapl(code_FPr_det,Ld).
 
 code_FPr_ndet([F,N,C]) :+
 		+> comm_pred(F,N),
@@ -320,14 +320,14 @@ code_G(G,L)		:+ code_call(G,L).
 
 code_G_or(fail,F,L_,L)	:+ L_=backtrack,
 			   +> alt_2,
-			   mapl(comp:reset_fvar,F),
+			   mapl(reset_fvar,F),
 			   flag(curr_C,Li,Li), label(Li,L),
 			   +> fl_(L).
 
 code_G_or((G1;G2),F,L_,L) :+ flag(curr_C,Li,Li), label(Li,L_),
 			   +> fl(L_),
 			   +> alt_1(Lb),
-			   mapl(comp:reset_fvar,F),
+			   mapl(reset_fvar,F),
 			   find_fvar(G1,Fv),
 			   code_G(G1,L),
 			   code_G_or(G2,Fv,Lb,L).
@@ -335,7 +335,7 @@ code_G_or((G1;G2),F,L_,L) :+ flag(curr_C,Li,Li), label(Li,L_),
 code_G_or(G,F,L_,L)	:+ flag(curr_C,Li,Li), label(Li,L_),
 			   +> fl(L_),
 			   +> alt_2,
-			   mapl(comp:reset_fvar,F),
+			   mapl(reset_fvar,F),
 			   code_G(G,L),
 			   flag(curr_C,Li,Li), label(Li,L),
 			   +> fl_(L).
@@ -369,7 +369,7 @@ code_Q(Q)	:- trans_term(Q,Qt),
 code_binding(Bs)   :+
 	+> g0('\n\n#ifdef	INTERACTIVE'),
 	+> g0('const char *PL_freevar[] =\n{'),
-	mapl(comp:binding,Bs),
+	mapl(binding,Bs),
 	+> g0('};\n'),
 	+> g0('int PL_nbr_fv = sizeof(PL_freevar)/sizeof(PL_freevar[0]);'),
 	+> g0('#endif\n\n').

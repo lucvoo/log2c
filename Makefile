@@ -35,9 +35,9 @@ ${PROG}: ${PROG}.pl ${PROG}.mod ${MODULES} ${PROG}.lnk.o ${PL_LIB}
 	-rm -f $@.mod # $@.lnk.c $@.c
 
 %: %.pl ${PL_C} ${PL_LIB}
-	pl -x ${PL_C} -g "comp_file('$*.pl')" -t halt
+	pl -x ${PL_C} -g "compile('$*.pl')" -t halt
 %.mod: %.pl
-	pl -x ${PL_C} -g "comp_file('$*.pl')" -t halt
+	pl -x ${PL_C} -g "compile('$*.pl')" -t halt
 ########################################################################
 # Dependencies
 system.mod: library/list.pl library/bags.pl

@@ -20,6 +20,8 @@ term_expansion(I,O)	:- translate(I,O).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+compile(F)		:- compile(F,[]).
+
 compile(F,Options)	:- process_options(Options),
 			   comp_file(F).
 
