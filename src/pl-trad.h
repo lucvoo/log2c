@@ -13,16 +13,17 @@ void pl_exit(int);
 
 
 #define	FAILED			\
-	printf("No\\n");	\
+	printf("No\n");		\
 	pl_exit(1)
 
-
+/*
 #define getref_m(ref)			\
 	({ int n;			\
 	   if (!PL_eval_(ref,&n))	\
 	     goto backtrack;		\
 	   return(n);			\
 	})
+*/
 
 
 #define getatom(arg,A)			\

@@ -67,7 +67,7 @@ unify(struct(F,N,L),V)	:- ( atom(V),
 			        g('  ~w=~w;',[Vn,V]),
 			        g('  if (is_var(~w))',[Vn])
 			   ),
-			   g('  { mkrefp(~w,HP);',[Vn]),
+			   g('  { ~w->celp = HP;',[Vn]),
 			   g('    trail(~w);',[Vn]),
 			   new_indent(4),
 			   trad_off(struct(F,N,L)),
@@ -99,7 +99,7 @@ wrt_(struct(F,N,L),V)	:- comm(wrt_(struct)),
 wrt_(atom(A),V)		:- map_atom(A,Am),
 			   g('(~w)->celp=new_atom(ATOM(~w));',[V,Am]).
 wrt_(intg(N),V)		:- g('(~w)->val=__intg(~w);',[V,N]).
-wrt_(flt(N),V)		:- g('(~w)->val=__flt(~w);',[V,N]).
+wrt_(flt(N),V)		:- g('(~w)->celp=new_flt(~w);',[V,N]).
 wrt_(var(I),V)		:- g('(~w)->val=__var(); FP[~w].celp=(~w);',[V,I,V]).
 wrt_(var_t(I),V)	:- g('(~w)->val=__var(); TMP_~w=(~w);',[V,I,V]).
 wrt_(void,V)		:- g('(~w)->val=__var();',[V]).
@@ -120,24 +120,37 @@ write_off	:- recorded(tradoff, g(F,A),R), !,
 write_off.
 
 
-tradoff([])	:- ( recorded(offset,w(struct(F,N,L),A),R)
-		     -> erase(R),
-		        flag(hp,HP,HP+1),
-		        recordz(tradoff, g('HP[~d].celp=(HP+~d);',[A,HP])),
-		        offset(struct(F,N,L),HP)
-		     ;  true
-		   ).
+tradoff([])	:- T=struct(_,_,_), recorded(offset,w(T,A),R),
+		   erase(R),
+		   flag(hp,HP,HP+1),
+		   recordz(tradoff, g('HP[~d].celp=(HP+~d);',[A,HP])),
+		   offset(T,HP).
+tradoff([])	:- T=flt(_),        recorded(offset,w(T,A),R),
+		   erase(R),
+		   flag(hp,HP,HP+3),
+		   recordz(tradoff, g('HP[~d].celp=(HP+~d);',[A,HP])),
+		   offset(T,HP).
+tradoff([]).
+
 
 tradoff([u(struct(F,N,L),_)])	:-
 			   flag(hp,HP,HP+1),
 			   offset(struct(F,N,L),HP), !.
+tradoff([u(flt(F),_)])	:- !,
+			   flag(hp,HP,HP+3),
+			   offset(flt(F),HP).
 tradoff([u(struct(F,N,L),_)|Q]) :- Q\=[],
 			   flag(hp,HP,HP+1),
 			   recorda(offset,w(struct(F,N,L),HP)),
 			   tradoff(Q).
+tradoff([u(flt(F),_)|Q]) :- Q\=[],
+			   flag(hp,HP,HP+1),
+			   recorda(offset,w(flt(F),HP)),
+			   tradoff(Q).
 tradoff([u(E,_)|Q])	:- flag(hp,HP,HP+1),
 			   offset(E,HP),
 			   tradoff(Q).
+tradoff(X)	:- error('uncatch tradoff(~w)', [X]).
 
 
 offset(struct(F,A,L),O)	:- map_atom(F,Fm),
@@ -147,7 +160,8 @@ offset(struct(F,A,L),O)	:- map_atom(F,Fm),
 offset(atom(A),O)	:- map_atom(A,Am),
 			   recordz(tradoff, g('HP[~w].val=__atom(ATOM(~w));',[O,Am])).
 offset(intg(N),O)	:- recordz(tradoff, g('HP[~w].val=__intg(~w);',[O,N])).
-offset(flt(N),O)	:- recordz(tradoff, g('HP[~w].val=__flt(~w);',[O,N])).
+offset(flt(N),O)	:- recordz(tradoff, g('HP[~w].val=(flt_tag<<29); get_flt(HP+~w) = ~w;',[O,O,N])).
+offset(flt(F),_)	:- error('No offset(flt(~w))', [F]).
 offset(var(I),O)	:- recorda(tradoff, g('HP[~w].val=__var(); FP[~w].celp=HP+(~w);',[O,I,O])).
 offset(var_t(I),O)	:- recorda(tradoff, g('HP[~w].val=__var(); TMP_~w=HP+(~w);',[O,I,O])).
 offset(void,O)		:- recordz(tradoff, g('HP[~w].val=__var();',[O])).
@@ -204,7 +218,6 @@ map_called(F,P)	:- ( recorded(preds,F)	% not extern predicate
 call_(F,N,L)    :- comm(call_,F,N),
 		   map_called(F/N,P),
 		   call_(P,L).
-		   %% DEBUG g('VM_CALL(~w,~w);',[P,L]).
 
 call_(P,L)	:- g('SP[1].cod= &&~w;',[L]),
 		   g('SP[2].stk=FP;'),

@@ -110,15 +110,7 @@ cell_t *new_intg(long N)
   return(HP++);
 }
 
-INLINE_DECL
-cell_t *new_flt(double r)
-{ typeof(HP) old_HP=HP;
-
-  HP->val = (flt_tag<<29);
-  get_flt(HP)=r;
-  HP+=3;
-  return(old_HP);
-}
+cell_t *new_flt(double r);
 
 INLINE_DECL 
 cell_t *new_var(void)

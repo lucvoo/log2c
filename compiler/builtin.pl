@@ -38,7 +38,7 @@ inline(X is Y)	:+ +> comm(is,X,Y),
 
 inline(atom(X))		:+ type(atom,X,is_atom).
 inline(integer(X))	:+ type(string,X,is_intg).
-inline(float(X))	:+ type(string,X,is_float).
+inline(float(X))	:+ type(float,X,is_flt).
 inline(number(X))	:+ type(number,X,is_number).
 inline(atomic(X))	:+ type(atomic,X,is_atomic).
 inline(var(X))		:+ type(var,X,is_var).
@@ -50,6 +50,8 @@ inline(is_list(X))	:+ type(list,X,is_list).
 
 %%%%
 
+inline(X = Y)	:+ ( X=var(v,_); Y=var(v,_) ),
+                   +> comm(=,X,Y), !.
 inline(X = Y)	:+ ( X=var(f,_); X=var(ft,_) ),
                    +> comm(=,X,Y),
 		   unify_var(X,Y), !.
@@ -91,15 +93,6 @@ inline(X == Y)	:+ Y=intg(I),
 		   code_AssignD(a1,X),
 		   +> new_indent(-2),
 		   +> g('  if (!isintg(~d,a1))',[I]),
-		   +> g('    goto backtrack;'),
-		   +> g('}').
-inline(X == Y)	:+ Y=flt(I),
-		   +> comm((==),X,Y),
-		   +> g('{ cell_t *a1;'),
-		   +> new_indent(2),
-		   code_AssignD(a1,X),
-		   +> new_indent(-2),
-		   +> g('  if (!isflt(~d,a1))',[I]),
 		   +> g('    goto backtrack;'),
 		   +> g('}').
 
@@ -232,7 +225,7 @@ unify_var(X,Y)	:+ +> g('{ cell_t *a1, *a2;'),
 		   code_Assign(a1,X),
 		   code_Assign(a2,Y),
 		   +> new_indent(-2),
-		   +> g('  mkrefp(a1,a2);'),
+		   +> g('  a1->celp = a2;'),
 		   +> g('  trail(a1);'),
 		   +> g('}').
 

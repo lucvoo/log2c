@@ -127,6 +127,12 @@ void PL_put_integer(term_t v, long N)
   return;
 }
 
+inline static 
+void PL_put_float(term_t v, double N)
+{ v->celp=new_flt(N); 
+  return;
+}
+
 inline static
 void PL_put_atom(term_t v, atom_t A)
 { v->celp=&(A->atom); 
