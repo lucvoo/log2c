@@ -1,5 +1,7 @@
-%% Copyright (c) 1997 Luc Van Oostenryck. All rights reserved.
-%%
+/****************************************************************/
+/* Copyright (c) 1998 Luc Van Oostenryck. All rights reserved.	*/
+/*								*/
+/****************************************************************/
 
 :- module(addr,[addr/2, addr_arg/2, mem_arg/2]).
 :- use_module(atoms).

@@ -4,7 +4,6 @@
 src_dir	 = ../src
 inc_dir	 = ${src_dir}
 comp_dir = ../compiler
-sub_dir	 = ${src_dir} ${comp_dir}
 
 include	../Make.common
 

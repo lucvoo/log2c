@@ -4,14 +4,15 @@
 src_dir	 = src
 inc_dir	 = ${src_dir}
 comp_dir = compiler
-sub_dir	 = ${src_dir} ${comp_dir}
+lib_dir	 = library
+sub_dir	 = ${src_dir} ${comp_dir} ${lib_dir} phase_1 phase_2
 
 include	Make.common
 
 PL_LIB	= ${src_dir}/${PLLIB}
 PL_C	= ${comp_dir}/${PLC}
 PLS	= $(wildcard *.pl)
-TRASH	= $(PLS:%.pl=%.{c,o,mod,lnk.c}) $(PLS:%.pl=%)
+TRASH	= $(PLS:%.pl=%.{c,h,o,mod,lnk.c,lnk.o}) $(PLS:%.pl=%)
 CLEAN	= ${TRASH}
 
 ########################################################################
