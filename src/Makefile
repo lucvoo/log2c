@@ -37,6 +37,7 @@ SRC = \
 	pl-Smem.c \
 	pl-Spipe.c \
 	pl-Sprintf.c \
+	pl-Ssocket.c \
 	pl-sys.c \
 	pl-time.c \
 	pl-util.c \
