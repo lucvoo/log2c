@@ -5,6 +5,7 @@
 	       , '$recorded_all'/2
 	       , '$erase_records'/1
 	       , '$mangle'/2
+	       , map/2
                ]).
 
 report(T)	:- write(user_error,T),
@@ -31,4 +32,11 @@ c_id([C|Q],M)		:- _A is C//16, hex_digit(_A,A),
 
 hex_digit(V,D)	:- between(0,9,V), D is V + 0'0.
 hex_digit(V,D)	:- between(10,15,V), D is V + (0'A-10).
+
+
+:- module_transparent map/2.
+
+map(G, [E|T])	:- call(G, E), map(G, T).
+map(_,[]).
+
 

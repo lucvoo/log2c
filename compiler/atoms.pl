@@ -9,50 +9,50 @@
 
 :- index(map_atom(1,1)).
 
-map_atom((/\),	and).
-map_atom((=:=),	ar_equals).
-map_atom((>),	ar_larger).
-map_atom((>=),	ar_larger_equal).
-map_atom((=\=),	ar_not_equal).
-map_atom((<),	ar_smaller).
-map_atom((=<),	ar_smaller_equal).
-map_atom((=@=),	at_equals).
-map_atom((@>),	at_larger).
-map_atom((@>=),	at_larger_equal).
-map_atom((\=@=),at_not_equals).
-map_atom((@<),	at_smaller).
-map_atom((@=<),	at_smaller_equal).
-map_atom((|),	bar).
-map_atom((,),	comma).
-map_atom(({}),	curl).
-map_atom((//),	div).
-map_atom((/),	divide).
-map_atom((.),	dot).
-map_atom((**),	doublestar).
-map_atom((-->),	grammar).
-map_atom((^),	hat).
-map_atom((->),	ifthen).
-map_atom((<<),	lshift).
-map_atom((-),	minus).
-map_atom((:),	module).
-map_atom(([]),	nil).
-map_atom((\+),	not_provable).
-map_atom((\==),	not_strick_equals).
-map_atom((\=),	not_unifiable).
-map_atom((?),	obtain).
-map_atom((\/),	or).
-map_atom((+),	plus).
-map_atom((:-),	prove).
-map_atom((?-),	query).
-map_atom((>>),	rshift).
-map_atom((;),	semicolon).
-map_atom((*->),	softcut).
-map_atom((*),	star).
-map_atom((==),	strick_equals).
-map_atom((=),	unify).
-map_atom((=..),	univ).
-map_atom((\),	backslash).
-map_atom('$stream_position',	str_pos).
+%% map_atom((/\),	and).
+%% map_atom((=:=),	ar_equals).
+%% map_atom((>),	ar_larger).
+%% map_atom((>=),	ar_larger_equal).
+%% map_atom((=\=),	ar_not_equal).
+%% map_atom((<),	ar_smaller).
+%% map_atom((=<),	ar_smaller_equal).
+%% map_atom((=@=),	at_equals).
+%% map_atom((@>),	at_larger).
+%% map_atom((@>=),	at_larger_equal).
+%% map_atom((\=@=),at_not_equals).
+%% map_atom((@<),	at_smaller).
+%% map_atom((@=<),	at_smaller_equal).
+%% map_atom((|),	bar).
+%% map_atom((,),	comma).
+%% map_atom(({}),	curl).
+%% map_atom((//),	div).
+%% map_atom((/),	divide).
+%% map_atom((.),	dot).
+%% map_atom((**),	doublestar).
+%% map_atom((-->),	grammar).
+%% map_atom((^),	hat).
+%% map_atom((->),	ifthen).
+%% map_atom((<<),	lshift).
+%% map_atom((-),	minus).
+%% map_atom((:),	module).
+%% map_atom(([]),	nil).
+%% map_atom((\+),	not_provable).
+%% map_atom((\==),	not_strick_equals).
+%% map_atom((\=),	not_unifiable).
+%% map_atom((?),	obtain).
+%% map_atom((\/),	or).
+%% map_atom((+),	plus).
+%% map_atom((:-),	prove).
+%% map_atom((?-),	query).
+%% map_atom((>>),	rshift).
+%% map_atom((;),	semicolon).
+%% map_atom((*->),	softcut).
+%% map_atom((*),	star).
+%% map_atom((==),	strick_equals).
+%% map_atom((=),	unify).
+%% map_atom((=..),	univ).
+%% map_atom((\),	backslash).
+%% map_atom('$stream_position',	str_pos).
 
 map_atom(A,N)	:- '$mangle'(A,N).
 
@@ -103,6 +103,7 @@ atoms(A):- L = [ []
 
 		%% pl-file.c
 		, '$stream_position', ''
+		, none, execute, exist
 
 		%% diverse
 		, '.' , []

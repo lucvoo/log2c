@@ -124,15 +124,7 @@ inline(cons(X)):+ +> comm(cons,X),
 		   +> g('  if (!is_cons(c))'),
 		   +> g('    goto backtrack;'),
 		   +> g('}').
-inline(nil(X)):+ +> comm(cons,X),
-		   +> g('{ cell_t *c;'),
-		   +> new_indent(2),
-		   code_AssignD(c,X),
-		   +> new_indent(-2),
-		   +> g('  if (!is_nil(c))'),
-		   +> g('    goto backtrack;'),
-		   +> g('}').
-inline(list(X)):+ +> comm(list,X),
+inline(is_list(X)):+ +> comm(list,X),
 		   +> g('{ cell_t *c;'),
 		   +> new_indent(2),
 		   code_AssignD(c,X),
@@ -204,8 +196,10 @@ inline(X == Y)	:+ Y=intg(I),
 		   +> g('    goto backtrack;'),
 		   +> g('}').
 
-inline(X == Y)	:+ std_cmp(==, X, Y).
-inline(X \== Y)	:+ std_cmp(\==, X, Y).
+inline(X == Y)	:+ std_eq(==, X, Y).
+inline(X \== Y)	:+ std_eq(\==, X, Y).
+%% inline(X == Y)	:+ std_cmp(==, X, Y).
+%% inline(X \== Y)	:+ std_cmp(\==, X, Y).
 inline(X @< Y)	:+ std_cmp(@<, X, Y).
 inline(X @> Y)	:+ std_cmp(@>, X, Y).
 inline(X @=< Y)	:+ std_cmp(@=<, X, Y).
@@ -347,6 +341,16 @@ std_cmp(Op,X,Y)	:+ +> comm(Op,X,Y),
 		   code_Assign(x,X), code_Assign(y,Y),
 		   +> new_indent(-2),
 		   +> g('  if (!(pl_std_cmp(x,y) ~w 0))',C_Op),
+                   +> g('    goto backtrack;'),
+		   +> g('}').
+
+std_eq(Op,X,Y)	:+ +> comm(Op,X,Y),
+                   map_C_op(Op,C_Op),
+		   +> g('{ cell_t *x, *y;'),
+		   +> new_indent(2),
+		   code_Assign(x,X), code_Assign(y,Y),
+		   +> new_indent(-2),
+		   +> g('  if (pl_std_eq(x,y) ~w 0)',C_Op),
                    +> g('    goto backtrack;'),
 		   +> g('}').
 

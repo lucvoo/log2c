@@ -93,7 +93,8 @@ code_anf(N)	:- read_mods(N,A,F,P),
 		   init_hash(A,F,Pall).
 
 link(Name)	:- need_modules(Ms),
-		   maplist(module_extension(o),Ms,Mso),
+		   maplist(module_extension(o),Ms,Mso_),
+		   sort(Mso_,Mso),
 		   concat_atom(Ms,' ',L),
 		   concat_atom(Mso,' ',Lo),
 		   concat_atom(['make PROG="',Name,'" MODULES="',Lo,'" ',Name], Make),

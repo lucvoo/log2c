@@ -11,7 +11,6 @@ SRC = \
 	builtin.pl \
 	code.pl \
 	comp.pl \
-	depend.pl \
 	hash.pl \
 	map_name.pl \
 	modules.pl \
@@ -19,7 +18,6 @@ SRC = \
 	swi.pl \
 	trad.pl \
 	trans.pl \
-	type.pl \
 	util.pl \
 	vars.pl \
 

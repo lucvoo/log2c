@@ -38,6 +38,7 @@ dgc(btinit,3).
 dgc(fin,1).
 dgc(arith_cmp,3).
 dgc(std_cmp,3).
+dgc(std_eq,3).
 dgc(str_eq,3).
 dgc(unify_var,2).
 dgc(decl,2).

@@ -68,8 +68,8 @@ unify(struct(F,N,L),V)	:- ( atom(V), (concat('ARG_',_,V);concat('TMP_',_,V))
 			   trad_off(struct(F,N,L)),
 			   new_indent(-4),
 			   g('  }'),
-			   g('  else'), map_fun(F/N,Fm),
-			   g('  if (isfun(FUN(~w),~w))',[Fm,Vn]),
+			   g('  else'), map_atom(F,Fm),
+			   g('  if (isfun(FUN(~w,~d),~w))',[Fm,N,Vn]),
 			   g('  {'),
 			   new_indent(4),
 			   trad_r(L,Vn),
@@ -126,8 +126,8 @@ tradoff([u(E,_)|Q])	:- flag(hp,HP,HP+1),
 			   tradoff(Q).
 
 
-offset(struct(F,A,L),O)	:- map_fun(F/A,Fm),
-			   g('HP[~w].val=__fun(FUN(~w));',[O,Fm]),
+offset(struct(F,A,L),O)	:- map_atom(F,Fm),
+			   g('HP[~w].val=__fun(FUN(~w,~d));',[O,Fm,A]),
 			   tradoff(L),
 			   !.
 offset(atom(A),O)	:- map_atom(A,Am),

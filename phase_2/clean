@@ -1,0 +1,6 @@
+#!/bin/sh
+
+for i in $*
+do
+rm -f $i.c $i.lnk.c $i.mod $i.h $i.o $i.prof gmon.sum.$i
+done

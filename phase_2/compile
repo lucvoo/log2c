@@ -1,0 +1,15 @@
+for i in $*
+do
+	echo "compiling : $i"
+	echo
+	make $i.mod 2>&1 
+	echo $i.mod
+	echo
+	diff ../phase_1/$i.mod $i.mod
+	echo $i.c
+	echo
+	diff ../phase_1/$i.c $i.c
+	echo $i.h
+	echo
+	diff ../phase_1/$i.h $i.h
+done

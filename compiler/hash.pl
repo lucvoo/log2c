@@ -69,16 +69,16 @@ hash_fun_vec(V)		:- V=..[vec|L], map(hash_fun_list,L), nl,
 hash_fun_list([]).
 hash_fun_list([F])	:- print_fun_list(F,0).
 hash_fun_list([F,G|Q])	:- hash_fun_list([G|Q]),
-			   map_fun(G,Gm),
-			   concat_atom(['FUN(',Gm,')'],Nxt),
+			   G=Gf/N, map_atom(Gf,Gm),
+			   concat_atom(['FUN(',Gm,',',N,')'],Nxt),
 			   print_fun_list(F,Nxt).
 
-print_fun_list(F/N,Nxt)	:- map_atom(F,Na), map_fun(F/N,Fm),
-			   format('fun__t FUN_~w={ ATOM(~w), ~w, ~w};\n',[Fm,Na,N,Nxt]).
+print_fun_list(F/N,Nxt)	:- map_atom(F,Na),
+			   format('fun__t FUN_~w_~w={ ATOM(~w), ~w, ~w};\n',[Na,N,Na,N,Nxt]).
 				
 hash_fun_tab([])	:- format('  0,\n').
-hash_fun_tab([E|_])	:- map_fun(E,Em),
-			   format('  FUN(~w),\n',[Em]).
+hash_fun_tab([F/N|_])	:- map_atom(F,Fm),
+			   format('  FUN(~w,~w),\n',[Fm,N]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 init_hash_jmps		:- flag(current_module,M,M),

@@ -1,0 +1,9 @@
+#!/bin/sh
+
+ALL="apply bags list grammar set system atoms map_name pl-ext aux arith vars code builtin modules util hash addr trad trans comp"
+
+for cmd in $*
+do
+	echo $cmd $ALL
+	$cmd $ALL
+done

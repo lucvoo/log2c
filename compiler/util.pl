@@ -149,10 +149,10 @@ decl_atoms_(A)	:- map_atom(A,Am),
 decl_funs(Fs)	:- map(decl_funs_,Fs),
 		   nl(h).
 
-decl_funs_(F)	:- map_fun(F,Fm),
-		   format(h,'extern fun__t FUN_~w;\n',[Fm]),
-		   format(mod,'~q.\n',[funs(F)]),
-		   F=_/N, flag(max_arg,O,max(O,N)).
+decl_funs_(F/N)	:- map_atom(F,Fm),
+		   format(h,'extern fun__t FUN_~w_~d;\n',[Fm,N]),
+		   format(mod,'~q.\n',[funs(F/N)]),
+		   flag(max_arg,O,max(O,N)).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -160,8 +160,8 @@ init_jmp_tbl(import,M)	:- map_atom(M,Mm),
 			   format('&module~w, ',Mm).
 
 init_jmp_tbl(pub,FN)	:- \+ exported(FN), !.
-init_jmp_tbl(_,FN)	:- map_fun(FN,Fm),
-			   format('{ FUN(~w), &&~w_1}, ',[Fm,Fm]).
+init_jmp_tbl(_,F/N)	:- map_atom(F,Fm),
+			   format('{ FUN(~w,~d), &&~w_~d_1}, ',[Fm,N,Fm,N]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

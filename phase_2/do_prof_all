@@ -1,0 +1,14 @@
+#!/bin/sh
+
+for i in $*
+do
+	I="$I gmon.sum.$i"
+done
+
+PROF_SUM="gprof -s plc $I"
+echo $PROF_SUM
+$PROF_SUM
+
+PROF_ALL="gprof --no-graph --ignore-non-functions -b plc gmon.sum > all.prof"
+echo $PROF_ALL
+$PROF_ALL

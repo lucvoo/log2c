@@ -16,7 +16,7 @@
 		, a_n_f/5
 		, fun/4
 		, new_file/2,	old_file/1
-		, map/2, mapi/3
+		, mapi/3
 		, fl/1, fl_/1
 		, g/1,	g/2,	g0/1,	g0/2, f/1, f/2
 		, comm/1,	comm/2,	comm/3,	comm/4, comm/5
@@ -322,9 +322,6 @@ old_file(Old)		:- told, tell(Old).
 
 %% variants of map and maplist
 :- module_transparent map/2.
-
-map(_, []).
-map(G, [E|T])	:- call(G, E), map(G, T).
 
 mapi(_,_,[]).
 mapi(N,G,[E|Q])	:- succ(N,M),

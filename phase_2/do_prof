@@ -1,0 +1,36 @@
+#!/bin/sh
+
+GPROF_OPT="--no-graph --ignore-non-functions -b plc"
+
+for f in $*
+do
+	rm -f gmon.$f.* gmon.$f
+
+	for i in 0 1 2 3 4 5 6 7 8 9
+	do
+		for j in 0 1 2 3 4 5
+		do
+			echo "'$f.pl'." | plc
+			mv gmon.out gmon.$f.$j$i
+		done
+	done
+	
+	echo "gprof -s plc gmon.$f.*"
+	gprof -s plc gmon.$f.*
+	mv gmon.sum gmon.sum.$f
+	rm -f gmon.$f.[0-4][0-9]
+	echo "gprof $GPROF_OPT gmon.sum.$f > $f.prof"
+	gprof $GPROF_OPT gmon.sum.$f > $f.prof
+done
+
+for i in $*
+do
+	I="$I gmon.sum.$i"
+done
+
+PROF_SUM="gprof -s plc $I"
+echo $PROF_SUM
+$PROF_SUM
+
+echo "gprof $GPROF_OPT gmon.sum > all.prof"
+gprof $GPROF_OPT gmon.sum > all.prof
