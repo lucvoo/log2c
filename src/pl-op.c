@@ -133,8 +133,8 @@ int pl_op(term_t precedence, term_t type, term_t operator)
 { atom_t op,   a_t;
   int    prec, t;
 
-  if (!PL_get_atom(operator,&op) ||
-      !PL_get_atom(type, &a_t) ||
+  if (!(op = PL_get_atom(operator)) ||
+      !(a_t= PL_get_atom(type)) ||
       !PL_get_integer(precedence, &prec) ||
       prec < 0 || prec > 1200 ||
       !(t = OperatorAtom2Type(a_t)) )
@@ -169,7 +169,7 @@ int pl_current_op(term_t precedence, term_t type, term_t operator, control_t ctr
 	fail;
   }
   
-  if (!PL_get_atom(operator, &a_op))
+  if (!(a_op = PL_get_atom(operator)))
   { if (isVar(operator))  a_op=0;
     else fail;
   }
@@ -179,7 +179,7 @@ int pl_current_op(term_t precedence, term_t type, term_t operator, control_t ctr
     else fail;
   }
 
-  if (PL_get_atom(type, &a_t))
+  if ((a_t = PL_get_atom(type)))
   { if (!(t=OperatorAtom2Type(a_t))) fail;
     else ;
   }

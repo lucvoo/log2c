@@ -40,7 +40,7 @@ SRC = \
 	pl-sys.c \
 	pl-time.c \
 	pl-util.c \
-	pl-write.c \
+	pl-write_term.c \
 
 
 OBJS	= ${SRC:%.c=%.o}

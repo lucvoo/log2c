@@ -115,7 +115,7 @@ char *malloc_string(char *s)
 
 
 int PL_get_list_codes(term_t list, const char **s, unsigned flags)
-{ ubs_t *b=find_ubs(flags);
+{ pl_ubs_t *b = PL_find_ubs(flags);
   term_t l;
   static int c;
 
@@ -124,22 +124,22 @@ int PL_get_list_codes(term_t list, const char **s, unsigned flags)
   { if (!PL_get_intg(l+1,&c) || c!=(c&0xff))
       goto failed;
 
-    add_ubs(b,c);
+    PL_add_ubs(b,c);
     l=deref(l+2);
   }
   if (!is_nil(l)) goto failed;
 
-  add_ubs(b,'\0');
-  *s=base_ubs(b);
+  PL_add_ubs(b,'\0');
+  *s=PL_base_ubs(b);
   succeed;
 
 failed:
-  unfind_ubs(flags);
+  PL_unfind_ubs(flags);
   fail;
 }
 
 int PL_get_list_chars(term_t list, const char **s, unsigned flags)
-{ ubs_t *b=find_ubs(flags);
+{ pl_ubs_t *b = PL_find_ubs(flags);
   term_t l;
 
   l=deref(list);
@@ -152,17 +152,17 @@ int PL_get_list_chars(term_t list, const char **s, unsigned flags)
     if (a[0] == '\0' || a[1] != '\0')
       goto failed;
 
-    add_ubs(b,a[0]);
+    PL_add_ubs(b,a[0]);
     l=deref(l+2);
   }
   if (!is_nil(l)) goto failed;
 
-  add_ubs(b,'\0');
-  *s=base_ubs(b);
+  PL_add_ubs(b,'\0');
+  *s = PL_base_ubs(b);
   succeed;
 
 failed:
-  unfind_ubs(flags);
+  PL_unfind_ubs(flags);
   fail;
 }
 
@@ -210,11 +210,11 @@ PL_get_chars(term_t term, const char **s, unsigned flags)
   }
   else
   if ( (flags & BUF_RING && type != ato_tag) )
-  { ubs_t *b = find_ubs(flags);
+  { pl_ubs_t *b = PL_find_ubs(flags);
     int l = strlen(r) + 1;
 
-    add_x_ubs(b,r,l);
-    *s = base_ubs(b);
+    PL_add_x_ubs(b,r,l);
+    *s = PL_base_ubs(b);
   }
   else
     *s = r;

@@ -123,7 +123,7 @@ int pl_set_prolog_flag(term_t key, term_t new)
 { pflag_t f;
   atom_t k;
 
-  if (!PL_get_atom(key,&k))
+  if (!(k = PL_get_atom(key)))
     fail;
 
   if (!(f=lookup_pflag(k,0)))
@@ -155,7 +155,7 @@ int pl_prolog_flag(term_t key, term_t old, term_t new)
 { pflag_t f;
   atom_t k;
 
-  if (!PL_get_atom(key,&k))
+  if (!(k = PL_get_atom(key)))
     fail;
 
   if ((f=lookup_pflag(k,0)))

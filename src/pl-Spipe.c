@@ -64,10 +64,13 @@ int open_pipe(const char *cmd, Smode_t mode, pid_t *pid_p)
     std_fd    = STDIN_FILENO;
   }
   else
+  if (mode == SM_READ)
   { child_fd  = fd[1];
     parent_fd = fd[0];
     std_fd    = STDOUT_FILENO;
   }
+  else
+    return(-1);
 
 /* forking */
   pid = fork();
@@ -122,10 +125,14 @@ pl_stream Sopen_pipe(const char *cmd, Smode_t mode, int flags)
 /* some check */
   if (cmd == 0)
     return(0);
+  if (mode != SM_READ && mode != SM_WRITE)
+  { PL_warn("Cannot open a pipe in `append' mode");
+    return(0);
+  }
 
   fd = open_pipe(cmd, mode, &pid);
   if ( fd == -1 || !(S=Snew_stream()))
-  {						// FIXME : msg
+  { // FIXME : errmsg
     return(0);
   }
 

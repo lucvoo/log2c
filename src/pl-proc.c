@@ -62,7 +62,7 @@ void *lookup_proc(module_t *module, atom_t functor, int arity)
       return(j->pred);
   }
 
-  PL_write((term_t) functor,Stderr);
+  PL_write(Stderr, (term_t) functor);
   PL_warning("/%d lookup_proc : no such procedure",arity);
 }
 
@@ -88,7 +88,7 @@ term_t strip_module(term_t term, module_t **module)
     return(deref(t));
   }
 
-  PL_write(term, Stderr);
+  PL_write(Stderr, term);
   PL_warning(" : strip_module : illegal module:term specification");
 }
 
@@ -103,7 +103,7 @@ void *PL_call(term_t clos, int extra, term_t *args)
   if (!(t=strip_module(clos, &mod)) ||
       !PL_get_name_arity(t,&name,&arity) ||
       !(proc=lookup_proc(mod,name,arity+extra)) )
-  { PL_write(clos, Stderr);
+  { PL_write(Stderr, clos);
     PL_warning("PL_call : fail");
   }
    
@@ -126,7 +126,7 @@ void *PL_apply(term_t clos, term_t list)
       !PL_get_name_arity(t,&name,&arity) ||
       !(extra=lengthList(list))>=0 ||
       !(proc=lookup_proc(mod,name,arity+extra)) )
-  { PL_write(clos, Stderr);
+  { PL_write(Stderr, clos);
     PL_warning("PL_call : fail");
   }
    

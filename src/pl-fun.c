@@ -28,7 +28,7 @@ int exist_fun(atom_t functor, int arity)
 { hash_t h;
   fun_t f;
 
-  h=(functor->hash + arity) % PL_atoms_hash_size;
+  h=(functor->hash + arity) % PL_funs_hash_size;
 
   for (f=PL_funs[h];f!=0;f=f->next)
     { if (f->functor==functor && f->arity==arity)
@@ -42,7 +42,7 @@ fun_t lookup_fun(atom_t functor, int arity)
 { hash_t h;
   fun_t f;
 				// FIXME : test if arity == 0 ???
-  h=(functor->hash + arity) % PL_atoms_hash_size;
+  h=(functor->hash + arity) % PL_funs_hash_size;
 
   for (f=PL_funs[h];f!=0;f=f->next)
   { if (f->functor==functor && f->arity==arity)
@@ -114,7 +114,7 @@ int pl_current_functor(cell_t *f, cell_t *n, control_t ctrl)
 
   loop_arity:	// INV: f is instantiated;
                 //      n is a variable.
-  for (;h<PL_atoms_hash_size; fun=PL_funs[++h])
+  for (;h<PL_funs_hash_size; fun=PL_funs[++h])
     for (;fun; fun=fun->next)
       if ( fun->functor==get_atom(f))
         { mkintg(n,fun->arity); trail(n); 
@@ -126,7 +126,7 @@ int pl_current_functor(cell_t *f, cell_t *n, control_t ctrl)
 
   loop_functor:	// INV: f is a variable
                 //      n is instantiated.
-  for (;h<PL_atoms_hash_size; fun=PL_funs[++h])
+  for (;h<PL_funs_hash_size; fun=PL_funs[++h])
     for (;fun; fun=fun->next)
       if ( fun->arity==get_val(n))
         { mkatom(f,fun->functor); trail(f); 
@@ -138,7 +138,7 @@ int pl_current_functor(cell_t *f, cell_t *n, control_t ctrl)
 
   loop_all:	// INV: f is a variable
                 //      n is a variable.
-  for (;h<PL_atoms_hash_size; fun=PL_funs[++h])
+  for (;h<PL_funs_hash_size; fun=PL_funs[++h])
     for (;fun; fun=fun->next)
       { mkatom(f,fun->functor); trail(f); 
         mkintg(n,fun->arity); trail(n); 

@@ -317,7 +317,7 @@ int pl_functor(term_t t, term_t f, term_t a)
   if (arity < 0)
     PL_warning("functor/3: illegal arity");
   else
-  if (PL_get_atom(f, &name))
+  if ((name = PL_get_atom(f)))
     return(PL_unify_functor(t, lookup_fun(name, arity)));
   else
     fail;
@@ -661,7 +661,7 @@ int pl_concat(term_t a1, term_t a2, term_t a3)
 
 __inline__
 int pl_concat_atom3(term_t list, term_t sep, term_t atom)
-{ ubs_t *b;
+{ pl_ubs_t *b;
   const char *sp, *s;
   int splen;
   term_t l = deref(list);
@@ -674,11 +674,11 @@ int pl_concat_atom3(term_t list, term_t sep, term_t atom)
   else
     splen = 0;
 
-  b=find_ubs(BUF_DISCARDABLE);
+  b = PL_find_ubs(BUF_DISCARDABLE);
 
   if (sep)	// add the first element
   { if (is_cons(l) && PL_get_chars(l+1, &s, CVT_ATOMIC))
-    { add_x_ubs(b, s, strlen(s));
+    { PL_add_x_ubs(b, s, strlen(s));
       l=deref(l+2);
     }
   }
@@ -686,16 +686,16 @@ int pl_concat_atom3(term_t list, term_t sep, term_t atom)
   		// add remaining elements
   while(is_cons(l) && PL_get_chars(l+1, &s, CVT_ATOMIC))
   { if (sep)	// with separator if needed
-      add_x_ubs(b, sp, splen);
-    add_x_ubs(b, s, strlen(s));
+      PL_add_x_ubs(b, sp, splen);
+    PL_add_x_ubs(b, s, strlen(s));
     l=deref(l+2);
   }
 
   if (is_nil(l))
   { atom_t a;
 
-    add_ubs(b, '\0');
-    a=lookup_atom(base_ubs(b));
+    PL_add_ubs(b, '\0');
+    a=lookup_atom(PL_base_ubs(b));
     return(PL_unify_atom(atom,a));
   }
   else
@@ -965,7 +965,7 @@ int pl_numbervars(term_t term, term_t functor, term_t start, term_t end)
   fun_t  f;
   int n;
 
-  if (PL_get_atom(functor,&fun) &&
+  if ((fun = PL_get_atom(functor)) &&
       PL_get_intg(start,&n) )
   { f=lookup_fun(fun,1);
     n=NumberVars(term,f,n);

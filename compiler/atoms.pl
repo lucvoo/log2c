@@ -55,6 +55,18 @@ atoms(A):- L = [ []
 
 		%% diverse
 		, '.' , [], '$VAR'
+
+		%% pl-write.c
+		, quoted
+		, char_escape
+		, ignore_ops
+		, numbervars
+		, namevars
+		, bindvars
+		, max_depth
+		, space_args
+		, list_notation
+		, curly_notation
 	       ],
 	   A = L.
 
@@ -75,6 +87,7 @@ functors(F)	:- L =	[ (*)/2 , (+)/2 , (-)/1 , (-)/2 , (.)/2 , (,)/2
 
 		%% pl-time.c
 			, dt/6
+
                        ],
                    F = L.
 

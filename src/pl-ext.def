@@ -180,6 +180,9 @@ DET(writeq,2,pl_writeq2)
 DET(write_ln,1,pl_write_ln)
 DET(report,1,pl_report)
 
+DET(write_term,2,pl_write_term)
+DET(write_term,3,pl_write_term3)
+
 // pl-time.c
 DET(statistics,2,pl_statistics)
 DET(gmtime,1,pl_gmtime)

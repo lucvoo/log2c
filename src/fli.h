@@ -147,13 +147,12 @@ int PL_get_pointer(cell_t *c, void **ptr)
 }
 
 INLINE_DECL
-int PL_get_atom(cell_t *c, atom_t *a)
+atom_t PL_get_atom(cell_t *c)
 { debut:
   switch(get_tag(c))
   { case ref_tag:  c=c->celp;
                    goto debut;
-    case ato_tag: *a=(atom_t) c;
-		   succeed;
+    case ato_tag:  return (atom_t) c;
     default:       fail;
   }
 }

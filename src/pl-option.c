@@ -8,11 +8,11 @@
 #include "pl-option.h"
 
 
-int scan_options(term_t options, OptSpec spec)
+int scan_options(term_t options, pl_opt_spec spec)
 { term_t list=deref(options);
   // term_t head;
   term_t val=PL_new_term_ref();
-  OptSpec s=0;
+  pl_opt_spec s=0;
 
 
   while (is_cons(list))	// loop trough the options list
@@ -28,7 +28,7 @@ int scan_options(term_t options, OptSpec spec)
       else
       if (arity==2 && name==ATOM(unify))
       { term_t head=deref(list+1);
-        if (!PL_get_atom(head+1,&name)) fail;
+        if (!(name = PL_get_atom(head+1))) fail;
         val=head+2;
       }
       else
@@ -40,7 +40,7 @@ int scan_options(term_t options, OptSpec spec)
     { if (s->name!=name) continue;
 
       switch(s->type)
-      { case OPT_BOOL:   if (!PL_get_atom(val,&name)) fail;
+      { case OPT_BOOL:   if (!(name = PL_get_atom(val))) fail;
                          if (name==ATOM(_true) || name==ATOM(_on))
                            { *s->val.bool=1; }
                          else
@@ -48,10 +48,14 @@ int scan_options(term_t options, OptSpec spec)
                            { *s->val.bool=0; }
                          else fail;
                          break;
-        case OPT_INTG:   if (PL_get_long(val,s->val.intg)) break;
-                         else fail;
-        case OPT_ATOM:   if (PL_get_atom(val,s->val.atom)) break;
-                         else fail;
+        case OPT_INTG:   if (PL_get_long(val,s->val.intg))
+			   break;
+                         else
+			   fail;
+        case OPT_ATOM:   if ((*s->val.atom = PL_get_atom(val)))
+			   break;
+                         else
+			   fail;
         case OPT_TERM:   *s->val.term=val;
                          val=PL_new_term_ref();
 		         break;

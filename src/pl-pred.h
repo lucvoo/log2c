@@ -24,7 +24,7 @@ extern int not_unify(cell_t *, cell_t *);
 
 int	Sprintf(const char *, ...) __attribute__((format (printf, 1, 2)));
 int	Sprintf_err(const char *, ...) __attribute__((format (printf, 1, 2)));
-int	PL_write(term_t, pl_stream);
+int	PL_write(pl_stream S, term_t);
 
 
 

@@ -16,7 +16,7 @@
 typedef union hndl_t
 { int		fd;
   int		sd;
-  ubs_t		*ubs;
+  pl_ubs_t	*ubs;
 } Shndl_t;
 
 

@@ -14,18 +14,18 @@ char *Sstring_wmem(pl_stream S)
   Sputc(S,'\0');
   Sflush(S);
 
-  return(base_ubs(S->hndl.ubs));
+  return(PL_base_ubs(S->hndl.ubs));
 }
 
 static
 int Swrite_wmem(Shndl_t hndl, const void *s, int n)
-{ add_x_ubs(hndl.ubs,s,n);
+{ PL_add_x_ubs(hndl.ubs,s,n);
   return(n);
 }
 
 static
 int Sclose_wmem(pl_stream S)
-{ free_ubs(S->hndl.ubs);
+{ PL_free_ubs(S->hndl.ubs);
   free(S->hndl.ubs);
 
   return(0);
@@ -41,7 +41,7 @@ Sfun_t wmem_functions =
 
 pl_stream Sopen_wmem(const char *buf, Smode_t mode, int flags )
 { pl_stream S;
-  ubs_t     *ubs;
+  pl_ubs_t     *ubs;
 
   if (mode != SM_WRITE)
   { // FIXME : errmsg
@@ -53,13 +53,13 @@ pl_stream Sopen_wmem(const char *buf, Smode_t mode, int flags )
     return(0);
   }
 
-  ubs=malloc(sizeof(ubs_t));
+  ubs=malloc(sizeof(pl_ubs_t));
   if (!ubs)
   { // FIXME : errmsg
     return(0);
   }
   else
-  { init_ubs(ubs);
+  { PL_init_ubs(ubs);
   }
 
   if (flags & SF_RECPOS)

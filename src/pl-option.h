@@ -6,7 +6,7 @@
 #ifndef PL_OPTIONS_H_
 #define PL_OPTIONS_H_
 
-typedef enum { OPT_BOOL, OPT_INTG, OPT_ATOM, OPT_TERM } opt_type_t;
+typedef enum { OPT_BOOL, OPT_INTG, OPT_ATOM, OPT_TERM } pl_opt_type_t;
 
 typedef union { long   *intg;
                 bool   *bool;
@@ -14,15 +14,15 @@ typedef union { long   *intg;
 		atom_t *atom;
                 cell_t *cell;
                 term_t *term;
-              } opt_val;
+              } pl_opt_val;
 
-typedef struct { atom_t     name;
-                 opt_type_t type;
-		 opt_val    val;
-               } opt_spec_t, *OptSpec;
+typedef struct { const atom_t		name;
+                 const pl_opt_type_t	type;
+		       pl_opt_val	val;
+               } pl_opt_spec_t, *pl_opt_spec;
 		         
 extern
-int scan_options(term_t options, OptSpec spec);
+int scan_options(term_t options, pl_opt_spec spec);
 
 
 #endif	// PL_OPTIONS_H_

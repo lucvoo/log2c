@@ -8,11 +8,9 @@
 #include "pl-stream.h"
 #include "pl-fli.h"
 
-
-int PL_display(term_t, pl_stream);
-int PL_displayq(term_t, pl_stream);
-int PL_write(term_t, pl_stream);
-int PL_writeq(term_t, pl_stream);
+int PL_display(pl_stream S, term_t);
+int PL_displayq(pl_stream S, term_t);
+int PL_writeq(pl_stream S, term_t);
 pl_stream OutStream(void);
 pl_stream Output_Stream(term_t stream);
 
@@ -141,7 +139,7 @@ do_format(const char *fmt, term_t argv, pl_stream S)
                      fmt++;
                      break;
                    }
-                   { int (*f)(term_t, pl_stream);
+                   { int (*f)(pl_stream, term_t);
         case 'k':    			/* displayq */
                      f=PL_displayq;
                      goto pl_common;
@@ -152,7 +150,7 @@ do_format(const char *fmt, term_t argv, pl_stream S)
                      f=PL_write;
 
         pl_common:   NEED_ARG;
-                     (*f)(argv,S);
+                     (*f)(S, argv);
                      SHIFT;
                      fmt++;
                      break;

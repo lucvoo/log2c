@@ -129,7 +129,7 @@ openStream(term_t file, Smode_t mode, int flags)
   Stype_t	type;
   pl_file fp;
 
-  if ( PL_get_atom(file, &name) )
+  if ( (name=PL_get_atom(file)) )
   { if (mode==SM_READ)
     { if (name==ATOM(_user) || name==ATOM(_user__input))
         { return(&plfiles[0]); }
@@ -137,27 +137,22 @@ openStream(term_t file, Smode_t mode, int flags)
     else
     { if (name==ATOM(_user) || name==ATOM(_user__output))
         { return(&plfiles[1]); }
-      if ( name==ATOM(_user__error) || name==ATOM(_stderr))
+      if ( name==ATOM(_user__error) )
         { return(&plfiles[2]); }
     }
     type=ST_FILE;
   }
   else
   if ( PL_get_functor(file, &f) && f == FUN(_pipe,1))
-  { // PL_warning("Pipes are not yet implemented");	// FIXME
-    type = ST_PIPE;
+  { type = ST_PIPE;
   }
   else
     PL_warning("Illegal stream specification");
 
-  if (type==ST_PIPE && mode==SM_APPEND)	// FIXME : Leave that to Sopen_pipe ?
-    PL_warning("Cannot open a pipe in `append' mode");
-    
   if (!(flags & SF_OPEN))	/* see/1, tell/1, append/1 */
   { for(fp=plfiles; fp<plfiles+max_files; fp++)
     { if (fp->file==name && StreamType(fp->S)==type)
-        { // if (!(fp->S->flags & mode))
-          if (StreamMode(fp->S) == mode)
+        { if (StreamMode(fp->S) == mode)
           { CloseStream(fp); }
           else
             goto OK;
@@ -168,20 +163,21 @@ openStream(term_t file, Smode_t mode, int flags)
   if ( type == ST_PIPE )
   { if ( !(S=Sopen_pipe(name->name, mode, flags)) )
     { if ( status.file_err )
-        PL_warning("Cannot open pipe %s: %s", name->name, OsError());
+      { PL_warning("Cannot open pipe %s: %s", name->name, OsError());
+      }
       fail;
     }
   }
-  else
+  else // type == ST_FILE
   { char *fn=ExpandFile(name->name,0);
 
     if (!fn) fail;
 
     if (!(S=Sopen_file(fn, mode, flags)))
     { if (status.file_err)
-        PL_warning("Cannot open %s", name->name);	// FIXME : Add errno msg
-      else
-        fail;
+      { PL_warn("Cannot open %s", name->name);
+      }
+      fail;
     }
   }
 
@@ -211,7 +207,7 @@ pl_file GetStream(term_t spec, Smode_t mode)
         f=&plfiles[n];
   }
   else
-  if (PL_get_atom(spec,&alias))
+  if ((alias=PL_get_atom(spec)))
   { if (alias==ATOM(_user))
     {   if (mode & SM_READ) f=Finput;
         else                f=Foutput;
@@ -309,11 +305,12 @@ static atom_t opt_type;
 static atom_t opt_alias;
 static atom_t opt_eof_action;
 static int    opt_reposition;	// Don't care
-static opt_spec_t spec[] = 
-{ { ATOM(_type), OPT_ATOM, { .atom = &opt_type } },
+static pl_opt_spec_t spec_open4[] = 
+{
   { ATOM(_alias), OPT_ATOM, { .atom = &opt_alias} },
   { ATOM(_eof__action), OPT_ATOM, { .atom = &opt_eof_action} },
   { ATOM(_reposition), OPT_BOOL, { .bool = &opt_reposition} },
+  { ATOM(_type), OPT_ATOM, { .atom = &opt_type } },
   { 0, 0, { 0 } }
 };
 
@@ -329,11 +326,13 @@ int pl_open4(term_t srcdest, term_t mode, term_t stream, term_t options)
   opt_eof_action=ATOM(_eof__code);
 
 // get options
-  if (!scan_options(options,spec))
-    PL_warning("open/4 : Illegal option list");
+  if (options)
+  { if (!scan_options(options,spec_open4))
+      PL_warning("open/4 : Illegal option list");
+  }
 
 // get mode
-  if (!PL_get_atom(mode,&m))
+  if (!(m=PL_get_atom(mode)))
     PL_warning("open/4 : Illegal mode specification");
   if (m==ATOM(_read))   s_mode=SM_READ;
   else
@@ -373,50 +372,15 @@ int pl_open4(term_t srcdest, term_t mode, term_t stream, term_t options)
     return(PL_unify_atom(stream,opt_alias));
   }
   else
-  if (PL_get_atom(stream,&opt_alias))
-  { if (!TestAlias(opt_alias))
-      fail;
-
-    AddAlias(f,opt_alias);
-    return(1);
-  }
-  else
     return(PL_unify_intg(stream,f-plfiles));
 }
+
 
 int pl_open3(term_t srcdest, term_t mode, term_t stream)
-{ int s_flags=0;
-  Smode_t	s_mode;
-  atom_t m;
-  pl_file f;
-
-
-// get mode
-  if (!PL_get_atom(mode,&m))
-    PL_warning("open/4 : Illegal mode specification");
-  if (m==ATOM(_read))   s_mode=SM_READ;
-  else
-  if (m==ATOM(_write))  s_mode=SM_WRITE;
-  else
-  if (m==ATOM(_append)) s_mode=SM_APPEND;
-  else
-  if (m==ATOM(_update)) s_mode=SM_UPDATE;
-  else
-    PL_warning("open/3 : Illegal mode specification");
-
-// open the stream
-  if (!(f=openStream(srcdest,s_mode,s_flags))) fail;
-
-  if (PL_get_atom(stream,&opt_alias))
-  { if (!TestAlias(opt_alias))
-      fail;
-
-    AddAlias(f,opt_alias);
-    return(1);
-  }
-  else
-    return(PL_unify_intg(stream,f-plfiles));
+{ return(pl_open4(srcdest, mode, stream, 0));
 }
+
+
 
 
 // FIXME : open_null_stream ???
@@ -548,9 +512,10 @@ int Put(term_t t, pl_stream S)
   if (PL_get_intg(t,&c))
   { c=(unsigned char) c; }	// FIXME : 0 <= c <= 256 ??
   else
-  if (PL_get_atom(t,&a))
+  if ((a=PL_get_atom(t)))
   { c=a->name[0]; }		// FIXME : 'a' must be single character
-  else fail;
+  else
+    fail;
 
   Sputc(S,c);
   succeed;

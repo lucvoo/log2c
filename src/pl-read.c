@@ -221,7 +221,7 @@ static inline
 void warn_singletons(void)
 { Var v=varl_first;
   int n=0;
-  ubs_t *b=find_ubs(BUF_DISCARDABLE);
+  pl_ubs_t *b = PL_find_ubs(BUF_DISCARDABLE);
 
   if (!v) return;
 
@@ -229,17 +229,17 @@ void warn_singletons(void)
   { if (v->name && !(v->times!=1 || v->name[0]=='_') )
     { if (!n) n++;
       else
-      { add_ubs(b,',');
-        add_ubs(b,' ');
+      { PL_add_ubs(b,',');
+        PL_add_ubs(b,' ');
       }
-      add_x_ubs(b,v->name,strlen(v->name));
+      PL_add_x_ubs(b,v->name,strlen(v->name));
     }
     if (v==varl_tail)
       break;
   }
 
   if (n)
-  { PL_warn("Singleton variable(s) : %s",base_ubs(b));
+  { PL_warn("Singleton variable(s) : %s",PL_base_ubs(b));
   }
   return;
 }
@@ -395,7 +395,7 @@ int read_quoted_char(pl_stream S)
 static // inline
 char *read_quoted_string(pl_stream S, int quote)
 { register int c;
-  ubs_t *b=find_ubs(BUF_DISCARDABLE);
+  pl_ubs_t *b = PL_find_ubs(BUF_DISCARDABLE);
 
   for(;;)
   { switch(c=Getc(S))
@@ -405,7 +405,7 @@ char *read_quoted_string(pl_stream S, int quote)
                  { if (Peekc(S)==quote)
                      Getc(S);
                    else
-                     return(base_ubs(b));
+                     return(PL_base_ubs(b));
                  }
                  break;
       case '\\': switch (c=Getc(S))
@@ -439,7 +439,7 @@ char *read_quoted_string(pl_stream S, int quote)
                  return(0);
       default:   break;				// FIXME : non-ISO
     }
-    add_ubs(b,c);
+    PL_add_ubs(b,c);
   }
 }
 
@@ -447,26 +447,26 @@ char *read_quoted_string(pl_stream S, int quote)
 static inline
 char *read_name(pl_stream S, int c)
 // OK for non-quoted atoms and variables name
-{ ubs_t b;
-  init_ubs(&b);
+{ pl_ubs_t b;
+  PL_init_ubs(&b);
 
   for (; isAlphaNum_(c); c=Getc(S))
-    add_ubs(&b,c);
+    PL_add_ubs(&b,c);
 
   UnGetc(c);
-  return(base_ubs(&b));
+  return(PL_base_ubs(&b));
 }
 
 
 static inline
 char *read_symbol(pl_stream S, int c)
-{ ubs_t *b=find_ubs(BUF_DISCARDABLE);
+{ pl_ubs_t *b = PL_find_ubs(BUF_DISCARDABLE);
 
   for (; isSymbol(c); c=Getc(S))
-    add_ubs(b,c);
+    PL_add_ubs(b,c);
 
   UnGetc(c);
-  return(base_ubs(b));
+  return(PL_base_ubs(b));
 }
 
 static // inline
@@ -488,7 +488,7 @@ ulong str2long(char *str)
 static
 int read_number(pl_stream S, int c, pl_number_t *num)
 { ulong val=0;
-  ubs_t *b=find_ubs(0);
+  pl_ubs_t *b = PL_find_ubs(0);
 
   if (c=='0')
   { switch(c=Getc(S))
@@ -511,7 +511,7 @@ int read_number(pl_stream S, int c, pl_number_t *num)
 // normal number or Edinburgh non-decimal number
 // PRE : [0-9] is readed
   while (isDigit(c))
-  { add_ubs(b,c);
+  { PL_add_ubs(b,c);
     c=Getc(S);
   }
 
@@ -519,7 +519,7 @@ int read_number(pl_stream S, int c, pl_number_t *num)
   { unsigned int base;
     unsigned int digit;
 
-    val=str2long(base_ubs(b));
+    val=str2long(PL_base_ubs(b));
 
     if (val<2 || 36<val)		// illegal radix 
     { UnGetc('\'');			// return the radix
@@ -547,33 +547,33 @@ int read_number(pl_stream S, int c, pl_number_t *num)
   if (c=='.')				// floating number
   { if (!isDigit(Peekc(S)))
     { UnGetc('.');
-      val=str2long(base_ubs(b));
+      val=str2long(PL_base_ubs(b));
       goto intg;
     }
-    add_ubs(b,'.');
+    PL_add_ubs(b,'.');
 
     while (isDigit(c=Getc(S)))		// read fraction
-      add_ubs(b,c);
+      PL_add_ubs(b,c);
 
     if (c=='e' || c=='E')		// read exponent
-    { add_ubs(b,c);
+    { PL_add_ubs(b,c);
       c=Getc(S);
       if (c=='+' || c=='-')
-      { add_ubs(b,c); c=Getc(S); }
+      { PL_add_ubs(b,c); c=Getc(S); }
       UnGetc(c);
       if (!isDigit(c))
         goto error;
       while (isDigit(c=Getc(S)))
-        add_ubs(b,c);
+        PL_add_ubs(b,c);
     }
     UnGetc(c);
-    num->val.flt=strtod(base_ubs(b),0);		// FIXME : overflow or underflow
+    num->val.flt=strtod(PL_base_ubs(b),0);		// FIXME : overflow or underflow
     num->type=flt_tag;
     return(1);
   }
   else
   { UnGetc(c);
-    val=str2long(base_ubs(b));
+    val=str2long(PL_base_ubs(b));
     goto intg;
   }
 
@@ -1107,7 +1107,7 @@ FAIL:
 static term_t error;
 static term_t varnames;
 static term_t singletons;
-static opt_spec_t spec[] =
+static pl_opt_spec_t spec[] =
 { { ATOM(_syntax__errors), OPT_TERM, { .term = &error } },
   { ATOM(_variable__names), OPT_TERM, { .term = &varnames} },
   { ATOM(_singletons), OPT_TERM, { .term = &singletons} },
