@@ -106,7 +106,7 @@ atoms(A):- L = [ []
 		, none, execute, exist
 
 		%% diverse
-		, '.' , []
+		, '.' , [], '$VAR'
 	       ],
 	   A = L.
 
@@ -115,6 +115,7 @@ functors(F)	:- L = [ (*)/2 , (+)/2 , (-)/1 , (-)/2 , (.)/2 , (,)/2
 		       , (=)/2
 		       , '$stream_position'/3
 		       , (max)/2, (min)/2, (mod)/2
+		       , '$VAR'/1
                        ],
                    F = L.
 

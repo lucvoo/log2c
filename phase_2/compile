@@ -2,7 +2,7 @@ for i in $*
 do
 	echo "compiling : $i"
 	echo
-	make $i.mod 2>&1 
+	make $i.mod >/dev/null 2>&1 
 	echo $i.mod
 	echo
 	diff ../phase_1/$i.mod $i.mod

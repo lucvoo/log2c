@@ -10,7 +10,7 @@ include	../Make.common
 PL_LIB	= ${src_dir}/${PLLIB}
 PL_C	= ${comp_dir}/${PLC}
 PLS	= $(wildcard *.pl)
-TRASH	=
+TRASH	= core
 CLEAN	= ${TRASH} $(PLS:%.pl=%.{c,h,o,mod,lnk.c,lnk.o}) $(PLS:%.pl=%)
 
 ########################################################################
