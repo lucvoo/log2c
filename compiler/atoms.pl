@@ -102,6 +102,11 @@ atoms(A):- L = [ []
 		, term_position, subterm_positions
 		, fail, quiet, end_of_file
 
+		%% pl-time.c
+		, dt
+		, cpu_time, user_time, system_time, real_time, runtime
+		, local_stack, heap_stack, sheap_stack, trail_stack
+
 		%% pl-file.c
 		, '$stream_position', ''
 		, none, execute, exist
@@ -116,11 +121,15 @@ functors(F)	:- L =	[ (*)/2 , (+)/2 , (-)/1 , (-)/2 , (.)/2 , (,)/2
 			, (=)/2
 			, '$stream_position'/3
 			, (max)/2, (min)/2, (mod)/2
-			, '$VAR'/1
+			, '$VAR'/1, '$VARNAME'/1
+
 		%% pl-io.c
 			, file_name/1, mode/1, type/1, alias/1
 			, position/1, end_of_stream/1
 			, eof_action/1, reposition/1
+
+		%% pl-time.c
+			, dt/6
                        ],
                    F = L.
 

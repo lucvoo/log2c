@@ -186,7 +186,7 @@ add_module(I,N,M,[A|X],[A|Y])	:- succ(I,J),
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 directive(use_module,1).
-directive(export_module,1).
+directive(reexport,1).
 directive(index,1).
 directive(meta_pred,2).
 directive(meta,1).
@@ -202,7 +202,7 @@ do_directive(meta(P))		:- recordz(meta,P).
 do_directive(meta((P,L)))	:- recordz(meta,P), do_directive(meta(L)).
 do_directive(op(P,T,N))		:- op(P,T,N).
 do_directive(use_module(M))	:- recorda(use_module,M).
-do_directive(export_module(M))	:- recorda(export_module,M), recorda(use_module,M).
+do_directive(reexport(M))	:- recorda(export_module,M), recorda(use_module,M).
 %% DEBUG do_directive(determinism(P,D))	:- recorda(determinism,determinism(P,D)).
 
 do_directive(D)			:- recordz(directive,D).

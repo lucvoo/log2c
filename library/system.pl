@@ -15,10 +15,10 @@
 		 , once/1 , ignore/1
 		 ]).
 
-:- export_module('$bags').
-:- export_module('$grammar').
-:- export_module('$list').
-:- export_module('$apply').
+:- reexport('$bags').
+:- reexport('$grammar').
+:- reexport('$list').
+:- reexport('$apply').
 
 %%
 %% End of Interface

@@ -8,7 +8,7 @@
 		, init_hash/0
 		]).
 
-
+%% :- use_module([hpjw]).
 :- use_module([atoms,map_name,aux,modules,util]).
 
 %% initalize default hash-table size.
@@ -42,7 +42,7 @@ hash_atom_list([A,B|Q])	:- hash_atom_list([B|Q]),
 			   print_atom_list(A,Nxt).
 
 print_atom_list(A,Nxt)	:- map_atom(A,Am), noescape(A,As), hpjw(A,H),
-   format('atom__t ATOM_~w={ {(atom_tag<<29)+(uint) ATOM(~w)}, "~w" , ~w ,~w};\n',[Am,Am,As,H,Nxt]).
+   format('atom__t ATOM_~w={ {(ato_tag<<29)+(uint) ATOM(~w)}, "~w" , ~w ,~w};\n',[Am,Am,As,H,Nxt]).
 
 hash_atom_tab([])	:- format('  0,\n').
 hash_atom_tab([E|_])	:- map_atom(E,Em),

@@ -101,15 +101,61 @@ wrt_(ref(I),V)		:- g('(~w)->celp=FP[~w].celp;',[V,I]).
 wrt_(ref_t(I),V)	:- g('(~w)->celp=TMP_~w;',[V,I]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% trad_off(E)		:- flag(hp,_,0),
+%% 			   tradoff([u(E,0)]),
+%% 			   flag(hp,HP,0),
+%% 			   g('HP+=~d;',[HP]).
+%% 
+%% tradoff([])	:- ( recorded(offset,w(struct(F,N,L),A),R)
+%% 		     -> erase(R),
+%% 		        flag(hp,HP,HP+1),
+%% 		        g('HP[~d].celp=(HP+~d);',[A,HP]),
+%% 		        offset(struct(F,N,L),HP)
+%% 		     ;  true
+%% 		   ).
+%% 
+%% tradoff([u(struct(F,N,L),_)])	:-
+%% 			   flag(hp,HP,HP+1),
+%% 			   offset(struct(F,N,L),HP), !.
+%% tradoff([u(struct(F,N,L),_)|Q]) :- Q\=[],
+%% 			   flag(hp,HP,HP+1),
+%% 			   recorda(offset,w(struct(F,N,L),HP)),
+%% 			   tradoff(Q).
+%% tradoff([u(E,_)|Q])	:- flag(hp,HP,HP+1),
+%% 			   offset(E,HP),
+%% 			   tradoff(Q).
+%% 
+%% 
+%% offset(struct(F,A,L),O)	:- map_atom(F,Fm),
+%% 			   g('HP[~w].val=__fun(FUN(~w,~d));',[O,Fm,A]),
+%% 			   tradoff(L),
+%% 			   !.
+%% offset(atom(A),O)	:- map_atom(A,Am),
+%% 			   g('HP[~w].val=__atom(ATOM(~w));',[O,Am]).
+%% offset(intg(N),O)	:- g('HP[~w].val=__intg(~w);',[O,N]).
+%% offset(var(I),O)	:- g('HP[~w].val=__var(); FP[~w].celp=HP+(~w);',[O,I,O]).
+%% offset(var_t(I),O)	:- g('HP[~w].val=__var(); TMP_~w=HP+(~w);',[O,I,O]).
+%% offset(void,O)		:- g('HP[~w].val=__var();',[O]).
+%% offset(ref(I),O)	:- g('HP[~w].celp=FP[~w].celp;',[O,I]).
+%% offset(ref_t(I),O)	:- g('HP[~w].celp=TMP_~w;',[O,I]).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 trad_off(E)		:- flag(hp,_,0),
 			   tradoff([u(E,0)]),
+			   write_off,
 			   flag(hp,HP,0),
 			   g('HP+=~d;',[HP]).
+
+write_off	:- recorded(tradoff, g(F,A),R), !,
+		   erase(R),
+		   g(F,A),
+		   write_off.
+write_off.
+
 
 tradoff([])	:- ( recorded(offset,w(struct(F,N,L),A),R)
 		     -> erase(R),
 		        flag(hp,HP,HP+1),
-		        g('HP[~d].celp=(HP+~d);',[A,HP]),
+		        recordz(tradoff, g('HP[~d].celp=(HP+~d);',[A,HP])),
 		        offset(struct(F,N,L),HP)
 		     ;  true
 		   ).
@@ -127,17 +173,17 @@ tradoff([u(E,_)|Q])	:- flag(hp,HP,HP+1),
 
 
 offset(struct(F,A,L),O)	:- map_atom(F,Fm),
-			   g('HP[~w].val=__fun(FUN(~w,~d));',[O,Fm,A]),
+			   recordz(tradoff, g('HP[~w].val=__fun(FUN(~w,~d));',[O,Fm,A])),
 			   tradoff(L),
 			   !.
 offset(atom(A),O)	:- map_atom(A,Am),
-			   g('HP[~w].val=__atom(ATOM(~w));',[O,Am]).
-offset(intg(N),O)	:- g('HP[~w].val=__intg(~w);',[O,N]).
-offset(var(I),O)	:- g('HP[~w].val=__var(); FP[~w].celp=HP+(~w);',[O,I,O]).
-offset(var_t(I),O)	:- g('HP[~w].val=__var(); TMP_~w=HP+(~w);',[O,I,O]).
-offset(void,O)		:- g('HP[~w].val=__var();',[O]).
-offset(ref(I),O)	:- g('HP[~w].celp=FP[~w].celp;',[O,I]).
-offset(ref_t(I),O)	:- g('HP[~w].celp=TMP_~w;',[O,I]).
+			   recordz(tradoff, g('HP[~w].val=__atom(ATOM(~w));',[O,Am])).
+offset(intg(N),O)	:- recordz(tradoff, g('HP[~w].val=__intg(~w);',[O,N])).
+offset(var(I),O)	:- recorda(tradoff, g('HP[~w].val=__var(); FP[~w].celp=HP+(~w);',[O,I,O])).
+offset(var_t(I),O)	:- recorda(tradoff, g('HP[~w].val=__var(); TMP_~w=HP+(~w);',[O,I,O])).
+offset(void,O)		:- recordz(tradoff, g('HP[~w].val=__var();',[O])).
+offset(ref(I),O)	:- recordz(tradoff, g('HP[~w].celp=FP[~w].celp;',[O,I])).
+offset(ref_t(I),O)	:- recordz(tradoff, g('HP[~w].celp=TMP_~w;',[O,I])).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 assign(struct(F,N,L),V)	:- comm(assign(struct)),
