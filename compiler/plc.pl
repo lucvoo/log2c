@@ -17,6 +17,7 @@ term_expansion(I,O)	:- translate(I,O).
 :- use_module([modules,trans]).
 :- use_module(code).
 :- use_module(util).
+:- use_module(getopt).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -25,5 +26,3 @@ compile(F)		:- compile(F,[]).
 compile(F,Options)	:- process_options(Options),
 			   comp_file(F).
 
-%% FIXME 
-process_options(_).

@@ -57,14 +57,15 @@ void *lookup_proc(module_t *module, atom_t functor, int arity)
 
 // if fail : try default module : system	// FIXME
   module=&module_system;
-  h=(functor->hash+arity) % module->all.size;
-  for (j=module->all.tab[h];j!=0;j=j->next)
+  h=(functor->hash+arity) % module->pub.size;
+  for (j=module->pub.tab[h];j!=0;j=j->next)
   { if (j->functor==functor && j->arity==arity)
       return(j->pred);
   }
 
   PL_write(Stderr, (term_t) functor);
-  PL_warning("/%d lookup_proc : no such procedure",arity);
+  PL_warning("%s/%d lookup_proc : no such procedure",
+		functor->name, arity);
 }
 
 
@@ -98,7 +99,7 @@ void *PL_call(term_t clos, int extra, term_t *args)
 { term_t t;
   atom_t name;
   int arity, n;
-  module_t *mod;
+  module_t *mod=0;
   void *proc;
 
   if (!(t=strip_module(clos, &mod)) ||

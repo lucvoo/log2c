@@ -39,15 +39,18 @@ make_ARGs(N,A)		:- M is N-1,
 		   
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-find_fvar(G,L)	:- to_list(G,Lg),
-		   maplist(find_fv,Lg,Lv),
-		   flatten(Lv,Lf), sort(Lf,L).
-find_fv(G,L)	:- G=..[_|Lg], maplist(find_fv_,Lg,L).
+find_fvar(G,L)	:-
+	to_list(G,Lg),
+	maplist(util:find_fv,Lg,Lv),
+	flatten(Lv,Lf),
+	sort(Lf,L).
+
+find_fv(G,L)	:- G=..[_|Lg], maplist(util:find_fv_,Lg,L).
 
 find_fv_(G,L)	:- find_fv_(G,L,[]).
 find_fv_(E)	:+ E=var(f,_), +> E.
 find_fv_(E)	:+ E=var(ft,_), +> E.
-find_fv_(E)	:+ E=fun(_,_,A), maplist(find_fv_,A,L), +> L.
+find_fv_(E)	:+ E=fun(_,_,A), maplist(util:find_fv_,A,L), +> L.
 find_fv_(_)	:+ true.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -100,7 +103,7 @@ anf_module(La,Lf,Lp)	:-
 	format(h,'#ifndef MODULE~w_H_\n',[Mm]),
 	format(h,'#define MODULE~w_H_\n\n',[Mm]),
 	used_modules(Ms),
-	map(include_module,Ms),
+	map(util:include_module,Ms),
 	nl,
 	flag(max_arg,_,0),
 	decl_atoms(La),
@@ -137,7 +140,7 @@ init_preds([]).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 decl_export_mod(export(X,L)) :-
 	flag(current_module,M,M),
-	map(decl_exp_mod(M,X),L).
+	map(util:decl_exp_mod(M,X),L).
 
 decl_exp_mod(M,X,P) :-
 	map_pred(P,M,Pm),
@@ -148,7 +151,7 @@ decl_exp_mod(M,X,P) :-
 decl_preds(X)	:-
 	'$recorded_all'(export_pred,P),
 	append(X,P,T), sort(T,L),
-	map(decl_pred,L),
+	map(util:decl_pred,L),
 	nl.
 
 decl_pred(P)	:-
@@ -158,13 +161,13 @@ decl_pred(P)	:-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-decl_atoms(As)	:- map(decl_atoms_,As),
+decl_atoms(As)	:- map(util:decl_atoms_,As),
 		   nl(h).
 decl_atoms_(A)	:- map_atom(A,Am),
 		   format(h,'extern atom__t ATOM_~w;\n',[Am]),
 		   format(mod,'~q.\n',[atoms(A)]).
 
-decl_funs(Fs)	:- map(decl_funs_,Fs),
+decl_funs(Fs)	:- map(util:decl_funs_,Fs),
 		   nl(h).
 
 decl_funs_(F/N)	:- map_atom(F,Fm),

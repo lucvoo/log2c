@@ -229,11 +229,11 @@ a_n_f(G,Q,A,F,P):- flag(current_module,M,M),
 
 anf(A,F,P)	:- flag(current_module,M,M),
 		   ( M==system
-		     -> foreign_preds(Fps), map(anf_rec_pred,Fps)
+		     -> foreign_preds(Fps), map(aux:anf_rec_pred,Fps)
 		     ;  true
 		   ),
 		   recorded(used_modules,Ms),
-		   map(anf_rec_atom,Ms),
+		   map(aux:anf_rec_atom,Ms),
 		   anf_rec_import,
 
 		   anf_get_atom(A),

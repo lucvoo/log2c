@@ -1,6 +1,6 @@
 #!/bin/sh
 
-ALL="apply bags list grammar set system atoms map_name pl-ext aux arith var_util vars code builtin modules util hash addr trad trans comp"
+ALL="apply bags list grammar set system atoms map_name pl-ext aux arith var_util vars code builtin modules util hash addr trad trans comp getopt"
 
 for cmd in $*
 do

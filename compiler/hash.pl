@@ -31,9 +31,9 @@ hash_atom_([A|Q],HS,V)	:- hpjw(A,H_), H is (H_ mod HS)+1,
 			   hash_atom_(Q,HS,V).
 			   
 hash_atom_vec(V,HS,N)	:-
-		V=..[vec|L], map(hash_atom_list,L), nl,
+		V=..[vec|L], map(hash:hash_atom_list,L), nl,
 		format('atom_t PL__atoms[]=\n{\n'),
-		map(hash_atom_tab,L),
+		map(hash:hash_atom_tab,L),
 		format('};\nint PL__atoms_hash_size = ~d;\n',[HS]),
 		format('int PL__atoms_count = ~d;\n\n', [N]).
 
@@ -65,9 +65,10 @@ hash_fun_([(F/N)|Q],HS,V)	:-
 		hash_fun_(Q,HS,V).
 			   
 hash_fun_vec(V,HS,N)	:-
-		V=..[vec|L], map(hash_fun_list,L), nl,
+		V=..[vec|L],
+		map(hash:hash_fun_list,L), nl,
 		format('fun_t PL__funs[~d]=\n{\n',[HS]),
-		map(hash_fun_tab,L),
+		map(hash:hash_fun_tab,L),
 		format('};\nint PL__funs_hash_size = ~d;\n',[HS]),
 		format('int PL__funs_count = ~d;\n\n',[N]).
 
@@ -86,24 +87,29 @@ hash_fun_tab([F/N|_])	:- map_atom(F,Fm),
 			   format('  FUN(~w,~w),\n',[Fm,N]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-init_hash_jmps	:- flag(current_module,M,M),
-		   map_atom(M,Mm),
-		   '$recorded_all'(export_pred,Ppub),
-		   findall(P,find_pred(P), Pall_),
-		   sort(Pall_,Pall),
-		   map(decl_pred,Pall), nl,
+init_hash_jmps	:-
+	flag(current_module,M,M),
+	map_atom(M,Mm),
+	'$recorded_all'(export_pred,Ppub),
+	findall(P,find_pred(P), Pall_),
+	sort(Pall_,Pall),
+	map(util:decl_pred,Pall), nl,
 		   
-		   flag(jmps_pub_hash_size,Hp,Hp),
-		   concat('JMP_pub',Mm,Tp),
-		   hash_jmp(Hp,Ppub,Tp),
+	flag(jmps_pub_hash_size,Hp,Hp),
+%%	concat('JMP_pub',Mm,Tp),
+%%	hash_jmp(Hp,Ppub,Tp),
+	hash_jmp(Hp,Ppub,'JMP_pub'),
 
-		   flag(jmps_all_hash_size,Ha,Ha),
-		   concat('JMP_all',Mm,Ta),
-		   hash_jmp(Ha,Pall,Ta),
-		   format('module_t module~w = { __FILE__, ATOM(~w), {~w_tab, ~w}, {~w_tab, ~w}};\n',[Mm,Mm,Tp,Hp,Ta,Ha]).
+	flag(jmps_all_hash_size,Ha,Ha),
+%	concat('JMP_all',Mm,Ta),
+%	hash_jmp(Ha,Pall,Ta),
+	hash_jmp(Ha,Pall,'JMP_all'),
+	format('module_t module~w = { __FILE__, ATOM(~w), ', [Mm,Mm]),
+	format('{JMP_pub_tab, ~w}, {JMP_all_tab, ~w}};\n',[Hp,Ha]).
 
 find_pred(P)	:- recorded(preds,P).
-find_pred(P)	:- recorded(module_export,module_export(_,P)).
+find_pred(P)	:- recorded(module_export,module_export(M,P)),
+		   M \= system.
 
 hash_jmp(H,Ps,T)	:- fill(H,[],L), 
 			   V=..[vec|L],
@@ -112,15 +118,18 @@ hash_jmp(H,Ps,T)	:- fill(H,[],L),
 
 
 hash_jmp_([],_,_).
-hash_jmp_([(F/N)|Q],HS,V)
-			:- hpjw(F,H_), H is ((H_ +N) mod HS)+1,
-			   arg(H,V,E), setarg(H,V,[(F/N)|E]),
-			   hash_jmp_(Q,HS,V).
+hash_jmp_([(F/N)|Q],HS,V) :-
+	hpjw(F,H_), H is ((H_ +N) mod HS)+1,
+	arg(H,V,E),
+	setarg(H,V,[(F/N)|E]),
+	hash_jmp_(Q,HS,V).
 			   
-hash_jmp_vec(V,T)	:- V=..[vec|L], map(hash_jmp_list(T),L), nl,
-			   format('jmp__t *~w_tab[]=\n{\n',[T]),
-			   map(hash_jmp_tab(T),L),
-			   format('};\n\n').
+hash_jmp_vec(V,T) :-
+	V=..[vec|L],
+	map(hash:hash_jmp_list(T),L), nl,
+	format('static jmp__t *~w_tab[]=\n{\n',[T]),
+	map(hash:hash_jmp_tab(T),L),
+	format('};\n\n').
 
 
 hash_jmp_list(_,[]).
@@ -141,36 +150,44 @@ hash_jmp_tab(T,[E|_])	:- map_fun(E,Em),
 			   format('  &~w~w,\n',[T,Em]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-init_hash_mods(N)	:- need_modules(M),
-			   map(include_module,M),
-			   select(M,N,M_), Ms=[user|M_],
-			   map(decl_mod,Ms), nl,
-			   flag(mods_hash_size,HS,HS),
-			   fill(HS,[],L), 
-			   V=..[vec|L],
-			   hash_mods_(Ms,HS,V),
-			   hash_mods_vec(V).
+init_hash_mods(N) :-
+	need_modules(M),
+	map(util:include_module,M),
+	select(M,N,M_), Ms=[user|M_],
+	map(hash:decl_mod,Ms), nl,
+	flag(mods_hash_size,HS,HS),
+	fill(HS,[],L), 
+	V=..[vec|L],
+	hash_mods_(Ms,HS,V),
+	hash_mods_vec(V).
 
-decl_mod(M)	:-	   map_atom(M,Mm),
-			   format('extern module_t module~w;~n',Mm).
+decl_mod(M) :-
+	map_atom(M,Mm),
+	format('extern module_t module~w;~n',Mm).
 
 hash_mods_([],_,_).
-hash_mods_([A|Q],HS,V)	:- hpjw(A,H_), H is (H_ mod HS)+1,
-			   arg(H,V,E), setarg(H,V,[A|E]),
-			   hash_mods_(Q,HS,V).
+hash_mods_([A|Q],HS,V) :-
+	hpjw(A,H_), H is (H_ mod HS)+1,
+	arg(H,V,E), setarg(H,V,[A|E]),
+	hash_mods_(Q,HS,V).
 			   
-hash_mods_vec(V)	:- V=..[vec|L], map(hash_mods_list,L), nl,
-			   format(' modules_t *PL__modules[]=\n{\n'),
-			   map(hash_mods_tab,L),
-			   format('};\nint PL__modules_hash_size=sizeof(PL__modules)/sizeof(PL__modules[0]);\n\n').
+hash_mods_vec(V) :-
+	V=..[vec|L],
+	map(hash:hash_mods_list,L), nl,
+	format(' modules_t *PL__modules[]=\n{\n'),
+	map(hash:hash_mods_tab,L),
+	format('};\nint PL__modules_hash_size=sizeof(PL__modules)/sizeof(PL__modules[0]);\n\n').
 
 hash_mods_list([]).
 hash_mods_list([A])	:- print_mods_list(A,0).
-hash_mods_list([A,B|Q])	:- hash_mods_list([B|Q]),
-			   map_atom(B,Bm), concat_atom(['&MODULE_',Bm],Nxt),
-			   print_mods_list(A,Nxt).
+hash_mods_list([A,B|Q])	:-
+	hash_mods_list([B|Q]),
+	map_atom(B,Bm),
+	concat_atom(['&MODULE_',Bm],Nxt),
+	print_mods_list(A,Nxt).
 
-print_mods_list(A,Nxt)	:- map_atom(A,Am),
+print_mods_list(A,Nxt)	:-
+	map_atom(A,Am),
 	format('static modules_t MODULE_~w={ ATOM(~w), &module~w ,~w};\n',[Am,Am,Am,Nxt]).
 
 hash_mods_tab([])	:- format('  0,\n').

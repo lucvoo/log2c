@@ -20,7 +20,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 check_export(X1,L)	:- flag(current_module,M,M),
-			   map(check_export1(M,L),X1),
+			   map(modules:check_export1(M,L),X1),
 			   ( M==system
 			     -> foreign_preds(X2), append(X1,X2,Xs)
 			     ;  Xs=X1
@@ -28,7 +28,7 @@ check_export(X1,L)	:- flag(current_module,M,M),
 			   export_pred(Xs).
 
 check_export(X1,L,Xm)	:- flag(current_module,M,M),
-			   map(check_export1(M,L),X1),
+			   map(modules:check_export1(M,L),X1),
 			   ( M==system
 			     -> foreign_preds(X2), append(X1,X2,X3)
 			     ;  X3=X1
@@ -110,18 +110,21 @@ export_use_(T,S,L)	:- '$recorded_all'(T,Lm),
 			   recorda(S,L).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-get_exports(Lu,Lx)	:- used_modules(U),
-			   exported_modules(X),
-			   maplist(get_xlist,U,Xs),
-			   maplist(prefix_export(Xs,use),U,Lu),
-			   maplist(prefix_export(Xs,export),X,Lx).
+get_exports(Lu,Lx) :-
+	used_modules(U),
+	exported_modules(X),
+	maplist(modules:get_xlist,U,Xs),
+	maplist(modules:prefix_export(Xs,use),U,Lu),
+	maplist(modules:prefix_export(Xs,export),X,Lx).
 
-get_xlist(M,A)	:- comp_sub_module(M,F), !,
-		   read_export(F,X),
-		   A=(M-X).
+get_xlist(M,A)	:-
+	comp_sub_module(M,F), !,
+	read_export(F,X),
+	A=(M-X).
 
-prefix_export(L,P,M,R)	:- memberchk(M-Xs,L),
-			   R=..[P,M,Xs].
+prefix_export(L,P,M,R)	:-
+	memberchk(M-Xs,L),
+	R=..[P,M,Xs].
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 need_modules(Ms)	:- '$recorded_all'(need_module,Ms).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -129,9 +132,9 @@ need_modules(Ms)	:- '$recorded_all'(need_module,Ms).
 check_import(U,_X)	:- del(module_export),
 			   used_modules(Us),
 			   format(mod,'use_module(~q).\n',[Us]),
-			   map(rec_x,U).
+			   map(modules:rec_x,U).
                          
-rec_x(use(M,L))	:- map(rec_export(M),L).
+rec_x(use(M,L))	:- map(modules:rec_export(M),L).
 
 rec_export(M,X)	:- ( recorded(module_export,module_export(Mm,X))
 		     -> X=F/N,
@@ -139,7 +142,7 @@ rec_export(M,X)	:- ( recorded(module_export,module_export(Mm,X))
 		     ;  recorda(module_export,module_export(M,X))
 		   ).
 
-exp_x(export(_,L))	:- map(export_pred,L).
+exp_x(export(_,L))	:- map(modules:export_pred,L).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 import_from_module(F,M)	:- recorded(module_export,module_export(M,F)).
