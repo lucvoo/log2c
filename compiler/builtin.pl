@@ -263,6 +263,29 @@ inline(fail)	:+ +> comm(fail),
 
 inline(true)	:+ +> comm(true).
 
+inline(apply(Clos,Args))	:+
+		   ( Clos=fun((:),2,_)
+		     -> Clos_=Clos
+		     ;  flag(current_module,M,M),
+		        Clos_=fun((:),2,[atom(M),Clos])
+		   ),
+		   +> comm(apply,Clos,Args),
+		   +> g('{ term_t clos, args;'),
+		   +> g('  void *proc;'),
+		   +> new_indent(2),
+		   code_Assign(clos,Clos_),
+		   code_AssignD(args,Args),
+		   +> new_indent(-2),
+		   gensym(label_call_,L),
+		   +> g('  proc=PL_apply(clos,args);'),
+		   +> g('  if (!proc) goto backtrack;'),
+		   +> g('  SP[1]= &&~w;',[L]),
+		   +> g('  SP[2]=FP;'),
+		   +> g('  FP=SP+2;'),
+		   +> g('  goto *proc;'),
+		   +> g('~w:',[L]),
+		   +> g('}').
+
 inline(Call)	:+ fun(Call,call,N,[Clos|Arg]),
 		   ( Clos=fun((:),2,_)
 		     -> Clos_=Clos
