@@ -30,11 +30,17 @@ ${PROG}: ${PROG}.pl ${PROG}.mod ${MODULES} ${PROG}.lnk.o ${PL_LIB}
 	-rm -f $@.mod # $@.lnk.c $@.c
 # ${PROG}: ${PL_LIB} ${PROG}.pl ${PROG}.mod ;
 
+# %: %.pl ${PL_C} ${PL_LIB}
+# 	echo "'$*.pl'." | ../phase_1/plc
+# 
+# %.mod: %.pl
+# 	echo "'$*.pl'." | ../phase_1/plc
+
 %: %.pl ${PL_C} ${PL_LIB}
-	echo "'$*.pl'." | ../phase_1/plc
+	../phase_1/plc $*.pl
 
 %.mod: %.pl
-	echo "'$*.pl'." | ../phase_1/plc
+	../phase_1/plc $*.pl
 ########################################################################
 
 veryclean: FORCE

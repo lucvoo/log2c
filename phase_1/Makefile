@@ -7,6 +7,11 @@ comp_dir = ../compiler
 
 include	../Make.common
 
+SRC = \
+	comp.pl \
+	plc.pl \
+
+
 PL_LIB	= ${src_dir}/${PLLIB}
 PL_C	= ${comp_dir}/${PLC}
 PLS	= $(wildcard *.pl)
