@@ -35,10 +35,6 @@ cell_t  *SHP=0;
 
 
 
-#ifdef	INTERACTIVE
-int PL_nbr_fv;
-#endif
-
 #include "pl-inline.h"
 #include "pl-pred.h"
 #include "pl-trad.h"

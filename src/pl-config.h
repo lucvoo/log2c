@@ -15,9 +15,6 @@
 // #define BTP_IN_REG
 // #define TP_IN_REG
 
-// #define MAIN_LOOP	-> trad.h
-// #define INTERACTIVE
-
 #define	WORDS_LITTLEENDIAN
 #define	CELL_BITS	32	// in bits
 #define	CELL_SIZE	4	// in bytes

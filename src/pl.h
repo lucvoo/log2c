@@ -57,10 +57,6 @@ extern int	PL__funs_hash_size;
 extern int	PL__funs_count;
 extern fun_t	PL__funs[];
 
-#ifdef	INTERACTIVE
-extern int		 PL__freevar_count;
-extern const char	*PL__freevar[];
-#endif
 
 #include "ATOMS.h"
 

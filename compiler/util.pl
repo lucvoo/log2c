@@ -4,7 +4,7 @@
 :- module(util, [ make_f_args/2, make_ARGs/2
 		, find_fvar/2
 		, get_preds/2
-		, get_query/4
+		, get_query/3
 		, anf_module/3
 		, init_preds/1
 		, decl_preds/1
@@ -65,15 +65,15 @@ sortCls_([C|Q],I,O)	:- getC(C,Ci),
 		           insertC(Ci,IO,O).
 
 
-getC(H :- B,cl(F,N,A,B ))	:- fun(H,F,N,A).
-getC( ':-'(main(Q,V)),q(V,Q)).
-getC(  :- D,'')			:- fun(D,F,N,_),
-                                   ( directive(F,N)
-                                     -> do_directive(D)
-                                     ;  warning('unknow directive : ~w/~w',[F,N])
-                                        %% , call(D)
-                                   ).
-getC(H,     cl(F,N,A,true))	:- fun(H,F,N,A).
+getC(H :- B,		cl(F,N,A,B ))	:- !, fun(H,F,N,A).
+getC( ':-'(main(Q,V)),	q(V,Q))	:- !.
+getC(  :- D,		'')	 :- !,
+	( do_directive(D)
+	  -> true
+	  ;  fun(D,F,N,_),
+	     warning('unknow directive : ~w/~w',[F,N])
+	).
+getC(H,     		cl(F,N,A,true))	:- fun(H,F,N,A).
 
 insertC('',L,L).
 insertC(q(V,Q),I,O) :- select(I,q(Lq),Is), !, O=[q([cl(V,Q)|Lq]) |Is].
@@ -83,12 +83,11 @@ insertC(cl(F,N,A,B),I,O) :- O=[pr(F,N,[cl(A,B)]) |I].
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-get_query(I,Q,B,O)	:- select(I,q(Lq),O), check_query(Lq,Q,B), !.
-get_query(_,_,_,_)	:- fatal('no query given').
+get_query(I,Q,O)	:- select(I,q(Lq),O), check_query(Lq,Q), !.
+get_query(_,_,_)	:- fatal('no query given').
 
-check_query([cl(B,Q)],Q,B).
-check_query(_L ,_Q,_B)	:-
-	%% format(user_error, ' L = ~w Q = ~w B = ~w\n', [ _L, _Q, _B]),
+check_query([cl(_,Q)],Q).
+check_query(_L ,_Q)	:-
 	fatal('several queries given').
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -210,43 +209,38 @@ add_mod_(I,N,M,[A|X],[A|Y]) :-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-directive(use_module,1).
-directive(reexport,1).
-directive(index,1).
-directive(meta_pred,2).
-directive(meta,1).
-directive(module_transparent,1).
-directive(op,3).
-directive(register_foreign,3).
-%% DEBUG directive(determinism,2).
-
-
-do_directive(module_transparent(P))	:-
-	do_directive(meta(P)).
-do_directive(meta_pred(P,A))		:-
-	recordz(meta_pred,meta_pred(P,A)),
-	recordz(meta,P).
-do_directive(meta(P))			:-
-	recordz(meta,P).
-do_directive(meta((P,L)))		:-
-	recordz(meta,P),
-	do_directive(meta(L)).
+do_directive(export(_))	:-		%% FIXME : to implement
+		warning('unsupported directive : use module/2').
+do_directive(import(M))	:-
+		do_directive(use_module(M)).
+do_directive(import(M,L))	:-
+		do_directive(use_module(M,L)).
+do_directive(index(_)).			%% FIXME : to implement
+do_directive(meta_predicate(P))		:-
+		recordz(meta_pred,meta_pred(P)),
+		recordz(meta,P).
+do_directive(module(_))	:-		%% FIXME : to implement
+		warning('unsupported directive: module/1\
+				\n\t\tuse module/2').
+do_directive(module_transparent(_))	:-
+		warning('unsupported directive: module_transparent/1\
+				\n\t\tuse ISO meta_predicate/1').
 do_directive(op(P,T,N))			:-
-	op(P,T,N).
-do_directive(use_module(M))		:-
-	recorda(use_module,M).
+		op(P,T,N).
 do_directive(reexport(M))		:-
-	recorda(export_module,M),
-	recorda(use_module,M).
-do_directive(register_foreign(T,C,D))	:-
-	recorda(reg_foreign,reg_foreign(T,C,D)).
-%% DEBUG do_directive(determinism(P,D))	:-
-%% DEBUG 	recorda(determinism,determinism(P,D)).
-do_directive(D)			:-
-	recordz(directive,D).
+		recorda(export_module,M),
+		recorda(use_module,M).
+do_directive(reexport(M,_))	:-	%% FIXME : to implement
+		do_directive(reexport(M)).
+do_directive(foreign(_,_)).		%% FIXME : to implement
+do_directive(foreign(P))	:-
+		do_directive(foreign(P,[])).
+do_directive(use_module(M))		:-
+		recorda(use_module,M).
+do_directive(use_module(M,_))		:-	%% FIXME
+		do_directive(use_module(M)).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-meta_pred(P,I)		:- recorded(meta_pred,meta_pred(P,I)).
 meta_pred(maplist/3,1).
 meta_pred(findall/3,2).
 meta_pred(bagof/3,2).
@@ -257,7 +251,8 @@ meta_pred(mapl/3,1).
 meta_pred(mapl/4,1).
 meta_pred(mapli/4,2).
 meta_pred(mapli/5,2).
-meta_pred(call/1,1).
+meta_pred(call/1,1).	% Useless as this one is inlined
+meta_pred(P,I)		:- recorded(meta_pred,meta_pred(P,I)).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 include_module(M) :-
 	module_extension(h,M,H),

@@ -7,6 +7,11 @@
 #include "pl-pred.h"
 
 
+int PL_next_goal(void)
+{ return(0);
+}
+
+
 int pl_unify(register cell_t *d1, register cell_t *d2)
 { d1=deref(d1);
 
@@ -87,58 +92,6 @@ int pl_unify(register cell_t *d1, register cell_t *d2)
 }
 
 
-#ifdef INTERACTIVE
-void write_binding(void)
-{ int i, flag=0;
-
-  for (i=0; i<PL__freevar_count; i++)
-    if (PL__freevar[i] && PL__freevar[i][0]!='_')
-      { Sprintf("\n%s = ",PL__freevar[i]);
-        pl_write(STK[i+6].celp);
-        flag=1;
-      }
-
- if (!flag) Sprintf("Yes\n");
- else       Sprintf("\n");
-
- return;
-}
-
-// FIXME
-#include "pl-os.h"			// for GetSingleChar()
-
-int PL_next_goal(void)
-{ int c;
-
-  PL_write_binding();
-  c=PL_GetSingleChar();
-
-  return(c==';');
-} 
-#else
-int PL_next_goal(void)
-{ return(0); }
-#endif	// INTERACTIVE
-
-
-#if 0
-static void *fp, *hp, *btp;
-static
-void save_regs(void)
-{ fp=FP; hp=HP; btp=BTP; }
-
-static
-void restore_regs(void)
-{ FP=fp; HP=hp; BTP=btp; }
-
-#define _warning(fm,args...)	\
-	do {	save_regs();	\
-		fflush(0);	\
-		fprintf(stderr,"[Warning: " fm "]\n" , ## args); \
-		restore_regs();	\
-		return(0);	\
-	} while(0)
-#endif
 
 // FIXME : add floating number
 int PL_eval_(cell_t *c, int *n)

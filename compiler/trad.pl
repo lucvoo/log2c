@@ -245,10 +245,9 @@ delbtp		:- g('delbtp();').
 popenv		:- g('popenv();\n').
 restore		:- g('restore();\n').
 
-init		:- format('#ifdef\tMAIN_LOOP\n  main_loop:\n#endif\n\n'),
-		   g('init(&&failed_query);').
+init		:- g('init(&&failed_query);').
 
-halt_		:- g0('#ifdef MAIN_LOOP\n\tgoto main_loop;\n#else\n\thalt_();\n#endif').
+halt_		:- g0('\n\thalt_();\n').
 
 saveargs(N)     :- comm(saveargs,N),
                    between(1,N,I),

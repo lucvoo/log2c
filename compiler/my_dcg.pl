@@ -12,7 +12,6 @@
 dgc(arith_cmp,3).
 dgc(assign,2).
 dgc(assign_args,2).
-dgc(binding,1).
 dgc(btinit,3).
 dgc(code_Arg,2).
 dgc(code_Assign,2).
@@ -29,7 +28,6 @@ dgc(code_Pr,1).
 dgc(code_U,2).
 dgc(code_UA,2).
 dgc(code__Pr,1).
-dgc(code_binding,1).
 dgc(code_call,2).
 dgc(code_fin,0).
 dgc(decl,2).

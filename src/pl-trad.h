@@ -11,8 +11,6 @@
 
 void pl_exit(int);
 
-// #define MAIN_LOOP
-
 
 #define	FAILED			\
 	printf("No\\n");	\

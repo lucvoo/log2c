@@ -26,11 +26,8 @@
 		, export_pred/1	, exported/1
 		, label/2	, label/3 
 		, getlabel/2	, getlabel1/3
-		, is_meta/0
-%% 		, mapl/3
 		, mapl/4
 		, mapli/4	, mapli/5
-%% 		, mapllist/5
 		, module_extension/3
 		]).
 
@@ -156,29 +153,29 @@ new_indent(N)	:- flag(indent,O,O+N).
 old_indent(N)	:- flag(indent,O,O-N).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-warning(W) :-	format(user_error,'\n[ WARNING : ~w]\n',[W]).
-warning(W,A) :-	concat_atom(['~n[ WARNING : ',W,']~n'],W_),
+warning(W) :-	format(user_error,'\nWarning: ~w\n',[W]).
+warning(W,A) :-	concat_atom([     '\nWarning: ',W,'\n'],W_),
 		format(user_error,W_,A).
 
-error(W) :-	format(user_error,'\n[ ERROR : ~w]\n',[W]),
+error(W) :-	format(user_error,'\nError: ~w\n',[W]),
 		flag(error,E,E+1).
-error(W,A) :-	concat_atom(['~n[ ERROR : ',W,']~n'],W_),
+error(W,A) :-	concat_atom([     '\nError: ',W,'\n'],W_),
 		format(user_error,W_,A),
 		flag(error,E,E+1).
+
+fatal(W) :-	format(user_error,'\nFatal Error: ~w\n',[W]),
+		halt(1).
+fatal(W,A) :-	concat_atom([     '\nFatal Error: ',W,'\n'],W_),
+		format(user_error,W_,A),
+		halt(1).
+
 
 error_report :-	flag(error,E,E),
+		flag(warning,W,W),
 		( E==0
 		-> fail
-		;  format(user_error,'\n[ Number of error : ~w ]\n',[E])
+		;  format(user_error,'\nNumber of error: ~w\n',[E])
 		).
-
-fatal(W) :-	format(user_error,'\n[ FATAL ERROR : ~w]',[W]),
-		format(user_error,'\n[ compilation aborted !]\n\n',[]),
-		halt(1).
-
-fatal(W,A) :-	concat_atom(['~n[ FATAL ERROR : ',W,']~n'],W_),
-		format(user_error,W_,A),
-		halt(1).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 merge_to_set(L1,L2,S):- list_to_set(L1,S1),
@@ -294,17 +291,9 @@ anf_get_erase(K,S)	:- '$recorded_all'(K,L), sort(L,S),
 anf_get_atom(A)	:- anf_get_erase(anf_rec_atom,A).
 anf_get_fun(F)	:- anf_get_erase(anf_rec_fun,F).
 anf_get_pred(P)	:- anf_get_erase(anf_rec_pred,P).
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%% variants of map and maplist
-:- module_transparent map/2.
-
-%% mapi(_,_,[]).
-%% mapi(N,G,[E|Q])	:- succ(N,M),
-%% 		   call(G,M,E),
-%% 		   mapi(M,G,Q).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 fl_(L)	:- fl(L).
 fl(L)	:- format('~w:\n',[L]).
 g(F,A)	:- put(9), flag(indent,N,N), tab(N),
@@ -426,14 +415,9 @@ maplist_map_name_v([],[]).
 maplist_map_name_v([A|X],[B|Y])	:- map_name_v(A,B), 
 				   maplist_map_name_v(X,Y).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-is_meta	:- flag(meta,M,M), M==true.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 :- module_transparent	mapl/4,
 			mapli/4, mapli/5.
-
-%% mapl(G,I,L)		:- mapl(G,I,L,[]).
 
 mapl(_,[],L,L).
 mapl(G,[E|Q],I,O)	:- call(G,E,I,T),
@@ -446,11 +430,8 @@ mapli(N,G,[E|Q],I,O)	:- succ(N,M),
 			   call(G,M,E,I,T),
 			   mapli(M,G,Q,T,O).
 
-%% mapllist(_,[],[],A,A).
-%% mapllist(G,[Ei|Qi],[Eo|Qo],I,O)	:- call(G,Ei,Eo,I,T),
-%% 				   mapllist(G,Qi,Qo,T,O).
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 module_extension(X,M,F)	:- concat('$',R,M), !,
 			   file_name_extension(R,X,F).
 module_extension(X,M,F)	:- M=user, !,

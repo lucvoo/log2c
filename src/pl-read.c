@@ -357,13 +357,13 @@ int read_quoted_char(pl_stream S)
     case '\\': switch (c=Getc(S))
                { case 'a':  c='\a'; break;
                  case 'b':  c='\b'; break;
-                 // case '\n': goto loop;
                  case 'e':  c='\e'; break;
                  case 'f':  c='\f'; break;
                  case 'n':  c='\n'; break;
                  case 'r':  c='\r'; break;
                  case 't':  c='\t'; break;
                  case 'v':  c='\v'; break;
+                 // case '\n': ....
                  case '\'': 
                  case '"':  
                  case '`':  break;
@@ -410,7 +410,11 @@ char *read_quoted_string(pl_stream S, int quote)
       case '\\': switch (c=Getc(S))
                  { case 'a':  c='\a'; break;
                    case 'b':  c='\b'; break;
-                   case '\n': continue;
+                   case '\n':		// ISO line continuation
+			      while (isSpace(c=Getc(S)) && c != '\n')
+				;
+			      UnGetc(c);
+			      continue;
                    case 'f':  c='\f'; break;
                    case 'n':  c='\n'; break;
                    case 'r':  c='\r'; break;
