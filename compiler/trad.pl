@@ -50,8 +50,8 @@ u_r(intg(N),V)		:- g('getintg(deref(~w),~w);',[V,N]).
 u_r(void,_).
 u_r(var(N),V)		:- g('FP[~w].celp=(~w);',[N,V]).
 u_r(var_t(N),V)		:- g('TMP_~w=(~w);',[N,V]).
-u_r(ref(N),V)		:- g('if (!unify(FP[~w].celp,~w)) goto backtrack;',[N,V]).
-u_r(ref_t(N),V)		:- g('if (!unify(TMP_~w,~w)) goto backtrack;',[N,V]).
+u_r(ref(N),V)		:- g('if (!pl_unify(FP[~w].celp,~w)) goto backtrack;',[N,V]).
+u_r(ref_t(N),V)		:- g('if (!pl_unify(TMP_~w,~w)) goto backtrack;',[N,V]).
 u_r(struct(F,N,L),V)	:- comm(u_r(struct)),
 			   unify(struct(F,N,L),deref(V)).
 
@@ -179,9 +179,9 @@ get_(N,var_t(I))	:- mem_arg(N,Arg),
 			   g('TMP_~w=~w;',[I,Arg]).
 get_(_,void).
 get_(N,ref(I))		:- mem_arg(N,Arg),
-			   g('if (!unify(~w,FP[~w].celp)) goto backtrack;',[Arg,I]).
+			   g('if (!pl_unify(~w,FP[~w].celp)) goto backtrack;',[Arg,I]).
 get_(N,ref_t(I))	:- mem_arg(N,Arg),
-			   g('if (!unify(~w,TMP_~w)) goto backtrack;',[Arg,I]).
+			   g('if (!pl_unify(~w,TMP_~w)) goto backtrack;',[Arg,I]).
 get_(N,struct(F,A,L))	:- mem_arg(N,Arg),
 			   comm(get_t(struct)),
 			   unify(struct(F,A,L),Arg).
@@ -246,9 +246,9 @@ popenv		:- g('popenv();\n').
 restore		:- g('restore();\n').
 
 init		:- format('#ifdef\tMAIN_LOOP\n  main_loop:\n#endif\n\n'),
-		   g('init_GetTime();\n'),
 		   g('init(&&failed_query);').
-halt_		:- g0('#ifdef MAIN_LOOP\n\tPL_print_time(); goto main_loop;\n#else\n\thalt_();\n#endif').
+
+halt_		:- g0('#ifdef MAIN_LOOP\n\tgoto main_loop;\n#else\n\thalt_();\n#endif').
 
 saveargs(N)     :- comm(saveargs,N),
                    between(1,N,I),

@@ -48,18 +48,18 @@ extern cell_t		*SH_STK;
 
 
 // must be a power of two for dynamic hashing
-extern int PL_atoms_hash_size;
-extern int PL_atoms_count;
-extern atom_t PL_atoms[];
+extern int	PL__atoms_hash_size;
+extern int	PL__atoms_count;
+extern atom_t	PL__atoms[];
 
 // must be a power of two for dynamic hashing
-extern int PL_funs_hash_size;
-extern int PL_funs_count;
-extern fun_t  PL_funs[];
+extern int	PL__funs_hash_size;
+extern int	PL__funs_count;
+extern fun_t	PL__funs[];
 
 #ifdef	INTERACTIVE
-extern int PL_nbr_fv;
-extern const char *PL_freevar[];
+extern int		 PL__freevar_count;
+extern const char	*PL__freevar[];
 #endif
 
 #include "ATOMS.h"

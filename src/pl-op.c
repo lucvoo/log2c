@@ -5,7 +5,7 @@
 
 #include "Prolog.h"
 #include "pl-op.h"
-#include "pl-init.h"		// For init_ops()
+#include "pl-init.h"		// For PL_init_ops()
 
 
 extern atom__t ATOM__fx;
@@ -217,7 +217,7 @@ int pl_current_op(term_t precedence, term_t type, term_t operator, control_t ctr
   fail;
 }
 
-void init_ops(void)
+void PL_init_ops(void)
 { add_operator(200,OP_XFX,ATOM(doublestar));
   add_operator(200,OP_XFY,ATOM(hat));
   add_operator(400,OP_YFX,ATOM(_mod));

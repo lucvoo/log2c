@@ -14,7 +14,7 @@
 static struct rusage ru_start, ru_last, ru_now;
 static struct timeval tv_start, tv_last, tv_now;
 
-void init_time(void)
+void PL_init_time(void)
 { getrusage(RUSAGE_SELF, &ru_start);
   getrusage(RUSAGE_SELF, &ru_last);
   gettimeofday(&tv_start, 0);
@@ -116,7 +116,7 @@ int pl_statistics(term_t key, term_t pair)
   p[3].val=__intg(d2);
   p[4].val=__nil();
 
-  return(unify(p,pair));
+  return(pl_unify(p,pair));
 }
 
 
@@ -138,7 +138,7 @@ int _pl_time(term_t t, struct tm *tm)
   dt[5].val = __intg(tm->tm_min);
   dt[6].val = __intg(tm->tm_sec);
 
-  return(unify(t, dt));
+  return(pl_unify(t, dt));
 }
 
 int pl_gmtime(term_t t)

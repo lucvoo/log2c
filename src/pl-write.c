@@ -231,7 +231,7 @@ void WritePrimitive(pl_stream S, term_t t, const w_opt *opt)
 	  { s = Options(OPT_QUOT) ? "'$NaN'" : "NaN";
 	  }
 	  else
-	  { sprintf(buf,PL_atom_chars(PL_status.float_fmt),d);
+	  { sprintf(buf,PL_atom_chars(PL__status.float_fmt),d);
 	    s = buf;
 	  }
 
@@ -473,7 +473,7 @@ int writeTerm(pl_stream S, term_t t,
     opt.flags	= OPT_OPS | OPT_LIST;
   else
     opt.flags	= 0;
-  if (PL_status.char_esc)
+  if (PL__status.char_esc)
     opt.flags |= OPT_ESC;
   if (quote)
     opt.flags |= OPT_QUOT;
@@ -639,7 +639,7 @@ int get_options(term_t Options, w_opt *options, const char *pred)
   
 // Set default value;
   opt_quoted = 0;
-  opt_char_esc = PL_status.char_esc;
+  opt_char_esc = PL__status.char_esc;
   opt_ignore_ops = 0;
   opt_numbervars = 0;
   opt_namevars = 0;

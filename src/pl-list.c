@@ -139,7 +139,7 @@ int PL_sort(term_t list, term_t sorted, int rem_dup)
     qsort(array,n,sizeof(term_t),qsort_cmp);
    
   l=array_to_list(array,n,rem_dup);
-  return(unify(l,sorted));
+  return(pl_unify(l,sorted));
 }
 
 int pl_sort(term_t list, term_t sorted)

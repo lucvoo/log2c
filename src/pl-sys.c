@@ -7,7 +7,7 @@
 #include "pl-os.h"
 #include "pl-fli.h"
 #include "pl-atom.h"
-#include "pl-init.h"	// For init_argv()
+#include "pl-init.h"	// For PL_init_argv()
 
 int pl_shell(term_t command, term_t status)
 { const char *cmd;
@@ -86,7 +86,7 @@ int pl_unsetenv(term_t var)
 
 static term_t argv;
 
-void init_argv(int arg_c, char **arg_v)
+void PL_init_argv(int arg_c, char **arg_v)
 { term_t a;
 
   a=argv=SHP;

@@ -391,7 +391,7 @@ int pl_recorded(cell_t *key, cell_t *term, cell_t *ref, control_t ctrl)
     { mark_t m;
       Mark(m);
 
-      if (unify(term,copy_to_global(r)) &&
+      if (pl_unify(term,copy_to_global(r)) &&
           PL_unify_integer(ref, ((typeof(SHP)) r) - (SH_STK) ) )
         { *ctxt=r->next;
           retry;
@@ -432,7 +432,7 @@ int pl_current_key(cell_t *c, control_t ctrl)
 
   for (;h<hash_recs_size; recl=records[++h])
     for (;recl; recl=recl->next)
-      if (unify_key(c,&(recl->key))) 	// FIXME : c is instantiated or variable
+      if (PL_unify_key(c,&(recl->key)))	// FIXME : c is instantiated or variable
         { ctxt->hash=h;
           ctxt->recl=recl->next;
           retry;
@@ -519,7 +519,7 @@ int pl_recorded_all(cell_t *key, cell_t *list)
   }
   tail->val=__nil();
 
-  return(unify(head,list));
+  return(pl_unify(head,list));
 }
 
 int pl_erase_records(term_t key)
@@ -671,7 +671,7 @@ int pl_copy_term(term_t src, term_t copy)
   reset(tp);
 
   if (r)
-    return(unify(base,copy));
+    return(pl_unify(base,copy));
 
   fail;
 }

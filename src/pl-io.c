@@ -37,7 +37,7 @@ pl_file Finput =&(plfiles[0]);
 pl_file Foutput=&(plfiles[1]);
 
 
-void init_io(void)
+void PL_init_io(void)
 { plfiles[0].S=Stdin;
   plfiles[1].S=Stdout;
   plfiles[2].S=Stderr;
@@ -109,7 +109,7 @@ void CloseStream(pl_file f)
 }
 
 
-void exit_io(void)
+void PL_exit_io(void)
 { int n;
 
   for (n=0; n<max_files; n++)
@@ -162,7 +162,7 @@ openStream(term_t file, Smode_t mode, int flags)
 
   if ( type == ST_PIPE )
   { if ( !(S=Sopen_pipe(name->name, mode, flags)) )
-    { if (PL_status.file_err)
+    { if (PL__status.file_err)
       { PL_warning("Cannot open pipe %s: %s", name->name, PL_OsError());
       }
       fail;
@@ -174,7 +174,7 @@ openStream(term_t file, Smode_t mode, int flags)
     if (!fn) fail;
 
     if (!(S=Sopen_file(fn, mode, flags)))
-    { if (PL_status.file_err)
+    { if (PL__status.file_err)
       { PL_warn("Cannot open %s", name->name);
       }
       fail;
@@ -681,7 +681,7 @@ int pl_stream_position(term_t s, term_t old, term_t new)
 #endif
     HP+=4;
   }
-  if (!unify(old,pos))
+  if (!pl_unify(old,pos))
     fail;
     
   new=deref(new);
@@ -988,7 +988,7 @@ loop_all:
       if (!t)
         continue;
 
-      if (!unify(t,prop))
+      if (!pl_unify(t,prop))
       { Undo(m);
         continue;
       }
@@ -1018,7 +1018,7 @@ loop_pro:
     if (!t)
       continue;
 
-    if (!unify(t,prop))
+    if (!pl_unify(t,prop))
     { Undo(m);
       continue;
     }

@@ -26,17 +26,17 @@ cell_t *ARG_15 = 0;
 cell_t *ARG_16 = 0;
 
 
-extern modules_t *modules[];
+extern modules_t *PL__modules[];
 extern module_t module_system;
-extern int modules_hash_size;
+extern int PL__modules_hash_size;
 
 inline static
 module_t *lookup_module(atom_t name)
 { hash_t h;
   modules_t *m;
 
-  h=name->hash % modules_hash_size;
-  for (m=modules[h];m!=0;m=m->next)
+  h=name->hash % PL__modules_hash_size;
+  for (m=PL__modules[h];m!=0;m=m->next)
     if (m->name==name)
       return(m->module);
 

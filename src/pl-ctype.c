@@ -5,7 +5,7 @@
 
 #include "pl-ctype.h"
 
-pl_ctype_t PL_char_type[] = {
+pl_ctype_t PL__char_type[] = {
 0,					// -1 (EOF)
 ct_space | ct_ctrl,			// '\x00'
 ct_space | ct_ctrl,			//   .

@@ -10,14 +10,12 @@
 #include <stdlib.h>	// for exit( )
 
 void pl_exit(int);
-void init_GetTime(void);
 
 // #define MAIN_LOOP
 
 
 #define	FAILED			\
 	printf("No\\n");	\
-	PL_print_time();	\
 	pl_exit(1)
 
 

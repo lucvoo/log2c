@@ -6,6 +6,6 @@
 #ifndef	PL_UTIL_H_
 #define PL_UTIL_H_
 
-extern int DigitValue[256];
+extern int PL__DigitValue[256];
 
 #endif	// PL_UTIL_H_

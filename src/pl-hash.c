@@ -5,7 +5,7 @@
 
 #include "pl-hash.h"
 
-hash_t hpjw(const char* x) // From Dragon book, p436
+hash_t PL_hpjw(const char* x) // From Dragon book, p436
 { hash_t g, h = 0;
 
   while (*x != 0)
@@ -16,7 +16,7 @@ hash_t hpjw(const char* x) // From Dragon book, p436
   return h;
 }
 
-hash_t hpjw_2(const char* x, const char *y) // From Dragon book, p436
+hash_t PL_hpjw_2(const char* x, const char *y) // From Dragon book, p436
 { hash_t g, h = 0;
 
   while (*x != 0)
@@ -32,7 +32,7 @@ hash_t hpjw_2(const char* x, const char *y) // From Dragon book, p436
   return h;
 }
 
-hash_t mult_hash(int x)
+hash_t PL_mult_hash(int x)
 { // uses a const close to golden ratio * pow(2,32)
   return ((hash_t)x) * 2654435767UL;
 }

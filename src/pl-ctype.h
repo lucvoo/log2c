@@ -28,24 +28,24 @@ typedef enum
   ct_undscr= ct_bits(16),
 } pl_ctype_t;
 
-extern pl_ctype_t PL_char_type[];	/* array of character types */
+extern pl_ctype_t PL__char_type[];	/* array of character types */
 
-#define isSpace(c)	(PL_char_type[(c) + 1] & ct_space)
-#define isDigit(c)	(PL_char_type[(c) + 1] & ct_digit)
-#define isLower(c)	(PL_char_type[(c) + 1] & ct_lower)
-#define isUpper(c)	(PL_char_type[(c) + 1] & ct_upper)
-#define isSymbol(c)	(PL_char_type[(c) + 1] & ct_symbol)
-#define isPunct(c)	(PL_char_type[(c) + 1] & ct_punc)
-#define isSolo(c)	(PL_char_type[(c) + 1] & ct_solo)
-#define isLetter(c)	(PL_char_type[(c) + 1] & (ct_upper | ct_lower))	// FIXME 
-#define isAlpha(c)	(PL_char_type[(c) + 1] & (ct_upper | ct_lower))	// FIXME
-#define isAlpha_(c)	(PL_char_type[(c) + 1] & (ct_upper | ct_lower | ct_undscr))	// FIXME
-#define isAlphaNum(c)	(PL_char_type[(c) + 1] & (ct_upper | ct_lower | ct_digit))
-#define isAlphaNum_(c)	(PL_char_type[(c) + 1] & (ct_upper | ct_lower | ct_digit | ct_undscr))
-#define isBinDigit(c)	(PL_char_type[(c) + 1] & ct_bin)
-#define isOctDigit(c)	(PL_char_type[(c) + 1] & ct_oct)
-#define isHexDigit(c)	(PL_char_type[(c) + 1] & ct_hex)
-#define isControl(c)	(PL_char_type[(c) + 1] & ct_ctrl)
+#define isSpace(c)	(PL__char_type[(c) + 1] & ct_space)
+#define isDigit(c)	(PL__char_type[(c) + 1] & ct_digit)
+#define isLower(c)	(PL__char_type[(c) + 1] & ct_lower)
+#define isUpper(c)	(PL__char_type[(c) + 1] & ct_upper)
+#define isSymbol(c)	(PL__char_type[(c) + 1] & ct_symbol)
+#define isPunct(c)	(PL__char_type[(c) + 1] & ct_punc)
+#define isSolo(c)	(PL__char_type[(c) + 1] & ct_solo)
+#define isLetter(c)	(PL__char_type[(c) + 1] & (ct_upper | ct_lower))	// FIXME 
+#define isAlpha(c)	(PL__char_type[(c) + 1] & (ct_upper | ct_lower))	// FIXME
+#define isAlpha_(c)	(PL__char_type[(c) + 1] & (ct_upper | ct_lower | ct_undscr))	// FIXME
+#define isAlphaNum(c)	(PL__char_type[(c) + 1] & (ct_upper | ct_lower | ct_digit))
+#define isAlphaNum_(c)	(PL__char_type[(c) + 1] & (ct_upper | ct_lower | ct_digit | ct_undscr))
+#define isBinDigit(c)	(PL__char_type[(c) + 1] & ct_bin)
+#define isOctDigit(c)	(PL__char_type[(c) + 1] & ct_oct)
+#define isHexDigit(c)	(PL__char_type[(c) + 1] & ct_hex)
+#define isControl(c)	(PL__char_type[(c) + 1] & ct_ctrl)
 
 #define toLower(c)	((isUpper(c) && c!='_')	\
                          ? ((c) - 'A' + 'a') : (c))

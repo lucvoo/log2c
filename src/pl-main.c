@@ -9,19 +9,19 @@
 
 
 void pl_exit(int status)
-{ exit_io();
+{ PL_exit_io();
 
   exit(status);
 }
 
 int main(int argc, char **argv)
-{ init_stacks();
-  init_ops();
-  init_io();
-  init_prolog_flag();
-  init_os();
-  init_time();
-  init_argv(argc, argv);
+{ PL_init_stacks();
+  PL_init_ops();
+  PL_init_io();
+  PL_init_prolog_flag();
+  PL_init_os();
+  PL_init_time();
+  PL_init_argv(argc, argv);
 
   module__user();
 

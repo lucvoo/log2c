@@ -32,10 +32,10 @@ hash_atom_([A|Q],HS,V)	:- hpjw(A,H_), H is (H_ mod HS)+1,
 			   
 hash_atom_vec(V,HS,N)	:-
 		V=..[vec|L], map(hash_atom_list,L), nl,
-		format('atom_t PL_atoms[]=\n{\n'),
+		format('atom_t PL__atoms[]=\n{\n'),
 		map(hash_atom_tab,L),
-		format('};\nint PL_atoms_hash_size = ~d;\n',[HS]),
-		format('int PL_atoms_count = ~d;\n\n', [N]).
+		format('};\nint PL__atoms_hash_size = ~d;\n',[HS]),
+		format('int PL__atoms_count = ~d;\n\n', [N]).
 
 hash_atom_list([]).
 hash_atom_list([A])	:- print_atom_list(A,0).
@@ -66,10 +66,10 @@ hash_fun_([(F/N)|Q],HS,V)	:-
 			   
 hash_fun_vec(V,HS,N)	:-
 		V=..[vec|L], map(hash_fun_list,L), nl,
-		format('fun_t PL_funs[~d]=\n{\n',[HS]),
+		format('fun_t PL__funs[~d]=\n{\n',[HS]),
 		map(hash_fun_tab,L),
-		format('};\nint PL_funs_hash_size = ~d;\n',[HS]),
-		format('int PL_funs_count = ~d;\n\n',[N]).
+		format('};\nint PL__funs_hash_size = ~d;\n',[HS]),
+		format('int PL__funs_count = ~d;\n\n',[N]).
 
 hash_fun_list([]).
 hash_fun_list([F])	:- print_fun_list(F,0).
@@ -160,9 +160,9 @@ hash_mods_([A|Q],HS,V)	:- hpjw(A,H_), H is (H_ mod HS)+1,
 			   hash_mods_(Q,HS,V).
 			   
 hash_mods_vec(V)	:- V=..[vec|L], map(hash_mods_list,L), nl,
-			   format(' modules_t *modules[]=\n{\n'),
+			   format(' modules_t *PL__modules[]=\n{\n'),
 			   map(hash_mods_tab,L),
-			   format('};\nint modules_hash_size=sizeof(modules)/sizeof(modules[0]);\n\n').
+			   format('};\nint PL__modules_hash_size=sizeof(PL__modules)/sizeof(PL__modules[0]);\n\n').
 
 hash_mods_list([]).
 hash_mods_list([A])	:- print_mods_list(A,0).

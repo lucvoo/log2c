@@ -488,7 +488,7 @@ PL_unify_arg(int index, term_t t, term_t a)
 { Deref(t);
 
   if ( (get_tag(t)==fun_tag) && index > 0 && index <= get_arity(t) )
-    return unify(a,t+index);
+    return pl_unify(a,t+index);
 
   fail;
 }

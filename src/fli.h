@@ -306,7 +306,7 @@ int PL_unify_atomic(register cell_t *c, cell_t at)
 }
 
 INLINE_DECL
-int unify_fun(register cell_t *c, fun_t F)
+int PL_unify_fun(register cell_t *c, fun_t F)
 // PRE : c must be deref.
 { if (is_var(c))
   { int n=FunArity(F);
@@ -325,7 +325,7 @@ int unify_fun(register cell_t *c, fun_t F)
 
 INLINE_DECL
 int PL_unify_functor(term_t t, functor_t f)
-{ return(unify_fun(deref(t),f));
+{ return(PL_unify_fun(deref(t),f));
 }
 
 
@@ -350,11 +350,11 @@ int PL_unify_list(cell_t *l, cell_t **h, cell_t **t)
 
 
 INLINE_DECL
-int unify_key(cell_t *c, cell_t *key)
+int PL_unify_key(cell_t *c, cell_t *key)
 { switch(get_tag(key))
   { case ato_tag: return(PL_unify_atom(c,get_addr(key)));
     case int_tag: return(PL_unify_integer(c,get_val(key)));
-    case fun_tag: return(unify_fun(c,get_fun(key)));
+    case fun_tag: return(PL_unify_functor(c,get_fun(key)));
     default:      fail;
   }
 }
@@ -376,7 +376,7 @@ int number_vars(cell_t *c)
 #define	Mark(m)	do { m.trail =TP; m.global=HP; } while (0)
 #define	Undo(m)	do { reset(m.trail); HP=m.global; } while(0)
 
-int unify(cell_t *, cell_t *);
+int pl_unify(cell_t *, cell_t *);
 
 INLINE_DECL
 int PL_unify(cell_t *a, cell_t *b)
@@ -384,7 +384,7 @@ int PL_unify(cell_t *a, cell_t *b)
   int rval;
 
   Mark(m);
-  if (!(rval=unify(a,b)))
+  if (!(rval=pl_unify(a,b)))
     Undo(m);
 
   return(rval);

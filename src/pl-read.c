@@ -112,7 +112,7 @@ int strip_C_comment(pl_stream S)
 
   Getc(S);				//  drop '*'
 
-  if (PL_status.nested_com)	// TESTED : OK
+  if (PL__status.nested_com)	// TESTED : OK
   { int nesting=1;
 
     c=Getc(S);
@@ -296,7 +296,7 @@ int seeingString(pl_stream S)
 
 static inline
 int DigitVal(int c)
-{ return(DigitValue[c]); }
+{ return(PL__DigitValue[c]); }
 
 
 static inline
@@ -700,19 +700,19 @@ tok_type get_token(pl_stream S)
 	       goto case_atom;
     case '\"': str=read_quoted_string(S, c);
                if (!str) goto error;
-               if (PL_status.dbl_quotes==PL_lookup_atom("chars"))
+               if (PL__status.dbl_quotes==PL_lookup_atom("chars"))
                { token.type=T_STRING;
                  token.tok_val.ref=PL_mk_char_list(str);
                  break;
                }
                else
-               if (PL_status.dbl_quotes==PL_lookup_atom("codes"))
+               if (PL__status.dbl_quotes==PL_lookup_atom("codes"))
                { token.type=T_STRING;
                  token.tok_val.ref=PL_mk_code_list(str);
                  break;
                }
                else
-               if (PL_status.dbl_quotes==PL_lookup_atom("atom"))
+               if (PL__status.dbl_quotes==PL_lookup_atom("atom"))
                { atom=PL_lookup_atom(str);
                  goto case_atom;
                  break;
@@ -721,19 +721,19 @@ tok_type get_token(pl_stream S)
                  goto error;
     case '`':  str=read_quoted_string(S, c);
                if (!str) goto error;
-               if (PL_status.bck_quotes==PL_lookup_atom("chars"))
+               if (PL__status.bck_quotes==PL_lookup_atom("chars"))
                { token.type=T_STRING;
                  token.tok_val.ref=PL_mk_char_list(str);
                  break;
                }
                else
-               if (PL_status.bck_quotes==PL_lookup_atom("codes"))
+               if (PL__status.bck_quotes==PL_lookup_atom("codes"))
                { token.type=T_STRING;
                  token.tok_val.ref=PL_mk_code_list(str);
                  break;
                }
                else
-               if (PL_status.bck_quotes==PL_lookup_atom("atom"))
+               if (PL__status.bck_quotes==PL_lookup_atom("atom"))
                { atom=PL_lookup_atom(str);
                  goto case_atom;
                  break;
@@ -1075,11 +1075,11 @@ int Read(pl_stream S, term_t term, term_t vars,
     HP+=1;
   }
 
-  if (!unify(addr,term))
+  if (!pl_unify(addr,term))
     goto FAIL;
   
   if (vars)
-  { if (!unify(vars,bind_vars(0)))
+  { if (!pl_unify(vars,bind_vars(0)))
       goto FAIL;
   }
 
@@ -1087,7 +1087,7 @@ int Read(pl_stream S, term_t term, term_t vars,
   { if (singles==(term_t) 1)
       warn_singletons();
     else
-    { if (!unify(singles,bind_vars(1)))
+    { if (!pl_unify(singles,bind_vars(1)))
         goto FAIL;
     }
   }
@@ -1123,7 +1123,7 @@ int PL_read_term(pl_stream S, term_t term, term_t options)
   if (Seof(S))
   { term_t t=new_atom(ATOM(_end__of__file));
     // FIXME : process eof according to eof_action of the stream !.
-    return(unify(term,t));
+    return(pl_unify(term,t));
   }
 
 // Init options with default

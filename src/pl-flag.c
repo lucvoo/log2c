@@ -65,7 +65,7 @@ int pl_flag(cell_t *key, cell_t *old, cell_t *new)
 
   tmp=PL_new_term_ref();
   *tmp=f->val;
-  if (!unify(old,tmp))
+  if (!pl_unify(old,tmp))
     fail;
 
   new=deref(new);
@@ -101,7 +101,7 @@ int pl_current_flag(cell_t *c, control_t ctrl)
 
   for (;h<hash_flags_size; flag=flags[++h])
     for (;flag; flag=flag->next)
-      if (unify_key(c,&(flag->key))) 	// FIXME : separe c is instantiated/variable ?
+      if (PL_unify_key(c,&(flag->key))) 	// FIXME : separe c is instantiated/variable ?
         { ctxt->hash=h;
           ctxt->flag=flag->next;
           retry;

@@ -7,7 +7,7 @@
 #include "pl-pred.h"
 
 
-int unify(register cell_t *d1, register cell_t *d2)
+int pl_unify(register cell_t *d1, register cell_t *d2)
 { d1=deref(d1);
 
   debut:
@@ -55,7 +55,7 @@ int unify(register cell_t *d1, register cell_t *d2)
 
     case fun_tag: if (d1->val==d2->val)
                   { if (isfun(FUN(dot,2),d2))
-                    { if (!unify(d1+1,d2+1))
+                    { if (!pl_unify(d1+1,d2+1))
                         goto KO;
                       d1=deref(d1+2);
                       d2=d2+2;
@@ -64,7 +64,7 @@ int unify(register cell_t *d1, register cell_t *d2)
                     else
                     { int n=get_arity(d2);
                       for (;n>1;n--)
-		        if (!unify(++d1,++d2))
+		        if (!pl_unify(++d1,++d2))
                           goto KO;
 
                       d1=deref(d1+1);
@@ -87,22 +87,13 @@ int unify(register cell_t *d1, register cell_t *d2)
 }
 
 
-#ifdef	TIME_OF_DAY
-static
-struct timeval t0, t1;
-#else
-static
-time__t t0, t1;
-#endif	// TIME_OF_DAY
-
-
 #ifdef INTERACTIVE
 void write_binding(void)
 { int i, flag=0;
 
-  for (i=0; i<PL_nbr_fv; i++)
-    if (PL_freevar[i] && PL_freevar[i][0]!='_')
-      { Sprintf("\n%s = ",PL_freevar[i]);
+  for (i=0; i<PL__freevar_count; i++)
+    if (PL__freevar[i] && PL__freevar[i][0]!='_')
+      { Sprintf("\n%s = ",PL__freevar[i]);
         pl_write(STK[i+6].celp);
         flag=1;
       }
@@ -120,46 +111,15 @@ int PL_next_goal(void)
 { int c;
 
   PL_write_binding();
-  PL_print_time();
   c=PL_GetSingleChar();
 
-  PL_GetTime(&t0);
-
-  if (c==';')
-    return(1);
-  else
-    PL_print_time();
+  return(c==';');
 } 
 #else
 int PL_next_goal(void)
 { return(0); }
 #endif	// INTERACTIVE
 
-#ifdef TIME_OF_DAY
-void PL_print_time(void)
-{ double t;
-
-  PL_GetTime(&t1);
-
-  t=t1.tv_sec+(t1.tv_usec/1000000.0)-(t0.tv_sec+(t0.tv_usec/1000000.0));
-  printf("time elapsed = %#.2f sec\n",t);
-
-  return;
-}
-#else
-void PL_print_time(void)
-{ double tu, ts;
-
-  PL_GetTime(&t1);
-
-  tu=(t1.utime-t0.utime)/1000000.0;
-  ts=(t1.stime-t0.stime)/1000000.0;
-
-  printf("time elapsed : user=%#.2f / system=%#.2f / clock=%#.2f sec\n",tu,ts,tu+ts);
-
-  return;
-}
-#endif
 
 #if 0
 static void *fp, *hp, *btp;
@@ -257,7 +217,7 @@ int PL_can_unify(cell_t *a, cell_t *b)
 { int r;
   mark_t m;
   Mark(m);
-  r=unify(a,b);
+  r=pl_unify(a,b);
   Undo(m);
   return(r);
 }
@@ -281,6 +241,3 @@ void PL_GetTime(time__t *t)
 }
 #endif
 
-void init_GetTime(void)
-{ PL_GetTime(&t0);
-}

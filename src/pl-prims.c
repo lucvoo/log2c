@@ -152,7 +152,7 @@ int pl_free_variables(cell_t *t, cell_t *fv)
   HP+=(2*n+1);
   (l+2*n)->val=__atom(ATOM(nil));
 
-  return(unify(fv,l));
+  return(pl_unify(fv,l));
 }
 
 static
@@ -735,7 +735,7 @@ int pl_arg(term_t n, term_t term, term_t arg)
 #else
   if ( PL_get_integer(n, &idx) &&  idx>0 )
 #endif
-    return(unify(arg, deref(term)+idx));
+    return(pl_unify(arg, deref(term)+idx));
   else
     fail;
 }
@@ -882,7 +882,7 @@ int pl_hpjw(term_t str, term_t h_val)
   if (!PL_get_atom_chars(str, &s))
     fail;
 
-  h=hpjw(s);
+  h=PL_hpjw(s);
 
   return PL_unify_integer(h_val, h);
 }

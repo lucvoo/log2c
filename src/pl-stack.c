@@ -141,7 +141,7 @@ void segv_handler(int sig)
   
 #include "pl-init.h"
 
-void init_stacks(void)
+void PL_init_stacks(void)
 { int i;
 
   for (i=0;i<NBR_STKS;i++)

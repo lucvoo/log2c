@@ -69,7 +69,7 @@ inline(X = Y)	:+ +> comm(=,X,Y),
 		   +> new_indent(2),
 		   code_Assign(a1,X), code_Assign(a2,Y),
 		   +> new_indent(-2),
-		   +> g('  if (!unify(a1,a2))'),
+		   +> g('  if (!pl_unify(a1,a2))'),
 		   +> g('    goto backtrack;'),
 		   +> g('}').
 

@@ -365,7 +365,7 @@ void PL_unsetenv(const char *name)
 
 #include "pl-init.h"
 
-void init_os(void)
+void PL_init_os(void)
 { InitRandom();
   atexit(tty_atexit);
   clk_tck=sysconf(_SC_CLK_TCK);
