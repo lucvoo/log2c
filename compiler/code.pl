@@ -28,6 +28,7 @@ code_AssignD(V,E):+ E=fun(F,Nf,A),
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 code_X(atom(E),atom(E)).
 code_X(intg(E),intg(E)).
+code_X(flt(E),flt(E)).
 code_X(E,X)	:- get_lv(O,Nv,E,R), flag(rho,L,L), K is L+Nv,
 	           ( O==f  -> X=var(K),    set_lv(r ,Nv,E,R);
 	             O==ft -> X=var_t(Nv), set_lv(rt,Nv,E,R);
@@ -36,6 +37,8 @@ code_X(E,X)	:- get_lv(O,Nv,E,R), flag(rho,L,L), K is L+Nv,
 	             O==r  -> X=ref(K) ).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 code_M(V,E)	:+ E=intg(I), +> g('~w=~d;',[V,I]).
+code_M(V,E)	:+ E=flt(I), warning('No math for float'),
+		   +> g('~w=~d;',[V,I]).
 code_M(V,E)	:+ get_lv(O, Nv,E,_), flag(rho,L,L),
 		   ( O==f  -> warning('unbound var in math');
 		     O==ft -> warning('unbound var in math');

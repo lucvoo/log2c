@@ -47,6 +47,7 @@ load_(N,E)		:- addr(E,A),
 u_r(atom(A),V)		:- map_atom(A,Am),
 			   g('uatom_r(ATOM(~w),~w);',[Am,V]).
 u_r(intg(N),V)		:- g('getintg(deref(~w),~w);',[V,N]).
+u_r(flt(N),V)		:- g('getflt(deref(~w),~w);',[V,N]).
 u_r(void,_).
 u_r(var(N),V)		:- g('FP[~w].celp=(~w);',[N,V]).
 u_r(var_t(N),V)		:- g('TMP_~w=(~w);',[N,V]).
@@ -98,6 +99,7 @@ wrt_(struct(F,N,L),V)	:- comm(wrt_(struct)),
 wrt_(atom(A),V)		:- map_atom(A,Am),
 			   g('(~w)->celp=new_atom(ATOM(~w));',[V,Am]).
 wrt_(intg(N),V)		:- g('(~w)->val=__intg(~w);',[V,N]).
+wrt_(flt(N),V)		:- g('(~w)->val=__flt(~w);',[V,N]).
 wrt_(var(I),V)		:- g('(~w)->val=__var(); FP[~w].celp=(~w);',[V,I,V]).
 wrt_(var_t(I),V)	:- g('(~w)->val=__var(); TMP_~w=(~w);',[V,I,V]).
 wrt_(void,V)		:- g('(~w)->val=__var();',[V]).
@@ -145,6 +147,7 @@ offset(struct(F,A,L),O)	:- map_atom(F,Fm),
 offset(atom(A),O)	:- map_atom(A,Am),
 			   recordz(tradoff, g('HP[~w].val=__atom(ATOM(~w));',[O,Am])).
 offset(intg(N),O)	:- recordz(tradoff, g('HP[~w].val=__intg(~w);',[O,N])).
+offset(flt(N),O)	:- recordz(tradoff, g('HP[~w].val=__flt(~w);',[O,N])).
 offset(var(I),O)	:- recorda(tradoff, g('HP[~w].val=__var(); FP[~w].celp=HP+(~w);',[O,I,O])).
 offset(var_t(I),O)	:- recorda(tradoff, g('HP[~w].val=__var(); TMP_~w=HP+(~w);',[O,I,O])).
 offset(void,O)		:- recordz(tradoff, g('HP[~w].val=__var();',[O])).
@@ -173,6 +176,8 @@ get_(N,atom(A))		:- map_atom(A,Am), mem_arg(N,Arg),
 			   g('getatom(~w,ATOM(~w));',[Arg,Am]).
 get_(N,intg(I))		:- mem_arg(N,Arg),
 			   g('getintg(~w,~w);',[Arg,I]).
+get_(N,flt(I))		:- mem_arg(N,Arg),
+			   g('getflt(~w,~w);',[Arg,I]).
 get_(N,var(I))		:- mem_arg(N,Arg),
 			   g('FP[~w].celp=~w;',[I,Arg]).
 get_(N,var_t(I))	:- mem_arg(N,Arg),

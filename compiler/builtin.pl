@@ -37,23 +37,15 @@ inline(X is Y)	:+ +> comm(is,X,Y),
 
 
 inline(atom(X))		:+ type(atom,X,is_atom).
-
 inline(integer(X))	:+ type(string,X,is_intg).
-
+inline(float(X))	:+ type(string,X,is_float).
 inline(number(X))	:+ type(number,X,is_number).
-
 inline(atomic(X))	:+ type(atomic,X,is_atomic).
-
 inline(var(X))		:+ type(var,X,is_var).
-
 inline(nonvar(X))	:+ type(nonvar,X,'!is_var').
-
 inline(compound(X))	:+ type(compound,X,is_fun).
-
 inline(simple(X))	:+ type(simple,X,'!is_fun').
-
 inline(cons(X))		:+ type(cons,X,is_cons).
-
 inline(is_list(X))	:+ type(list,X,is_list).
 
 %%%%
@@ -99,6 +91,15 @@ inline(X == Y)	:+ Y=intg(I),
 		   code_AssignD(a1,X),
 		   +> new_indent(-2),
 		   +> g('  if (!isintg(~d,a1))',[I]),
+		   +> g('    goto backtrack;'),
+		   +> g('}').
+inline(X == Y)	:+ Y=flt(I),
+		   +> comm((==),X,Y),
+		   +> g('{ cell_t *a1;'),
+		   +> new_indent(2),
+		   code_AssignD(a1,X),
+		   +> new_indent(-2),
+		   +> g('  if (!isflt(~d,a1))',[I]),
 		   +> g('    goto backtrack;'),
 		   +> g('}').
 

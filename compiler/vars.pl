@@ -93,7 +93,9 @@ sublist_var1(_,[],[]).
 sublist_var1(G,[A|X],R)   :- var1(G,A)
                         -> R=[A|Y], sublist_var1(G,X,Y)
                         ;  sublist_var1(G,X,R).
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 to_list(T,R)		:- to_list(T,R,[]).
 
 to_list((A,B),I,O)	:- to_list(A,I,T), to_list(B,T,O).

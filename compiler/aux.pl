@@ -259,7 +259,7 @@ anf3([])	:- !.
 anf3([E|Q])	:- atom(E), !,
 		   anf_rec_atom(E),
 		   anf3(Q).
-anf3([E|Q])	:- ( var(E); integer(E) ), !,
+anf3([E|Q])	:- ( var(E); integer(E); float(E) ), !,
 		   anf3(Q).
 anf3([E|Q])	:- anf4(E),
 		   anf3(Q).
@@ -405,7 +405,7 @@ getlabel1(F,A,L):- map_fun(F/A,Fm),
 map_name_v(var(_,N),M)	:- concat('_var_',N,M).
 map_name_v(atom(E),E).
 map_name_v(intg(E),E).
-%% map_name_v(float(E),E).
+map_name_v(flt(E),E).
 %% map_name_v(string(E),E).
 map_name_v(fun(F,_,A),M):- maplist_map_name_v(A,X),
 			   M=..[F|X].

@@ -58,6 +58,18 @@ void pl_exit(int);
 	}
 
 
+#define getflt(arg,N)			\
+	{ if (isflt(N,arg)) ;		\
+	  else				\
+	  if (is_var(arg))		\
+	    { PL_put_float(arg,N);	\
+	      trail(arg);		\
+	    }				\
+	  else 				\
+	    goto backtrack;		\
+	}
+
+
 #define getref(arg,ref)			\
 	{ if ( !unify(arg,ref) )	\
 	    goto backtrack;		\

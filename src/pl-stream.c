@@ -269,11 +269,7 @@ int Sclose(pl_stream S)
   if (!(S->flags & SF_STATIC))
     free(S->base);
 
-  if (S->funs->Sclose)
-    rval = (S->funs->Sclose)(S);
-  else
-    rval = S_EOF;
-
+  rval = (S->funs->Sclose)(S);
   free(S);
 
   return(rval);
