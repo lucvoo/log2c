@@ -134,24 +134,6 @@ inline(is_list(X)):+ +> comm(list,X),
 		   +> g('}').
 
 
-unify_var(X,Y)	:+ +> g('{ cell_t *a1, *a2;'),
-		   +> new_indent(2),
-		   code_Assign(a1,X),
-		   code_Assign(a2,Y),
-		   +> new_indent(-2),
-		   +> g('  mkref(a1,a2);'),
-		   +> g('  trail(a1);'),
-		   +> g('}').
-
-unify_intg(X,I)	:+ +> g('{ cell_t *a1; int i'),
-		   +> new_indent(2),
-		   code_Assign(a1,X),
-		   code_M(i,I),
-		   +> new_indent(-2),
-		   +> g('  mkintg(a1,i);'),
-		   +> g('  trail(a1);'),
-		   +> g('}').
-
 inline(X = Y)	:+ ( X=var(f,_); X=var(ft,_) ),
                    +> comm(=,X,Y),
 		   unify_var(X,Y), !.
@@ -319,6 +301,25 @@ inline(T)	:+ fun(T,F,N,A), pred_C(det,F,N,C), !,
 		   +> new_indent(-2),
 		   function(C,Aa),
 		   +> g('    goto backtrack;'),
+		   +> g('}').
+
+
+unify_var(X,Y)	:+ +> g('{ cell_t *a1, *a2;'),
+		   +> new_indent(2),
+		   code_Assign(a1,X),
+		   code_Assign(a2,Y),
+		   +> new_indent(-2),
+		   +> g('  mkref(a1,a2);'),
+		   +> g('  trail(a1);'),
+		   +> g('}').
+
+unify_intg(X,I)	:+ +> g('{ cell_t *a1; int i'),
+		   +> new_indent(2),
+		   code_Assign(a1,X),
+		   code_M(i,I),
+		   +> new_indent(-2),
+		   +> g('  mkintg(a1,i);'),
+		   +> g('  trail(a1);'),
 		   +> g('}').
 
 

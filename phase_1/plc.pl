@@ -5,4 +5,4 @@
 
 
 %% main	:- read(F), comp_file(F).
-main	:- '$arg_list'([_,F]), comp_file(F).
+main	:- '$argv'([_,F]), comp_file(F).

@@ -339,7 +339,6 @@ f(F,A)	:- tab(9), flag(indent,N,N), tab(N),
 	   format(F,A).
 f(F)	:- f(F,[]).
 
-comm(curr_C)	:- flag(curr_C,C,C), getlabel(C,Lab), comm(Lab).
 
 comm(H,A,B,C,D)	:- map_name_v(A,Na), map_name_v(B,Nb), map_name_v(C,Nc), map_name_v(D,Nd),
 		   format('/* ~w(~w,~w,~w,~w) */\n',[H,Na,Nb,Nc,Nd]), !.
@@ -349,6 +348,7 @@ comm(H,A,B)	:- map_name_v(A,Na), map_name_v(B,Nb),
 		   format('/* ~w(~w,~w) */\n',[H,Na,Nb]), !.
 comm(H,A)	:- map_name_v(A,Na),
 		   format('/* ~w(~w) */\n',[H,Na]), !.
+comm(curr_C)	:- flag(curr_C,C,C), getlabel(C,Lab), comm(Lab).
 comm(H)		:- format('/* ~w */\n',[H]), !.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

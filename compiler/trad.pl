@@ -56,11 +56,11 @@ u_r(struct(F,N,L),V)	:- comm(u_r(struct)),
 
 unify(struct(F,N,L),V)	:- ( atom(V), (concat('ARG_',_,V);concat('TMP_',_,V))
 			     -> Vn=V,
-			        g('{ if (isvar(~w))',[Vn])
+			        g('{ if (is_var(~w))',[Vn])
 			     ;  gensym('v_',Vn),
 			        g('{ cell_t *~w;',[Vn]),
 			        g('  ~w=~w;',[Vn,V]),
-			        g('  if (isvar(~w))',[Vn])
+			        g('  if (is_var(~w))',[Vn])
 			   ),
 			   g('  { mkref(~w,HP);',[Vn]),
 			   g('    trail(~w);',[Vn]),
@@ -186,7 +186,8 @@ map_called(F,P)	:- ( recorded(preds,F)	% not extern predicate
 
 call_(F,N,L)    :- comm(call_,F,N),
 		   map_called(F/N,P),
-		   call_(P,L).
+		   %% call_(P,L).
+		   g('VM_CALL(~w,~w);',[P,L]).
 
 call_(P,L)	:- g('SP[1]= &&~w;',[L]),
 		   g('SP[2]=FP;'),
