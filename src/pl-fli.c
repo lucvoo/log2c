@@ -134,7 +134,7 @@ int PL_get_list_codes(term_t list, const char **s, unsigned flags)
   succeed;
 
 failed:
-  PL_unfind_ubs(flags);
+  PL_lost_ubs(flags);
   fail;
 }
 
@@ -162,7 +162,7 @@ int PL_get_list_chars(term_t list, const char **s, unsigned flags)
   succeed;
 
 failed:
-  PL_unfind_ubs(flags);
+  PL_lost_ubs(flags);
   fail;
 }
 

@@ -16,24 +16,22 @@
 #include <unistd.h>	// for ...
 
 /* pl-os.c */
-void PL_halt(int status);
-char *PL_OsError(void);
-double PL_CpuTime(void);
-struct tm *PL_LocalTime(long t);
-unsigned long PL_Random(void);
-char *PL_TempFileName(char *id);
-char *PL_CanonicalPath(const char *path, char canon[]);
-char *PL_ExpandFile(const char *file, char expanded[]);
-int PL_AccessFile(const char *path, int mode);
-int PL_ExistsFile(const char *path);
-int PL_ExistsDirectory(const char *path);
-long PL_SizeFile(const char *path);
-int pl_test(term_t file, term_t expand);
-int PL_GetSingleChar(void);
-int PL_setenv(const char *name, const char *val);
-void PL_unsetenv(const char *name);
-char *PL_ReadLink(const char *path);
-int PL_System(const char *cmd);
+char *	PL_OsError(void);
+double	PL_CpuTime(void);
+struct tm *	PL_LocalTime(long t);
+unsigned long	PL_Random(void);
+char *	PL_TempFileName(char *id);
+char *	PL_CanonicalPath(const char *path, char canon[]);
+char *	PL_ExpandFile(const char *file, char expanded[]);
+int 	PL_AccessFile(const char *path, int mode);
+int 	PL_ExistsFile(const char *path);
+int 	PL_ExistsDirectory(const char *path);
+long 	PL_SizeFile(const char *path);
+int	PL_GetSingleChar(void);
+int	PL_setenv(const char *name, const char *val);
+void	PL_unsetenv(const char *name);
+char *	PL_ReadLink(const char *path);
+int	PL_System(const char *cmd);
 
 
 INLINE_DECL

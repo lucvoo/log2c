@@ -120,7 +120,7 @@ typedef struct
 typedef struct pl_stream_t pl_stream_t, *pl_stream;
 #endif
 
-extern pl_stream Stdin, Stdout, Stderr;
-extern pl_stream_t Stdin__, Stdout__, Stderr__;
+// extern pl_stream Stdin, Stdout, Stderr;
+// extern pl_stream_t Stdin__, Stdout__, Stderr__;
 
 #endif	// PL_TYPES_H_

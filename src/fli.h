@@ -379,7 +379,7 @@ int number_vars(cell_t *c)
 int pl_unify(cell_t *, cell_t *);
 
 INLINE_DECL
-int PL_unify(cell_t *a, cell_t *b)
+int PL_try_unify(cell_t *a, cell_t *b)
 { mark_t m;
   int rval;
 

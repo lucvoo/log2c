@@ -101,4 +101,4 @@ void PL_init_argv(int arg_c, char **arg_v)
 }
 
 int pl_argv(term_t a)
-{ return(PL_unify(argv, a)); }
+{ return(pl_unify(argv, a)); }

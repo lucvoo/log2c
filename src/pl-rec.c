@@ -592,7 +592,7 @@ int pl_findall_collect(term_t bag)
     freeAssoc(prev, a);
   }
 
-  return PL_unify(bag, list);
+  return pl_unify(bag, list);
 }
 
 

@@ -32,7 +32,8 @@ int pl_memberchk(term_t e, term_t l)
   Deref(e);
 
   while(is_cons(l))
-  { if (PL_unify(e,l+1)) succeed;
+  { if (PL_try_unify(e,l+1))
+      succeed;
     l=deref(l+2);
   }
   fail;

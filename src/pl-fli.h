@@ -55,14 +55,8 @@ _PL_get_arg(int index, term_t t, term_t a)
   mkrefp(a,deref(arg));
 }
 
-/* fli.h */
-int PL_unify(term_t t1, term_t t2);
-
 /* pl-os.c */
 void PL_halt(int status);
-
-/* pl-proc.c */
-void *PL_call(term_t closure, int extra, term_t *args);
 
 /* pl-char.c */
 atom_t PL_char_to_atom(int c);

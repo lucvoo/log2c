@@ -10,10 +10,6 @@
 #include "pl-inline.h"
 #include "fli.h"
 
-/* pl-proc.c */
-void *PL_call(term_t closure, int extra, term_t *args);
-void *PL_apply(term_t closure, term_t list);
-
 /* pl-prims.c */
 int PL_lengthList(term_t l);
 int PL_unify_list_codes(term_t l, const char *s);

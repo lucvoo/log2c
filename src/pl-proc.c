@@ -5,6 +5,7 @@
 
 #include "Prolog.h"
 #include "pl-fli.h"
+#include "pl-write.h"
 
 extern cell_t *ARGS[17] asm("ARG_0");
 cell_t *ARG_0 = 0;
@@ -122,12 +123,12 @@ void *PL_apply(term_t clos, term_t list)
 
   list=deref(list);
 
-  if (!(t=strip_module(clos, &mod)) ||
-      !PL_get_name_arity(t,&name,&arity) ||
-      !(extra = PL_lengthList(list))>=0 ||
+  if (!(t=strip_module(clos, &mod))		||
+      !PL_get_name_arity(t,&name,&arity)	||
+      !((extra = PL_lengthList(list))>=0)	||
       !(proc = lookup_proc(mod,name,arity+extra)) )
   { PL_write(Stderr, clos);
-    PL_warning("PL_call : fail");
+    PL_warning("PL_apply : fail");
   }
    
   for (n=1;n<=arity;n++)

@@ -67,7 +67,7 @@ int pl_file_name_extension(term_t base, term_t ext, term_t full)
       return(PL_unify_atom_chars(base,buf));
     }
 
-    if (PL_unify_atom(ext,ATOM(_)) && PL_unify(full,base))
+    if (PL_unify_atom(ext,ATOM(_)) && pl_unify(full,base))
       succeed;
     fail;
   }

@@ -8,15 +8,6 @@
 #include "pl-init.h"		// For PL_init_ops()
 
 
-extern atom__t ATOM__fx;
-extern atom__t ATOM__fy;
-extern atom__t ATOM__xf;
-extern atom__t ATOM__yf;
-extern atom__t ATOM__xfx;
-extern atom__t ATOM__xfy;
-extern atom__t ATOM__yfx;
-extern atom__t ATOM__yfy;
-
 typedef struct { short 	type;
                  short	prec;
                } op_type;

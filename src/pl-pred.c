@@ -226,18 +226,3 @@ int PL_not_unify(cell_t *a, cell_t *b)
 { return(! PL_can_unify(a,b)); }
 
 
-#ifdef TIME_OF_DAY
-void PL_GetTime(struct timeval *tv)
-{ gettimeofday(tv,0); }
-#else
-#include <sys/resource.h>       // for getrusage()
-void PL_GetTime(time__t *t)
-{ struct rusage usage;
-
-  getrusage(RUSAGE_SELF, &usage);
-
-  t->utime=usage.ru_utime.tv_sec*1000000.0+usage.ru_utime.tv_usec;
-  t->stime=usage.ru_stime.tv_sec*1000000.0+usage.ru_stime.tv_usec;
-}
-#endif
-

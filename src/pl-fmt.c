@@ -8,10 +8,7 @@
 #include "pl-stream.h"
 #include "pl-fli.h"
 #include "pl-io.h"
-
-int PL_display(pl_stream S, term_t);
-int PL_displayq(pl_stream S, term_t);
-int PL_writeq(pl_stream S, term_t);
+#include "pl-write.h"
 
 
 #define BUFSIZE 	10240

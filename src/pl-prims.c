@@ -14,6 +14,13 @@
 #include "pl-hash.h"
 #include <stdlib.h>	// for qsort()
 
+
+void PL_halt(int status)
+{			// FIXME : do I/O clean-up
+			//         and ``on_halt'' predicate.
+  exit(status);
+}
+
 int PL_lengthList(term_t l)
 { int n=0;
   Deref(l);
@@ -306,13 +313,13 @@ int pl_functor(term_t t, term_t f, term_t a)
            PL_unify_integer(a, arity) );
 
   if (isAtomic(t))
-    return(PL_unify(f, t) &&
+    return(pl_unify(f, t) &&
 	   PL_unify_integer(a, 0) );
 
   try(PL_get_integer(a, &arity));
 
   if (arity == 0 && isAtomic(f))
-    return(PL_unify(t, f));
+    return(pl_unify(t, f));
   else
   if (arity < 0)
     PL_warning("functor/3: illegal arity");
@@ -354,8 +361,12 @@ int pl_univ(term_t t, term_t l)
                         HP++;
                         succeed;
                       }
-        case fun_tag: if (is_cons(l) && PL_unify(t+n,l+1))
-                      { l=l+2; break; }
+        case fun_tag: if (is_cons(l) && pl_unify(t+n,l+1))
+                      { l=l+2;
+			break;
+		      }
+		      else
+		      fail;
         default:      fail;
       }
     }
@@ -363,13 +374,14 @@ int pl_univ(term_t t, term_t l)
   }
   else
   if (is_atomic(t))
-    return(PL_unify_list(l,&h,&l) && PL_unify_nil(l) && PL_unify(t,h));
+    return(PL_unify_list(l,&h,&l) && PL_unify_nil(l) && pl_unify(t,h));
   else
   if (is_var(t))
   { term_t term;
     try(PL_unify_list(l,&h,&l));
     l=deref(l);
-    if (is_nil(l)) return(PL_unify(t,h));
+    if (is_nil(l))
+      return(pl_unify(t,h));
     h=deref(h);
     try(is_atom(h));
 
@@ -536,76 +548,6 @@ int pl_struct_eq(cell_t *t1, cell_t *t2)
   return(rval);
 }
 
-// int pl_atom_concat(term_t a1, term_t a2, term_t a3, control_t ctrl)
-// { const char *s3 = 0;
-//   int l;
-//   struct { int l; const char *s; } *ctxt;
-// 
-//   switch(GetCtrl(ctrl))
-//   { case FIRST_CALL:
-//         { const char *s1=0, *s2=0;
-//           PL_get_atom_chars(a1, &s1);
-// 	  PL_get_atom_chars(a2, &s2);
-// 	  PL_get_atom_chars(a3, &s3);
-// 
-// 	  if (s1 && s2)
-// 	  { char *tmp;
-//             int l1, l2;
-// 
-//             l1 = strlen(s1);
-//             l2 = strlen(s2);
-// 	    tmp = alloca(l1 + l2 + 1);
-// 	    strcpy(tmp, s1);
-// 	    strcpy(tmp+l1, s2);
-// 	    return(PL_unify_atom_chars(a3, tmp));
-// 	  }
-// 	}
-// 
-//         if (!s3)
-//         { // PL_warning("concat/3: instantiation fault(1)");
-//           fail;
-//         }
-//         l=0;
-//         ctxt=AllocCtxt(*ctxt);
-//         ctxt->s=s3;
-//         break;
-//     case NEXT_CALL:
-//         ctxt=GetCtxt(ctrl);
-//         s3=ctxt->s;
-//         l=ctxt->l;
-//         break;
-//     default:
-//         fail;
-//   }
-// 
-// // Backtracking part
-//   { tr_t *tr;
-//     int l3;
-//     char *tmp;
-// 
-//     tr=TP;
-//     l3 = strlen(s3);
-//     tmp = alloca(l3 +1);
-//     while (l <= l3)
-//     { atom_t s1, s2;
-//   
-//       strncpy(tmp, s3, l); tmp[l]='\0';
-//       s1=PL_lookup_atom(tmp);
-//       s2=PL_lookup_atom(s3+l);
-//       l++;
-//       if ( PL_unify_atom(a1, s1) &&
-//            PL_unify_atom(a2, s2) )
-//       { ctxt->l=l;
-//         retry;
-//       }
-//       else
-//       { reset(tr);
-//       }
-//     }
-//     fail;
-//   }
-// }
-
 
 int pl_concat(term_t a1, term_t a2, term_t a3)
 { const char *s1 = 0, *s2 = 0, *s3 = 0;
@@ -716,7 +658,7 @@ int pl_halt(term_t stat)
   if (!PL_get_integer(stat,&n))
     n=1;
 
-  exit(n);
+  PL_halt(n);
   fail;
 }
 

@@ -18,13 +18,6 @@
 
 #define PL_msg(M)
 
-void
-PL_halt(int status)
-{			// FIXME : do I/O clean-up
-			//         and ``on_halt'' predicate.
-  exit(status);
-}
-
 
 // Return a string describing the last OS call error
 char *PL_OsError(void)

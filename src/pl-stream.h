@@ -78,8 +78,6 @@ char 		*Sstring_wmem(pl_stream S);
 pl_stream	Sopen_pipe(const char *cmd, Smode_t mode, int flags);
 long		Stell(pl_stream);
 int		Sseek(pl_stream, long, int);
-int		Sprintf(const char *, ...) __attribute__((format (printf, 1, 2)));
-int		Sprintf_err(const char *, ...) __attribute__((format (printf, 1, 2)));
 int		Sfprintf(pl_stream, const char *, ...) __attribute__((format (printf, 2, 3)));
 
 void		pl_init_stream(void);
@@ -89,7 +87,6 @@ Smode_t		StreamMode(pl_stream);
 Sflag_t		StreamFlags(pl_stream);
 Spos_t *	Sget_pos(pl_stream);
 int		Seof(pl_stream S);
-int		Serror(pl_stream S);
 int		Spasteof(pl_stream S);
 
 #endif	// PL_STREAM_H_

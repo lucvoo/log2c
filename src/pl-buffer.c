@@ -4,10 +4,22 @@
 /****************************************************************/
 
 #include "pl-buffer.h"
+#include <stdlib.h>			// For malloc(3)
 
 static unsigned int current_buffer_no;
 static pl_ubs_t ring_buffers[MAX_RING_BUFFER];
 static pl_ubs_t discardable_buffer;
+
+
+void PL_init_ubs(pl_ubs_t *ubs)
+{ char *s=malloc(240);			// FIXME : test if fail
+  ubs->ptr=ubs->base=s;
+  ubs->end=s+240;
+}
+
+void PL_free_ubs(pl_ubs_t *b)
+{ free(b->base);
+}
 
 pl_ubs_t *PL_find_ubs(unsigned flags)
 { pl_ubs_t *b;
@@ -23,7 +35,7 @@ pl_ubs_t *PL_find_ubs(unsigned flags)
   return(b);
 }
 
-void PL_unfind_ubs(unsigned flags)
+void PL_lost_ubs(unsigned flags)
 { if (flags & BUF_RING)
     current_buffer_no = (current_buffer_no-1) % MAX_RING_BUFFER;
 }

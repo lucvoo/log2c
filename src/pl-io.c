@@ -33,8 +33,8 @@ static pl_file_t plfiles[MAX_FILES]=
   { 0,           ATOM(_user__error), 0 }
 };
 
-pl_file Finput =&(plfiles[0]);
-pl_file Foutput=&(plfiles[1]);
+static pl_file Finput =&(plfiles[0]);
+static pl_file Foutput=&(plfiles[1]);
 
 
 void PL_init_io(void)
