@@ -1,11 +1,7 @@
 %% Copyright (c) 1997 Luc Van Oostenryck. All rights reserved.
 %%
 
-:- initialization(op(1200,xfx,':+')).
-:- initialization(op( 900, fy,'+>')).
-:- use_module([my_dcg]).
-:- use_module(swi).
-term_expansion(I,O)	:- translate(I,O).
+:- module(comp, [ comp_file/1 ] ).
 
 :- use_module([aux, vars, builtin, trad, atoms, map_name, hash]).
 :- use_module([modules,trans]).
@@ -16,15 +12,14 @@ term_expansion(I,O)	:- translate(I,O).
 init_all		:- init_hash,
 			   del_all.
 
-comp_file(File)		:- comp_file(File,[]).
-comp_file(File,Opt)	:- init_all,
-			   file_type(File,Type),
-			   ( Type=user -> comp_user(Opt) ;
-			     Type=module(M,X) -> comp_module(M,X,Opt)
-			                      ;  fail
-			   ).
+comp_file(File)	:- init_all,
+		   file_type(File,Type),
+		   ( Type=user -> comp_user ;
+		     Type=module(M,X) -> comp_module(M,X)
+		                      ;  fail
+		   ).
 
-comp_module(Mod,Export,_Opt) :-
+comp_module(Mod,Export) :-
 		   flag(current_module,_,Mod),
 		   open_files(Mod,_Fc,Fm,_Fh),
 		   set_output(c),
@@ -45,12 +40,12 @@ comp_module(Mod,Export,_Opt) :-
 		   ).
 
 
-comp_user(Opt)	:- flag(current_module,_,user),
+comp_user	:- flag(current_module,_,user),
 		   read_module(Li), 
 		   flag(input_file,Name,Name),
 		   open_files(Name,_Fc,_Fm,_Fh),
 		   set_output(c),
-		   code_user(Li,Opt), !,
+		   code_user(Li), !,
 		   init_hash_jmps, 
 		   close(mod),
 		   nl,
@@ -110,18 +105,18 @@ link(Name)	:- need_modules(Ms),
 			fail
 		   ).
 
-code_user(I,Opt)	:- code_user(I,Opt,T,[]), trad(T).
-code_user(I,_Opt)	:+ get_preds(I,Lpr),
-		           get_query(Lpr,Q,B,P),
-			   get_exports(Us,Xs),
-			   check_import(Us,Xs),
-			   flag(current_module,M,M),
-			   map(export_user_preds,P),	%% export all predicates
-			   init_module(P,Q,Xs),
-			   code_Q(Q),
-			   code_P(P),
-			   code_fin,
-			   code_binding(B).
+code_user(I)	:- code_user(I,T,[]), trad(T).
+code_user(I)	:+ get_preds(I,Lpr),
+	           get_query(Lpr,Q,B,P),
+		   get_exports(Us,Xs),
+		   check_import(Us,Xs),
+		   flag(current_module,M,M),
+		   map(export_user_preds,P),	%% export all predicates
+		   init_module(P,Q,Xs),
+		   code_Q(Q),
+		   code_P(P),
+		   code_fin,
+		   code_binding(B).
 
 code_module(I,X,O)	:- code_module(I,X,O,[]).
 code_module(I,X)	:+ get_preds(I,P),
@@ -203,9 +198,9 @@ code__Pr(pr(F,A,[C|Q]))	:+ code_C(F,A,C,middle),
 			   code__Pr(pr(F,A,Q)).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 code_FPr	:+ ndet_pred(full,Ln),
-		   mapl(code_FPr_ndet,Ln),
+		   mapl(comp:code_FPr_ndet,Ln),
 		   det_pred(full,Ld),
-		   mapl(code_FPr_det,Ld).
+		   mapl(comp:code_FPr_det,Ld).
 
 code_FPr_ndet([F,N,C]) :+
 		+> comm_pred(F,N),
@@ -325,14 +320,14 @@ code_G(G,L)		:+ code_call(G,L).
 
 code_G_or(fail,F,L_,L)	:+ L_=backtrack,
 			   +> alt_2,
-			   mapl(reset_fvar,F),
+			   mapl(comp:reset_fvar,F),
 			   flag(curr_C,Li,Li), label(Li,L),
 			   +> fl_(L).
 
 code_G_or((G1;G2),F,L_,L) :+ flag(curr_C,Li,Li), label(Li,L_),
 			   +> fl(L_),
 			   +> alt_1(Lb),
-			   mapl(reset_fvar,F),
+			   mapl(comp:reset_fvar,F),
 			   find_fvar(G1,Fv),
 			   code_G(G1,L),
 			   code_G_or(G2,Fv,Lb,L).
@@ -340,7 +335,7 @@ code_G_or((G1;G2),F,L_,L) :+ flag(curr_C,Li,Li), label(Li,L_),
 code_G_or(G,F,L_,L)	:+ flag(curr_C,Li,Li), label(Li,L_),
 			   +> fl(L_),
 			   +> alt_2,
-			   mapl(reset_fvar,F),
+			   mapl(comp:reset_fvar,F),
 			   code_G(G,L),
 			   flag(curr_C,Li,Li), label(Li,L),
 			   +> fl_(L).
@@ -374,7 +369,7 @@ code_Q(Q)	:- trans_term(Q,Qt),
 code_binding(Bs)   :+
 	+> g0('\n\n#ifdef	INTERACTIVE'),
 	+> g0('const char *PL_freevar[] =\n{'),
-	mapl(binding,Bs),
+	mapl(comp:binding,Bs),
 	+> g0('};\n'),
 	+> g0('int PL_nbr_fv = sizeof(PL_freevar)/sizeof(PL_freevar[0]);'),
 	+> g0('#endif\n\n').

@@ -1,6 +1,5 @@
 // Copyright (c) 1997 Luc Van Oostenryck. All rights reserved.
 //
-//
 
 // pl-ISO.c
 NDET(atom_concat,3,pl_atom_concat)

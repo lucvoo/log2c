@@ -21,6 +21,8 @@ SRC = \
 	util.pl \
 	vars.pl \
 	var_util.pl \
+	\
+	plc.pl
 
 
 GEN     = pl-ext.pl
@@ -36,7 +38,7 @@ all_plc: ${PLC}
 ########################################################################
 
 ${PLC}: ${SRC} pl-ext.pl
-	pl -o $@ -c comp.pl
+	pl -o $@ -c plc.pl
 
 pl-ext.pl: ${src_dir}/pl-ext.def ${src_dir}/pl-ext.h
 	echo ":- module('$*',[ foreign_pred_builtin/4 ])." > $@
