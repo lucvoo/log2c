@@ -37,7 +37,7 @@ ${PLC}: ${SRC} pl-ext.pl
 	pl -o $@ -c comp.pl
 
 pl-ext.pl: ${src_dir}/pl-ext.def ${src_dir}/pl-ext.h
-	echo ":- module('$*',[ pred_C/4 ])." > $@
+	echo ":- module('$*',[ foreign_pred_builtin/3 ])." > $@
 	echo >> $@
 	gcc -E -P -x c-header -DPL ${src_dir}/pl-ext.h | grep -v "^[ ]*$$" >> $@
 

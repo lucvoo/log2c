@@ -19,6 +19,7 @@
 		, fl/1, fl_/1
 		, g/1,	g/2,	g0/1,	g0/2, f/1, f/2
 		, comm/1,	comm/2,	comm/3,	comm/4, comm/5
+		, foreign_pred/3
 		, ndet_pred/2, det_pred/2, foreign_preds/1
 		, comp_C/1
 		, flag2/3
@@ -36,28 +37,33 @@
 :- use_module('pl-ext').
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+foreign_pred(PI,C,D)	:- foreign_pred_builtin(PI,C,D).
+foreign_pred(PI,C,D)	:- recorded(reg_foreign, reg_foreign(PI,C,D)).
+
+
 ndet_pred(T,L)	:- findall(R,ndet_pred_(T,R),Lt), list_to_set(Lt,L).
 
-ndet_pred_(F,N,C)	:- recorded(directive,register_foreign(F,N,C,ndet)).
-ndet_pred_(F,N,C)	:- pred_C(ndet,F,N,C).
+ndet_pred_(F,N,C)	:- foreign_pred(F/N,C,ndet).
 
 ndet_pred_(full,Np)	:- ndet_pred_(F,N,C), Np=[F,N,C].
 ndet_pred_(spec,Np)	:- ndet_pred_(F,N,_), Np=F/N.
 ndet_pred_(functor,Np)	:- ndet_pred_(F,_,_), Np=F.
 
+
 det_pred(T,L)		:- findall(R,det_pred_(T,R),Lt), list_to_set(Lt,L).
 
-det_pred_(F,N,C)	:- recorded(directive,register_foreign(F,N,C,det)).
-det_pred_(F,N,C)	:- pred_C(det,F,N,C).
+det_pred_(F,N,C)	:- foreign_pred(F/N,C,det).
 
 det_pred_(full,Np)	:- det_pred_(F,N,C), Np=[F,N,C].
 det_pred_(spec,Np)	:- det_pred_(F,N,_), Np=F/N.
 det_pred_(functor,Np)	:- det_pred_(F,_,_), Np=F.
 
+
 foreign_preds(L)	:- findall(P,preds_C_(P),Lt), sort(Lt,L).
 
-preds_C_(F/N)	:- recorded(directive,register_foreign(F,N,_,_)).
-preds_C_(F/N)	:- pred_C(_,F,N,_).
+preds_C_(F/N)	:- foreign_pred(F/N,_,_).
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 file_type(F,T)	:- file_base_name(F,Name),
 		   file_name_extension(Base,Ext,Name),

@@ -192,18 +192,24 @@ directive(meta_pred,2).
 directive(meta,1).
 directive(module_transparent,1).
 directive(op,3).
+directive(register_foreign,3).
 %% DEBUG directive(determinism,2).
 
 
-do_directive(module_transparent(P))	:- do_directive(meta(P)).
-do_directive(meta_pred(P,A))		:- recordz(meta_pred,meta_pred(P,A)),
-					   recordz(meta,P).
+do_directive(module_transparent(P))	:-
+		do_directive(meta(P)).
+do_directive(meta_pred(P,A))		:-
+		recordz(meta_pred,meta_pred(P,A)), recordz(meta,P).
 do_directive(meta(P))		:- recordz(meta,P).
 do_directive(meta((P,L)))	:- recordz(meta,P), do_directive(meta(L)).
 do_directive(op(P,T,N))		:- op(P,T,N).
 do_directive(use_module(M))	:- recorda(use_module,M).
-do_directive(reexport(M))	:- recorda(export_module,M), recorda(use_module,M).
-%% DEBUG do_directive(determinism(P,D))	:- recorda(determinism,determinism(P,D)).
+do_directive(reexport(M))	:-
+		recorda(export_module,M), recorda(use_module,M).
+do_directive(register_foreign(T,C,D))	:-
+		recorda(reg_foreign,reg_foreign(T,C,D)).
+%% DEBUG do_directive(determinism(P,D))	:-
+%% 		recorda(determinism,determinism(P,D)).
 
 do_directive(D)			:- recordz(directive,D).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -285,7 +285,7 @@ inline(Call)	:+ fun(Call,call,N,[Clos|Arg]),
 		   +> g('}').
 
 
-inline(T)	:+ fun(T,F,N,A), pred_C(det,F,N,C), !,
+inline(T)	:+ fun(T,F,N,A), foreign_pred(F/N,C,det), !,
 		   decl(N,Aa),
 		   +> new_indent(2),
 		   assign(Aa,A),

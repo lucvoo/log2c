@@ -150,7 +150,7 @@ check_module(P)		:- %% predicate imported from a module
 			   recorded(module_export,module_export(_,P)), !.
 check_module(P)		:- %% private predicate
 			   recorded(preds,P), !.
-check_module(F/N)	:- pred_C(ndet,F,N,_).
+check_module(F/N)	:- foreign_pred(F/N,_,ndet).
 check_module(F/N)	:- ( recorded(undef_pred,undef_pred(F,N))
 			     -> true
 			     ;  recorda(undef_pred,undef_pred(F,N)),
