@@ -62,7 +62,7 @@ unify(struct(F,N,L),V)	:- ( atom(V), (concat('ARG_',_,V);concat('TMP_',_,V))
 			        g('  ~w=~w;',[Vn,V]),
 			        g('  if (is_var(~w))',[Vn])
 			   ),
-			   g('  { mkref(~w,HP);',[Vn]),
+			   g('  { mkrefp(~w,HP);',[Vn]),
 			   g('    trail(~w);',[Vn]),
 			   new_indent(4),
 			   trad_off(struct(F,N,L)),
@@ -186,11 +186,11 @@ map_called(F,P)	:- ( recorded(preds,F)	% not extern predicate
 
 call_(F,N,L)    :- comm(call_,F,N),
 		   map_called(F/N,P),
-		   %% call_(P,L).
-		   g('VM_CALL(~w,~w);',[P,L]).
+		   call_(P,L).
+		   %% DEBUG g('VM_CALL(~w,~w);',[P,L]).
 
-call_(P,L)	:- g('SP[1]= &&~w;',[L]),
-		   g('SP[2]=FP;'),
+call_(P,L)	:- g('SP[1].cod= &&~w;',[L]),
+		   g('SP[2].stk=FP;'),
                    g('FP=SP+2;'),
                    g('~w;',[P]).
 
@@ -240,7 +240,7 @@ halt_		:- g0('#ifdef MAIN_LOOP\n\tget_time(&t1); print_time(); goto main_loop;\n
 
 saveargs(N)     :- comm(saveargs,N),
                    between(1,N,I),
-                   g('FP[~w+4]=ARG_~w;',[I,I]), fail;
+                   g('FP[~w+4].celp=ARG_~w;',[I,I]), fail;
                    true.
 
 %% restoreargs(N)	:- comm(restoreargs,N),

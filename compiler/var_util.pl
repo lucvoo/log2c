@@ -1,3 +1,8 @@
+/****************************************************************/
+/* Copyright (c) 1998 Luc Van Oostenryck. All rights reserved.	*/
+/*								*/
+/****************************************************************/
+
 :- module(var_util, [ member_v/2
                     , memberchk_v/2
                     , subtract_v/3

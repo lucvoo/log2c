@@ -84,7 +84,8 @@ get_query(I,Q,B,O)	:- select(I,q(Lq),O), check_query(Lq,Q,B), !.
 get_query(_,_,_,_)	:- fatal('no query given').
 
 check_query([cl(B,Q)],Q,B).
-check_query(_ ,_,_)	:- fatal('several queries given').
+check_query(L ,Q,B)	:- %% format(user_error, ' L = ~w Q = ~w B = ~w\n', [ L, Q, B]),
+			   fatal('several queries given').
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -191,7 +192,7 @@ directive(meta_pred,2).
 directive(meta,1).
 directive(module_transparent,1).
 directive(op,3).
-directive(determinism,2).
+%% DEBUG directive(determinism,2).
 
 
 do_directive(module_transparent(P))	:- do_directive(meta(P)).
@@ -202,7 +203,7 @@ do_directive(meta((P,L)))	:- recordz(meta,P), do_directive(meta(L)).
 do_directive(op(P,T,N))		:- op(P,T,N).
 do_directive(use_module(M))	:- recorda(use_module,M).
 do_directive(export_module(M))	:- recorda(export_module,M), recorda(use_module,M).
-do_directive(determinism(P,D))	:- recorda(determinism,determinism(P,D)).
+%% DEBUG do_directive(determinism(P,D))	:- recorda(determinism,determinism(P,D)).
 
 do_directive(D)			:- recordz(directive,D).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
