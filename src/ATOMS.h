@@ -55,7 +55,6 @@
 #define ATOM_univ 		 ATOM___3D_2E_2E
 
 extern atom__t ATOM__;
-extern atom__t ATOM___25g;
 extern atom__t ATOM___2B_3E;
 extern atom__t ATOM___3A_2B;
 extern atom__t ATOM__alias;
@@ -74,7 +73,6 @@ extern atom__t ATOM__execute;
 extern atom__t ATOM__exist;
 extern atom__t ATOM__fail;
 extern atom__t ATOM__false;
-extern atom__t ATOM__file__name;
 extern atom__t ATOM__fx;
 extern atom__t ATOM__fy;
 extern atom__t ATOM__heap__stack;
@@ -95,7 +93,6 @@ extern atom__t ATOM__off;
 extern atom__t ATOM__on;
 extern atom__t ATOM__output;
 extern atom__t ATOM__past;
-extern atom__t ATOM__pipe;
 extern atom__t ATOM__quiet;
 extern atom__t ATOM__quoted;
 extern atom__t ATOM__read;
@@ -107,11 +104,9 @@ extern atom__t ATOM__runtime;
 extern atom__t ATOM__sheap__stack;
 extern atom__t ATOM__singletons;
 extern atom__t ATOM__space__args;
-extern atom__t ATOM__subterm__positions;
 extern atom__t ATOM__syntax__errors;
 extern atom__t ATOM__system;
 extern atom__t ATOM__system__time;
-extern atom__t ATOM__term__positions;
 extern atom__t ATOM__text;
 extern atom__t ATOM__trail__stack;
 extern atom__t ATOM__true;

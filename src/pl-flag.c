@@ -140,7 +140,9 @@ flag_2_t lookup_flag_2(term_t key1, term_t key2, int new)
   if ( (h1=SimpleHashValue(key1)) && (h2=SimpleHashValue(key2)) )
     h=(h1+h2) % hash_flag_2_size;
   else
-    return(0);			// FIXME : msg : illegal key
+  { // FIXME : msg : illegal key
+    return(0);
+  }
 
   for (f=flag_2_tbl[h]; f; f=f->next)
      if ( (key1->val==f->key1.val) && (key2->val==f->key2.val) )

@@ -30,7 +30,7 @@ inline(X is Y)	:+ +> comm(is,X,Y),
 		   code_AssignD(c,X),
 		   +> new_indent(-2),
 		   ( ( X=var(f,_); X=var(ft,_) )
-		     -> +> g('  mkintg(c, i);'), +> g('  trail(c);')
+		     -> +> g('  PL_put_integer(c, i);'), +> g('  trail(c);')
 		     ;  +> g('  getintg(c, i);')
 		   ),
 		   +> g('}').
@@ -240,7 +240,7 @@ unify_intg(X,I)	:+ +> g('{ cell_t *a1; int i'),
 		   code_Assign(a1,X),
 		   code_M(i,I),
 		   +> new_indent(-2),
-		   +> g('  mkintg(a1,i);'),
+		   +> g('  PL_put_integer(a1,i);'),
 		   +> g('  trail(a1);'),
 		   +> g('}').
 

@@ -10,11 +10,9 @@
 #include "Prolog.h"
 
 /* pl-io.c */
-void init_io(void);
-void exit_io(void);
-pl_stream Output_Stream(term_t s);
-pl_stream Input_Stream(term_t s);
-pl_stream OutStream(void);
-pl_stream InStream(void);
+pl_stream PL_Output_Stream(term_t s);
+pl_stream PL_Input_Stream(term_t s);
+pl_stream PL_OutStream(void);
+pl_stream PL_InStream(void);
 
 #endif

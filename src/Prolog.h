@@ -14,6 +14,7 @@
 #include "pl.h"
 #include "pl-inline.h"
 #include "fli.h"
+#include "pl-fli.h"
 #include "pl-pred.h"
 #include "pl-prims.h"
 #include "pl-ext.h"

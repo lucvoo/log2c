@@ -202,7 +202,7 @@ term_t bind_vars(int single)
   for (;;v=v->next)
   { if (v->name && !(single && (v->times!=1 || v->name[0]=='_')) )
     { HP[0].val=__fun(FUN(unify,2)); 
-      HP[1].val=__atom(PL_lookup_atom(v->name)); 
+      HP[1].val=__atom(PL_new_atom(v->name)); 
       HP[2].celp=v->ref; 
       HP[3].val=__cons(); 
       HP[4].celp=HP; 
@@ -624,7 +624,7 @@ tok_type get_token(pl_stream S)
     case 'u':  case 'v': case 'w': case 'x': case 'y':
     case 'z':  
     case_low:  str=read_name(S, c);
-	       atom=PL_lookup_atom(str);
+	       atom=PL_new_atom(str);
 	       free(str);
 	       goto case_atom;
     case '_':  if (!isAlphaNum(Peekc(S)))
@@ -696,24 +696,24 @@ tok_type get_token(pl_stream S)
 	       break;
     case '\'': str=read_quoted_string(S, c);
                if (!str) goto error;
-	       atom=PL_lookup_atom(str);
+	       atom=PL_new_atom(str);
 	       goto case_atom;
     case '\"': str=read_quoted_string(S, c);
                if (!str) goto error;
-               if (PL__status.dbl_quotes==PL_lookup_atom("chars"))
+               if (PL__status.dbl_quotes==PL_new_atom("chars"))
                { token.type=T_STRING;
                  token.tok_val.ref=PL_mk_char_list(str);
                  break;
                }
                else
-               if (PL__status.dbl_quotes==PL_lookup_atom("codes"))
+               if (PL__status.dbl_quotes==PL_new_atom("codes"))
                { token.type=T_STRING;
                  token.tok_val.ref=PL_mk_code_list(str);
                  break;
                }
                else
-               if (PL__status.dbl_quotes==PL_lookup_atom("atom"))
-               { atom=PL_lookup_atom(str);
+               if (PL__status.dbl_quotes==PL_new_atom("atom"))
+               { atom=PL_new_atom(str);
                  goto case_atom;
                  break;
                }
@@ -721,20 +721,20 @@ tok_type get_token(pl_stream S)
                  goto error;
     case '`':  str=read_quoted_string(S, c);
                if (!str) goto error;
-               if (PL__status.bck_quotes==PL_lookup_atom("chars"))
+               if (PL__status.bck_quotes==PL_new_atom("chars"))
                { token.type=T_STRING;
                  token.tok_val.ref=PL_mk_char_list(str);
                  break;
                }
                else
-               if (PL__status.bck_quotes==PL_lookup_atom("codes"))
+               if (PL__status.bck_quotes==PL_new_atom("codes"))
                { token.type=T_STRING;
                  token.tok_val.ref=PL_mk_code_list(str);
                  break;
                }
                else
-               if (PL__status.bck_quotes==PL_lookup_atom("atom"))
-               { atom=PL_lookup_atom(str);
+               if (PL__status.bck_quotes==PL_new_atom("atom"))
+               { atom=PL_new_atom(str);
                  goto case_atom;
                  break;
                }
@@ -769,7 +769,7 @@ tok_type get_token(pl_stream S)
     case '^':
     case '~':
     case_sym:  str=read_symbol(S,c);
-               atom=PL_lookup_atom(str);
+               atom=PL_new_atom(str);
                goto case_atom;
     case_atom: token.tok_val.atom=atom;
                if (Peekc(S)=='(')
@@ -816,7 +816,7 @@ void mk_unary(atom_t atom, node_t *arg,node_t *node_out)
     node_out->cell=arg->cell;
   }
   else
-  { fun_t fun=PL_lookup_fun(atom,1);
+  { fun_t fun=PL_new_functor(atom,1);
     cell_t *addr=new_struct(fun,1);
 
     addr[1]=arg->cell;
@@ -826,7 +826,7 @@ void mk_unary(atom_t atom, node_t *arg,node_t *node_out)
 
 static inline
 void mk_binary(atom_t atom, node_t *left, node_t *right, node_t *node_out)
-{ fun_t fun=PL_lookup_fun(atom,2);
+{ fun_t fun=PL_new_functor(atom,2);
   cell_t *addr=new_struct(fun,2);
 
   addr[1]=left ->cell;
@@ -844,7 +844,7 @@ cell_t *read_fun(pl_stream S, atom_t functor, int level,
   else level++;
 
   switch(token.type)
-  { case ')': addr=new_struct(PL_lookup_fun(functor,level),level);
+  { case ')': addr=new_struct(PL_new_functor(functor,level),level);
               addr[level]=elem.cell;
               node_out->prec=0;
 	      node_out->cell.celp=addr;
@@ -1229,7 +1229,7 @@ int pl_number_atom(term_t num, term_t a)
       fail;
     }
 
-    if (!Read(S,num,0,0,0) || !isNumber(num))
+    if (!Read(S,num,0,0,0) || !PL_is_number(num))
     { // err_msg
       Sclose(S);
       fail;

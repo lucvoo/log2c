@@ -42,7 +42,7 @@ int pl_statistics(term_t key, term_t pair)
 
   Deref(key);
 
-  if (!isAtom(key))
+  if (!is_atom(key))
   { // FIXME : error msg
     fail;
   }

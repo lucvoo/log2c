@@ -31,34 +31,28 @@ void pl_exit(int);
 	{ if (isatom(A,arg)) ;		\
 	  else				\
 	  if (is_var(arg))		\
-	    { mkatom(arg,A);		\
+	    { PL_put_atom(arg,A);	\
 	      trail(arg);		\
 	    }				\
 	  else				\
 	    goto backtrack;		\
 	}
 
-#define getatom_(V,A)			\
-	{ cell_t *arg=V;		\
-	 				\
-	  if (isatom(A,arg)) ;		\
-	  else				\
-	  if (is_var(arg))		\
-	  { mkatom(arg,A);		\
-	    trail(arg);			\
-	  }				\
+
+#define GETINTG(C,I)			\
+	{ int __i;			\
+	  if (PL_eval_((C),&__i))	\
+	    I=__i;			\
 	  else				\
 	    goto backtrack;		\
 	}
-
-#define GETINTG(C,I)	{ int __i; if (PL_eval_((C),&__i)) I=__i; else goto backtrack; }
 
 
 #define getintg(arg,N)			\
 	{ if (isintg(N,arg)) ;		\
 	  else				\
 	  if (is_var(arg))		\
-	    { mkintg(arg,N);		\
+	    { PL_put_integer(arg,N);	\
 	      trail(arg);		\
 	    }				\
 	  else 				\
@@ -78,21 +72,7 @@ void pl_exit(int);
 	  if (isatom(A,v)) ;		\
 	  else				\
 	  if (is_var(v))		\
-	  { mkatom(v,A);		\
-	    trail(v);			\
-	  }				\
-	  else				\
-	    goto backtrack;		\
-	}
-
-
-#define uintg_r(N,V)			\
-	{ cell_t *v=deref(V);		\
-					\
-	  if (isntg(N,v)) ;		\
-	  else				\
-	  if (is_var(v))		\
-	  { mkintg(v,N);		\
+	  { PL_put_atom(v,A);		\
 	    trail(v);			\
 	  }				\
 	  else				\
@@ -158,7 +138,7 @@ void init(void *L)
 
 INLINE_DECL
 void cut_deep(void)
-{ while (BTP>=FP)			// FIXME : SEGV in : main :- p -> ! ; true.
+{ while (BTP>=FP)	// FIXME : SEGV in : main :- p -> ! ; true.
   BTP=BTP[1].stk;
 }
 

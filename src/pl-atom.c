@@ -24,7 +24,7 @@ atom_t add_atom(const char *s, hash_t H, hash_t h)
   return(a);
 }
 
-atom_t PL_lookup_atom(const char *s)
+atom_t PL_new_atom(const char *s)
 { hash_t h, H;
   atom_t a;
   const char *copy;
@@ -50,8 +50,8 @@ int pl_current_atom(cell_t *c, control_t ctrl)
 
   switch(GetCtrl(ctrl))
   { case FIRST_CALL:
-	if (isAtom(c))	succeed;
-	if (!isVar(c)) fail;	
+	if (PL_is_atom(c))	succeed;
+	if (!PL_is_var(c)) fail;	
 
 	ctxt=AllocCtxt(*ctxt);
 	h=0;

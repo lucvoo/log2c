@@ -198,18 +198,6 @@ void mkrefp(cell_t *v, cell_t *c)
   return;
 }
 
-INLINE_DECL 
-void mkintg(cell_t *v, long N)
-{ v->val=__intg(N); 
-  return;
-}
-
-INLINE_DECL 
-void mkatom(cell_t *v, atom_t A)
-{ v->celp=&(A->atom); 
-  return;
-}
-
 
 INLINE_DECL 
 void trail(cell_t *addr)

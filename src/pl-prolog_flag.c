@@ -75,7 +75,7 @@ inline static
 int Setpf_atom(const char *key, atom_t val, int lock, atom_t *addr)
 { pflag_t f;
 
-  if ((f=lookup_pflag(PL_lookup_atom(key),1)))
+  if ((f=lookup_pflag(PL_new_atom(key),1)))
     return SetAtom(f,val,lock,addr);
   else
     fail;
@@ -83,7 +83,7 @@ int Setpf_atom(const char *key, atom_t val, int lock, atom_t *addr)
 
 inline static
 int Setpf_str(const char *key, const char *val, int lock, atom_t *addr)
-{ return(Setpf_atom(key,PL_lookup_atom(val), lock, addr)); }
+{ return(Setpf_atom(key,PL_new_atom(val), lock, addr)); }
 
 
 inline static
@@ -102,7 +102,7 @@ inline static
 int Setpf_int(const char *key, long val, int lock, int *addr)
 { pflag_t f;
 
-  if ((f=lookup_pflag(PL_lookup_atom(key),1)))
+  if ((f=lookup_pflag(PL_new_atom(key),1)))
     return SetInt(f,val,lock,addr,T_INTG);
   else
     fail;
@@ -112,7 +112,7 @@ inline static
 int Setpf_boo(const char *key, long val, int lock, int *addr)
 { pflag_t f;
 
-  if ((f=lookup_pflag(PL_lookup_atom(key),1)))
+  if ((f=lookup_pflag(PL_new_atom(key),1)))
     return SetInt(f,val,lock,addr,T_BOOL);
   else
     fail;

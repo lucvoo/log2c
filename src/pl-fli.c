@@ -37,31 +37,6 @@ PL_new_term_ref(void)
 
 
 		 /*******************************
-		 *	       ATOMS		*
-		 *******************************/
-
-atom_t
-PL_new_atom(const char *s)
-{ return PL_lookup_atom(s); }
-
-const char *
-PL_atom_chars(atom_t a)
-{ return a->name; }
-
-functor_t
-PL_new_functor(atom_t f,  int a)
-{ return PL_lookup_fun(f, a); }
-
-atom_t
-PL_functor_name(functor_t f)
-{ return f->functor; }
-
-int
-PL_functor_arity(functor_t f)
-{ return f->arity; }
-
-
-		 /*******************************
 		 *	       CONS-*		*
 		 *******************************/
 #include <stdarg.h>
@@ -107,7 +82,7 @@ char *malloc_string(char *s)
   char *m;
 
   n=strlen(s)+1;
-  m=malloc(n);		// FIXME : check for malloc
+  m=malloc(n);		// FIXME : check if fail
   memcpy(m,s,n);
  
   return(m);
@@ -249,41 +224,27 @@ int
 PL_get_functor(term_t t, functor_t *f)
 { Deref(t);
 
-  if ( isTerm(t) )
+  if ( is_term(t) )
   { *f = get_fun(t);
     succeed;
   }
-  if ( isAtom(t) )
-  { *f = PL_lookup_fun(get_atom(t), 0);
-    succeed;
-  }
+
+// Functor have always arity > 0
+//   if ( PL_is_atom(t) )
+//   { *f = PL_new_functor(get_atom(t), 0);
+//     succeed;
+//   }
 
   fail;
 }
 
 
 
-// int
-// PL_get_arg_(int index, term_t t, term_t *a)
-// { Deref(t);
-// 
-//   if (is_fun(t))
-//   { int arity = get_arity(t);
-// 
-//     if ( index >0 && index <= arity )
-//     { *a=t+index;
-//       succeed;
-//     }
-//   }
-// 
-//   fail;
-// }
-
 int
 PL_get_arg(int index, term_t t, term_t a)
 { Deref(t);
 
-  if (isTerm(t))
+  if (is_term(t))
   { int arity = get_arity(t);
 
     if ( index >0 && index <= arity )
@@ -300,7 +261,7 @@ int
 PL_get_list(term_t l, term_t h, term_t t)
 { Deref(l);
 
-  if (isCons(l))
+  if (is_cons(l))
   { mkrefp(h,(l+1));
     mkrefp(t,(l+2));
     succeed;
@@ -325,7 +286,7 @@ int
 PL_get_head(term_t l, term_t h)
 { Deref(l);
 
-  if (isList(l))
+  if (is_list(l))
   { mkrefp(h,(l+1));
     succeed;
   }
@@ -336,7 +297,7 @@ int
 PL_get_tail(term_t l, term_t t)
 { Deref(l);
 
-  if (isList(l))
+  if (is_list(l))
   { mkrefp(t,(l+2));
     succeed;
   }
@@ -344,94 +305,9 @@ PL_get_tail(term_t l, term_t t)
 }
 
 
-int
-PL_get_nil(term_t l)
-{ return(isNil(l));
-}
-
-
-
-		 /*******************************
-		 *		IS-*		*
-		 *******************************/
-
-int
-PL_is_variable(term_t t)
-{ return isVar(t);
-}
-
-
-int
-PL_is_atom(term_t t)
-{ return isAtom(t);
-}
-
-
-int
-PL_is_integer(term_t t)
-{ return isInteger(t);
-}
-
-
-int
-PL_is_compound(term_t t)
-{ return isTerm(t);
-}
-
-
-int
-PL_is_functor(term_t t, functor_t f)
-{ return(f==get_fun(deref(t)));
-}
-
-
-int
-PL_is_list(term_t t)
-{ return(isList(t));
-}
-
-
-int
-PL_is_atomic(term_t t)
-{ return(isAtomic(t));
-}
-
-
-int
-PL_is_number(term_t t)
-{ return(isNumber(t));
-}
-
-
-
 		 /*******************************
 		 *             PUT-*  		*
 		 *******************************/
-
-void
-PL_put_variable(term_t t)
-{ mkrefp(t,new_var());
-}
-
-
-void
-PL_put_atom(term_t t, atom_t a)
-{ mkatom(t,a);
-}
-
-
-void
-PL_put_atom_chars(term_t t, const char *s)
-{ atom_t a=PL_lookup_atom(new_str(s));
-  PL_put_atom(t,a);
-}
-
-
-void
-PL_put_integer(term_t t, long i)
-{ mkintg(t,i);
-}
-
 
 
 void
@@ -439,7 +315,7 @@ PL_put_functor(term_t t, functor_t f)
 { int arity = f->arity;
 
   if ( arity == 0 )
-  { mkatom(t,f->functor);
+  { PL_put_atom(t,f->functor);
   } else
   { cell_t *a=new_struct(f,arity);
 
@@ -460,25 +336,13 @@ PL_put_list(term_t l)
 }
 
 
-void
-PL_put_nil(term_t l)
-{ mkatom(l,ATOM(nil));
-}
-
-
-void
-PL_put_term(term_t t1, term_t t2)
-{ mkrefp(t1,deref(t2));
-}
-
-
 		 /*******************************
 		 *	       UNIFY		*
 		 *******************************/
 
 int
 PL_unify_atom_chars(term_t t, const char *chars)
-{ return(PL_unify_atom(t,PL_lookup_atom(new_str(chars))));
+{ return(PL_unify_atom(t,PL_new_atom(chars)));
 }
 
 

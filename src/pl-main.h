@@ -13,7 +13,7 @@ cell_t    *H_STK=0;
 cell_t   *SH_STK=0;
 tr_t	 *TR_STK=0;
 
-void *PC=0;
+// void *PC=0;
 
 #ifndef	SP_IN_REG
 pl_stack_t *SP=0;

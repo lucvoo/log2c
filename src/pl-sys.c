@@ -12,7 +12,7 @@
 int pl_shell(term_t command, term_t status)
 { const char *cmd;
 
-  if (!PL_get_atom_chars(command,&cmd))	// FIXME : use PL_get_chars
+  if (!PL_get_atom_chars(command,&cmd))	// FIXME : use PL_get_chars ?
     PL_warning("shell/2: instantiation fault");
   else
     return(PL_unify_integer(status,PL_System(cmd)));
@@ -94,7 +94,7 @@ void PL_init_argv(int arg_c, char **arg_v)
 
   while(arg_c--)
   { a[0].val=__cons();
-    a[1].val=__atom(PL_lookup_atom(*arg_v++));
+    a[1].val=__atom(PL_new_atom(*arg_v++));
     a+=2;
   }
   a[0].val=__nil();

@@ -38,7 +38,7 @@ int exist_fun(atom_t functor, int arity)
   fail;
 }
 
-fun_t PL_lookup_fun(atom_t functor, int arity)
+fun_t PL_new_functor(atom_t functor, int arity)
 { hash_t h;
   fun_t f;
 
@@ -117,7 +117,8 @@ int pl_current_functor(cell_t *f, cell_t *n, control_t ctrl)
   for (;h<PL__funs_hash_size; fun=PL__funs[++h])
     for (;fun; fun=fun->next)
       if ( fun->functor==get_atom(f))
-        { mkintg(n,fun->arity); trail(n); 
+        { PL_put_integer(n,fun->arity);
+          trail(n); 
           ctxt->hash=h;
           ctxt->fun=fun->next;
           retry;
@@ -129,7 +130,7 @@ int pl_current_functor(cell_t *f, cell_t *n, control_t ctrl)
   for (;h<PL__funs_hash_size; fun=PL__funs[++h])
     for (;fun; fun=fun->next)
       if ( fun->arity==get_val(n))
-        { mkatom(f,fun->functor); trail(f); 
+        { PL_put_atom(f,fun->functor); trail(f); 
           ctxt->hash=h;
           ctxt->fun=fun->next;
           retry;
@@ -140,8 +141,10 @@ int pl_current_functor(cell_t *f, cell_t *n, control_t ctrl)
                 //      n is a variable.
   for (;h<PL__funs_hash_size; fun=PL__funs[++h])
     for (;fun; fun=fun->next)
-      { mkatom(f,fun->functor); trail(f); 
-        mkintg(n,fun->arity); trail(n); 
+      { PL_put_atom(f,fun->functor);
+        trail(f); 
+        PL_put_integer(n,fun->arity);
+        trail(n); 
         ctxt->hash=h;
         ctxt->fun=fun->next;
         retry;

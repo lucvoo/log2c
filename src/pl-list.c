@@ -7,7 +7,7 @@
 #include <stdlib.h>	// for qsort()
 
 int pl_is_list(term_t l)
-{ return(isCons(l)); }
+{ return(PL_is_cons(l)); }
 
 int pl_proper_list(term_t l)
 { Deref(l);
@@ -69,7 +69,7 @@ int pl_length(term_t list, term_t l)
     }
   }
   else
-  if (isVar(l))
+  if (PL_is_var(l))
   { int n=PL_lengthList(list);
     if (n>=0) return(PL_unify_intg(l,n));
   }

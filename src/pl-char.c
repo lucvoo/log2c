@@ -19,7 +19,7 @@ atom_t PL_char_to_atom(int c)
 
   if (!atoms_tab[c])
   { tmp[0]=c; tmp[1]='\0';
-    atoms_tab[c]=PL_lookup_atom(tmp);
+    atoms_tab[c]=PL_new_atom(tmp);
   }
   return(atoms_tab[c]);
 }

@@ -41,6 +41,15 @@ typedef struct
   w_flags_t	flags;
 } w_opt;
 
+
+inline static
+void
+Get_arg(int index, term_t t, term_t a)
+{ cell_t *arg=deref(t)+index;
+  mkrefp(a,deref(arg));
+}
+
+
 // PRE : t is deref
 inline static
 char *varName(term_t t)
@@ -302,16 +311,16 @@ bool WriteTerm(pl_stream S, term_t t,
            Options(OPT_CURL) )
       { term_t a = PL_new_term_ref();
 
-	_PL_get_arg(1, t, arg);
+	Get_arg(1, t, arg);
 	Putc(S, '{');
 	for(;;)
 	{ if ( !PL_is_functor(arg, FUN(comma,2)) )
 	    break;
           deref(arg);
-	  _PL_get_arg(1, arg, a);
+	  Get_arg(1, arg, a);
 	  WriteTerm(S, a, 999, depth+1, opt);
 	  Puts(S, ", ");
-	  _PL_get_arg(2, arg, arg);
+	  Get_arg(2, arg, arg);
 	}
 	WriteTerm(S, arg, 999, depth+1, opt);      
 	Putc(S, '}');
@@ -323,7 +332,7 @@ bool WriteTerm(pl_stream S, term_t t,
 	   Options(OPT_NUMV) )
       { int n;
 
-        _PL_get_arg(1, t, arg);
+        Get_arg(1, t, arg);
         if ( PL_get_integer(arg, &n) && n >= 0 )
         { int i = n % 26;
           int j = n / 26;
@@ -342,7 +351,7 @@ bool WriteTerm(pl_stream S, term_t t,
 	   Options(OPT_NAMV) )
       { atom_t a;
 
-        _PL_get_arg(1, t, arg);
+        Get_arg(1, t, arg);
         if (( a = PL_get_atom(arg) ))
         { w_opt opt2;
           memcpy(&opt2, opt, sizeof(w_opt));
@@ -359,7 +368,7 @@ bool WriteTerm(pl_stream S, term_t t,
         { term_t arg = PL_new_term_ref();
           int pri;
   
-  	  _PL_get_arg(1, t, arg);
+  	  Get_arg(1, t, arg);
   	  if ( op_pri > prec )
   	    PutOpenBrace(S);
   	  WriteAtom(S, functor, opt);
@@ -379,7 +388,7 @@ bool WriteTerm(pl_stream S, term_t t,
         { term_t arg = PL_new_term_ref();
           int pri;
   
-  	  _PL_get_arg(1, t, arg);
+  	  Get_arg(1, t, arg);
   	  if ( op_pri > prec )
   	    PutOpenBrace(S);
   	  if (op_type == OP_XF)
@@ -425,7 +434,7 @@ bool WriteTerm(pl_stream S, term_t t,
 
 	  if ( op_pri > prec )
 	    PutOpenBrace(S);
-	  _PL_get_arg(1, t, a);
+	  Get_arg(1, t, a);
           if (op_type==OP_XFX || op_type == OP_XFY)
             pri = op_pri-1;
           else
@@ -434,7 +443,7 @@ bool WriteTerm(pl_stream S, term_t t,
 	  WriteAtom(S, functor, opt);
 	  if ( functor == ATOM(comma) )
 	    Putc(S, ' ');
-	  _PL_get_arg(2, t, a);
+	  Get_arg(2, t, a);
           if (op_type==OP_XFX || op_type == OP_YFX)
             pri = op_pri-1;
           else
@@ -593,13 +602,13 @@ int pl_warn(const char *fmt)
   char  *buf;
 
   asprintf(&buf, "[Warning: %s ]\n", fmt);
-  term=(term_t)PL_lookup_atom(buf);
+  term=(term_t)PL_new_atom(buf);
   free(buf);
 #else
   static char buf[2048];		// FIXME : very dangerous
 
   sprintf(buf, "[Warning: %s ]\n", fmt);
-  term=(term_t)PL_lookup_atom(buf);
+  term=(term_t)PL_new_atom(buf);
 #endif
 
   writeTerm(Stderr, term, 0, 0, 0);

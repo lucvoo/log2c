@@ -161,12 +161,12 @@ int pl_current_op(term_t precedence, term_t type, term_t operator, control_t ctr
   }
   
   if (!(a_op = PL_get_atom(operator)))
-  { if (isVar(operator))  a_op=0;
+  { if (PL_is_var(operator))  a_op=0;
     else fail;
   }
 
   if (!PL_get_integer(precedence, &prec))
-  { if (isVar(precedence))  prec=0;
+  { if (PL_is_var(precedence))  prec=0;
     else fail;
   }
 
@@ -175,7 +175,7 @@ int pl_current_op(term_t precedence, term_t type, term_t operator, control_t ctr
     else ;
   }
   else
-  if (isVar(type)) t=0;
+  if (PL_is_var(type)) t=0;
   else fail;
 
 
