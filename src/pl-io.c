@@ -162,19 +162,19 @@ openStream(term_t file, Smode_t mode, int flags)
 
   if ( type == ST_PIPE )
   { if ( !(S=Sopen_pipe(name->name, mode, flags)) )
-    { if ( status.file_err )
-      { PL_warning("Cannot open pipe %s: %s", name->name, OsError());
+    { if (PL_status.file_err)
+      { PL_warning("Cannot open pipe %s: %s", name->name, PL_OsError());
       }
       fail;
     }
   }
   else // type == ST_FILE
-  { char *fn=ExpandFile(name->name,0);
+  { char *fn = PL_ExpandFile(name->name,0);
 
     if (!fn) fail;
 
     if (!(S=Sopen_file(fn, mode, flags)))
-    { if (status.file_err)
+    { if (PL_status.file_err)
       { PL_warn("Cannot open %s", name->name);
       }
       fail;
@@ -327,7 +327,7 @@ int pl_open4(term_t srcdest, term_t mode, term_t stream, term_t options)
 
 // get options
   if (options)
-  { if (!scan_options(options,spec_open4))
+  { if (!PL_scan_options(options,spec_open4))
       PL_warning("open/4 : Illegal option list");
   }
 
@@ -492,16 +492,16 @@ int pl_current_output(term_t s)
 	   S=f->S; \
 	})
 
-pl_stream Output_Stream(term_t s)
+pl_stream PL_Output_Stream(term_t s)
 { return(OutputStream(s)); }
 
-pl_stream Input_Stream(term_t s)
+pl_stream PL_Input_Stream(term_t s)
 { return(InputStream(s)); }
 
-pl_stream OutStream(void)
+pl_stream PL_OutStream(void)
 { return(Foutput->S); }
 
-pl_stream InStream(void)
+pl_stream PL_InStream(void)
 { return(Finput->S); }
 
 static
@@ -542,7 +542,7 @@ int pl_nl1(term_t s)
 
 int pl_tab(term_t N)
 { int n;
-  if (!eval_(N,&n) || n<0) fail;
+  if (!PL_eval_(N,&n) || n<0) fail;
   for (;n--;)
     Sputc(Foutput->S,' ');
   return(1);
@@ -552,7 +552,7 @@ int pl_tab2(term_t s,term_t N)
 { int n;
   pl_stream S;
 
-  if (!eval_(N,&n) || n<0) fail;
+  if (!PL_eval_(N,&n) || n<0) fail;
   S=OutputStream(s);
   for (;n--;)
     Sputc(S,' ');
@@ -581,7 +581,7 @@ int pl_get02(term_t s, term_t c)
 }
 
 int pl_get_single_char(term_t c)
-{ return(PL_unify_intg(c,GetSingleChar())); }
+{ return(PL_unify_intg(c,PL_GetSingleChar())); }
 
 
 static int Get(pl_stream S)

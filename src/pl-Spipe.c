@@ -108,6 +108,7 @@ int open_pipe(const char *cmd, Smode_t mode, pid_t *pid_p)
   // return(0);	// never reached : Make compiler happy
 }
 
+static
 Sfun_t pipe_functions =
 { Sread_pipe,
   Swrite_pipe,

@@ -32,6 +32,7 @@ typedef enum {
 #undef  STACK_DEF
 
 #define	STACK_DEF(NBR,BASE,INCR,MAX,NAME) { (void *) BASE, 0, 0, INCR, MAX, NAME },
+static
 Stack stacks[] = { 
 #include "pl-stack.h"
                  };

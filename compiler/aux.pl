@@ -19,6 +19,7 @@
 		, fl/1, fl_/1
 		, g/1,	g/2,	g0/1,	g0/2, f/1, f/2
 		, comm/1,	comm/2,	comm/3,	comm/4, comm/5
+		, comm_pred/2
 		, foreign_pred/3
 		, ndet_pred/2, det_pred/2, foreign_preds/1
 		, comp_C/1
@@ -305,6 +306,8 @@ comm(H,A)	:- map_name_v(A,Na),
 		   format('/* ~w(~w) */\n',[H,Na]), !.
 comm(curr_C)	:- flag(curr_C,C,C), getlabel(C,Lab), comm(Lab).
 comm(H)		:- format('/* ~w */\n',[H]), !.
+
+comm_pred(F,N)	:- format('/* code for ~w/~w */\n', [F,N]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Read all terms of file 'F' and put it in list 'L'

@@ -15,7 +15,8 @@ const char *PL_get_filename(term_t file, char *buf)
   if (!buf)
     buf=buffer;
 
-  if ( PL_get_chars(file,&name,CVT_ALL) && (name=ExpandFile(name,buf)) )
+  if ( PL_get_chars(file,&name,CVT_ALL) &&
+       (name = PL_ExpandFile(name,buf)) )
     return(name);
   else
     return(0);
@@ -28,7 +29,7 @@ int pl_file_base_name(term_t path, term_t base)
   if (!PL_get_atom_chars(path,&p))
     PL_warning("file_base_name/2 : instantiation fault");
 
-  return(PL_unify_atom_chars(base,BaseName(p)));
+  return(PL_unify_atom_chars(base,PL_BaseName(p)));
 }
 
 int pl_file_directory_name(term_t path, term_t dir)
@@ -37,7 +38,7 @@ int pl_file_directory_name(term_t path, term_t dir)
   if (!PL_get_atom_chars(path,&p))
     PL_warning("file_directory_name/2 : instantiation fault");
 
-  return(PL_unify_atom_chars(dir,DirName(p)));
+  return(PL_unify_atom_chars(dir,PL_DirName(p)));
 }
 
 int pl_file_name_extension(term_t base, term_t ext, term_t full)
@@ -53,7 +54,7 @@ int pl_file_name_extension(term_t base, term_t ext, term_t full)
     if (*s=='.')
     { if (PL_get_atom_chars(ext,&e))
       { if (e[0]=='.') e++;
-        if (PathCmp(e,s+1)) fail;
+        if (PL_PathCmp(e,s+1)) fail;
       }
       else
       if (!PL_unify_atom_chars(ext,s+1)) fail;
@@ -98,7 +99,7 @@ int pl_delete_file(term_t name)
   if ( !(f = PL_get_filename(name, 0)) )
     PL_warning("delete_file/1: instantiation fault");
   
-  return(RemoveFile(f));
+  return(PL_RemoveFile(f));
 }
 
 int pl_absolute_file_name(term_t file, term_t abs)
@@ -108,7 +109,7 @@ int pl_absolute_file_name(term_t file, term_t abs)
   if (!PL_get_atom_chars(file,&f))
     fail;
 
-  c=CanonicalPath(f,buf);
+  c = PL_CanonicalPath(f,buf);
 
   return(PL_unify_atom_chars(abs,c));
 }
@@ -116,7 +117,7 @@ int pl_absolute_file_name(term_t file, term_t abs)
 int pl_is_absolute_file_name(term_t file)
 { const char *f;
 
-  return(PL_get_atom_chars(file,&f) && isAbsolutePath(f) );
+  return(PL_get_atom_chars(file,&f) && PL_isAbsolutePath(f) );
 }
 
 int pl_access_file(term_t name, term_t mode)
@@ -145,13 +146,13 @@ int pl_access_file(term_t name, term_t mode)
   else
     PL_warning("access_file/2: mode: {read,write,append,execute,exist,none}");
 
-  if ( AccessFile(n, md) )
+  if ( PL_AccessFile(n, md) )
     succeed;
 
-  if ( md == PL_ACCESS_WRITE && !AccessFile(n, PL_ACCESS_EXIST) )
-  { const char *dir=DirName(n);
+  if ( md == PL_ACCESS_WRITE && !PL_AccessFile(n, PL_ACCESS_EXIST) )
+  { const char *dir = PL_DirName(n);
     dir=( dir ? dir : "." );
-    return(AccessFile(dir, md));
+    return(PL_AccessFile(dir, md));
   }
   else
     fail;
@@ -163,7 +164,7 @@ int pl_exists_file(term_t file)
   if (!(f = PL_get_filename(file, 0)))
     PL_warning("exists_file/1: instantiation fault");
   
-  return(ExistsFile(f));
+  return(PL_ExistsFile(f));
 }
 
 
@@ -173,7 +174,7 @@ int pl_exists_directory(term_t dir)
   if (!(d = PL_get_filename(dir, 0)))
     PL_warning("exists_directory/1: instantiation fault");
   
-  return(ExistsDirectory(d));
+  return(PL_ExistsDirectory(d));
 }
 
 

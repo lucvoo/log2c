@@ -24,9 +24,9 @@ typedef struct { atom_t bck_quotes;
                  int	singleton;
                  int	string;
                  int	tty_ctrl;
-               } status_t;
+               } pl_status_t;
 
-extern status_t status;
+extern pl_status_t PL_status;
 
 
 #endif	// PL_STATUS_H_

@@ -38,7 +38,7 @@ int exist_fun(atom_t functor, int arity)
   fail;
 }
 
-fun_t lookup_fun(atom_t functor, int arity)
+fun_t PL_lookup_fun(atom_t functor, int arity)
 { hash_t h;
   fun_t f;
 				// FIXME : test if arity == 0 ???

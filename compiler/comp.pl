@@ -3,7 +3,6 @@
 
 :- initialization(op(1200,xfx,':+')).
 :- initialization(op( 900, fy,'+>')).
-
 :- use_module([my_dcg]).
 :- use_module(swi).
 term_expansion(I,O)	:- translate(I,O).
@@ -19,7 +18,6 @@ init_all		:- init_hash,
 
 comp_file(File)		:- comp_file(File,[]).
 comp_file(File,Opt)	:- init_all,
-			   flag(current_source_file,_,File),
 			   file_type(File,Type),
 			   ( Type=user -> comp_user(Opt) ;
 			     Type=module(M,X) -> comp_module(M,X,Opt)
@@ -184,14 +182,14 @@ code_P(P,L,L)	:- code_P(P).
 code_P([P|Q])	:- code_Pr(P,T,[]), trad(T), code_P(Q).
 code_P([]).
 
-code_Pr(pr(F,A,[C]))	:+ comm('code for ~w/~w',F,A),
+code_Pr(pr(F,A,[C]))	:+ comm_pred(F,A),
 			   flag2(curr_P,F,A),
 			   ( recorded(meta,F/A)
 			     -> flag(meta,_,true)
 			     ;  flag(meta,_,false)
 			   ),
 			   code_C(F,A,C,single).
-code_Pr(pr(F,A,[C|Q]))	:+ comm('code for ~w/~w',F,A),
+code_Pr(pr(F,A,[C|Q]))	:+ comm_pred(F,A),
 			   flag2(curr_P,F,A),
 			   ( recorded(meta,F/A)
 			     -> flag(meta,_,true)
@@ -210,7 +208,7 @@ code_FPr	:+ ndet_pred(full,Ln),
 		   mapl(code_FPr_det,Ld).
 
 code_FPr_ndet([F,N,C]) :+
-		+> comm('code for ~w/~w',F,N),
+		+> comm_pred(F,N),
 		L is N + 4, L1 is L+1,
 		+> flag(arg,_,fp4), flag(arg,_,fp4),
 		flag(rho,_,L),
@@ -239,7 +237,7 @@ code_FPr_ndet([F,N,C]) :+
 		+> g('}\n'), !.
 
 code_FPr_det([F,N,C]) :+
-		+> comm('code for ~w/~w',F,N),
+		+> comm_pred(F,N),
 		+> flag(arg,_,arg), flag(arg,_,arg),
 		flag(rho,_,N),
 		label(F,N,Li), flag(curr_C,_,Li), label(Li,_),
@@ -373,10 +371,13 @@ code_Q(Q)	:- trans_term(Q,Qt),
 		   del(vars_list).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-code_binding(Bs)   :+ +> g0('\n\nconst char *PL_freevar[] =\n{'),
-		   mapl(binding,Bs),
-	           +> g0('};\n'),
-	           +> g0('int PL_nbr_fv = sizeof(PL_freevar)/sizeof(PL_freevar[0]);\n\n').
+code_binding(Bs)   :+
+	+> g0('\n\n#ifdef	INTERACTIVE'),
+	+> g0('const char *PL_freevar[] =\n{'),
+	mapl(binding,Bs),
+	+> g0('};\n'),
+	+> g0('int PL_nbr_fv = sizeof(PL_freevar)/sizeof(PL_freevar[0]);'),
+	+> g0('#endif\n\n').
 
 binding(N=var(_,I))	:+ J is I-1,
 	                  +> g0('  [~w] "~w",',[J,N]).

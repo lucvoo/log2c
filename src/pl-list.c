@@ -69,7 +69,7 @@ int pl_length(term_t list, term_t l)
   }
   else
   if (isVar(l))
-  { int n=lengthList(list);
+  { int n=PL_lengthList(list);
     if (n>=0) return(PL_unify_intg(l,n));
   }
 

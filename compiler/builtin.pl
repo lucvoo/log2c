@@ -35,95 +35,28 @@ inline(X is Y)	:+ +> comm(is,X,Y),
 		   ),
 		   +> g('}').
 
-inline(atom(X))	:+ +> comm(atom,X),
-		   +> g('{ cell_t *c;'),
-		   +> new_indent(2),
-		    code_AssignD(c,X),
-		   +> new_indent(-2),
-		   +> g('  if (!is_atom(c))'),
-		   +> g('    goto backtrack;'),
-		   +> g('}').
 
-inline(integer(X)):+ +> comm(string,X),
-		   +> g('{ cell_t *c;'),
-		   +> new_indent(2),
-		    code_AssignD(c,X),
-		   +> new_indent(-2),
-		   +> g('  if (!is_intg(c))'),
-		   +> g('    goto backtrack;'),
-		   +> g('}').
+inline(atom(X))		:+ type(atom,X,is_atom).
 
-inline(number(X)) :+ +> comm(number,X),
-		   +> g('{ cell_t *c;'),
-		   +> new_indent(2),
-		    code_AssignD(c,X),
-		   +> new_indent(-2),
-		   +> g('  if (!is_number(c))'),
-		   +> g('    goto backtrack;'),
-		   +> g('}').
+inline(integer(X))	:+ type(string,X,is_intg).
 
-inline(atomic(X)) :+ +> comm(atomic,X),
-		   +> g('{ cell_t *c;'),
-		   +> new_indent(2),
-		    code_AssignD(c,X),
-		   +> new_indent(-2),
-		   +> g('  if (!is_atomic(c))'),
-		   +> g('    goto backtrack;'),
-		   +> g('}').
+inline(number(X))	:+ type(number,X,is_number).
 
-inline(var(X))	:+ +> comm(var,X),
-		   +> g('{ cell_t *c;'),
-		   +> new_indent(2),
-		    code_AssignD(c,X),
-		   +> new_indent(-2),
-		   +> g('  if (!is_var(c))'),
-		   +> g('    goto backtrack;'),
-		   +> g('}').
+inline(atomic(X))	:+ type(atomic,X,is_atomic).
 
-inline(nonvar(X)) :+ +> comm(nonvar,X),
-		   +> g('{ cell_t *c;'),
-		   +> new_indent(2),
-		    code_AssignD(c,X),
-		   +> new_indent(-2),
-		   +> g('  if (is_var(c))'),
-		   +> g('    goto backtrack;'),
-		   +> g('}').
+inline(var(X))		:+ type(var,X,is_var).
 
-inline(compound(X)):+ +> comm(compound,X),
-		   +> g('{ cell_t *c;'),
-		   +> new_indent(2),
-		    code_AssignD(c,X),
-		   +> new_indent(-2),
-		   +> g('  if (!is_fun(c))'),
-		   +> g('    goto backtrack;'),
-		   +> g('}').
+inline(nonvar(X))	:+ type(nonvar,X,'!is_var').
 
-inline(simple(X)):+ +> comm(simple,X),
-		   +> g('{ cell_t *c;'),
-		   +> new_indent(2),
-		    code_AssignD(c,X),
-		   +> new_indent(-2),
-		   +> g('  if (is_fun(c))'),
-		   +> g('    goto backtrack;'),
-		   +> g('}').
+inline(compound(X))	:+ type(compound,X,is_fun).
 
-inline(cons(X)):+ +> comm(cons,X),
-		   +> g('{ cell_t *c;'),
-		   +> new_indent(2),
-		   code_AssignD(c,X),
-		   +> new_indent(-2),
-		   +> g('  if (!is_cons(c))'),
-		   +> g('    goto backtrack;'),
-		   +> g('}').
-inline(is_list(X)):+ +> comm(list,X),
-		   +> g('{ cell_t *c;'),
-		   +> new_indent(2),
-		   code_AssignD(c,X),
-		   +> new_indent(-2),
-		   +> g('  if (!is_list(c))'),
-		   +> g('    goto backtrack;'),
-		   +> g('}').
+inline(simple(X))	:+ type(simple,X,'!is_fun').
 
+inline(cons(X))		:+ type(cons,X,is_cons).
+
+inline(is_list(X))	:+ type(list,X,is_list).
+
+%%%%
 
 inline(X = Y)	:+ ( X=var(f,_); X=var(ft,_) ),
                    +> comm(=,X,Y),
@@ -145,7 +78,7 @@ inline(X \= Y)	:+ +> comm((\=),X,Y),
 		   +> new_indent(2),
 		   code_Assign(a1,X), code_Assign(a2,Y),
 		   +> new_indent(-2),
-		   +> g('  if (can_unify(a1,a2))'),
+		   +> g('  if (PL_can_unify(a1,a2))'),
 		   +> g('    goto backtrack;'),
 		   +> g('}').
 
@@ -380,6 +313,14 @@ str_eq(Op,X,Y)	:+ +> comm(Op,X,Y),
 		   +> g('}').
 
 
+type(N,X,F)	:+ +> comm(N,X),
+		   +> g('{ cell_t *c;'),
+		   +> new_indent(2),
+		    code_AssignD(c,X),
+		   +> new_indent(-2),
+		   +> g('  if (!~w(c))',F),
+		   +> g('    goto backtrack;'),
+		   +> g('}').
 
 
 

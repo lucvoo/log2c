@@ -17,6 +17,7 @@
 #include "pl-util.h"
 #include "pl-status.h"
 #include "pl-fli.h"
+#include "pl-io.h"
 
 typedef enum { T_STOP=256, T_OP, T_ATOM, T_FUN, T_INTG, T_FLT,
 	       T_STRING, T_VOID, T_VAR, T_EOF, T_ERROR } tok_type;
@@ -54,8 +55,6 @@ static int give_syntaxerrors = TRUE;
 static token_t token;		// current_token
 static int unget_token=0;
 static int must_be_op;
-pl_stream Input_Stream(term_t stream);
-pl_stream InStream(void);
 
 
 /**********************************************************************/
@@ -113,7 +112,7 @@ int strip_C_comment(pl_stream S)
 
   Getc(S);				//  drop '*'
 
-  if (status.nested_com)	// TESTED : OK
+  if (PL_status.nested_com)	// TESTED : OK
   { int nesting=1;
 
     c=Getc(S);
@@ -203,7 +202,7 @@ term_t bind_vars(int single)
   for (;;v=v->next)
   { if (v->name && !(single && (v->times!=1 || v->name[0]=='_')) )
     { HP[0].val=__fun(FUN(unify,2)); 
-      HP[1].val=__atom(lookup_atom(v->name)); 
+      HP[1].val=__atom(PL_lookup_atom(v->name)); 
       HP[2].celp=v->ref; 
       HP[3].val=__cons(); 
       HP[4].celp=HP; 
@@ -625,7 +624,7 @@ tok_type get_token(pl_stream S)
     case 'u':  case 'v': case 'w': case 'x': case 'y':
     case 'z':  
     case_low:  str=read_name(S, c);
-	       atom=lookup_atom(str);
+	       atom=PL_lookup_atom(str);
 	       free(str);
 	       goto case_atom;
     case '_':  if (!isAlphaNum(Peekc(S)))
@@ -697,24 +696,24 @@ tok_type get_token(pl_stream S)
 	       break;
     case '\'': str=read_quoted_string(S, c);
                if (!str) goto error;
-	       atom=lookup_atom(str);
+	       atom=PL_lookup_atom(str);
 	       goto case_atom;
     case '\"': str=read_quoted_string(S, c);
                if (!str) goto error;
-               if (status.dbl_quotes==lookup_atom("chars"))
+               if (PL_status.dbl_quotes==PL_lookup_atom("chars"))
                { token.type=T_STRING;
                  token.tok_val.ref=PL_mk_char_list(str);
                  break;
                }
                else
-               if (status.dbl_quotes==lookup_atom("codes"))
+               if (PL_status.dbl_quotes==PL_lookup_atom("codes"))
                { token.type=T_STRING;
                  token.tok_val.ref=PL_mk_code_list(str);
                  break;
                }
                else
-               if (status.dbl_quotes==lookup_atom("atom"))
-               { atom=lookup_atom(str);
+               if (PL_status.dbl_quotes==PL_lookup_atom("atom"))
+               { atom=PL_lookup_atom(str);
                  goto case_atom;
                  break;
                }
@@ -722,20 +721,20 @@ tok_type get_token(pl_stream S)
                  goto error;
     case '`':  str=read_quoted_string(S, c);
                if (!str) goto error;
-               if (status.bck_quotes==lookup_atom("chars"))
+               if (PL_status.bck_quotes==PL_lookup_atom("chars"))
                { token.type=T_STRING;
                  token.tok_val.ref=PL_mk_char_list(str);
                  break;
                }
                else
-               if (status.bck_quotes==lookup_atom("codes"))
+               if (PL_status.bck_quotes==PL_lookup_atom("codes"))
                { token.type=T_STRING;
                  token.tok_val.ref=PL_mk_code_list(str);
                  break;
                }
                else
-               if (status.bck_quotes==lookup_atom("atom"))
-               { atom=lookup_atom(str);
+               if (PL_status.bck_quotes==PL_lookup_atom("atom"))
+               { atom=PL_lookup_atom(str);
                  goto case_atom;
                  break;
                }
@@ -770,13 +769,13 @@ tok_type get_token(pl_stream S)
     case '^':
     case '~':
     case_sym:  str=read_symbol(S,c);
-               atom=lookup_atom(str);
+               atom=PL_lookup_atom(str);
                goto case_atom;
     case_atom: token.tok_val.atom=atom;
                if (Peekc(S)=='(')
                  token.type=T_FUN;
                else
-               if (can_be_op(atom))
+               if (PL_can_be_op(atom))
                  token.type=T_OP;
                else
                  token.type=T_ATOM;
@@ -801,6 +800,7 @@ tok_type get_token(pl_stream S)
 /* PARSER                                                             */
 /**********************************************************************/
 
+static
 int read_term(pl_stream S, int max, const char *stop, node_t *node);
 
 static inline
@@ -816,7 +816,7 @@ void mk_unary(atom_t atom, node_t *arg,node_t *node_out)
     node_out->cell=arg->cell;
   }
   else
-  { fun_t fun=lookup_fun(atom,1);
+  { fun_t fun=PL_lookup_fun(atom,1);
     cell_t *addr=new_struct(fun,1);
 
     addr[1]=arg->cell;
@@ -826,7 +826,7 @@ void mk_unary(atom_t atom, node_t *arg,node_t *node_out)
 
 static inline
 void mk_binary(atom_t atom, node_t *left, node_t *right, node_t *node_out)
-{ fun_t fun=lookup_fun(atom,2);
+{ fun_t fun=PL_lookup_fun(atom,2);
   cell_t *addr=new_struct(fun,2);
 
   addr[1]=left ->cell;
@@ -844,7 +844,7 @@ cell_t *read_fun(pl_stream S, atom_t functor, int level,
   else level++;
 
   switch(token.type)
-  { case ')': addr=new_struct(lookup_fun(functor,level),level);
+  { case ')': addr=new_struct(PL_lookup_fun(functor,level),level);
               addr[level]=elem.cell;
               node_out->prec=0;
 	      node_out->cell.celp=addr;
@@ -894,7 +894,7 @@ int read_term_a(pl_stream S, int max,const char *stop, node_t *node_out)
   atom_t atom=token.tok_val.atom;
 
 // Try prefix operator
-  if (is_op(OP_PREFIX,atom,&type,&prec) && max >= prec)
+  if (PL_is_op(OP_PREFIX,atom,&type,&prec) && max >= prec)
   { node_t node_r;
 
     if ((type==OP_FX && read_term(S,prec-1,stop,&node_r)) ||
@@ -934,7 +934,7 @@ loop:
     { int type, prec, m;
       atom_t atom=token.tok_val.atom;
 
-      if (is_op(OP_INFIX,atom,&type,&prec))
+      if (PL_is_op(OP_INFIX,atom,&type,&prec))
         { if (max>=prec)
             switch(type)
             { case OP_XFX: if (node_l.prec <  prec)
@@ -960,7 +960,7 @@ loop:
             }
         }                  
 
-      if (is_op(OP_POSTFIX,atom,&type,&prec))
+      if (PL_is_op(OP_POSTFIX,atom,&type,&prec))
         { if (max>=prec)
             switch(type)
             { case OP_XF: if (node_l.prec <  prec)
@@ -984,6 +984,7 @@ loop:
 
 
 // POST: node->prec <= max
+static
 int read_term(pl_stream S, int max, const char *stop, node_t *node)
 { node_t node_s;
   int tok;
@@ -1133,7 +1134,7 @@ int PL_read_term(pl_stream S, term_t term, term_t options)
   // subposition=0;
 
 // get options
-  if (!scan_options(options,spec))
+  if (!PL_scan_options(options,spec))
     PL_warning("read_term/2 : illegal option list");
 // process options
   if (error==(term_t) ATOM(_fail))
@@ -1157,7 +1158,7 @@ int PL_read_term(pl_stream S, term_t term, term_t options)
 
 int pl_read_variables(term_t t, term_t v)
 { int rc;
-  pl_stream S=InStream();
+  pl_stream S = PL_InStream();
 
   rc = Read(S,t,v,0,0);
   return(rc);
@@ -1165,7 +1166,7 @@ int pl_read_variables(term_t t, term_t v)
 
 int pl_read_variables3(term_t s, term_t t, term_t v)
 { int rc;
-  pl_stream S=Input_Stream(s);
+  pl_stream S = PL_Input_Stream(s);
 
   rc = Read(S,t,v,0,0);
 
@@ -1173,19 +1174,19 @@ int pl_read_variables3(term_t s, term_t t, term_t v)
 }
 
 int pl_read(term_t t)
-{ pl_stream S=InStream();
+{ pl_stream S = PL_InStream();
 
   return(Read(S,t,0,0,0));
 }
 
 int pl_read2(term_t s, term_t t)
-{ pl_stream S=Input_Stream(s);
+{ pl_stream S = PL_Input_Stream(s);
 
   return(Read(S,t,0,0,0));
 }
 
 int pl_read_clause(term_t t)
-{ pl_stream S=InStream();
+{ pl_stream S = PL_InStream();
 
   // FIXME : singletons warning should depend of style_check(singletons)
   //         set to default
@@ -1193,7 +1194,7 @@ int pl_read_clause(term_t t)
 }
 
 int pl_read_clause2(term_t s, term_t t)
-{ pl_stream S=Input_Stream(s);
+{ pl_stream S = PL_Input_Stream(s);
 
   // FIXME : singletons warning should depend of style_check(singletons)
   //         set to default
@@ -1201,14 +1202,14 @@ int pl_read_clause2(term_t s, term_t t)
 }
 
 int pl_read_term(term_t term, term_t options)
-{ pl_stream S=InStream();
+{ pl_stream S = PL_InStream();
 
   return(PL_read_term(S,term, options));
 }
 
 int pl_read_term3(term_t stream, term_t term, term_t options)
 { int rval;
-  pl_stream S=Input_Stream(stream);
+  pl_stream S = PL_Input_Stream(stream);
 
   if (!S) fail;
   rval=PL_read_term(S,term, options);

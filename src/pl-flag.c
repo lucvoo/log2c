@@ -72,7 +72,7 @@ int pl_flag(cell_t *key, cell_t *old, cell_t *new)
   if (is_atom(new))
     { f->val.celp=new; succeed; }
   else
-  if (eval_(new,&n))
+  if (PL_eval_(new,&n))
     { f->val.val=__intg(n); succeed; }
   else
     PL_warning("flag/3: value should be an atom, integer or expression");

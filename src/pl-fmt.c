@@ -7,12 +7,11 @@
 #include "pl-ctype.h"
 #include "pl-stream.h"
 #include "pl-fli.h"
+#include "pl-io.h"
 
 int PL_display(pl_stream S, term_t);
 int PL_displayq(pl_stream S, term_t);
 int PL_writeq(pl_stream S, term_t);
-pl_stream OutStream(void);
-pl_stream Output_Stream(term_t stream);
 
 
 #define BUFSIZE 	10240
@@ -30,8 +29,72 @@ pl_stream Output_Stream(term_t stream);
 
 
 		/********************************
+		*       UTILITIES		*
+		********************************/
+
+static char digitname[] =
+{ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+  'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
+  'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
+  'u', 'v', 'w', 'x', 'y', 'z'
+};
+static char DigitName[] =
+{ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+  'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+  'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
+  'U', 'V', 'W', 'X', 'Y', 'Z'
+};
+
+inline static
+char digitName(int n, bool small)		// FIXME : check if overflow ???
+{ return( small ? digitname[n] : DigitName[n] );
+}
+
+		/********************************
 		*       ACTUAL FORMATTING	*
 		********************************/
+
+/* format an integer according to a number of modifiers at various
+   radius. `split' is a boolean asking to put ',' between each group
+   of three digits (e.g. 67,567,288). `div' askes to divide the number
+   by radix^`div' before printing. `radix' is the radix used for
+   conversion. `n' is the number to be converted.
+
+ ** Fri Aug 19 22:26:41 1988  jan@swivax.UUCP (Jan Wielemaker)
+*/
+static
+char * formatInteger(bool split, int div, int radix, bool small, long int n)
+{ static char tmp[100];
+  char *s = tmp + 99;
+  int before = (div == 0);
+  int digits = 0;
+  bool negative = FALSE;
+
+  *s = EOS;
+  if ( n < 0 )
+  { n = -n;
+    negative = TRUE;
+  }
+  if ( n == 0 && div == 0 )
+  { *--s = '0';
+    return s;
+  }
+  while( n > 0 || div >= 0 )
+  { if ( div-- == 0 && !before )
+    { *--s = '.';
+      before = 1;
+    }
+    if ( split && before && (digits++ % 3) == 0 && digits != 1 )
+      *--s = ',';
+    *--s = digitName((int)(n % radix), small);
+    n /= radix;
+  }
+  if ( negative )
+    *--s = '-';  
+
+  return s;
+}	  
+
 
 inline static
 int update_column(int col, int c)
@@ -214,12 +277,12 @@ int pl_format(term_t fmt, term_t args)
   if (!PL_get_chars(fmt, &f, CVT_ALL|BUF_RING))
     PL_warning("format/2: format is not an atom or string");
 
-  return(do_format(f, list_to_tab(args), OutStream()));
+  return(do_format(f, list_to_tab(args), PL_OutStream()));
 }
 
 int pl_format3(term_t stream, term_t fmt, term_t args)
 { const char *f;
-  pl_stream S=Output_Stream(stream);
+  pl_stream S = PL_Output_Stream(stream);
 
   if (!PL_get_chars(fmt, &f, CVT_ALL|BUF_RING))
     PL_warning("format/2: format is not an atom or string");
@@ -266,3 +329,60 @@ int pl_sformat2(term_t string, term_t fmt)
     return(PL_unify_atom_chars(string,s)); 
 }
 
+
+int pl_int_to_atom2(term_t num, term_t atom)
+{ static char buf[100];		// Always large enough to store an 32 bit int
+  long int n;
+  char *s=buf+sizeof(buf);
+
+  if (!PL_get_long(num,&n))
+    PL_warning("int_to_atom/2: instantiation fault");
+
+  *--s='\0';
+  if (n==0)
+    *--s = '0';
+  else
+    for (;n>0; n/=10)
+      *--s = digitName(n % 10, 1);
+
+  return(PL_unify_atom_chars(atom,s));
+}
+
+int pl_int_to_atom3(term_t num, term_t base, term_t atom)
+{ static char buf[100];		// Always large enough to store an 32 bit int
+  long int n;
+  int b;
+  char *s=buf+sizeof(buf);
+
+  if (!PL_get_long(num, &n) ||
+      !PL_get_integer(base, &b) )
+    PL_warning("int_to_atom/3: instantiation fault");
+
+  *--s = '\0';
+
+  if ( b==0 && n>0 && n<256 )
+  { *--s = n;			// FIXME : what to do with non-printable char ?
+    *--s = '\'';
+    *--s = '0';
+  }
+  else
+  if ( b>36 || b<2 )
+      PL_warning("int_to_atom/3: Illegal base: %d", b);
+  else
+  { // write the number
+    if (n==0)
+      *--s = '0';
+    else
+      for (;n>0; n/=b)
+        *--s = digitName(n % b, 1);
+
+    // write the base if necessary
+    if ( b!=10 )
+    { *--s='\'';
+      for (;b>0; b/=10)
+        *--s = digitName(b%10, 1);
+    }
+  }
+
+  return(PL_unify_atom_chars(atom, s));
+}

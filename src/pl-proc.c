@@ -124,8 +124,8 @@ void *PL_apply(term_t clos, term_t list)
 
   if (!(t=strip_module(clos, &mod)) ||
       !PL_get_name_arity(t,&name,&arity) ||
-      !(extra=lengthList(list))>=0 ||
-      !(proc=lookup_proc(mod,name,arity+extra)) )
+      !(extra = PL_lengthList(list))>=0 ||
+      !(proc = lookup_proc(mod,name,arity+extra)) )
   { PL_write(Stderr, clos);
     PL_warning("PL_call : fail");
   }

@@ -95,7 +95,7 @@ int pl_mangle(term_t name, term_t mangled)
      fail; 
 
    m=PL_mangle(n);
-   a=lookup_atom(m);
+   a=PL_lookup_atom(m);
    return(PL_unify_atom(mangled,a)); 
 }
 

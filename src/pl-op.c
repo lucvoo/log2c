@@ -110,7 +110,7 @@ void add_operator(int precedence, int type, atom_t operator)
 }
 
 
-int is_op(int fix, atom_t operator, int *type, int *prec)
+int PL_is_op(int fix, atom_t operator, int *type, int *prec)
 { op_type   *op_t;
 
   if (!(op_t=get_op_type(operator,fix)) )
@@ -125,7 +125,7 @@ int is_op(int fix, atom_t operator, int *type, int *prec)
   return(1);
 }
 
-int can_be_op(atom_t operator)
+int PL_can_be_op(atom_t operator)
 { return(get_operator(operator)!=0); }
 
 

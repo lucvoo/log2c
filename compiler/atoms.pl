@@ -58,7 +58,7 @@ atoms(A):- L = [ []
 
 		%% pl-write.c
 		, quoted
-		, char_escape
+		, character_escapes
 		, ignore_ops
 		, numbervars
 		, namevars

@@ -23,7 +23,6 @@ int PL_get_name_arity(term_t t, atom_t *name, int *arity);
 int PL_get_functor(term_t t, functor_t *f);
 int PL_get_arg(int index, term_t t, term_t a);
 int PL_get_arg_(int index, term_t t, term_t *a);
-void _PL_get_arg(int index, term_t t, term_t a);
 int PL_get_list(term_t l, term_t h, term_t t);
 int PL_get_list_(term_t l, term_t *h, term_t *t);
 int PL_get_head(term_t l, term_t h);
@@ -48,6 +47,13 @@ void PL_put_term(term_t t1, term_t t2);
 int PL_unify_atom_chars(term_t t, const char *chars);
 int PL_unify_arg(int index, term_t t, term_t a);
 int PL_term_type(term_t t);
+
+inline static
+void
+_PL_get_arg(int index, term_t t, term_t a)
+{ cell_t *arg=deref(t)+index;
+  mkrefp(a,deref(arg));
+}
 
 /* fli.h */
 int PL_unify(term_t t1, term_t t2);

@@ -63,7 +63,7 @@ extern atom__t ATOM__append;
 extern atom__t ATOM__at;
 extern atom__t ATOM__binary;
 extern atom__t ATOM__bindvars;
-extern atom__t ATOM__char__escape;
+extern atom__t ATOM__character__escapes;
 extern atom__t ATOM__cpu__time;
 extern atom__t ATOM__curly__notation;
 extern atom__t ATOM__end__of__file;

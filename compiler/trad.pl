@@ -246,9 +246,9 @@ popenv		:- g('popenv();\n').
 restore		:- g('restore();\n').
 
 init		:- format('#ifdef\tMAIN_LOOP\n  main_loop:\n#endif\n\n'),
-		   g('get_time(&t0);\n'),
+		   g('init_GetTime();\n'),
 		   g('init(&&failed_query);').
-halt_		:- g0('#ifdef MAIN_LOOP\n\tget_time(&t1); print_time(); goto main_loop;\n#else\n\thalt_();\n#endif').
+halt_		:- g0('#ifdef MAIN_LOOP\n\tPL_print_time(); goto main_loop;\n#else\n\thalt_();\n#endif').
 
 saveargs(N)     :- comm(saveargs,N),
                    between(1,N,I),

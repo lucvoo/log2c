@@ -42,7 +42,7 @@ PL_new_term_ref(void)
 
 atom_t
 PL_new_atom(const char *s)
-{ return lookup_atom(s); }
+{ return PL_lookup_atom(s); }
 
 const char *
 PL_atom_chars(atom_t a)
@@ -50,7 +50,7 @@ PL_atom_chars(atom_t a)
 
 functor_t
 PL_new_functor(atom_t f,  int a)
-{ return lookup_fun(f, a); }
+{ return PL_lookup_fun(f, a); }
 
 atom_t
 PL_functor_name(functor_t f)
@@ -254,7 +254,7 @@ PL_get_functor(term_t t, functor_t *f)
     succeed;
   }
   if ( isAtom(t) )
-  { *f = lookup_fun(get_atom(t), 0);
+  { *f = PL_lookup_fun(get_atom(t), 0);
     succeed;
   }
 
@@ -262,6 +262,22 @@ PL_get_functor(term_t t, functor_t *f)
 }
 
 
+
+// int
+// PL_get_arg_(int index, term_t t, term_t *a)
+// { Deref(t);
+// 
+//   if (is_fun(t))
+//   { int arity = get_arity(t);
+// 
+//     if ( index >0 && index <= arity )
+//     { *a=t+index;
+//       succeed;
+//     }
+//   }
+// 
+//   fail;
+// }
 
 int
 PL_get_arg(int index, term_t t, term_t a)
@@ -277,28 +293,6 @@ PL_get_arg(int index, term_t t, term_t a)
   }
 
   fail;
-}
-
-int
-PL_get_arg_(int index, term_t t, term_t *a)
-{ Deref(t);
-
-  if (is_fun(t))
-  { int arity = get_arity(t);
-
-    if ( index >0 && index <= arity )
-    { *a=t+index;
-      succeed;
-    }
-  }
-
-  fail;
-}
-
-void
-_PL_get_arg(int index, term_t t, term_t a)
-{ cell_t *arg=deref(t)+index;
-  mkrefp(a,deref(arg));
 }
 
 
@@ -428,7 +422,7 @@ PL_put_atom(term_t t, atom_t a)
 
 void
 PL_put_atom_chars(term_t t, const char *s)
-{ atom_t a=lookup_atom(new_str(s));
+{ atom_t a=PL_lookup_atom(new_str(s));
   PL_put_atom(t,a);
 }
 
@@ -484,7 +478,7 @@ PL_put_term(term_t t1, term_t t2)
 
 int
 PL_unify_atom_chars(term_t t, const char *chars)
-{ return(PL_unify_atom(t,lookup_atom(new_str(chars))));
+{ return(PL_unify_atom(t,PL_lookup_atom(new_str(chars))));
 }
 
 

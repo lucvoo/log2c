@@ -5,7 +5,7 @@ CC 	= gcc
 
 #DEBUG=1
 
-CFLAGS_WARN = -Wall -Wwrite-strings -Wstrict-prototypes # -Wmissing-prototypes
+CFLAGS_WARN = -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes
 CFLAGS_ALL  = -fno-builtin -funsigned-char
 CFLAGS_REG1 = -ffixed-%ebx
 CFLAGS_REG2 = -ffixed-%esi -ffixed-%edi

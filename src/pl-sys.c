@@ -15,7 +15,7 @@ int pl_shell(term_t command, term_t status)
   if (!PL_get_atom_chars(command,&cmd))	// FIXME : use PL_get_chars
     PL_warning("shell/2: instantiation fault");
   else
-    return(PL_unify_integer(status,System(cmd)));
+    return(PL_unify_integer(status,PL_System(cmd)));
 }
 
 int pl_get_time(term_t time)
@@ -33,7 +33,7 @@ int pl_convert_time(term_t Time, term_t Year, term_t Month, term_t Day, term_t H
     long ms=(long) ((t-s)*1000);
     struct tm *tm;
 
-    tm=LocalTime(s);
+    tm = PL_LocalTime(s);
     return( PL_unify_intg(Year,   tm->tm_year+1900) &&
             PL_unify_intg(Month,  tm->tm_mon+1)	  &&
             PL_unify_intg(Day,    tm->tm_mday) &&
@@ -53,7 +53,7 @@ int pl_getenv(term_t var, term_t val)
   if (PL_get_chars(var, &n, CVT_ALL))
   { char *v;
 
-    if ((v = Getenv(n)))
+    if ((v = getenv(n)))
       return(PL_unify_atom_chars(val, v));
     else
       fail;
@@ -67,7 +67,7 @@ int pl_setenv(term_t var, term_t val)
 
   if ( PL_get_chars(var, &n, CVT_ALL|BUF_RING) &&
        PL_get_chars(val, &v, CVT_ALL) )
-  { return(Setenv(n, v)!=0);
+  { return(PL_setenv(n, v)!=0);
   }
   else
     PL_warning("setenv/2: instantiation fault");
@@ -77,7 +77,7 @@ int pl_unsetenv(term_t var)
 { const char *n;
 
   if (PL_get_chars(var, &n, CVT_ALL))
-  { Unsetenv(n);
+  { PL_unsetenv(n);
     succeed;
   }
   else
@@ -94,7 +94,7 @@ void init_argv(int arg_c, char **arg_v)
 
   while(arg_c--)
   { a[0].val=__cons();
-    a[1].val=__atom(lookup_atom(*arg_v++));
+    a[1].val=__atom(PL_lookup_atom(*arg_v++));
     a+=2;
   }
   a[0].val=__nil();

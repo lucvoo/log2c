@@ -24,7 +24,7 @@ atom_t add_atom(const char *s, hash_t H, hash_t h)
   return(a);
 }
 
-atom_t lookup_atom(const char *s)
+atom_t PL_lookup_atom(const char *s)
 { hash_t h, H;
   atom_t a;
   const char *copy;

@@ -231,7 +231,7 @@ void WritePrimitive(pl_stream S, term_t t, const w_opt *opt)
 	  { s = Options(OPT_QUOT) ? "'$NaN'" : "NaN";
 	  }
 	  else
-	  { sprintf(buf,PL_atom_chars(status.float_fmt),d);
+	  { sprintf(buf,PL_atom_chars(PL_status.float_fmt),d);
 	    s = buf;
 	  }
 
@@ -250,11 +250,11 @@ static int priorityOperator(atom_t atom)
 { int type, priority;
   int result = 0;
 
-  if (is_op(OP_PREFIX, atom, &type, &priority) && priority > result)
+  if (PL_is_op(OP_PREFIX, atom, &type, &priority) && priority > result)
     result = priority;
-  if (is_op(OP_POSTFIX, atom, &type, &priority) && priority > result)
+  if (PL_is_op(OP_POSTFIX, atom, &type, &priority) && priority > result)
     result = priority;
-  if (is_op(OP_INFIX, atom, &type, &priority) && priority > result)
+  if (PL_is_op(OP_INFIX, atom, &type, &priority) && priority > result)
     result = priority;
 
   return result;
@@ -302,15 +302,16 @@ bool WriteTerm(pl_stream S, term_t t,
            Options(OPT_CURL) )
       { term_t a = PL_new_term_ref();
 
-	PL_get_arg(1, t, arg);
+	_PL_get_arg(1, t, arg);
 	Putc(S, '{');
 	for(;;)
 	{ if ( !PL_is_functor(arg, FUN(comma,2)) )
 	    break;
-	  PL_get_arg(1, arg, a);
+          deref(arg);
+	  _PL_get_arg(1, arg, a);
 	  WriteTerm(S, a, 999, depth+1, opt);
 	  Puts(S, ", ");
-	  PL_get_arg(2, arg, arg);
+	  _PL_get_arg(2, arg, arg);
 	}
 	WriteTerm(S, arg, 999, depth+1, opt);      
 	Putc(S, '}');
@@ -322,7 +323,7 @@ bool WriteTerm(pl_stream S, term_t t,
 	   Options(OPT_NUMV) )
       { int n;
 
-        PL_get_arg(1, t, arg);
+        _PL_get_arg(1, t, arg);
         if ( PL_get_integer(arg, &n) && n >= 0 )
         { int i = n % 26;
           int j = n / 26;
@@ -341,7 +342,7 @@ bool WriteTerm(pl_stream S, term_t t,
 	   Options(OPT_NAMV) )
       { atom_t a;
 
-        PL_get_arg(1, t, arg);
+        _PL_get_arg(1, t, arg);
         if (( a = PL_get_atom(arg) ))
         { w_opt opt2;
           memcpy(&opt2, opt, sizeof(w_opt));
@@ -354,11 +355,11 @@ bool WriteTerm(pl_stream S, term_t t,
       }
 
       if (Options(OPT_OPS))			/* op <term> */
-      { if ( is_op(OP_PREFIX, functor, &op_type, &op_pri) )
+      { if ( PL_is_op(OP_PREFIX, functor, &op_type, &op_pri) )
         { term_t arg = PL_new_term_ref();
           int pri;
   
-  	  PL_get_arg(1, t, arg);
+  	  _PL_get_arg(1, t, arg);
   	  if ( op_pri > prec )
   	    PutOpenBrace(S);
   	  WriteAtom(S, functor, opt);
@@ -374,11 +375,11 @@ bool WriteTerm(pl_stream S, term_t t,
         }
   
   					/* <term> op */
-        if ( is_op(OP_POSTFIX, functor, &op_type, &op_pri) )
+        if ( PL_is_op(OP_POSTFIX, functor, &op_type, &op_pri) )
         { term_t arg = PL_new_term_ref();
           int pri;
   
-  	  PL_get_arg(1, t, arg);
+  	  _PL_get_arg(1, t, arg);
   	  if ( op_pri > prec )
   	    PutOpenBrace(S);
   	  if (op_type == OP_XF)
@@ -418,13 +419,13 @@ bool WriteTerm(pl_stream S, term_t t,
       }
 
       if (Options(OPT_OPS))		/* <term> op <term> */
-      { if ( is_op(OP_INFIX, functor, &op_type, &op_pri) )
+      { if ( PL_is_op(OP_INFIX, functor, &op_type, &op_pri) )
         { term_t a = PL_new_term_ref();
           int pri;
 
 	  if ( op_pri > prec )
 	    PutOpenBrace(S);
-	  PL_get_arg(1, t, a);
+	  _PL_get_arg(1, t, a);
           if (op_type==OP_XFX || op_type == OP_XFY)
             pri = op_pri-1;
           else
@@ -433,7 +434,7 @@ bool WriteTerm(pl_stream S, term_t t,
 	  WriteAtom(S, functor, opt);
 	  if ( functor == ATOM(comma) )
 	    Putc(S, ' ');
-	  PL_get_arg(2, t, a);
+	  _PL_get_arg(2, t, a);
           if (op_type==OP_XFX || op_type == OP_YFX)
             pri = op_pri-1;
           else
@@ -472,7 +473,7 @@ int writeTerm(pl_stream S, term_t t,
     opt.flags	= OPT_OPS | OPT_LIST;
   else
     opt.flags	= 0;
-  if (status.char_esc)
+  if (PL_status.char_esc)
     opt.flags |= OPT_ESC;
   if (quote)
     opt.flags |= OPT_QUOT;
@@ -492,12 +493,12 @@ int PL_writeq(pl_stream S, term_t t)
 }
 
 int pl_write(term_t t)
-{ writeTerm(OutStream(), t, 1, 0, 0);
+{ writeTerm(PL_OutStream(), t, 1, 0, 0);
   succeed;
 }
 
 int pl_write_ln(term_t t)
-{ pl_stream S=OutStream();
+{ pl_stream S = PL_OutStream();
 
   writeTerm(S, t, 1, 0, 0);
   Sputc(S,'\n');
@@ -505,12 +506,12 @@ int pl_write_ln(term_t t)
 }
 
 int pl_writeq(term_t t)
-{ writeTerm(OutStream(), t, 1, 1, 0);
+{ writeTerm(PL_OutStream(), t, 1, 1, 0);
   succeed;
 }
 
 int pl_write2(term_t stream, term_t t)
-{ pl_stream S=Output_Stream(stream);
+{ pl_stream S = PL_Output_Stream(stream);
 
   if (!S) fail;
   writeTerm(S, t, 1, 0, 0);
@@ -518,7 +519,7 @@ int pl_write2(term_t stream, term_t t)
 }
 
 int pl_writeq2(term_t stream, term_t term)
-{ pl_stream S=Output_Stream(stream);
+{ pl_stream S = PL_Output_Stream(stream);
 
   if (!S) fail;
   writeTerm(S, term, 1, 1, 0);
@@ -527,12 +528,12 @@ int pl_writeq2(term_t stream, term_t term)
 
 
 int pl_display(term_t t)
-{ writeTerm(OutStream(), t, 0, 0, 1);
+{ writeTerm(PL_OutStream(), t, 0, 0, 1);
   succeed;
 }
 
 int pl_display2(term_t stream, term_t term)
-{ pl_stream S=Output_Stream(stream);
+{ pl_stream S = PL_Output_Stream(stream);
 
   if (!S) fail;
   writeTerm(S, term, 0, 0, 1);
@@ -540,12 +541,12 @@ int pl_display2(term_t stream, term_t term)
 }
 
 int pl_write_canonical(term_t t)
-{ writeTerm(OutStream(), t, 0, 1, 1);
+{ writeTerm(PL_OutStream(), t, 0, 1, 1);
   succeed;
 }
 
 int pl_write_canonical2(term_t stream, term_t term)
-{ pl_stream S=Output_Stream(stream);
+{ pl_stream S = PL_Output_Stream(stream);
 
   if (!S) fail;
   writeTerm(S, term, 0, 1, 1);
@@ -570,7 +571,7 @@ int PL_displayq(pl_stream S, term_t t)
 
 // FIXME : move this to pl-io.c
 int PL_puts(char *s)
-{ pl_stream S=OutStream();
+{ pl_stream S = PL_OutStream();
   Sputs(S,s);
   succeed;
 }
@@ -592,13 +593,13 @@ int pl_warn(const char *fmt)
   char  *buf;
 
   asprintf(&buf, "[Warning: %s ]\n", fmt);
-  term=(term_t)lookup_atom(buf);
+  term=(term_t)PL_lookup_atom(buf);
   free(buf);
 #else
   static char buf[2048];		// FIXME : very dangerous
 
   sprintf(buf, "[Warning: %s ]\n", fmt);
-  term=(term_t)lookup_atom(buf);
+  term=(term_t)PL_lookup_atom(buf);
 #endif
 
   writeTerm(Stderr, term, 0, 0, 0);
@@ -624,7 +625,7 @@ int get_options(term_t Options, w_opt *options, const char *pred)
   static long   opt_max_depth;
   static pl_opt_spec_t specs[] =
   { { ATOM(_quoted), OPT_BOOL, { .bool = &opt_quoted} },
-    { ATOM(_char__escape), OPT_BOOL, { .bool = &opt_char_esc} },
+    { ATOM(_character__escapes), OPT_BOOL, { .bool = &opt_char_esc} },
     { ATOM(_ignore__ops), OPT_BOOL, { .bool = &opt_ignore_ops} },
     { ATOM(_numbervars), OPT_BOOL, { .bool = &opt_numbervars} },
     { ATOM(_namevars), OPT_BOOL, { .bool = &opt_namevars} },
@@ -638,7 +639,7 @@ int get_options(term_t Options, w_opt *options, const char *pred)
   
 // Set default value;
   opt_quoted = 0;
-  opt_char_esc = status.char_esc;
+  opt_char_esc = PL_status.char_esc;
   opt_ignore_ops = 0;
   opt_numbervars = 0;
   opt_namevars = 0;
@@ -649,7 +650,7 @@ int get_options(term_t Options, w_opt *options, const char *pred)
   opt_max_depth = LONG_MAX;
 
 // Scan the options
-  if (!scan_options(Options, specs))
+  if (!PL_scan_options(Options, specs))
   { PL_warning("%s : illegal option list", pred);
   }
 
@@ -686,13 +687,13 @@ int PL_write_term(pl_stream S,term_t term, term_t options,
 }
 
 int pl_write_term(term_t term, term_t options)
-{ pl_stream S = OutStream();
+{ pl_stream S = PL_OutStream();
 
   return PL_write_term(S,term, options, "write_term/2");
 }
 
 int pl_write_term3(term_t stream, term_t term, term_t options)
-{ pl_stream S=Output_Stream(stream);
+{ pl_stream S = PL_Output_Stream(stream);
 
   if (!S) fail;
   return PL_write_term(S,term, options, "write_term/3");

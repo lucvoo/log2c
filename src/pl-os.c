@@ -27,10 +27,14 @@ PL_halt(int status)
 
 
 // Return a string describing the last OS call error
-char *OsError(void)
+char *PL_OsError(void)
 { return(strerror(errno));
 }
 
+int PL_System(const char *cmd)
+{ return(system(cmd));		// FIXME : close I/O       ?
+				//         signal handling ?
+}
 
 /**********************************************************************/
 /* Time stuff                                                         */
@@ -40,19 +44,16 @@ static double clk_tck;
 
 // Return the amount of second of CPU time (user + system time)
 // used by the process.
-double CpuTime(void)
+double PL_CpuTime(void)
 { struct tms t;
 
   times(&t);
   return((t.tms_utime+t.tms_stime)/clk_tck);
 }
 
-// Return time in seconds since Unix's epoch ( 1 Jan 1970, 00.00.00 )
-long Time(void)
-{ return(time(0)); }
 
 // Wrapper for localtime
-struct tm* LocalTime(long t)
+struct tm* PL_LocalTime(long t)
 { time_t T=t;
   return(localtime(&T));
 }
@@ -63,13 +64,14 @@ struct tm* LocalTime(long t)
 /**********************************************************************/
 
 // Return a Random Number (in the range ... )
-unsigned long Random(void)
-{ return(random());
+unsigned long PL_Random(void)
+{ return(rand());
 }
 
 static
 void InitRandom(void)
-{ srandom(Time()); }
+{ srand(time(0));
+}
 
 
 /**********************************************************************/
@@ -97,7 +99,7 @@ const char *EnsureAbsolutePath(const char *path)
   }
 }
 
-char *ReadLink(const char *path)
+char *PL_ReadLink(const char *path)
 { static char buf[PATH_MAX+1];
   int n;
 
@@ -121,7 +123,7 @@ char *ReadLink(const char *path)
 // else
 //   return the home directory of <user>
 static
-char *GetHome(const char *user)
+char *PL_GetHome(const char *user)
 { struct passwd *pw;
 
   if (!user)
@@ -153,7 +155,7 @@ char *ExpandTilde(const char *path)
 
     path++;
     if (path[0]=='/' || path[0]=='\0')	// get real user home directory
-    { home=GetHome(0);
+    { home = PL_GetHome(0);
     }
     else				// get home directory of user
     { char *user;
@@ -169,7 +171,7 @@ char *ExpandTilde(const char *path)
       strncpy(user,path,len);
       user[len]='\0';
 
-      if ((home=GetHome(user)))
+      if ((home = PL_GetHome(user)))
         path+=len;
       else
       { home="~"; }
@@ -195,7 +197,7 @@ char *ExpandTilde(const char *path)
 
 
 
-char *CanonicalPath(const char *path, char canon_path[])
+char *PL_CanonicalPath(const char *path, char canon_path[])
 { char *p; 
 
   if ((p=ExpandTilde(path)))
@@ -212,7 +214,7 @@ char *CanonicalPath(const char *path, char canon_path[])
 
 
 // For the moment interprete only '~' and '~<user>' construct.
-char *ExpandFile(const char *file, char *expanded)
+char *PL_ExpandFile(const char *file, char *expanded)
 { static char buf[PATH_MAX+1];
   char *x;
 
@@ -228,7 +230,7 @@ char *ExpandFile(const char *file, char *expanded)
 }
 
 
-int AccessFile(const char *path, int mode)
+int PL_AccessFile(const char *path, int mode)
 { int m = 0;
 
   if ( mode == PL_ACCESS_EXIST ) 
@@ -243,14 +245,14 @@ int AccessFile(const char *path, int mode)
 }
 
 
-int ExistsFile(const char *path)
+int PL_ExistsFile(const char *path)
 { if (access(path, F_OK) == 0 )
     succeed;
   fail;
 }
 
 
-int ExistsDirectory(const char *path)
+int PL_ExistsDirectory(const char *path)
 { struct stat buf;
 
   if (stat(path, &buf))
@@ -261,7 +263,7 @@ int ExistsDirectory(const char *path)
 }
 
 
-long SizeFile(const char *path)
+long PL_SizeFile(const char *path)
 { struct stat buf;
 
   if (stat(path, &buf))
@@ -319,7 +321,7 @@ void tty_atexit(void)    /* can be set up by atexit(tty_atexit) */
 }
 
 
-int GetSingleChar(void)
+int PL_GetSingleChar(void)
 { int c;
 
   if (isatty(STDIN_FILENO))
@@ -339,30 +341,22 @@ int GetSingleChar(void)
 /**********************************************************************/
 /* environment stuff                                                  */
 /**********************************************************************/
-// For portability a environment string like : "var="
-// behave the same as if var is undefined
 
-char *Getenv(const char *name)
-{ char *val=getenv(name);
-
-  return( (val && val[0]!='\0') ? val : 0 );
-}
-
-char *Setenv(const char *name, const char *val)
+int PL_setenv(const char *name, const char *val)
 { int name_len=strlen(name);
-  char *buf=AllocHeap(name_len+strlen(val)+2);
+  char *buf=alloca(name_len+1+strlen(val)+1);
 
   strcpy(buf,name);
   buf[name_len]='=';
   strcpy(buf+name_len+1,val);
   if (putenv(buf)!=0)
     PL_warning("setenv/2: os error");	// FIXME : use errno for error ?
-  return(buf);
+
+  succeed;
 }
 
-void Unsetenv(const char *name)
-{ if (getenv(name))
-    Setenv(name,"");
+void PL_unsetenv(const char *name)
+{ unsetenv(name);
 }
 
 /**********************************************************************/

@@ -87,7 +87,16 @@ int unify(register cell_t *d1, register cell_t *d2)
 }
 
 
+#ifdef	TIME_OF_DAY
+static
+struct timeval t0, t1;
+#else
+static
+time__t t0, t1;
+#endif	// TIME_OF_DAY
 
+
+#ifdef INTERACTIVE
 void write_binding(void)
 { int i, flag=0;
 
@@ -104,24 +113,33 @@ void write_binding(void)
  return;
 }
 
-#ifdef INTERACTIVE
-int next_goal(void)
+// FIXME
+#include "pl-os.h"			// for GetSingleChar()
+
+int PL_next_goal(void)
 { int c;
-  print_time();
-  c=GetSingleChar();
 
-  get_time(&t0);
+  PL_write_binding();
+  PL_print_time();
+  c=PL_GetSingleChar();
 
-  return(c==';');
+  PL_GetTime(&t0);
+
+  if (c==';')
+    return(1);
+  else
+    PL_print_time();
 } 
 #else
-int next_goal(void)
+int PL_next_goal(void)
 { return(0); }
 #endif	// INTERACTIVE
 
 #ifdef TIME_OF_DAY
-void print_time(void)
+void PL_print_time(void)
 { double t;
+
+  PL_GetTime(&t1);
 
   t=t1.tv_sec+(t1.tv_usec/1000000.0)-(t0.tv_sec+(t0.tv_usec/1000000.0));
   printf("time elapsed = %#.2f sec\n",t);
@@ -129,8 +147,10 @@ void print_time(void)
   return;
 }
 #else
-void print_time(void)
+void PL_print_time(void)
 { double tu, ts;
+
+  PL_GetTime(&t1);
 
   tu=(t1.utime-t0.utime)/1000000.0;
   ts=(t1.stime-t0.stime)/1000000.0;
@@ -141,79 +161,91 @@ void print_time(void)
 }
 #endif
 
-
+#if 0
 static void *fp, *hp, *btp;
+static
 void save_regs(void)
 { fp=FP; hp=HP; btp=BTP; }
+
+static
 void restore_regs(void)
 { FP=fp; HP=hp; BTP=btp; }
 
-#define _warning(fm,args...)       do { save_regs(); fflush(0); fprintf(stderr,"[Warning: " fm "]\n" , ## args); restore_regs(); return(0); } while(0)
+#define _warning(fm,args...)	\
+	do {	save_regs();	\
+		fflush(0);	\
+		fprintf(stderr,"[Warning: " fm "]\n" , ## args); \
+		restore_regs();	\
+		return(0);	\
+	} while(0)
+#endif
 
 // FIXME : add floating number
-int eval_(cell_t *c, int *n)
+int PL_eval_(cell_t *c, int *n)
 { int n2; //, n2;
 
   debut:
   switch(get_tag(c))
   { case ref_tag: c=c->celp;
                   goto debut;
-    case var_tag: _warning("Unbound variable in arithmetic expression");
+    case var_tag: PL_warn("Unbound variable in arithmetic expression");
                   return(0);
-    case ato_tag: _warning("Unknow arithmetic operator: %s/%d",AtomName(get_atom(c)),0);
+    case ato_tag: PL_warn("Unknow arithmetic operator: %s/%d",
+			AtomName(get_atom(c)),0);
                   return(0);
     case int_tag: *n=get_val(c);
 		  return(1);
     case fun_tag: { fun_t f=get_fun(c);	// FIXME : hash-table
                     if (f==FUN(plus,2))
-		    { if (eval_(c+1,n) && eval_(c+2,&n2))
+		    { if (PL_eval_(c+1,n) && PL_eval_(c+2,&n2))
 		      { *n+=n2; succeed; }
 		      else fail;
                     }
                     else
                     if (f==FUN(minus,2))
-		    { if (eval_(c+1,n) && eval_(c+2,&n2))
+		    { if (PL_eval_(c+1,n) && PL_eval_(c+2,&n2))
 		      { *n-=n2; succeed; }
 		      else fail;
                     }
                     else
                     if (f==FUN(star,2))
-		    { if (eval_(c+1,n) && eval_(c+2,&n2))
+		    { if (PL_eval_(c+1,n) && PL_eval_(c+2,&n2))
 		      { *n*=n2; succeed; }
 		      else fail;
                     }
                     else
                     if (f==FUN(div,2) || f==FUN(divide,2))
-		    { if (eval_(c+1,n) && eval_(c+2,&n2))
+		    { if (PL_eval_(c+1,n) && PL_eval_(c+2,&n2))
 		       { *n/=n2; succeed; }
 		       else fail;
                     }
                     else
                     if (f==FUN(minus,1))
-		    { if (eval_(c+1,n))
+		    { if (PL_eval_(c+1,n))
 		      { *n=-*n; succeed; }
 		      else fail;
                     }
                     else
                     if (f==FUN(_max,2))
-		    { if (eval_(c+1,n) && eval_(c+2,&n2))
+		    { if (PL_eval_(c+1,n) && PL_eval_(c+2,&n2))
 		      { *n=((*n>n2) ? *n : n2); succeed; }
 		      else fail;
                     }
                     else
                     if (f==FUN(_min,2))
-		    { if (eval_(c+1,n) && eval_(c+2,&n2))
+		    { if (PL_eval_(c+1,n) && PL_eval_(c+2,&n2))
 		      { *n=((*n<n2) ? *n : n2); succeed; }
 		      else fail;
                     }
                     else
                     if (f==FUN(_mod,2))
-		    { if (eval_(c+1,n) && eval_(c+2,&n2))
+		    { if (PL_eval_(c+1,n) && PL_eval_(c+2,&n2))
 		      { *n=*n % n2; succeed; }
 		      else fail;
                     }
                     else
-                      _warning("Unknow arithmetic operator: %s/%ld",FunName(f), FunArity(f));
+                      PL_warn("Unknow arithmetic operator: %s/%ld",
+			FunName(f), FunArity(f));
                   }                  
   }
 
@@ -221,7 +253,7 @@ int eval_(cell_t *c, int *n)
 }  
 
 
-int can_unify(cell_t *a, cell_t *b)
+int PL_can_unify(cell_t *a, cell_t *b)
 { int r;
   mark_t m;
   Mark(m);
@@ -230,16 +262,16 @@ int can_unify(cell_t *a, cell_t *b)
   return(r);
 }
 
-int not_unify(cell_t *a, cell_t *b)
-{ return(! can_unify(a,b)); }
+int PL_not_unify(cell_t *a, cell_t *b)
+{ return(! PL_can_unify(a,b)); }
 
 
 #ifdef TIME_OF_DAY
-void get_time(struct timeval *tv)
+void PL_GetTime(struct timeval *tv)
 { gettimeofday(tv,0); }
 #else
 #include <sys/resource.h>       // for getrusage()
-void get_time(time__t *t)
+void PL_GetTime(time__t *t)
 { struct rusage usage;
 
   getrusage(RUSAGE_SELF, &usage);
@@ -249,3 +281,6 @@ void get_time(time__t *t)
 }
 #endif
 
+void init_GetTime(void)
+{ PL_GetTime(&t0);
+}

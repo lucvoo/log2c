@@ -22,7 +22,7 @@ typedef struct { const atom_t		name;
                } pl_opt_spec_t, *pl_opt_spec;
 		         
 extern
-int scan_options(term_t options, pl_opt_spec spec);
+int PL_scan_options(term_t options, pl_opt_spec spec);
 
 
 #endif	// PL_OPTIONS_H_

@@ -108,13 +108,11 @@ typedef	int	bool;
 
 #include <sys/time.h>
 
-#ifdef TIME_OF_DAY
-extern struct timeval t0, t1;
-#else
-typedef struct { double utime;
-                 double stime;
-               } time__t;
-extern time__t t0, t1;
+#ifndef TIME_OF_DAY
+typedef struct
+{ double utime;
+  double stime;
+} time__t;
 #endif
 
 #ifndef	STRUCT_PL_STREAM

@@ -34,14 +34,10 @@ tr_t  *TP=0;
 cell_t  *SHP=0;
 
 
-#ifdef	TIME_OF_DAY
-struct timeval t0, t1;
-#else
-time__t t0, t1;
-#endif	// TIME_OF_DAY
 
+#ifdef	INTERACTIVE
 int PL_nbr_fv;
-// void **PL_jump_table;
+#endif
 
 #include "pl-inline.h"
 #include "pl-pred.h"

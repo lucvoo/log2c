@@ -10,19 +10,20 @@
 #include <stdlib.h>	// for exit( )
 
 void pl_exit(int);
+void init_GetTime(void);
 
 // #define MAIN_LOOP
 
 
-#define	FAILED		get_time(&t1);	\
-			printf("No\\n");\
-			print_time();	\
-			pl_exit(1)
+#define	FAILED			\
+	printf("No\\n");	\
+	PL_print_time();	\
+	pl_exit(1)
 
 
 #define getref_m(ref)			\
 	({ int n;			\
-	   if (!eval_(ref,&n))		\
+	   if (!PL_eval_(ref,&n))	\
 	     goto backtrack;		\
 	   return(n);			\
 	})
@@ -52,7 +53,7 @@ void pl_exit(int);
 	    goto backtrack;		\
 	}
 
-#define GETINTG(C,I)	{ int __i; if (eval_((C),&__i)) I=__i; else goto backtrack; }
+#define GETINTG(C,I)	{ int __i; if (PL_eval_((C),&__i)) I=__i; else goto backtrack; }
 
 
 #define getintg(arg,N)			\
@@ -150,13 +151,10 @@ void init(void *L)
 
 
 #define halt_()				\
-	{ get_time(&t1);		\
-	  write_binding();		\
-	  if (next_goal())		\
+	{ if (PL_next_goal())		\
 	    goto backtrack;		\
 	  else				\
-	  { print_time();		\
-	    pl_exit(0);			\
+	  { pl_exit(0);			\
 	  }				\
 	}
 

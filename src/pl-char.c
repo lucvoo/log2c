@@ -9,7 +9,7 @@
 #include "pl-string.h"
 
 
-static atom_t pl_char_atoms[256];
+static atom_t atoms_tab[256];
 
 atom_t PL_char_to_atom(int c)
 { static char tmp[2];
@@ -17,11 +17,11 @@ atom_t PL_char_to_atom(int c)
   if (0>c || c>255)
     return(0);
 
-  if (!pl_char_atoms[c])
+  if (!atoms_tab[c])
   { tmp[0]=c; tmp[1]='\0';
-    pl_char_atoms[c]=lookup_atom(tmp);
+    atoms_tab[c]=PL_lookup_atom(tmp);
   }
-  return(pl_char_atoms[c]);
+  return(atoms_tab[c]);
 }
 
 

@@ -8,7 +8,7 @@
 #include "pl-option.h"
 
 
-int scan_options(term_t options, pl_opt_spec spec)
+int PL_scan_options(term_t options, pl_opt_spec spec)
 { term_t list=deref(options);
   // term_t head;
   term_t val=PL_new_term_ref();

@@ -17,28 +17,27 @@
 
 /* pl-os.c */
 void PL_halt(int status);
-char *OsError(void);
-double CpuTime(void);
-long Time(void);
-struct tm *LocalTime(long t);
-unsigned long Random(void);
-char *TempFileName(char *id);
-char *CanonicalPath(const char *path, char canon[]);
-char *ExpandFile(const char *file, char expanded[]);
-int AccessFile(const char *path, int mode);
-int ExistsFile(const char *path);
-int ExistsDirectory(const char *path);
-long SizeFile(const char *path);
+char *PL_OsError(void);
+double PL_CpuTime(void);
+struct tm *PL_LocalTime(long t);
+unsigned long PL_Random(void);
+char *PL_TempFileName(char *id);
+char *PL_CanonicalPath(const char *path, char canon[]);
+char *PL_ExpandFile(const char *file, char expanded[]);
+int PL_AccessFile(const char *path, int mode);
+int PL_ExistsFile(const char *path);
+int PL_ExistsDirectory(const char *path);
+long PL_SizeFile(const char *path);
 int pl_test(term_t file, term_t expand);
-int GetSingleChar(void);
-char *Getenv(const char *name);
-char *Setenv(const char *name, const char *val);
-void Unsetenv(const char *name);
-char *ReadLink(const char *path);
+int PL_GetSingleChar(void);
+int PL_setenv(const char *name, const char *val);
+void PL_unsetenv(const char *name);
+char *PL_ReadLink(const char *path);
+int PL_System(const char *cmd);
 
 
 INLINE_DECL
-const char *BaseName(const char *p)
+const char *PL_BaseName(const char *p)
 { char *b;
 
   b=strrchr(p,'/');
@@ -46,7 +45,7 @@ const char *BaseName(const char *p)
 }
 
 INLINE_DECL
-char *DirName(const char *path)
+char *PL_DirName(const char *path)
 { static char buf[PATH_MAX+1];
   char *p;
 
@@ -60,18 +59,12 @@ char *DirName(const char *path)
 }
 
 INLINE_DECL
-int PathCmp(const char *s1, const char *s2)
+int PL_PathCmp(const char *s1, const char *s2)
 { return(strcmp(s1,s2)); }
 
 
-// FIXME : close non-terminal related I/O in child
 INLINE_DECL
-int System(const char *cmd)
-{ return(system(cmd)); }
-
-
-INLINE_DECL
-int RemoveFile(const char *path)
+int PL_RemoveFile(const char *path)
 {
 #ifdef HAVE_REMOVE
   return(remove(path) == 0 );
@@ -81,8 +74,9 @@ int RemoveFile(const char *path)
 }
 
 INLINE_DECL
-int isAbsolutePath(const char *path)
-{ return(path[0]=='/'); }
+int PL_isAbsolutePath(const char *path)
+{ return(path[0]=='/');
+}
 
 // definition for access_file/2
 #define	PL_ACCESS_EXIST		1

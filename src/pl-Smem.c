@@ -31,6 +31,7 @@ int Sclose_wmem(pl_stream S)
   return(0);
 }
 
+static
 Sfun_t wmem_functions = 
 { 0,
   Swrite_wmem,
@@ -96,7 +97,7 @@ int Sclose_rmem(pl_stream S)
 { return(0);
 }
 
-
+static
 Sfun_t rmem_functions = 
 { Sread_rmem,
   0,
