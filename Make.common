@@ -34,6 +34,9 @@ PLC	= plc
 ##
 .SUFFIXES: .c .o .s .i .mod .lnk.c .pl
 
+.%.d: %.c $(HDR)
+	@$(CC) -MM $(CFLAGS) $*.c | sed "/: /s/[^\.]*/&.s &/" > $@
+
 %.o: %.c ${$*.dep}
 	$(CC) $(CFLAGS) -c $*.c -o $*.o
 %.s: %.c ${$*.dep}
@@ -59,7 +62,7 @@ veryclean:
 depend:
 	$(CC) -MM $(CFLAGS) ${DEPS} | sed "/: /s/[^\.]*/&.s &/" > $@
 
-depend.mk:
+depend.mk: ${DEPS}
 	@$(CC) -MM $(CFLAGS) ${DEPS} | sed "/: /s/[^\.]*/&.s &/" > $@
 
 ########################################################################

@@ -15,7 +15,6 @@
 		, to_list/2
 		, a_n_f/5
 		, fun/4
-		, new_file/2,	old_file/1
 		, mapi/3
 		, fl/1, fl_/1
 		, g/1,	g/2,	g0/1,	g0/2, f/1, f/2
@@ -316,10 +315,6 @@ anf_get_pred(P)	:- anf_get_erase(anf_rec_pred,P).
 %% 				   anf3(L,[F|Ai],Ao,[(F/N)|Fi],Fo).
 %% anf4(_).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-new_file(Old,New)	:- telling(Old), tell(New).
-old_file(Old)		:- told, tell(Old).
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% variants of map and maplist
 :- module_transparent map/2.
@@ -355,12 +350,12 @@ comm(H)		:- format('/* ~w */\n',[H]), !.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Read all terms of file 'F' and put it in list 'L'
 
-read_all(F,L)	:- seeing(Old),
+read_all(F,L)	:- current_input(Old),
 		   open(F,read,N),
 		   set_input(N),
 		   read_all_(L),
 		   close(N),
-		   see(Old).
+		   set_input(Old).
 
 read_all_(L)	:- read(T),
 		   ( T==end_of_file
@@ -370,12 +365,12 @@ read_all_(L)	:- read(T),
 		        expand_term(T,Tx)
 		   ).
 
-read_export(F,X):- seeing(Old),
+read_export(F,X):- current_input(Old),
 		   open(F,read,N),
 		   set_input(N),
 		   read_x_(X),
 		   close(N),
-		   see(Old).
+		   set_input(Old).
 
 read_x_(X)	:- read(T),
 		   ( T==end_of_file -> fail;

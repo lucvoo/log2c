@@ -18,6 +18,8 @@ CLEAN	= ${TRASH} $(PLS:%.pl=%.{c,h,o,mod,lnk.c,lnk.o}) $(PLS:%.pl=%)
 
 FORCE: ;
 
+all: ${PLC}
+
 ${PL_LIB}: FORCE
 	@${MAKE} -C ${src_dir} $(notdir $@)
 ${PL_C}: FORCE
