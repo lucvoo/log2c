@@ -1,0 +1,187 @@
+// Copyright (c) 1997 Luc Van Oostenryck. All rights reserved.
+//
+//
+
+// pl-ISO.c
+NDET(atom_concat,3,pl_atom_concat)
+NDET(sub_atom,5,pl_sub_atom)
+
+// pl-atoms.c
+NDET(current_atom,1,pl_current_atom)
+
+// pl-char.c
+DET(char_code,2,pl_char_code)
+
+// pl-file.c
+DET(file_name_extension,3,pl_file_name_extension)
+DET(file_base_name,2,pl_file_base_name)
+DET(file_directory_name,2,pl_file_directory_name)
+DET(delete_file,1,pl_delete_file)
+DET(absolute_file_name,2,pl_absolute_file_name)
+DET(is_absolute_file_name,1,pl_is_absolute_file_name)
+DET(access_file,2,pl_access_file)
+DET(exists_file,1,pl_exists_file)
+DET(exists_directory,1,pl_exists_directory)
+
+// pl-flag.c
+DET(flag,3,pl_flag)
+NDET(current_flag,1,pl_current_flag)
+NDET('$flag2',3,pl_flag_2)
+DET('$set_flag2',3,pl_set_flag_2)
+
+// pl-fmt.c
+DET(format,2,pl_format)
+DET(format,3,pl_format3)
+DET(sformat,2,pl_sformat2)
+DET(sformat,3,pl_sformat3)
+
+// pl-fun.c
+NDET(current_functor,2,pl_current_functor)
+
+// pl-hash.c
+DET(hpjw,2,pl_hpjw)
+
+// pl-io.c
+DET(see,1,pl_see)
+DET(tell,1,pl_tell)
+DET(append,1,pl_append)
+DET(seeing,1,pl_seeing)
+DET(telling,1,pl_telling)
+DET(seen,0,pl_seen)
+DET(told,0,pl_told)
+DET(open,4,pl_open4)
+DET(open,3,pl_open3)
+DET(close,1,pl_close)
+NDET(current_stream,3,pl_current_stream)
+NDET(stream_property,2,pl_stream_property)
+DET(set_input,1,pl_set_input)
+DET(set_output,1,pl_set_output)
+DET(current_input,1,pl_current_input)
+DET(current_output,1,pl_current_output)
+DET(stream_position,3,pl_stream_position)
+DET(nl,0,pl_nl)
+DET(nl,1,pl_nl1)
+DET(put,1,pl_put)
+DET(put,2,pl_put2)
+DET(tab,1,pl_tab)
+DET(tab,2,pl_tab2)
+DET(flush,0,pl_flush)
+DET(flush_output,1,pl_flush_output)
+DET(get_single_char,1,pl_get_single_char)
+DET(get0,1,pl_get0)
+DET(get0,2,pl_get02)
+DET(get,1,pl_get)
+DET(get,2,pl_get2)
+DET(peek_byte,1,pl_peek_byte)
+DET(peek_byte,2,pl_peek_byte2)
+DET(skip,1,pl_skip)
+DET(skip,2,pl_skip2)
+DET(getline,1,pl_getline)
+DET(character_count,2,pl_character_count)
+DET(line_count,2,pl_line_count)
+DET(line_position,2,pl_line_position)
+
+// pl-list.c
+DET(memberchk,2,pl_memberchk)
+DET('$length',2,pl_length)
+DET(is_list,1,pl_is_list) // inline
+DET(proper_list,1,pl_proper_list)
+DET(partial_list,1,pl_partial_list)
+
+// pl-network.c
+DET(host_to_addr,2, pl_host_to_addr)
+
+// pl-op.c
+DET(op,3,pl_op)
+NDET(current_op,3,pl_current_op)
+
+// pl-prims.[ch]
+DET(free_variables,2,pl_free_variables)
+NDET(between,3,pl_between)
+DET(plus,3,pl_plus)
+DET(atom_codes,2,pl_atom_codes)
+DET(atom_chars,2,pl_atom_chars)
+DET(atom_char,2,pl_atom_char)
+DET(atom_length,2,pl_atom_length)
+DET(atom_prefix,2,pl_atom_prefix)
+DET(functor,3,pl_functor)
+DET(sort,2,pl_sort)
+DET(msort,2,pl_msort)
+DET(int_to_atom,2,pl_int_to_atom2)
+DET(int_to_atom,3,pl_int_to_atom3)
+DET(concat,3,pl_concat)
+DET(concat_atom,3,pl_concat_atom3)
+DET(concat_atom,2,pl_concat_atom2)
+DET(halt,1,pl_halt)
+DET('$arg',3,pl_arg)
+DET(setarg,3,pl_setarg)
+DET(=..,2,pl_univ)
+DET(ground,1,pl_ground)
+DET(unground,1,pl_unground)
+NDET(repeat,0,pl_repeat)
+DET(hash_term,2,pl_hash_term)
+DET(numbervars,4,pl_numbervars)
+
+// pl-proc.c
+
+// pl-prolog_flag.c
+DET(prolog_flag,3,pl_prolog_flag)
+DET(prolog_flag,2,pl_prolog_flag_2)
+DET(set_prolog_flag,2,pl_set_prolog_flag)
+
+// pl-read.c
+DET(read,1,pl_read)
+DET(read,2,pl_read2)
+DET(read_clause,1,pl_read_clause)
+DET(read_clause,2,pl_read_clause2)
+DET(read_variables,2,pl_read_variables)
+DET(read_variables,3,pl_read_variables3)
+DET(read_term,2,pl_read_term)
+DET(read_term,3,pl_read_term3)
+DET(number_atom,2,pl_number_atom)
+
+// pl-rec.c
+DET(recorda,3,pl_recorda)
+DET(recordz,3,pl_recordz)
+NDET(recorded,3,pl_recorded)
+DET(recorda,2,pl_recorda_2)
+DET(recordz,2,pl_recordz_2)
+NDET(recorded,2,pl_recorded_2)
+DET(erase,1,pl_erase)
+NDET(current_key,1,pl_current_key)
+DET('$recorded_all',2,pl_recorded_all)
+DET('$erase_records',1,pl_erase_records)
+DET('$findall_record',1,pl_findall_record)
+DET('$findall_collect',1,pl_findall_collect)
+DET(copy_term,2,pl_copy_term)
+
+// pl-sys.c
+DET(shell,2,pl_shell)
+DET(get_time,1,pl_get_time)
+DET(convert_time,8,pl_convert_time)
+DET(getenv,2,pl_getenv)
+DET(setenv,2,pl_setenv)
+DET(unsetenv,1,pl_unsetenv)
+DET('$argv',1,pl_argv)
+
+// pl-util.c
+DET('$mangle',2,pl_mangle)
+
+// pl-write.c
+DET(write,1,pl_write)
+DET(write,2,pl_write2)
+DET(display,1,pl_display)
+DET(display,2,pl_display2)
+DET(displayq,1,pl_displayq)
+DET(displayq,2,pl_displayq2)
+DET(writeq,1,pl_writeq)
+DET(writeq,2,pl_writeq2)
+DET(write_ln,1,pl_write_ln)
+DET(report,1,pl_report)
+
+// pl-time.c
+DET(statistics,2,pl_statistics)
+DET(gmtime,1,pl_gmtime)
+DET(localtime,1,pl_localtime)
+DET(sleep,1,pl_sleep)
+

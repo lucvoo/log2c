@@ -5,13 +5,12 @@
 
 #include "Prolog.h"
 #include "pl-fli.h"
-#include <stdlib.h>		// For alloca
 #include "pl-atom.h"
 
 #include <netdb.h>
 #include <netinet/in.h>
 
-
+static
 int PL_unify_ip(term_t Ip, const struct in_addr *addr)
 { unsigned long ip;
   unsigned char a[4];
@@ -44,6 +43,7 @@ int PL_unify_ip(term_t Ip, const struct in_addr *addr)
     fail;
 }
 
+static
 int PL_get_ip(term_t Ip, struct in_addr *addr)
 { unsigned long ip=0;
 

@@ -1,0 +1,379 @@
+/****************************************************************/
+/* Copyright (c) 1998 Luc Van Oostenryck. All rights reserved.	*/
+/*								*/
+/****************************************************************/
+
+#include "Prolog.h"
+#include <stdlib.h>
+#include <limits.h>
+#include <string.h>
+#include <termios.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <pwd.h>
+#include "pl-os.h"
+#include "pl-ctype.h"
+#include "pl-fli.h"
+#include "pl-string.h"
+
+#define PL_msg(M)
+
+void
+PL_halt(int status)
+{			// FIXME : do I/O clean-up
+			//         and ``on_halt'' predicate.
+  exit(status);
+}
+
+
+// Return a string describing the last OS call error
+char *OsError(void)
+{ return(strerror(errno));
+}
+
+
+/**********************************************************************/
+/* Time stuff                                                         */
+/**********************************************************************/
+
+static double clk_tck;
+
+// Return the amount of second of CPU time (user + system time)
+// used by the process.
+double CpuTime(void)
+{ struct tms t;
+
+  times(&t);
+  return((t.tms_utime+t.tms_stime)/clk_tck);
+}
+
+// Return time in seconds since Unix's epoch ( 1 Jan 1970, 00.00.00 )
+long Time(void)
+{ return(time(0)); }
+
+// Wrapper for localtime
+struct tm* LocalTime(long t)
+{ time_t T=t;
+  return(localtime(&T));
+}
+
+
+/**********************************************************************/
+/* Random Numbers stuff                                               */
+/**********************************************************************/
+
+// Return a Random Number (in the range ... )
+unsigned long Random(void)
+{ return(random());
+}
+
+static
+void InitRandom(void)
+{ srandom(Time()); }
+
+
+/**********************************************************************/
+/* File Management                                                    */
+/**********************************************************************/
+
+static
+char *RealPath(const char *file, char *canonical)
+{ return(realpath(file,canonical)); }
+
+inline static
+const char *EnsureAbsolutePath(const char *path)
+{ if (path[0]=='/')
+    return(path);
+  else
+  { static char buf[PATH_MAX+1], *cwd;
+    int len;
+    cwd=getcwd(buf,sizeof(buf)-1);
+    if (cwd!=buf)
+      return(0);		// FIXME : msg ?
+    len=strlen(buf);
+    buf[len]='/';
+    strcpy(buf+(len+1),path);
+    return(buf);
+  }
+}
+
+char *ReadLink(const char *path)
+{ static char buf[PATH_MAX+1];
+  int n;
+
+  if ( (n=readlink(path,buf,sizeof(buf)-1)) >= 0 )
+  { buf[n]='\0';		// readlink doesn't add the null char
+    return(buf);
+  }
+  else
+    return(0);
+}
+
+/**********************************************************************/
+/* FileName Expansion (tilde only !)                                  */
+/**********************************************************************/
+
+#include <pwd.h>
+#include <sys/types.h>
+
+// if <user> is null
+//   return the home directory of the real user of this process 
+// else
+//   return the home directory of <user>
+static
+char *GetHome(const char *user)
+{ struct passwd *pw;
+
+  if (!user)
+  { char *home;
+
+    if ((home=getenv("HOME")))
+      return(home);
+    else
+      pw=getpwuid(getuid());
+  }
+  else
+    pw=getpwnam(user);  
+
+  return(pw ? pw->pw_dir : 0);
+}
+
+
+
+// expand '~[user]' in pathname
+// return expanded path or null if error
+inline static
+char *ExpandTilde(const char *path)
+{ static char new_path[PATH_MAX+1];
+  char *np=new_path;
+  int len=0;
+
+  if (path[0]=='~')	// must do tilde expansion
+  { const char *home; 
+
+    path++;
+    if (path[0]=='/' || path[0]=='\0')	// get real user home directory
+    { home=GetHome(0);
+    }
+    else				// get home directory of user
+    { char *user;
+      char *stop;
+
+      stop=strchr(path,'/');
+      len=( stop ? stop-path : strlen(path) );
+      if (!(user=alloca(len+1)))
+      { PL_msg("alloca failed");
+        return(0);
+      }
+
+      strncpy(user,path,len);
+      user[len]='\0';
+
+      if ((home=GetHome(user)))
+        path+=len;
+      else
+      { home="~"; }
+    }
+
+    len=strlen(home);
+    if (len>=sizeof(new_path))
+    { PL_msg("Pathname too long");
+      return(0);
+    }
+
+    strcpy(new_path,home);
+    np=new_path+len;
+  }
+  
+  if ((len+strlen(path))>=sizeof(new_path))
+  { PL_msg("Pathname too long");
+    return(0);
+  }
+  strcpy(np,path);
+  return(new_path);
+}
+
+
+
+char *CanonicalPath(const char *path, char canon_path[])
+{ char *p; 
+
+  if ((p=ExpandTilde(path)))
+    path=p;
+
+#ifdef HAVE_REALPATH
+  if ((p=realpath(path,canon_path)))
+    return(p);
+  else
+#endif
+    return((char *) path);
+}
+
+
+
+// For the moment interprete only '~' and '~<user>' construct.
+char *ExpandFile(const char *file, char *expanded)
+{ static char buf[PATH_MAX+1];
+  char *x;
+
+  if (!expanded)
+    expanded=buf;
+
+  if (!(x=ExpandTilde(file)))
+  { x=(char *) file;
+  }
+
+  strcpy(expanded,file);
+  return(expanded);
+}
+
+
+int AccessFile(const char *path, int mode)
+{ int m = 0;
+
+  if ( mode == PL_ACCESS_EXIST ) 
+    m = F_OK;
+  else
+  { if ( mode & PL_ACCESS_READ    ) m |= R_OK;
+    if ( mode & PL_ACCESS_WRITE   ) m |= W_OK;
+    if ( mode & PL_ACCESS_EXECUTE ) m |= X_OK;
+  }
+
+  return(!access(path, m));
+}
+
+
+int ExistsFile(const char *path)
+{ if (access(path, F_OK) == 0 )
+    succeed;
+  fail;
+}
+
+
+int ExistsDirectory(const char *path)
+{ struct stat buf;
+
+  if (stat(path, &buf))
+    fail;
+  if ((buf.st_mode & S_IFMT) == S_IFDIR)
+    succeed;
+  fail;
+}
+
+
+long SizeFile(const char *path)
+{ struct stat buf;
+
+  if (stat(path, &buf))
+    return(-1);
+
+  return(buf.st_size);
+}
+
+
+/**********************************************************************/
+/* Terminal Handling                                                  */
+/**********************************************************************/
+
+// static struct termios	initial_termios;
+static struct termios	save_termios;
+static int				ttysavefd = -1;
+static enum { RESET, RAW, CBREAK }	ttystate = RESET;
+
+static
+int tty_cbreak(int fd)	/* put terminal into a cbreak mode */
+{ struct termios  buf;
+
+  if (tcgetattr(fd, &save_termios) < 0)
+    return(-1);
+  if (tcgetattr(fd, &buf) < 0)
+    return(-1);
+
+  buf.c_lflag &= ~(ECHO | ICANON); /* echo off, canonical mode off */
+
+  buf.c_cc[VMIN] = 1;  /* Case B: 1 byte at a time, no timer */
+  buf.c_cc[VTIME] = 0;
+
+  if (tcsetattr(fd, TCSAFLUSH, &buf) < 0)
+    return(-1);
+  ttystate = CBREAK;
+  ttysavefd = fd;
+  return(0);
+}
+
+static
+int tty_reset(int fd)		/* restore terminal's mode */
+{ if (ttystate != CBREAK && ttystate != RAW)
+    return(0);
+
+  if (tcsetattr(fd, TCSAFLUSH, &save_termios) < 0)
+    return(-1);
+  ttystate = RESET;
+  return(0);
+}
+
+static
+void tty_atexit(void)    /* can be set up by atexit(tty_atexit) */
+{ if (ttysavefd >= 0)
+    tty_reset(ttysavefd);
+}
+
+
+int GetSingleChar(void)
+{ int c;
+
+  if (isatty(STDIN_FILENO))
+  { if ( tty_cbreak(STDIN_FILENO) || 
+         (read(STDIN_FILENO,&c,1)!=1) ||
+         tty_reset(STDIN_FILENO) )
+      return(-1);
+  }
+  else
+  { if (read(STDIN_FILENO,&c,1)!=1)
+      return(-1);
+  }
+
+  return(c);
+}
+
+/**********************************************************************/
+/* environment stuff                                                  */
+/**********************************************************************/
+// For portability a environment string like : "var="
+// behave the same as if var is undefined
+
+char *Getenv(const char *name)
+{ char *val=getenv(name);
+
+  return( (val && val[0]!='\0') ? val : 0 );
+}
+
+char *Setenv(const char *name, const char *val)
+{ int name_len=strlen(name);
+  char *buf=AllocHeap(name_len+strlen(val)+2);
+
+  strcpy(buf,name);
+  buf[name_len]='=';
+  strcpy(buf+name_len+1,val);
+  if (putenv(buf)!=0)
+    PL_warning("setenv/2: os error");	// FIXME : use errno for error ?
+  return(buf);
+}
+
+void Unsetenv(const char *name)
+{ if (getenv(name))
+    Setenv(name,"");
+}
+
+/**********************************************************************/
+/* ...                                                                */
+/**********************************************************************/
+
+#include "pl-init.h"
+
+void init_os(void)
+{ InitRandom();
+  atexit(tty_atexit);
+  clk_tck=sysconf(_SC_CLK_TCK);
+}
+
