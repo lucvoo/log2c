@@ -89,6 +89,7 @@ atoms(A):- L = [ []
 		, type , alias , eof_action , eof_code , reposition
 		, text , binary , error , reset , end_of_file
 		, read , write , append, update
+		, input, output, at, past, not
 
 		%% pl-option.c
 		, true , false , on , off
@@ -110,12 +111,16 @@ atoms(A):- L = [ []
 	       ],
 	   A = L.
 
-functors(F)	:- L = [ (*)/2 , (+)/2 , (-)/1 , (-)/2 , (.)/2 , (,)/2
-		       , (/)/2 , (//)/2 , (:)/2 , '{}'/1 , pipe/1
-		       , (=)/2
-		       , '$stream_position'/3
-		       , (max)/2, (min)/2, (mod)/2
-		       , '$VAR'/1
+functors(F)	:- L =	[ (*)/2 , (+)/2 , (-)/1 , (-)/2 , (.)/2 , (,)/2
+			, (/)/2 , (//)/2 , (:)/2 , '{}'/1 , pipe/1
+			, (=)/2
+			, '$stream_position'/3
+			, (max)/2, (min)/2, (mod)/2
+			, '$VAR'/1
+		%% pl-io.c
+			, file_name/1, mode/1, type/1, alias/1
+			, position/1, end_of_stream/1
+			, eof_action/1, reposition/1
                        ],
                    F = L.
 

@@ -84,7 +84,7 @@ get_query(I,Q,B,O)	:- select(I,q(Lq),O), check_query(Lq,Q,B), !.
 get_query(_,_,_,_)	:- fatal('no query given').
 
 check_query([cl(B,Q)],Q,B).
-check_query(L ,Q,B)	:- %% format(user_error, ' L = ~w Q = ~w B = ~w\n', [ L, Q, B]),
+check_query(_L ,_Q,_B)	:- %% format(user_error, ' L = ~w Q = ~w B = ~w\n', [ _L, _Q, _B]),
 			   fatal('several queries given').
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
