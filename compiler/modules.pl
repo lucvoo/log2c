@@ -76,7 +76,7 @@ read_mod_([T|Q],Ia,Oa,If,Of,Ip,Op)  :-
 
 read_mod__(atoms(A),Ia,Oa,F,F,P,P)	:- Ia=[A|Oa], !.
 read_mod__(funs(F),A,A,If,Of,P,P)	:- If=[F|Of], !.
-read_mod__(export(P),A,A,F,F,Ip,Op)	:- append(P,Op,Ip), !. %%Ip=[P|Op], !.
+read_mod__(export(P),A,A,F,F,Ip,Op)	:- append(P,Op,Ip), !.
 read_mod__(use_module(M),Ia,Oa,If,Of,Ip,Op) :- read_mod(M,Ia,Oa,If,Of,Ip,Op), !.
 read_mod__(T,A,A,F,F,P,P)                   :- recorda(module_info,T), !.
 
@@ -105,7 +105,7 @@ used_modules(L)		:- export_use_(use_module,used_modules,L).
 exported_modules(L)	:- export_use_(export_module,exported_modules,L).
 
 export_use_(_,S,L)	:- recorded(S,L), !.
-export_use_(T,S,L)	:- findall(M,recorded(T,M),Lm),
+export_use_(T,S,L)	:- '$recorded_all'(T,Lm),
 			   flatten(Lm,B), sort(B,L),
 			   recorda(S,L).
 
@@ -123,14 +123,13 @@ get_xlist(M,A)	:- comp_sub_module(M,F), !,
 prefix_export(L,P,M,R)	:- memberchk(M-Xs,L),
 			   R=..[P,M,Xs].
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-need_modules(Ms)	:- findall(V,recorded(need_module,V),Ms).
+need_modules(Ms)	:- '$recorded_all'(need_module,Ms).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 check_import(U,_X)	:- del(module_export),
 			   used_modules(Us),
 			   format(mod,'use_module(~q).\n',[Us]),
 			   map(rec_x,U).
-			   %%map(exp_x,_X).
                          
 rec_x(use(M,L))	:- map(rec_export(M),L).
 

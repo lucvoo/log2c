@@ -49,7 +49,7 @@ code_M(V,E)	:+ E=fun(F,2,[A,B]),
 		   +> new_indent(2),
 		   code_M(V,A), code_M(J,B),
 		   +> g('~w=~w(~w,~w);',[V,Op,V,J]),
-		   +> old_indent,
+		   +> new_indent(-2),
 		   +> g('}').
 code_M(V,E)	:+ E=fun(F,1,[A]),
 		   map_arith_op(F/1,Op),

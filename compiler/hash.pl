@@ -83,7 +83,7 @@ hash_fun_tab([E|_])	:- map_fun(E,Em),
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 init_hash_jmps		:- flag(current_module,M,M),
 			   map_atom(M,Mm),
-			   findall(P,exported(P),Ppub),
+			   '$recorded_all'(export_pred,Ppub),
 			   findall(P,find_pred(P), Pall_),
 			   sort(Pall_,Pall),
 			   map(decl_pred,Pall), nl,

@@ -6,7 +6,7 @@ CC 	= gcc
 #DEBUG=1
 
 CFLAGS_WARN = -Wall
-CFLAGS_ALL  = -I. -I${inc_dir} -fno-builtin
+CFLAGS_ALL  = -I. -I${inc_dir} -fno-builtin -funsigned-char
 CFLAGS_REG1 = -ffixed-%ebx
 CFLAGS_REG2 = -ffixed-%esi -ffixed-%edi
 
@@ -41,7 +41,9 @@ PLC	= plc
 %.i: %.c ${$*.dep}
 	$(CC) $(CFLAGS) -E $*.c | grep -v '^[ ]*$$' > $*.i
 %.so: %.c ${$*.dep}
-	$(CC) $(CFLAGS) -fpic -shared -Wl,-soname,$*.so -o $*.so $(filter %.c,$^)
+	$(CC) $(CFLAGS) -fpic -shared -Wl,-soname,$*.so -o $@ $(filter %.c,$^)
+%.sa: %.c ${$*.dep}
+	$(CC) $(CFLAGS) -shared -Wl,-soname,$*.so -o $@ $(filter %.c,$^)
 
 ########################################################################
 

@@ -41,16 +41,13 @@ vars(Q,R)	:- % Be sure that no query variable is void or temporary !
 
 temp_vars(H,B,Pv,Tt,Tv)	:- to_list(B,Lg), Lg=[G1|Qg],
 		   get_void((H,B),Tv),
-		   %% maplist(free_variables,[(H,G1)|Qg],LLv),
 		   maplist_free_vars([(H,G1)|Qg],LLv),
 		   free_variables(LLv,L1),
 		   subtract_(L1,Tv,L2),
-		   %% sublist(var1(LLv),L2,Tt),
 		   sublist_var1(LLv,L2,Tt),
 		   subtract_(L2,Tt,Pv).
 
 temp_vars(Q,Pv)	:- to_list(Q,Lg),
-		   %% maplist(free_variables,Lg,LLv),
 		   maplist_free_vars(Lg,LLv),
 		   free_variables(LLv,Pv).
 
@@ -68,7 +65,6 @@ get_void(T,L)	:- get_var(T,Lgv), count_var(Lgv,Lc), keep_void(Lc,L).
 get_var(T,L)	:- get_var_(T,Lt), flatten(Lt,L).
 
 get_var_(T,[T])	:- var(T).
-%% get_var_(T,L)	:- compound(T), T=..[_|I], maplist(get_var_,I,L).
 get_var_(T,L)	:- compound(T), T=..[_|I], maplist_get_var_(I,L).
 get_var_(_,[]).
 

@@ -29,13 +29,13 @@ ${PL_C}: FORCE
 
 ${COMP}: $*.pl
 
-${PROG}: ${MODULES:%=%.o} ${PROG}.pl ${PROG}.o ${PROG}.lnk.o ${PROG}.mod ${PL_LIB} 
-	${CC} ${CFLAGS} $(filter %.o %.a,$^) -o $@
+${PROG}: ${PROG}.pl ${PROG}.mod ${MODULES} ${PROG}.lnk.o ${PL_LIB}
+	${CC} ${CFLAGS} $(filter %.o %.a,$^) ${LIBS} -o $@
 	-rm -f $@.mod # $@.lnk.c $@.c
 
 %: %.pl ${PL_C} ${PL_LIB}
 	pl -x ${PL_C} -g "comp_file('$*.pl')" -t halt
-%.mod: %.pl ${PL_C}
+%.mod: %.pl
 	pl -x ${PL_C} -g "comp_file('$*.pl')" -t halt
 ########################################################################
 # Dependencies

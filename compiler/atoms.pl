@@ -1,7 +1,11 @@
 %% Copyright (c) 1997 Luc Van Oostenryck. All rights reserved.
 %%
 
-:- module(atoms, [map_atom/2, atoms/1, functors/1, 'C_id'/2]).
+:- module(atoms, [ map_atom/2
+                 , atoms/1
+                 , functors/1
+                 %% , 'C_id'/2
+                 ]).
 
 :- index(map_atom(1,1)).
 
@@ -21,7 +25,6 @@ map_atom((@=<),	at_smaller_equal).
 map_atom((|),	bar).
 map_atom((,),	comma).
 map_atom(({}),	curl).
-% map_atom((!),	cut).
 map_atom((//),	div).
 map_atom((/),	divide).
 map_atom((.),	dot).
@@ -39,7 +42,6 @@ map_atom((\=),	not_unifiable).
 map_atom((?),	obtain).
 map_atom((\/),	or).
 map_atom((+),	plus).
-% map_atom('|:',	prompt).
 map_atom((:-),	prove).
 map_atom((?-),	query).
 map_atom((>>),	rshift).
@@ -47,42 +49,26 @@ map_atom((;),	semicolon).
 map_atom((*->),	softcut).
 map_atom((*),	star).
 map_atom((==),	strick_equals).
-% map_atom((~),	tilde).
 map_atom((=),	unify).
 map_atom((=..),	univ).
 map_atom((\),	backslash).
-% map_atom('%',	percent).
-% map_atom('\'',	squote).
-% map_atom('"',	dquote).
-% map_atom('#',	diese).
-% map_atom('$',	dollar).
-% map_atom('&',	ampersand).
-% map_atom('@',	at).
-% map_atom('`',	backquote).
-% map_atom('(',	l_paren).
-% map_atom(')',	r_paren).
-% map_atom('{',	l_brace).
-% map_atom('}',	r_brace).
-% map_atom('[',	l_bracket).
-% map_atom(']',	r_bracket).
-% map_atom('',	null).
-% map_atom('_',	underscore).
 map_atom('$stream_position',	str_pos).
 
-map_atom(A,N)	:- !, atom(A), 'C_id'(A,N).
+map_atom(A,N)	:- '$mangle'(A,N).
 
-
-'C_id'(A,Ma)	:- atom_chars(A,L), c_id(L,Ml), atom_chars(Ma,[0'_|Ml]).
-
-c_id([],[])	:- !.
-c_id([0'_|Q],[0'_,0'_|Mq])	:- !, c_id(Q,Mq).
-c_id([C|Q],[C|Mq])	:- is_csym(C), !, c_id(Q,Mq).
-c_id([C|Q],M)		:- _A is C//16, hex_digit(_A,A),
-			   _B is C mod 16, hex_digit(_B,B),
-			   M=[0'_,A,B|Mq], c_id(Q,Mq).
-
-hex_digit(V,D)	:- between(0,9,V), D is V + 0'0.
-hex_digit(V,D)	:- between(10,15,V), D is V + (0'A-10).
+%% map_atom(A,N)	:- !, atom(A), 'C_id'(A,N).
+%% 
+%% 'C_id'(A,Ma)	:- atom_chars(A,L), c_id(L,Ml), !, atom_chars(Ma,[0'_|Ml]).
+%% 
+%% c_id([],[])	:- !.
+%% c_id([0'_|Q],[0'_,0'_|Mq])	:- !, c_id(Q,Mq).
+%% c_id([C|Q],[C|Mq])	:- is_csym(C), !, c_id(Q,Mq).
+%% c_id([C|Q],M)		:- _A is C//16, hex_digit(_A,A),
+%% 			   _B is C mod 16, hex_digit(_B,B),
+%% 			   M=[0'_,A,B|Mq], c_id(Q,Mq).
+%% 
+%% hex_digit(V,D)	:- between(0,9,V), D is V + 0'0.
+%% hex_digit(V,D)	:- between(10,15,V), D is V + (0'A-10).
 
 
 atoms(A):- L = [ []

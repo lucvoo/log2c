@@ -70,7 +70,6 @@ getC(  :- D,'')			:- fun(D,F,N,_),
                                      ;  warning('unknow directive : ~w/~w',[F,N])
                                         %% , call(D)
                                    ).
-%% getC(H,     cl(F,N,A,''))	:- fun(H,F,N,A).
 getC(H,     cl(F,N,A,true))	:- fun(H,F,N,A).
 
 insertC('',L,L).
@@ -127,12 +126,10 @@ decl_export_mod(export(X,L))	:- flag(current_module,M,M),
 
 decl_exp_mod(M,X,P)	:- map_pred(P,M,Pm),
 			   map_pred(P,X,Px),
-%%			   format(h,'extern void PRED~w __attribute__((alias("PRED~w")));~n',[Pm,Px]),
 			   format(h,'#define PRED~w PRED~w~n',[Pm,Px]).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-decl_preds(X)	:- findall(V,recorded(export_pred,V),P),
-%% decl_preds(X)	:- findall(V,recorded(module_export,module_export(_,V)),P),
+decl_preds(X)	:- '$recorded_all'(export_pred,P),
 		   append(X,P,T), sort(T,L),
 		   map(decl_pred,L),
 		   nl.
@@ -166,17 +163,6 @@ init_jmp_tbl(pub,FN)	:- \+ exported(FN), !.
 init_jmp_tbl(_,FN)	:- map_fun(FN,Fm),
 			   format('{ FUN(~w), &&~w_1}, ',[Fm,Fm]).
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% 
-%% defined_pred(L,D)	:- defined_pred(L,[],D).
-%% defined_pred([],L,L).
-%% defined_pred([pr(P,N,_)|Q],I,L)	:- defined_pred(Q,[(P/N)|I],L).
-%% 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% 
-%% deletePr(Pi,[],Pi).
-%% deletePr(Pi,[F/N|Q],Po)	:- delete(Pi,pr(F,N,_),Pt), deletePr(Pt,Q,Po).
-%% 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 decl_import_mod(M)	:- map_atom(M,Mm),

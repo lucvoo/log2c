@@ -30,13 +30,4 @@ map_C_op(>=,>=).
 map_C_op(=:=,==).
 map_C_op(=\=,'!=').
 
-%% map_C_op(//,/).
-%% map_C_op(mod,'%').
-%% map_C_op(rem,'%').
-%% map_C_op(xor,^).
-%% map_C_op(\,~).
-%% map_C_op(/\,&).
-%% map_C_op(\/,|).
-%% map_C_op(O,O).
-
 

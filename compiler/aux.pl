@@ -6,7 +6,7 @@
 		, read_export/2
 		, file_type/2
 		, del_all/0,	del/1
-		, new_indent/1,	old_indent/0
+		, new_indent/1
 		, warning/1,	warning/2,	fatal/1
 		, error/1,	error/2,	error_report/0
 		, merge_to_set/3
@@ -115,34 +115,30 @@ read_Pr(':-'(op(P,T,N)),_,[':-'(op(P,T,N))|O],O)	:- op(P,T,N).
 read_Pr(T,_,[T|O],O).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-del_all :- del(code), del_labels, del(vars_list),
-	   del_atoms, del_funs, del(directive),
-	   del(curr_C), del(indent), del(preds),
-	   del(export_pred), del(used_modules),
-	   del(module_compiled),
+del_all :- del_labels,
+           '$erase_records'(code), '$erase_records'(vars_list),
+	   '$erase_records'(directive), '$erase_records'(curr_C),
+	   '$erase_records'(indent), '$erase_records'(preds),
+	   '$erase_records'(export_pred), '$erase_records'(used_modules),
+	   '$erase_records'(module_compiled),
 	   flag(indent,_,0), new_indent(0).
 
 del_labels	:- current_flag(K), atom(K), concat(label_,_,K), flag(K,_,0), fail.
 del_labels.
-del_atoms	:- flag(atoms_index,_,0), del(atoms_list).
-del_funs	:- flag(funs_index,_,0), del(funs_list).
-del(K)		:- recorded(K,_,R), erase(R), fail; true.
+
+del(K)		:- '$erase_records'(K).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-new_indent(N)	:- flag(indent,O,O), M is O+N,
-		   recorda(indent,M), flag(indent,_,M).
-old_indent	:- recorded(indent,_,R), erase(R),
-		   recorded(indent,N), flag(indent,_,N).
+new_indent(N)	:- flag(indent,O,O+N).
+old_indent(N)	:- flag(indent,O,O-N).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 warning(W)	:- format(user_error,'\n[ WARNING : ~w]\n',[W]).
-%% warning(W,A)	:- sformat(S,W,A), warning(S).
 warning(W,A)	:- concat_atom(['~n[ WARNING : ',W,']~n'],W_),
 		   format(user_error,W_,A).
 
 error(W)	:- format(user_error,'\n[ ERROR : ~w]\n',[W]),
 		   flag(error,E,E+1).
-%% error(W,A)	:- sformat(S,W,A), error(S).
 error(W,A)	:- concat_atom(['~n[ ERROR : ',W,']~n'],W_),
 		   format(user_error,W_,A),
 		   flag(error,E,E+1).
@@ -155,7 +151,6 @@ error_report	:- flag(error,E,E),
 
 fatal(W)	:- format(user_error,'\n[ FATAL ERROR : ~w]\n              compilation aborted !\n\n',[W]),
 		   halt(1).
-%% fatal(W,A)	:- sformat(S,W,A), fatal(S).
 fatal(W,A)	:- concat_atom(['~n[ FATAL ERROR : ',W,']~n'],W_),
 		   format(user_error,W_,A),
 		   halt(1).
@@ -204,7 +199,6 @@ a_n_f(G,Q,A,F,P):- flag(current_module,M,M),
 
 anf(A,F,P)	:- flag(current_module,M,M),
 		   ( M==system
-		     %% -> ndet_pred(spec,Ns), map(anf_rec_pred,Ns)
 		     -> foreign_preds(Fps), map(anf_rec_pred,Fps)
 		     ;  true
 		   ),
@@ -212,12 +206,10 @@ anf(A,F,P)	:- flag(current_module,M,M),
 		   map(anf_rec_atom,Ms),
 		   anf_rec_import,
 
-		   findall(A,anf_get_atom(A),La),
-		   findall(F,anf_get_fun(F),Lf),
-		   findall(P,anf_get_pred(P),Lp),
-	           sort(La,A),
-                   sort(Lf,F),
-	           sort(Lp,P).
+		   anf_get_atom(A),
+		   anf_get_fun(F),
+		   anf_get_pred(P).
+
 
 anf_rec_import		:- recorded(module_export,module_export(_,F/_)),
 			   anf_rec_atom(F),
@@ -251,23 +243,77 @@ anf4(E)		:- functor(E,F,N), E=..[F|L],
 anf4(_).
 
 
-anf_rec_atom(A)	:- recorded(anf_rec_atom,A), !.
+%% anf_rec_atom(A)	:- recorded(anf_rec_atom,A), !.
 anf_rec_atom(A)	:- recorda(anf_rec_atom,A).
 
-anf_rec_fun(F)	:- recorded(anf_rec_fun,F).
-anf_rec_fun(F)	:- recorda(anf_rec_fun,F).
+anf_rec_fun(F)	:- ( fail %% recorded(anf_rec_fun,F)
+                     -> true
+                     ;  recorda(anf_rec_fun,F)
+                   ),
+                   F=A/_ , anf_rec_atom(A).
 
-anf_rec_pred(P)	:- recorded(anf_rec_pred,P).
-anf_rec_pred(P)	:- recorda(anf_rec_pred,P).
+anf_rec_pred(P)	:- ( fail %% recorded(anf_rec_pred,P)
+                     -> true
+                     ;  recorda(anf_rec_pred,P)
+                   ),
+                   anf_rec_fun(P).
 
-anf_get_atom(A)	:- recorded(anf_rec_atom,A,R), erase(R).
-anf_get_atom(A)	:- recorded(anf_rec_fun,A/_).
-anf_get_atom(A)	:- recorded(anf_rec_pred,A/_).
 
-anf_get_fun(F)	:- recorded(anf_rec_fun,F,R), erase(R).
-anf_get_fun(F)	:- recorded(anf_rec_pred,F).
+anf_get_erase(K,S)	:- '$recorded_all'(K,L), sort(L,S),
+                	   '$erase_records'(K).
 
-anf_get_pred(P)	:- recorded(anf_rec_pred,P,R), erase(R).
+anf_get_atom(A)	:- anf_get_erase(anf_rec_atom,A).
+anf_get_fun(F)	:- anf_get_erase(anf_rec_fun,F).
+anf_get_pred(P)	:- anf_get_erase(anf_rec_pred,P).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% a_n_f(G,Q,A,F,P):- flag(current_module,N,N),
+%% 		   ( N\=0 -> Ia=[N] ;  Ia=[] ),
+%% 		   anf2([cl([],Q)],Ia,Ta,[],Tf),
+%% 		   anf1(G,Ta,La,Tf,Lf,[],Lp), 
+%% 		   anf(La,A,Lf,F,Lp,P).
+%% 
+%% anf(Ia,A,If,F,Ip,P)	:- flag(current_module,M,M),
+%% 			   ( M==system
+%% 			     -> foreign_preds(Fps),
+%% 			        get_atoms(Fps,Pa),
+%% 			        append(Pa,Ia,Oa),
+%% 			        append(Fps,Ip,Op)
+%% 			     ;  Oa=Ia, Op=Ip
+%% 			   ),
+%% 			   Of=If,
+%% 		           sort(Oa,A),
+%%                            sort(Of,F),
+%% 		           sort(Op,P).
+%% 
+%% get_atoms([],[]).
+%% get_atoms([F/_|Q],[F/A])	:- get_atoms(Q,A).
+%% 
+%% anf_ndet([],[]).
+%% anf_ndet([F/_|Q],[F|A])	:- anf_ndet(Q,A).
+%% 
+%% anf1([],A,A,F,F,P,P)		:- !.
+%% anf1([pr(F,N,L)|Q],Ai,Ao,Fi,Fo,Pi,[(F/N)|Po])
+%% 				:- anf2(L,[F|Ai],At,Fi,Ft),
+%% 				   anf1(Q,At,Ao,Ft,Fo,Pi,Po).
+%% 
+%% 
+%% anf2([],A,A,F,F)		:- !.
+%% anf2([cl(H,G)|Q],Ai,Ao,Fi,Fo)	:- to_list(G,L),
+%% 				   anf3(L,Ai,At,Fi,Ft),
+%% 				   anf3(H,At,As,Ft,Fs),
+%% 				   anf2(Q,As,Ao,Fs,Fo).
+%% 
+%% anf3([],A,A,F,F)		:- !.
+%% anf3([E|Q],Ai,Ao,Fi,Fo)		:- atom(E), !,
+%% 				   anf3(Q,[E|Ai],Ao,Fi,Fo).
+%% anf3([E|Q],Ai,Ao,Fi,Fo)		:- ( var(E); integer(E) ), !,
+%% 				   anf3(Q,Ai,Ao,Fi,Fo).
+%% anf3([E|Q],Ai,Ao,Fi,Fo)		:- anf4(E,Ai,At,Fi,Ft),
+%% 				   anf3(Q,At,Ao,Ft,Fo).
+%% 
+%% anf4(E,Ai,Ao,Fi,Fo)		:- functor(E,F,N), E=..[F|L],
+%% 				   anf3(L,[F|Ai],Ao,[(F/N)|Fi],Fo).
+%% anf4(_).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 new_file(Old,New)	:- telling(Old), tell(New).
 old_file(Old)		:- told, tell(Old).
@@ -285,18 +331,16 @@ mapi(N,G,[E|Q])	:- succ(N,M),
 		   call(G,M,E),
 		   mapi(M,G,Q).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-fl_(L)	:- fl(L), !.
-fl(L)	:- format('~w:\n',[L]), !.
-g(F,A)	:- put(9), %% format('\t'),
-	   flag(indent,N,N), tab(N),
-	   format(F,A), nl, !.
-g(F)	:- g(F,[]), !.
-g0(F,A)	:- concat(F,'\n',FF), format(FF,A), !.
-g0(F)	:- concat(F,'\n',FF),	format(FF), !.
-f(F,A)	:- put(9), %% format('\t'),
-	   flag(indent,N,N), tab(N),
-	   format(F,A), !.
-f(F)	:- f(F,[]), !.
+fl_(L)	:- fl(L).
+fl(L)	:- format('~w:\n',[L]).
+g(F,A)	:- put(9), flag(indent,N,N), tab(N),
+	   format(F,A), nl.
+g(F)	:- g(F,[]).
+g0(F,A)	:- format(F,A), nl.
+g0(F)	:- format(F), nl.
+f(F,A)	:- tab(9), flag(indent,N,N), tab(N),
+	   format(F,A).
+f(F)	:- f(F,[]).
 
 comm(curr_C)	:- flag(curr_C,C,C), getlabel(C,Lab), comm(Lab).
 
@@ -401,7 +445,6 @@ map_name_v(intg(E),E).
 map_name_v(fun(F,_,A),M):- maplist_map_name_v(A,X),
 			   M=..[F|X].
 map_name_v(E,E)		:- atomic(E).
-%% map_name_v(E,M)		:- E=..[F|A], maplist_map_name_v(A,B), M=..[F|B].
 
 maplist_map_name_v([],[]).
 maplist_map_name_v([A|X],[B|Y])	:- map_name_v(A,B), 

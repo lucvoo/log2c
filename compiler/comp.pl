@@ -112,7 +112,6 @@ code_user(I,_Opt)	:+ get_preds(I,Lpr),
 		           get_query(Lpr,Q,B,P),
 			   get_exports(Us,Xs),
 			   check_import(Us,Xs),
-			   %% check_import,
 			   flag(current_module,M,M),
 			   map(export_user_preds,P),	%% export all predicates
 			   init_module(P,Q,Xs),
@@ -124,7 +123,6 @@ code_user(I,_Opt)	:+ get_preds(I,Lpr),
 code_module(I,X,O)	:- code_module(I,X,O,[]).
 code_module(I,X)	:+ get_preds(I,P),
 			   get_exports(Us,Xs),
-			   %% check_import,
 			   check_import(Us,Xs),
 			   check_export(X,P,Xs),	%% check and export public predicates
 			   init_module(P,[],Xs),
@@ -146,9 +144,7 @@ init_module(P,Q,X)	:- del(undef_pred),
 
 get_atom_from_fun(A/_,A).
 
-init_hash(La,Lf,Lp)	:- %% findall(A,atoms(A),Ba),
-			   %% findall(F,functors(F),Bf),
-			   atoms(Ba),
+init_hash(La,Lf,Lp)	:- atoms(Ba),
 			   functors(Bf),
 			   append(La,Ba,Ca),
 			   append(Lf,Bf,F),
@@ -268,7 +264,6 @@ code_C(F,N,cl(La,G),T)	:+
 	+> fl(Li),
 	+> flag(type_cl,_,T),
 	( T==single -> flag(rho,_,0) ; flag(rho,_,N+4) ),
-	%% ( is_meta   -> flag(rho,R_,R_+1); true ),
 	( (T==single; T==first)
 	  -> map_pred(F/N,Pm), map_fun(F/N,Fm),
 	     ( exported(F/N) -> +> g0('asm(".global PRED~w");',[Pm]); true ),

@@ -2,38 +2,22 @@
 %%
 
 :- module(trad, [ trad/1
-		%% , fl/1
-		%% , g/1,	g/2,	g0/1,	g0/2
-		%% , comm/1,	comm/2,	comm/3,	comm/4
 		]).
 
 :- use_module([aux, addr, atoms, map_name]).
 :- use_module(modules).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-trad([])			:- !.
-trad([call_(F,N,L), fl(L), restore|Q])	:-
-		map_called(F/N,P),
-		comm(execute,F,N),
-		execute(P), !,
-		trad(Q).
-trad([call_(F,N,L), fl(L), popenv|Q])	:-
-		map_called(F/N,P),
-		comm(executend,F,N),
-		executend(P), !,
-		trad(Q).
-trad([call_(F,N,L), fl_(L), restore|Q])	:-
-		map_called(F/N,P),
-		comm(execute,F,N),
-		execute(P), !,
-		trad([fl(L),restore|Q]).
-trad([call_(F,N,L), fl_(L), popenv|Q])	:-
-		map_called(F/N,P),
-		comm(executend,F,N),
-		executend(P), !,
-		trad([fl(L),popenv|Q]).
+trad([call_(F,N,L), fl(L), restore|Q])	:- execute(F,N), !,
+					   trad(Q).
+trad([call_(F,N,L), fl(L), popenv|Q])	:- executend(F,N), !,
+					   trad(Q).
+trad([call_(F,N,L), fl_(L), restore|Q])	:- execute(F,N), !,
+					   trad([fl(L),restore|Q]).
+trad([call_(F,N,L), fl_(L), popenv|Q])	:- executend(F,N), !,
+					   trad([fl(L),popenv|Q]).
 trad([saveargs(S), pushenv(T,R,N)|Q])	:- save_push(S,pushenv(T,R,N),Q,Qq), trad(Qq).
-trad([I|Q])	:- call(I), !,
-		trad(Q).
+trad([I|Q])	:- call(I), !, trad(Q).
+trad([])	:- !.
 
 trad_r([],_).
 trad_r([u(E,I)|Q],V)	:- concat_atom([V,'+',I],A),
@@ -82,14 +66,14 @@ unify(struct(F,N,L),V)	:- ( atom(V), (concat('ARG_',_,V);concat('TMP_',_,V))
 			   g('    trail(~w);',[Vn]),
 			   new_indent(4),
 			   trad_off(struct(F,N,L)),
-			   old_indent,
+			   new_indent(-4),
 			   g('  }'),
 			   g('  else'), map_fun(F/N,Fm),
 			   g('  if (isfun(FUN(~w),~w))',[Fm,Vn]),
 			   g('  {'),
 			   new_indent(4),
 			   trad_r(L,Vn),
-			   old_indent,
+			   new_indent(-4),
 			   g('  }'),
 			   g('  else'),
 			   g('    goto backtrack;'),
@@ -97,18 +81,10 @@ unify(struct(F,N,L),V)	:- ( atom(V), (concat('ARG_',_,V);concat('TMP_',_,V))
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% wrt__(struct(F,N,L),V)	:- map_fun(F/N,Fm),
-%% 			   gensym('v_',Vn),
-%% 			   g('{ cell_t *~w;',[Vn]),
-%% 			   g('  ~w=~w=new_struct(FUN(~w),~w);',[Vn,V,Fm,N]),
-%% 			   new_indent(2),
-%% 			   trad_w(L,Vn),
-%% 			   old_indent, 
-%% 			   g('}'), !.
 wrt__(struct(F,N,L),V)	:- g('{ ~w=HP;',[V]),
 			   new_indent(2),
 			   trad_off(struct(F,N,L)),
-			   old_indent, 
+			   new_indent(-2), 
 			   g('}'), !.
 
 wrt_(struct(F,N,L),V)	:- comm(wrt_(struct)),
@@ -168,7 +144,7 @@ assign(struct(F,N,L),V)	:- comm(assign(struct)),
 			   g('{ ~w=HP;',[V]),
 			   new_indent(2),
 			   trad_off(struct(F,N,L)),
-			   old_indent,
+			   new_indent(-2),
 			   g('}'), !.
 assign(E,V)		:- addr(E,A),
 			   g('~w=~w;',[V,A]).
@@ -217,12 +193,16 @@ call_(P,L)	:- g('SP[1]= &&~w;',[L]),
                    g('FP=SP+2;'),
                    g('~w;',[P]).
 
-execute(P)	:- g('SP[1]=FP[-1];'),
+execute(F,N)	:- comm(execute,F,N),
+		   map_called(F/N,P),
+		   g('SP[1]=FP[-1];'),
 		   g('SP[2]=FP[0];'),
                    g('FP=SP+2;'),
                    g('~w;',[P]).
 
-executend(P)	:- g('if (!(FP > BTP))'),
+executend(F,N)	:- comm(executend,F,N),
+		   map_called(F/N,P),
+		   g('if (!(FP > BTP))'),
                    g('{ SP[1]=FP[-1];'),
                    g('  SP[2]=FP[0];'),
                    g('  FP=SP+2;'),
@@ -262,10 +242,10 @@ saveargs(N)     :- comm(saveargs,N),
                    g('FP[~w+4]=ARG_~w;',[I,I]), fail;
                    true.
 
-restoreargs(N)	:- comm(restoreargs,N),
-		   between(1,N,I),
-		   g('ARG_~w=FP[~w+4].celp;',[I,I]), fail;
-		   true.
+%% restoreargs(N)	:- comm(restoreargs,N),
+%% 		   between(1,N,I),
+%% 		   g('ARG_~w=FP[~w+4].celp;',[I,I]), fail;
+%% 		   true.
 
 cut		:- g('cut();').
 cut_deep	:- g('cut_deep();').
@@ -277,24 +257,24 @@ alt_1(L)	:- g('alt_1(&&~w);',[L]).
 alt_2		:- g('alt_2();').
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-op_i(Op)	:- map_fun(Op/2,Name), comm(Name),
-		   g('SP--;'),
-		   g('SP->intg=(SP)->intg ~w (SP+1)->intg;',[Op]).
-op_i_pre(Op,I)	:- map_fun(Op/2,Name), comm(Name),
-		   g('SP->intg=~w ~w (SP)->intg;',[I,Op]).
-op_i_post(Op,I)	:- map_fun(Op/2,Name), comm(Name),
-		   g('SP->intg=(SP)->intg ~w ~w;',[Op,I]).
-op_i(Op,I,J)	:- map_fun(Op/2,Name), comm(Name),
-		   g('SP++;'),
-		   g('SP->intg=~w ~w ~w;',[I,Op,J]).
+%% op_i(Op)	:- map_fun(Op/2,Name), comm(Name),
+%% 		   g('SP--;'),
+%% 		   g('SP->intg=(SP)->intg ~w (SP+1)->intg;',[Op]).
+%% op_i_pre(Op,I)	:- map_fun(Op/2,Name), comm(Name),
+%% 		   g('SP->intg=~w ~w (SP)->intg;',[I,Op]).
+%% op_i_post(Op,I)	:- map_fun(Op/2,Name), comm(Name),
+%% 		   g('SP->intg=(SP)->intg ~w ~w;',[Op,I]).
+%% op_i(Op,I,J)	:- map_fun(Op/2,Name), comm(Name),
+%% 		   g('SP++;'),
+%% 		   g('SP->intg=~w ~w ~w;',[I,Op,J]).
                
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-op_i(N,Op,J)	:- map_fun(Op/2,Name), comm(Name),
-		   g('~w=~w ~w;',[N,Op,J]).
-op_i(N,Op,I,J)	:- integer(I), integer(J),
-		   map_fun(Op/2,Name), comm(Name),
-		   g('~w=~w ~w ~w;',[N,I,Op,J]).
+%% op_i(N,Op,J)	:- map_fun(Op/2,Name), comm(Name),
+%% 		   g('~w=~w ~w;',[N,Op,J]).
+%% op_i(N,Op,I,J)	:- integer(I), integer(J),
+%% 		   map_fun(Op/2,Name), comm(Name),
+%% 		   g('~w=~w ~w ~w;',[N,I,Op,J]).
                
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 save_push(S,P,I,O)	:- get_arg(I,L,Q),
