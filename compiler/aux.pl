@@ -1,0 +1,423 @@
+%% Copyright (c) 1997 Luc Van Oostenryck. All rights reserved.
+%%
+
+:- module(aux,  [ read_module/1
+		, read_all/2
+		, file_type/2
+		, del_all/0,	del/1
+		, new_indent/1,	old_indent/0
+		, warning/1,	warning/2,	fatal/1
+		, error/1,	error/2,	error_report/0
+		, merge_to_set/3
+		, msg_pred_not_def/1,	 msg_pred_not_used/1
+		, noescape/2
+		, to_list/2
+		, a_n_f/5
+		, fun/4
+		, new_file/2,	old_file/1
+		, map/2, mapi/3
+		, fl/1, fl_/1
+		, g/1,	g/2,	g0/1,	g0/2, f/1, f/2
+		, comm/1,	comm/2,	comm/3,	comm/4, comm/5
+		, ndet_pred/2, det_pred/2, foreign_preds/1
+		, comp_C/1
+		, flag2/3
+		, export_pred/1, exported/1
+		, label/2, label/3 
+		, getlabel/2, getlabel1/3
+		, is_meta/0
+                , mapl/3, mapl/4
+                , mapli/4, mapli/5
+                , mapllist/5
+		]).
+
+:- use_module(map_name).
+:- use_module('pl-ext').
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ndet_pred(T,L)	:- findall(R,ndet_pred_(T,R),Lt), list_to_set(Lt,L).
+
+ndet_pred_(F,N,C)	:- recorded(directive,register_foreign(F,N,C,ndet)).
+ndet_pred_(F,N,C)	:- pred_C(ndet,F,N,C).
+
+ndet_pred_(full,Np)	:- ndet_pred_(F,N,C), Np=[F,N,C].
+ndet_pred_(spec,Np)	:- ndet_pred_(F,N,_), Np=F/N.
+ndet_pred_(functor,Np)	:- ndet_pred_(F,_,_), Np=F.
+
+det_pred(T,L)		:- findall(R,det_pred_(T,R),Lt), list_to_set(Lt,L).
+
+det_pred_(F,N,C)	:- recorded(directive,register_foreign(F,N,C,det)).
+det_pred_(F,N,C)	:- pred_C(det,F,N,C).
+
+det_pred_(full,Np)	:- det_pred_(F,N,C), Np=[F,N,C].
+det_pred_(spec,Np)	:- det_pred_(F,N,_), Np=F/N.
+det_pred_(functor,Np)	:- det_pred_(F,_,_), Np=F.
+
+foreign_preds(L)	:- findall(P,preds_C_(P),Lt), sort(Lt,L).
+
+preds_C_(F/N)	:- recorded(directive,register_foreign(F,N,_,_)).
+preds_C_(F/N)	:- pred_C(_,F,N,_).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+file_type(F,T)	:- file_base_name(F,Name),
+		   file_name_extension(Base,Ext,Name),
+		   ( Ext == pl
+                     -> true
+                     ;  warning('~w : may not be a Prolog file',[F])
+                   ),
+		   open(F,read,S), set_input(S),
+		   stream_position(S,P,P),
+		   read(R), 
+		   ( R=':-'(module(M,L))
+                     -> ( Base==M
+                          -> true
+                          ;  warning('name of file (~w) and name of module (~w) do not match',[F,M])
+			),
+                        T=module(M,L)
+                     ;
+		     stream_position(S,_,P),
+                     T=user
+		   ),
+		   flag(input_file,_,Base).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+read_module(L)	:- current_input(S),
+		   readclauses_(S,C,[]),
+		   flag(current_module,M,M),
+		   ( M==system
+		     -> L=C
+		     ;  L=[(:- use_module(system))|C]
+		   ),
+		   set_input(user_input).
+
+readclauses([],O,O)	:- !.
+readclauses([F|Q],I,O)	:- readclauses(F,I,T),
+			   readclauses(Q,T,O), !.
+readclauses(F,I,O)	:- open(F,read,S,[]),
+			   readclauses_(S,I,O),
+			   close(S).
+
+readclauses_(S,I,O)	:- read_variables(S,T,V),
+			   ( T==end_of_file
+			     -> I=O
+			     ;  expand_term(T,Tx),
+			        read_Pr(Tx,V,I,Tmp),
+			        readclauses_(S,Tmp,O)
+			   ), !.
+
+read_Pr((main :- Q), V, I,O)	:- read_Pr(':-'main(Q,V),V,I,O).
+read_Pr(':-'(consult(F)),_, I,O) :- readclauses(F,I,O).
+read_Pr(':-'(include(F)),_, I,O) :- readclauses(F,I,O).
+read_Pr(':-'(op(P,T,N)),_,[':-'(op(P,T,N))|O],O)	:- op(P,T,N).
+
+read_Pr(T,_,[T|O],O).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+del_all :- del(code), del_labels, del(vars_list),
+	   del_atoms, del_funs, del(directive),
+	   del(curr_C), del(indent), del(preds),
+	   del(export_pred), del(used_modules),
+	   del(module_compiled),
+	   flag(indent,_,0), new_indent(0).
+
+del_labels	:- current_flag(K), atom(K), concat(label_,_,K), flag(K,_,0), fail.
+del_labels.
+del_atoms	:- flag(atoms_index,_,0), del(atoms_list).
+del_funs	:- flag(funs_index,_,0), del(funs_list).
+del(K)		:- recorded(K,_,R), erase(R), fail; true.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+new_indent(N)	:- flag(indent,O,O), M is O+N,
+		   recorda(indent,M), flag(indent,_,M).
+old_indent	:- recorded(indent,_,R), erase(R),
+		   recorded(indent,N), flag(indent,_,N).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+warning(W)	:- format(user_error,'\n[ WARNING : ~w]\n',[W]).
+%% warning(W,A)	:- sformat(S,W,A), warning(S).
+warning(W,A)	:- concat_atom(['~n[ WARNING : ',W,']~n'],W_),
+		   format(user_error,W_,A).
+
+error(W)	:- format(user_error,'\n[ ERROR : ~w]\n',[W]),
+		   flag(error,E,E+1).
+%% error(W,A)	:- sformat(S,W,A), error(S).
+error(W,A)	:- concat_atom(['~n[ ERROR : ',W,']~n'],W_),
+		   format(user_error,W_,A),
+		   flag(error,E,E+1).
+
+error_report	:- flag(error,E,E),
+		   ( E==0
+		     -> fail
+		     ;  format(user_error,'\n[ Number of error : ~w ]\n',[E])
+		   ).
+
+fatal(W)	:- format(user_error,'\n[ FATAL ERROR : ~w]\n              compilation aborted !\n\n',[W]),
+		   halt(1).
+%% fatal(W,A)	:- sformat(S,W,A), fatal(S).
+fatal(W,A)	:- concat_atom(['~n[ FATAL ERROR : ',W,']~n'],W_),
+		   format(user_error,W_,A),
+		   halt(1).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+merge_to_set(L1,L2,S):- list_to_set(L1,S1),
+			list_to_set(L2,S2),
+			union(S1,S2,S).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+msg_pred_not_def(_).
+msg_pred_not_used([]).
+msg_pred_not_used([P])	:- warning('unused predicate : ~w ',[[P]]),
+			   warning('no code generated for this'),
+			   format(user_error,'\n',[]).
+msg_pred_not_used(Lp)	:- warning('unused predicates : ~w ',[Lp]),
+			   warning('no code generated for these'),
+			   format(user_error,'\n',[]).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+noescape(F,Fs)	:- atom_chars(F,L), noescape_(L,Ls), atom_chars(Fs,Ls).
+noescape_([],[]).
+noescape_([0'\ |Q],[0'\ ,0'\ |R])	:- noescape_(Q,R).
+noescape_([0'" |Q],[0'\ ,0'" |R])	:- noescape_(Q,R).
+noescape_([E|Q],[E|R])			:- noescape_(Q,R).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+to_list(T,R)		:- to_list(T,R,[]).
+
+to_list(A,I,O)		:- var(A), !, I=[A|O].
+to_list((A,B),I,O)	:- to_list(A,I,T), to_list(B,T,O).
+to_list((A;B),I,O)	:- to_list(A,I,T), to_list(B,T,O).
+to_list((A|B),I,O)	:- to_list(A,I,T), to_list(B,T,O).
+to_list((A->B),I,O)	:- to_list(A,I,T), to_list(B,T,O).
+to_list((A*->B),I,O)	:- to_list(A,I,T), to_list(B,T,O).
+to_list(\+(A),I,O)	:- to_list(A,I,O).
+to_list(not(A),I,O)	:- to_list(A,I,O).
+to_list(E,[E|O],O).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+a_n_f(G,Q,A,F,P):- flag(current_module,M,M),
+		   ( M=0 -> true; anf_rec_atom(M) ),
+		   anf2([cl([],Q)]),
+		   anf1(G), 
+		   anf(A,F,P).
+
+anf(A,F,P)	:- flag(current_module,M,M),
+		   ( M==system
+		     %% -> ndet_pred(spec,Ns), map(anf_rec_pred,Ns)
+		     -> foreign_preds(Fps), map(anf_rec_pred,Fps)
+		     ;  true
+		   ),
+		   recorded(used_modules,Ms),
+		   map(anf_rec_atom,Ms),
+		   anf_rec_import,
+
+		   findall(A,anf_get_atom(A),La),
+		   findall(F,anf_get_fun(F),Lf),
+		   findall(P,anf_get_pred(P),Lp),
+	           sort(La,A),
+                   sort(Lf,F),
+	           sort(Lp,P).
+
+anf_rec_import		:- recorded(module_export,module_export(_,F/_)),
+			   anf_rec_atom(F),
+			   fail.
+anf_rec_import.
+
+
+anf1([])		:- !.
+anf1([pr(F,N,L)|Q])	:- anf_rec_pred(F/N),
+			   anf2(L), 
+			   anf1(Q).
+
+anf2([])		:- !.
+anf2([cl(H,G)|Q])	:- to_list(G,L),
+			   anf3(L),
+			   anf3(H),
+			   anf2(Q), !.
+
+anf3([])	:- !.
+anf3([E|Q])	:- atom(E), !,
+		   anf_rec_atom(E),
+		   anf3(Q).
+anf3([E|Q])	:- ( var(E); integer(E) ), !,
+		   anf3(Q).
+anf3([E|Q])	:- anf4(E),
+		   anf3(Q).
+
+anf4(E)		:- functor(E,F,N), E=..[F|L],
+		   anf_rec_fun(F/N),
+		   anf3(L), !.
+anf4(_).
+
+
+anf_rec_atom(A)	:- recorded(anf_rec_atom,A), !.
+anf_rec_atom(A)	:- recorda(anf_rec_atom,A).
+
+anf_rec_fun(F)	:- recorded(anf_rec_fun,F).
+anf_rec_fun(F)	:- recorda(anf_rec_fun,F).
+
+anf_rec_pred(P)	:- recorded(anf_rec_pred,P).
+anf_rec_pred(P)	:- recorda(anf_rec_pred,P).
+
+anf_get_atom(A)	:- recorded(anf_rec_atom,A,R), erase(R).
+anf_get_atom(A)	:- recorded(anf_rec_fun,A/_).
+anf_get_atom(A)	:- recorded(anf_rec_pred,A/_).
+
+anf_get_fun(F)	:- recorded(anf_rec_fun,F,R), erase(R).
+anf_get_fun(F)	:- recorded(anf_rec_pred,F).
+
+anf_get_pred(P)	:- recorded(anf_rec_pred,P,R), erase(R).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+new_file(Old,New)	:- telling(Old), tell(New).
+old_file(Old)		:- told, tell(Old).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% variants of map and maplist
+:- module_transparent map/2.
+
+map(_, []).
+map(G, [E|T])	:- call(G, E), map(G, T).
+
+mapi(_,_,[]).
+mapi(N,G,[E|Q])	:- succ(N,M),
+		   call(G,M,E),
+		   mapi(M,G,Q).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+fl_(L)	:- fl(L), !.
+fl(L)	:- format('~w:\n',[L]), !.
+g(F,A)	:- put(9), %% format('\t'),
+	   flag(indent,N,N), tab(N),
+	   format(F,A), nl, !.
+g(F)	:- g(F,[]), !.
+g0(F,A)	:- concat(F,'\n',FF), format(FF,A), !.
+g0(F)	:- concat(F,'\n',FF),	format(FF), !.
+f(F,A)	:- put(9), %% format('\t'),
+	   flag(indent,N,N), tab(N),
+	   format(F,A), !.
+f(F)	:- f(F,[]), !.
+
+comm(curr_C)	:- flag(curr_C,C,C), getlabel(C,Lab), comm(Lab).
+
+comm(H,A,B,C,D)	:- map_name_v(A,Na), map_name_v(B,Nb), map_name_v(C,Nc), map_name_v(D,Nd),
+		   format('/* ~w(~w,~w,~w,~w) */\n',[H,Na,Nb,Nc,Nd]), !.
+comm(H,A,B,C)	:- map_name_v(A,Na), map_name_v(B,Nb), map_name_v(C,Nc),
+		   format('/* ~w(~w,~w,~w) */\n',[H,Na,Nb,Nc]), !.
+comm(H,A,B)	:- map_name_v(A,Na), map_name_v(B,Nb),
+		   format('/* ~w(~w,~w) */\n',[H,Na,Nb]), !.
+comm(H,A)	:- map_name_v(A,Na),
+		   format('/* ~w(~w) */\n',[H,Na]), !.
+comm(H)		:- format('/* ~w */\n',[H]), !.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Read all terms of file 'F' and put it in list 'L'
+
+%% read_all(F,L)	:- open(F,read,S),
+%% 		   read_all_(S,L),
+%% 		   close(S).
+%% 
+%% read_all_(S,L)	:- read(S,T),
+%% 		   ( T==end_of_file
+%% 		     -> L=[]
+%% 		     ;  read_all_(S,Q),
+%% 			L=[Tx|Q],
+%% 		        expand_term(T,Tx)
+%% 		   ).
+
+read_all(F,L)	:- seeing(Old),
+		   open(F,read,N),
+		   set_input(N),
+		   read_all_(L),
+		   close(N),
+		   see(Old).
+
+read_all_(L)	:- read(T),
+		   ( T==end_of_file
+		     -> L=[]
+		     ;  read_all_(Q),
+			L=[Tx|Q],
+		        expand_term(T,Tx)
+		   ).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+comp_C(F)	:- concat_atom(['make ',F],Make),
+		   format(user_error,'~a\n',Make),
+		   shell(Make,R), !,
+		   ( R = 0
+		     -> Res=done
+		     ;  Res=failed, flag(error,E,E+1),
+		        format(user_error,'\n[ Compilation failed ]\n',[]),
+			fail
+		   ).
+		   
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+flag2(K,V1,V2)	:- var(V1), var(V2), !,
+		   concat(K,'_1',K1),
+		   concat(K,'_2',K2),
+		   flag(K1,V1,V1),
+		   flag(K2,V2,V2).
+flag2(K,V1,V2)	:- concat(K,'_1',K1),
+		   concat(K,'_2',K2),
+		   flag(K1,_,V1),
+		   flag(K2,_,V2).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+export_pred(Xs)	:- format(mod,'export(~q).\n',[Xs]),
+		   map_recorda(export_pred,Xs).
+map_recorda(_,[]).
+map_recorda(K,[A|Q])	:- recorda(K,A),
+			   map_recorda(K,Q).
+
+exported(P)	:- recorded(export_pred,P).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+fun(T,F,N,A)	:- T=..[F|A], length(A,N).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+label(F,A,Label):- map_fun(F/A,Fm),
+		   label(Fm,Label).
+label(Fm,Label)	:- concat(Fm,'_',Base),
+		   concat(label_,Base,Key),
+		   flag(Key, Old, Old+1),
+		   succ(Old, New),
+		   concat(Base, New, Label).
+getlabel(Fm,L)	:- concat(Fm,'_',Base),
+		   concat(label_,Base,Key),
+		   flag(Key, N, N),
+		   concat(Base, N, L).
+getlabel1(F,A,L):- map_fun(F/A,Fm),
+		   concat(Fm,'_',Base),
+		   concat(label_,Base,Key),
+		   flag(Key, N, N),
+		   succ(N,M),
+		   concat(Base, M, L).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+map_name_v(var(_,N),M)	:- concat('_var_',N,M).
+map_name_v(atom(E),E).
+map_name_v(intg(E),E).
+%% map_name_v(float(E),E).
+%% map_name_v(string(E),E).
+map_name_v(fun(F,_,A),M):- maplist_map_name_v(A,X),
+			   M=..[F|X].
+map_name_v(E,E)		:- atomic(E).
+%% map_name_v(E,M)		:- E=..[F|A], maplist_map_name_v(A,B), M=..[F|B].
+
+maplist_map_name_v([],[]).
+maplist_map_name_v([A|X],[B|Y])	:- map_name_v(A,B), 
+				   maplist_map_name_v(X,Y).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+is_meta	:- flag(meta,M,M), M==true.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+mapl(G,I,L)		:- mapl(G,I,L,[]).
+mapl(_,[],L,L).
+mapl(G,[E|Q],I,O)	:- call(G,E,I,T),
+			   mapl(G,Q,T,O).
+
+mapli(N,G,I,L)		:- mapli(N,G,I,L,[]).
+mapli(_,_,[],L,L).
+mapli(N,G,[E|Q],I,O)	:- succ(N,M),
+			   call(G,M,E,I,T),
+			   mapli(M,G,Q,T,O).
+
+mapllist(_,[],[],A,A).
+mapllist(G,[Ei|Qi],[Eo|Qo],I,O)	:- call(G,Ei,Eo,I,T),
+				   mapllist(G,Qi,Qo,T,O).

@@ -1,0 +1,60 @@
+########################################################################
+##
+
+CC 	= gcc
+
+#DEBUG=1
+
+CFLAGS_WARN = -Wall
+CFLAGS_ALL  = -I. -I${inc_dir} -fno-builtin
+CFLAGS_REG1 = -ffixed-%ebx
+CFLAGS_REG2 = -ffixed-%esi -ffixed-%edi
+
+ifdef DEBUG
+CFLAGS_OPT  = -O2 -g -DPL_DEBUG=1
+else
+CFLAGS_OPT  = -O2 -g -fomit-frame-pointer #-march=i686
+# CFLAGS_OPT  = -O2 -ggdb 
+# CFLAGS_OPT  = -O2 -pg
+endif
+
+CFLAGS	= ${CFLAGS_WARN} ${CFLAGS_ALL} ${CFLAGS_OPT} \
+	  ${CFLAGS_REG1} ${CFLAGS_REG2}
+
+
+PLLIB	= libpl.a
+PLC	= plc
+
+.PHONY: clean all depend FORCE
+
+########################################################################
+## Override
+%.o: %.mod
+
+##
+.SUFFIXES: .c .o .s .i .mod .lnk.c .pl
+
+%.o: %.c ${$*.dep}
+	$(CC) $(CFLAGS) -c $*.c -o $*.o
+%.s: %.c ${$*.dep}
+	$(CC) $(CFLAGS) -S $*.c -o $*.s
+%.i: %.c ${$*.dep}
+	$(CC) $(CFLAGS) -E $*.c | grep -v '^[ ]*$$' > $*.i
+%.so: %.c ${$*.dep}
+	$(CC) $(CFLAGS) -fpic -shared -Wl,-soname,$*.so -o $*.so $(filter %.c,$^)
+
+########################################################################
+
+all: ;
+
+clean:
+	rm -f ${TRASH}
+	$(foreach dir, ${sub_dir}, ${MAKE} -C ${dir} $@; )
+veryclean:
+	rm -f ${CLEAN}
+	$(foreach dir, ${sub_dir}, ${MAKE} -C ${dir} $@; )
+
+depend:
+	$(CC) -MM $(CFLAGS) ${DEPS} | sed "/: /s/[^\.]*/&.s &/" > $@
+
+########################################################################
