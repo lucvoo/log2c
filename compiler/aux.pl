@@ -172,7 +172,7 @@ msg_pred_not_used(Lp)	:- warning('unused predicates : ~w ',[Lp]),
 			   format(user_error,'\n',[]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-noescape(F,Fs)	:- atom_chars(F,L), noescape_(L,Ls), atom_chars(Fs,Ls).
+noescape(F,Fs)	:- atom_codes(F,L), noescape_(L,Ls), atom_codes(Fs,Ls).
 noescape_([],[]).
 noescape_([0'\ |Q],[0'\ ,0'\ |R])	:- noescape_(Q,R).
 noescape_([0'" |Q],[0'\ ,0'" |R])	:- noescape_(Q,R).

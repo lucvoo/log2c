@@ -58,7 +58,7 @@ map_atom(A,N)	:- '$mangle'(A,N).
 
 %% map_atom(A,N)	:- !, atom(A), 'C_id'(A,N).
 %% 
-%% 'C_id'(A,Ma)	:- atom_chars(A,L), c_id(L,Ml), !, atom_chars(Ma,[0'_|Ml]).
+%% 'C_id'(A,Ma)	:- atom_codes(A,L), c_id(L,Ml), !, atom_codes(Ma,[0'_|Ml]).
 %% 
 %% c_id([],[])	:- !.
 %% c_id([0'_|Q],[0'_,0'_|Mq])	:- !, c_id(Q,Mq).
