@@ -1,3 +1,8 @@
+/****************************************************************/
+/* Copyright (c) 1998 Luc Van Oostenryck. All rights reserved.	*/
+/*								*/
+/****************************************************************/
+
 #include <stdlib.h>		// For exit(3)
 #include <unistd.h>		// For pipe(2)
 #include <errno.h>
