@@ -83,21 +83,20 @@ hash_fun_tab([E|_])	:- map_fun(E,Em),
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 init_hash_jmps		:- flag(current_module,M,M),
 			   map_atom(M,Mm),
-			   flag(jmps_pub_hash_size,Hp,Hp),
 			   findall(P,exported(P),Ppub),
-			   concat('JMP_pub',Mm,Tp),
-			   hash_jmp(Hp,Ppub,Tp),
-			   flag(jmps_all_hash_size,Ha,Ha),
-			   %% findall(P,find_pred(M,P), Pall_),
 			   findall(P,find_pred(P), Pall_),
 			   sort(Pall_,Pall),
 			   map(decl_pred,Pall), nl,
+			   
+			   flag(jmps_pub_hash_size,Hp,Hp),
+			   concat('JMP_pub',Mm,Tp),
+			   hash_jmp(Hp,Ppub,Tp),
+
+			   flag(jmps_all_hash_size,Ha,Ha),
 			   concat('JMP_all',Mm,Ta),
 			   hash_jmp(Ha,Pall,Ta),
 			   format('module_t module~w = { __FILE__, ATOM(~w), {~w_tab, ~w}, {~w_tab, ~w}};\n',[Mm,Mm,Tp,Hp,Ta,Ha]).
 
-find_pred(_,P)	:- recorded(preds,P).
-find_pred(M,P)	:- recorded(module_export,module_export(M,P)).
 find_pred(P)	:- recorded(preds,P).
 find_pred(P)	:- recorded(module_export,module_export(_,P)).
 
@@ -138,6 +137,7 @@ hash_jmp_tab(T,[E|_])	:- map_fun(E,Em),
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 init_hash_mods(N)	:- need_modules(M),
+			   map(include_module,M),
 			   select(M,N,M_), Ms=[user|M_],
 			   map(decl_mod,Ms), nl,
 			   flag(mods_hash_size,HS,HS),

@@ -2,7 +2,9 @@
 %%
 
 :- module(modules, [ check_export/2
-		   , check_import/0
+		   , check_export/3
+		   , check_import/2
+		   , get_exports/2
 		   , export_user_preds/1
 		   , read_mods/4
 		   , used_modules/1
@@ -20,16 +22,30 @@
 check_export(X1,L)	:- flag(current_module,M,M),
 			   map(check_export1(M,L),X1),
 			   ( M==system
-			     %% -> ndet_pred(spec,X2), append(X1,X2,Xs)
 			     -> foreign_preds(X2), append(X1,X2,Xs)
 			     ;  Xs=X1
 			   ),
+			   export_pred(Xs).
+
+check_export(X1,L,Xm)	:- flag(current_module,M,M),
+			   map(check_export1(M,L),X1),
+			   ( M==system
+			     -> foreign_preds(X2), append(X1,X2,X3)
+			     ;  X3=X1
+			   ),
+			   export_l(Xm,Xl,X3),
+			   sort(Xl,Xs),
 			   export_pred(Xs).
 
 check_export1(M,L,F/N)	:- ( memberchk(pr(F,N,_),L)
 			     -> true
 		             ;  warning('Exported predicate: ~w:~w/~w is not defined',[M,F,N])
 			   ).
+
+export_l([],L,L).
+export_l([M|Q],I,O)		:- export_l_(M,I,N),
+				   export_l(Q,N,O).
+export_l_(export(_,L),I,O)	:- append(L,O,I).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 export_user_preds(pr(F,N,_))
@@ -82,32 +98,49 @@ comp_sub_module(M,F)	:- module_path(M,F),
 			   format(user_error,' ~w ]\n',[Res]),
 			   recorda(module_compiled,M).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-module_path(M,F)	:- concat(M,'.mod',F).  
-module_source(M,F)	:- concat(M,'.pl',F).  
+module_path(M,F)	:- module_extension('.mod',M,F).
+module_source(M,F)	:- module_extension('.pl',M,F).  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-used_modules(M)	:- recorded(used_modules,M).
-used_modules(M)	:- findall(U,recorded(directive,use_module(U)),B),
-		   flatten(B,L), list_to_set(L,M),
-		   recorda(used_modules,M).
+used_modules(L)		:- export_use_(use_module,used_modules,L).
+exported_modules(L)	:- export_use_(export_module,exported_modules,L).
+
+export_use_(_,S,L)	:- recorded(S,L), !.
+export_use_(T,S,L)	:- findall(M,recorded(T,M),Lm),
+			   flatten(Lm,B), sort(B,L),
+			   recorda(S,L).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+get_exports(Lu,Lx)	:- used_modules(U),
+			   exported_modules(X),
+			   maplist(get_xlist,U,Xs),
+			   maplist(prefix_export(Xs,use),U,Lu),
+			   maplist(prefix_export(Xs,export),X,Lx).
+
+get_xlist(M,A)	:- comp_sub_module(M,F), !,
+		   read_export(F,X),
+		   A=(M-X).
+
+prefix_export(L,P,M,R)	:- memberchk(M-Xs,L),
+			   R=..[P,M,Xs].
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 need_modules(Ms)	:- findall(V,recorded(need_module,V),Ms).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-check_import	:- del(module_export),
-		   used_modules(Ms),
-		   format(mod,'use_module(~q).\n',[Ms]),
-		   map(get_imports,Ms).
+check_import(U,_X)	:- del(module_export),
+			   used_modules(Us),
+			   format(mod,'use_module(~q).\n',[Us]),
+			   map(rec_x,U).
+			   %%map(exp_x,_X).
                          
-get_imports(M)	:- comp_sub_module(M,F),
-		   read_all(F,L),
-		   memberchk(export(Xs),L),
-		   map(rec_export(M),Xs).
+rec_x(use(M,L))	:- map(rec_export(M),L).
 
 rec_export(M,X)	:- ( recorded(module_export,module_export(Mm,X))
 		     -> X=F/N,
 			error('Predicate ~w/~w already imported from module ~w',[F,N,Mm])
 		     ;  recorda(module_export,module_export(M,X))
 		   ).
+
+exp_x(export(_,L))	:- map(export_pred,L).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 import_from_module(F,M)	:- recorded(module_export,module_export(M,F)).

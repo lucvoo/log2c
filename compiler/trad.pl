@@ -204,7 +204,7 @@ map_called(F,P)	:- ( recorded(preds,F)	% not extern predicate
 		        concat_atom(['goto ',Fm,'_1'],P)
 		     ;  import_from_module(F,M),
 		        map_pred(F,M,Pm),
-			concat_atom(['asm("jmp PRED',Pm,'")'],P)
+			concat_atom(['ASM_JMP(PRED',Pm,')'],P)
 		   ).
 
 

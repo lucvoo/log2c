@@ -15,6 +15,8 @@
 		, decl_import_mod/1
 		, add_module/4
 		, meta_pred/2
+		, decl_export_mod/1
+		, include_module/1
                 ]).
 
 :- use_module(aux).
@@ -87,7 +89,15 @@ check_query(_ ,_,_)	:- fatal('several queries given').
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-anf_module(La,Lf,Lp)	:- format('#include <Prolog.h>\n#include <trad.h>\n\n'),
+anf_module(La,Lf,Lp)	:- flag(current_module,M,M),
+			   module_extension(h,M,H),
+			   format('#include <Prolog.h>\n#include <pl-trad.h>\n\n',[]),
+			   format('#include "~w"~n~n',[H]),
+			   map_atom(M,Mm),
+			   format(h,'#ifndef MODULE~w_H_~n#define MODULE~w_H_~n~n',[Mm,Mm]),
+			   used_modules(Ms),
+			   map(include_module,Ms),
+			   nl,
 			   flag(max_arg,_,0),
 			   decl_atoms(La),
 			   decl_funs(Lf),
@@ -107,10 +117,18 @@ init_args		:- nl,
 			   nl.
 init_preds([F|Q])	:- recorda(preds,F),
 			   map_pred(F,Pm),
-	                   format('extern void PRED~w;\n',Pm),
+	                   format(h,'extern void PRED~w;\n',Pm),
 			   init_preds(Q).
 init_preds([]).
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+decl_export_mod(export(X,L))	:- flag(current_module,M,M),
+				   map(decl_exp_mod(M,X),L).
+
+decl_exp_mod(M,X,P)	:- map_pred(P,M,Pm),
+			   map_pred(P,X,Px),
+%%			   format(h,'extern void PRED~w __attribute__((alias("PRED~w")));~n',[Pm,Px]),
+			   format(h,'#define PRED~w PRED~w~n',[Pm,Px]).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 decl_preds(X)	:- findall(V,recorded(export_pred,V),P),
@@ -121,21 +139,21 @@ decl_preds(X)	:- findall(V,recorded(export_pred,V),P),
 
 decl_pred(P)	:- import_from_module(P,M),
 		   map_pred(P,M,Pm),
-		   format('extern void PRED~w;\n',Pm).
+		   format(h,'extern void PRED~w;\n',Pm).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 decl_atoms(As)	:- map(decl_atoms_,As),
-		   nl(c).
+		   nl(h).
 decl_atoms_(A)	:- map_atom(A,Am),
-		   format(c,'extern atom__t ATOM_~w;\n',[Am]),
+		   format(h,'extern atom__t ATOM_~w;\n',[Am]),
 		   format(mod,'~q.\n',[atoms(A)]).
 
 decl_funs(Fs)	:- map(decl_funs_,Fs),
-		   nl(c).
+		   nl(h).
 
 decl_funs_(F)	:- map_fun(F,Fm),
-		   format('extern fun__t FUN_~w;\n',[Fm]),
+		   format(h,'extern fun__t FUN_~w;\n',[Fm]),
 		   format(mod,'~q.\n',[funs(F)]),
 		   F=_/N, flag(max_arg,O,max(O,N)).
 
@@ -181,21 +199,22 @@ add_module(I,N,M,[A|X],[A|Y])	:- succ(I,J),
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 directive(use_module,1).
+directive(export_module,1).
 directive(index,1).
 directive(meta_pred,2).
 directive(meta,1).
 directive(module_transparent,1).
 directive(op,3).
 
-do_directive(meta_pred(P,A))		:- recordz(meta_pred,meta_pred(P,A)),
-					   recordz(meta,P).
-
-do_directive(meta(P))		:- recordz(meta,P).
-do_directive(meta((P,L)))	:- recordz(meta,P), do_directive(meta(L)).
 
 do_directive(module_transparent(P))	:- do_directive(meta(P)).
-
+do_directive(meta_pred(P,A))		:- recordz(meta_pred,meta_pred(P,A)),
+					   recordz(meta,P).
+do_directive(meta(P))		:- recordz(meta,P).
+do_directive(meta((P,L)))	:- recordz(meta,P), do_directive(meta(L)).
 do_directive(op(P,T,N))		:- op(P,T,N).
+do_directive(use_module(M))	:- recorda(use_module,M).
+do_directive(export_module(M))	:- recorda(export_module,M), recorda(use_module,M).
 
 do_directive(D)			:- recordz(directive,D).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -212,3 +231,6 @@ meta_pred(mapli/4,2).
 meta_pred(mapli/5,2).
 meta_pred(call/1,1).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+include_module(M)	:- module_extension(h,M,H),
+			   format('#include "~w"\n',[H]).
+

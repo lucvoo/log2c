@@ -24,23 +24,20 @@ comp_file(File,Opt)	:- init_all,
 
 comp_module(Mod,Export,_Opt) :-
 		   flag(current_module,_,Mod),
-		   file_name_extension(Mod,c, File_C),
-		   file_name_extension(Mod,mod,File_Mod),
-		   open(File_C,  write,c),
-		   open(File_Mod,write,mod),
+		   open_files(Mod,_Fc,Fm,_Fh),
 		   set_output(c),
 		   read_module(Li), 
 		   code_module(Li,Export,Lo), !,
 		   trad(Lo), nl,
 		   init_hash_jmps,
 		   set_output(user_output),
-		   close(c), close(mod),
+		   close(c), close_h, close(mod),
 		   ( error_report
-		     -> delete_file(File_Mod), % delete_file(File_C)
+		     -> delete_file(Fm), % delete_file(_Fc), delete_file(_Fh),
 		        halt(1)
-		     ;  file_name_extension(Mod,o, File_O),
-			( true %% comp_C(File_O)	%% FIXME :
-			  -> true % delete_file(File_C)%% leave the file for
+		     ;  module_extension(o,Mod,_Fo),
+			( true %% comp_C(_Fo)	%% FIXME :
+			  -> true % delete_file(_Fc)%% leave the file for
 			  ;  true		%% inspection in case
 			)			%% of error
 		   ).
@@ -49,10 +46,7 @@ comp_module(Mod,Export,_Opt) :-
 comp_user(Opt)	:- flag(current_module,_,user),
 		   read_module(Li), 
 		   flag(input_file,Name,Name),
-		   file_name_extension(Name,c,   File_c),
-		   file_name_extension(Name,mod, File_mod),
-		   open(File_c,   write,c),
-		   open(File_mod,write,mod),
+		   open_files(Name,_Fc,_Fm,_Fh),
 		   set_output(c),
 		   code_user(Li,Opt), !,
 		   init_hash_jmps, 
@@ -67,16 +61,24 @@ comp_user(Opt)	:- flag(current_module,_,user),
 		   % delete_file(File_c),
 		   % delete_file(File_mod).
 		   
+open_files(Name,C,H,M)	:- module_extension(c,  Name, C),
+			   module_extension(mod,Name, M),
+			   module_extension(h,  Name, H),
+			   open(C,   write,c),
+			   open(M,write,mod),
+			   open(H,write,h).
 
+close_h	:- format(h,'~n#endif~n',[]),
+	   close(h).
 link_file(Name)	:- flag(input_file,_,Name),
-		   file_name_extension(Name,'lnk.c', File_Lnk),
+		   module_extension('lnk.c', Name,File_Lnk),
 		   open(File_Lnk,write,lnk),
 		   set_output(lnk),
-		   format('#include <Prolog.h>\n#include <trad.h>\n\n'),
+		   format('#include <Prolog.h>\n#include <pl-trad.h>\n\n'),
 		   code_anf(Name),
 		   init_hash_mods(Name),
 		   set_output(user_output),
-		   close(lnk), !,
+		   close_h, close(lnk), !,
 		   ( error_report
 		     -> fail
 		     ;  ( link(Name)
@@ -91,12 +93,12 @@ code_anf(N)	:- read_mods(N,A,F,P),
 		   init_hash(A,F,Pall).
 
 link(Name)	:- need_modules(Ms),
-		   delete(Ms,Name,_Ms),
-		   concat_atom(_Ms,' ',Mods),
-%% stable	   concat_atom(['make PROG="',Name,'" MODULES="',Mods,'" ',Name, ' > /dev/null 2>&1'],Make),
-		   concat_atom(['make PROG="',Name,'" MODULES="',Mods,'" ',Name],Make),
+		   maplist(module_extension(o),Ms,Mso),
+		   concat_atom(Ms,' ',L),
+		   concat_atom(Mso,' ',Lo),
+		   concat_atom(['make PROG="',Name,'" MODULES="',Lo,'" ',Name], Make),
 		   format(user_error,'~w\n',[Make]),
-		   format(user_error,'[ Linking module(s) ~w :',[Mods]),
+		   format(user_error,'[ Linking module(s) ~w :',[L]),
 		   shell(Make,R), !,
 		   ( R = 0
 		     -> format(user_error,' done ]\n',[])
@@ -108,10 +110,12 @@ link(Name)	:- need_modules(Ms),
 code_user(I,Opt)	:- code_user(I,Opt,T,[]), trad(T).
 code_user(I,_Opt)	:+ get_preds(I,Lpr),
 		           get_query(Lpr,Q,B,P),
-			   check_import,
+			   get_exports(Us,Xs),
+			   check_import(Us,Xs),
+			   %% check_import,
 			   flag(current_module,M,M),
 			   map(export_user_preds,P),	%% export all predicates
-			   init_module(P,Q),
+			   init_module(P,Q,Xs),
 			   code_Q(Q),
 			   code_P(P),
 			   code_fin,
@@ -119,21 +123,24 @@ code_user(I,_Opt)	:+ get_preds(I,Lpr),
 
 code_module(I,X,O)	:- code_module(I,X,O,[]).
 code_module(I,X)	:+ get_preds(I,P),
-			   check_export(X,P),	%% check and export public predicates
-			   check_import,
-			   init_module(P,[]),
+			   get_exports(Us,Xs),
+			   %% check_import,
+			   check_import(Us,Xs),
+			   check_export(X,P,Xs),	%% check and export public predicates
+			   init_module(P,[],Xs),
 			   code_P(P),
 			   flag(current_module,M,M),
 			   ( M==system -> code_FPr; true ),
 			   code_fin.
 
-init_module(P,Q)	:- del(undef_pred),
+init_module(P,Q,X)	:- del(undef_pred),
 			   a_n_f(P,Q,La,Lf,Lp),
 			   anf_module(La,Lf,Lp),
 			   flag(current_module,M,M),
 			   map_atom(M,Mod),
 			   used_modules(Ms),
 			   map(decl_import_mod,Ms),
+			   map(decl_export_mod,X), nl,
 			   format('\nvoid module_~w(void)\n{\n',[Mod]),
 		           format('  if (&&backtrack==0) return;\n\n').
 
@@ -349,7 +356,6 @@ code_call(G,L)		:+ fun(G,F,N,A),
 			   ( meta_pred(F/N,I),
 			     Meta\=true
 			     -> flag(current_module,Mod,Mod),
-			        %% recorded(module_export,module_export(Mod,F/N)),
 			        add_module(Mod,I,A,Arg)
 			     ;  Arg=A
 			   ),

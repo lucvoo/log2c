@@ -3,6 +3,7 @@
 
 :- module(aux,  [ read_module/1
 		, read_all/2
+		, read_export/2
 		, file_type/2
 		, del_all/0,	del/1
 		, new_indent/1,	old_indent/0
@@ -29,6 +30,7 @@
                 , mapl/3, mapl/4
                 , mapli/4, mapli/5
                 , mapllist/5
+                , module_extension/3
 		]).
 
 :- use_module(map_name).
@@ -68,7 +70,7 @@ file_type(F,T)	:- file_base_name(F,Name),
 		   stream_position(S,P,P),
 		   read(R), 
 		   ( R=':-'(module(M,L))
-                     -> ( Base==M
+                     -> ( module_extension(pl,M,Name)
                           -> true
                           ;  warning('name of file (~w) and name of module (~w) do not match',[F,M])
 			),
@@ -84,9 +86,9 @@ file_type(F,T)	:- file_base_name(F,Name),
 read_module(L)	:- current_input(S),
 		   readclauses_(S,C,[]),
 		   flag(current_module,M,M),
-		   ( M==system
-		     -> L=C
-		     ;  L=[(:- use_module(system))|C]
+		   ( M==system       -> L=C;
+                     concat('$',_,M) -> L=C;
+		                        L=[(:- use_module(system))|C]
 		   ),
 		   set_input(user_input).
 
@@ -311,18 +313,6 @@ comm(H)		:- format('/* ~w */\n',[H]), !.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Read all terms of file 'F' and put it in list 'L'
 
-%% read_all(F,L)	:- open(F,read,S),
-%% 		   read_all_(S,L),
-%% 		   close(S).
-%% 
-%% read_all_(S,L)	:- read(S,T),
-%% 		   ( T==end_of_file
-%% 		     -> L=[]
-%% 		     ;  read_all_(S,Q),
-%% 			L=[Tx|Q],
-%% 		        expand_term(T,Tx)
-%% 		   ).
-
 read_all(F,L)	:- seeing(Old),
 		   open(F,read,N),
 		   set_input(N),
@@ -336,6 +326,19 @@ read_all_(L)	:- read(T),
 		     ;  read_all_(Q),
 			L=[Tx|Q],
 		        expand_term(T,Tx)
+		   ).
+
+read_export(F,X):- seeing(Old),
+		   open(F,read,N),
+		   set_input(N),
+		   read_x_(X),
+		   close(N),
+		   see(Old).
+
+read_x_(X)	:- read(T),
+		   ( T==end_of_file -> fail;
+                     T=export(X)    -> true;
+		        read_x_(X)
 		   ).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 comp_C(F)	:- concat_atom(['make ',F],Make),
@@ -421,3 +424,10 @@ mapli(N,G,[E|Q],I,O)	:- succ(N,M),
 mapllist(_,[],[],A,A).
 mapllist(G,[Ei|Qi],[Eo|Qo],I,O)	:- call(G,Ei,Eo,I,T),
 				   mapllist(G,Qi,Qo,T,O).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+module_extension(X,M,F)	:- concat('$',R,M), !,
+			   file_name_extension(R,X,F).
+module_extension(X,M,F)	:- M=user, !,
+			   flag(input_file,I,I),
+			   file_name_extension(I,X,F).
+module_extension(X,M,F)	:- file_name_extension(M,X,F).
