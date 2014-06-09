@@ -35,12 +35,12 @@
 #define __isFloat(v) 	(Tag(v)==(flt_tag<<29))
 #define __isTerm(v) 	(Tag(v)==(fun_tag<<29))
 #define	__isCons(v)	(v==__fun(FUN(dot,2)))
-#define	__isNil(v)	(v==((ato_tag<<29) + (uint) ATOM(nil)))
+#define	__isNil(v)	(v==((ato_tag<<29) + (unsigned int) ATOM(nil)))
 
-#define __isNumber(V)	({ uint v=V; int r=(__isInteger(v) || __isFloat(v)); r; })
-#define	__isStruct(V)	({ uint v=V; int r=(v!=__fun(FUN(dot,2)) && __isTerm(v)); r; })
-#define __isAtomic(V)	({ uint v=V; int r=(!__isVar(v) && !__isTerm(v)); r; })
-#define __isList(V)	({ uint v=V; int r=(__isCons(v) || __isNil(v)); r; })
+#define __isNumber(V)	({ unsigned int v=V; int r=(__isInteger(v) || __isFloat(v)); r; })
+#define	__isStruct(V)	({ unsigned int v=V; int r=(v!=__fun(FUN(dot,2)) && __isTerm(v)); r; })
+#define __isAtomic(V)	({ unsigned int v=V; int r=(!__isVar(v) && !__isTerm(v)); r; })
+#define __isList(V)	({ unsigned int v=V; int r=(__isCons(v) || __isNil(v)); r; })
 
 
 

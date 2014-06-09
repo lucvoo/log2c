@@ -24,18 +24,18 @@ typedef	enum { FIRST_CALL, NEXT_CALL } ctrl_t, *control_t;
 #ifdef	WORDS_BIGENDIAN
 
 typedef	struct { tag_t tag:3;  int  val:29; } _val_t;
-typedef struct { tag_t tag:3; uint uval:29; } uval_t;
+typedef struct { tag_t tag:3; unsigned int uval:29; } uval_t;
 
 #else	// WORDS_BIGENDIAN
 
 typedef	struct {  int  val:29; tag_t tag:3; } _val_t;
-typedef struct { uint uval:29; tag_t tag:3; } uval_t;
+typedef struct { unsigned int uval:29; tag_t tag:3; } uval_t;
 
 #endif	// WORDS_BIGENDIAN
 
 
 typedef union  cell_t  cell_t, *term_t, *tr_t;
-union cell_t { ulong   val;
+union cell_t { unsigned long   val;
 	       _val_t  tag_val;
 	       uval_t  tag_uval;
                cell_t *celp;
@@ -96,7 +96,7 @@ struct mods_t  { atom_t	     name;
 typedef struct { int   type;		// int_tag | flt_tag
                  union { intg_t	intg;
                  	 flt_t  flt;
-                 	 ulong  w[sizeof(double)/sizeof(ulong)];
+                 	 unsigned long  w[sizeof(double)/sizeof(unsigned long)];
                        } val;
                } pl_number_t;
 

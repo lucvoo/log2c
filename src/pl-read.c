@@ -473,8 +473,8 @@ char *read_symbol(pl_stream S, int c)
 }
 
 static // inline
-ulong str2long(char *str)
-{ ulong val=0;
+unsigned long str2long(char *str)
+{ unsigned long val=0;
 
   while(*str)
     val=val*10+DigitVal(*str++);
@@ -490,7 +490,7 @@ ulong str2long(char *str)
 
 static
 int read_number(pl_stream S, int c, pl_number_t *num)
-{ ulong val=0;
+{ unsigned long val=0;
   pl_ubs_t *b = PL_find_ubs(0);
 
   if (c=='0')
