@@ -28,8 +28,8 @@
 #define PL_PROTO_N_4	term_t, term_t, term_t, term_t, control_t);
 #define PL_PROTO_N_5	term_t, term_t, term_t, term_t, term_t, control_t);
 
-#define DET(P,A,F)	int F##(PL_PROTO_D(A)
-#define NDET(P,A,F)	int F##(PL_PROTO_N(A)
+#define DET(P,A,F)	int F(PL_PROTO_D(A)
+#define NDET(P,A,F)	int F(PL_PROTO_N(A)
 
 #else
 #define DET(F,N,C)      foreign_pred_builtin(F,N,C,det).

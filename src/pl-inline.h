@@ -9,9 +9,9 @@
 #include "pl.h"
 
 
-#define ATOM(A)		(&ATOM_ ## A ## )
-#define FUN_(F)		(&FUN_ ## F ## )
-#define FUN(F,A)	(&FUN_ ## F ## _ ## A ## )
+#define ATOM(A)		(&ATOM_ ## A)
+#define FUN_(F)		(&FUN_ ## F)
+#define FUN(F,A)	(&FUN_ ## F ## _ ## A)
 
 #define Round(i,align)	((i+align-1) & (-align) )
 

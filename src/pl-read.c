@@ -482,9 +482,9 @@ ulong str2long(char *str)
   return(val);
 }
 
-#define ISO_NUM(S,P,B)	if (!P ## (Peekc(S))) \
+#define ISO_NUM(S,P,B)	if (!P(Peekc(S))) \
                           goto case_default; \
-                        while (P ## (c=Getc(S))) \
+                        while (P(c=Getc(S))) \
                         { val=val* B +DigitVal(c); } \
                         goto case_iso
 
