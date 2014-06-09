@@ -31,7 +31,7 @@
 #define PL_MIN_TAG_INT	(-(PL_MAX_TAG_INT+1))
 #define PL_MIN_INT	(-(PL_MAX_INT+1))
 
-#define MAX_RING_BUFFER	4
+#define PL_MAX_RING_BUF	4
 
 #define	PL_MAX_ARGS	256
 

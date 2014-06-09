@@ -7,7 +7,7 @@
 #include <stdlib.h>			// For malloc(3)
 
 static unsigned int current_buffer_no;
-static pl_ubs_t ring_buffers[MAX_RING_BUFFER];
+static pl_ubs_t ring_buffers[PL_MAX_RING_BUF];
 static pl_ubs_t discardable_buffer;
 
 
@@ -25,7 +25,7 @@ pl_ubs_t *PL_find_ubs(unsigned flags)
 { pl_ubs_t *b;
 
   if (flags & BUF_RING)
-  { current_buffer_no = (current_buffer_no+1) % MAX_RING_BUFFER;
+  { current_buffer_no = (current_buffer_no+1) % PL_MAX_RING_BUF;
     b=&ring_buffers[current_buffer_no];
   }
   else
@@ -37,6 +37,6 @@ pl_ubs_t *PL_find_ubs(unsigned flags)
 
 void PL_lost_ubs(unsigned flags)
 { if (flags & BUF_RING)
-    current_buffer_no = (current_buffer_no-1) % MAX_RING_BUFFER;
+    current_buffer_no = (current_buffer_no-1) % PL_MAX_RING_BUF;
 }
 
