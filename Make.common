@@ -45,7 +45,7 @@ PLC	= plc
 %.s: %.c ${$*.dep}
 	$(CC) $(CFLAGS) -S $*.c -o $*.s
 %.i: %.c ${$*.dep}
-	$(CC) $(CFLAGS) -E $*.c | grep -v '^[ ]*$$' > $*.i
+	$(CC) $(CFLAGS) -E $*.c -dD | grep -v '^[ ]*$$' > $*.i
 %.so: %.c ${$*.dep}
 	$(CC) $(CFLAGS) -fpic -shared -Wl,-soname,$*.so -o $@ $(filter %.c,$^)
 %.sa: %.c ${$*.dep}
