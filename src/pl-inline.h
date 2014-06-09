@@ -15,7 +15,7 @@
 
 #define Round(i,align)	((i+align-1) & (-align) )
 
-#define Align_N(ptr,align)	((void *) Round((int) ptr,align) )
+#define Align_N(ptr,align)	((void *) Round((uintptr_t) ptr,align) )
 #define Align(ptr)		Align_N(ptr,CELL_SIZE)
 
 #define Adjust_N(i,align)	((i+align-1) / align )
