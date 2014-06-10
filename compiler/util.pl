@@ -76,14 +76,14 @@ getC(  :- D,		'')	 :- !,
 getC(H,     		cl(F,N,A,true))	:- fun(H,F,N,A).
 
 insertC('',L,L).
-insertC(q(V,Q),I,O) :- select(I,q(Lq),Is), !, O=[q([cl(V,Q)|Lq]) |Is].
+insertC(q(V,Q),I,O) :- select(q(Lq),I,Is), !, O=[q([cl(V,Q)|Lq]) |Is].
 insertC(q(V,Q),I,O) :- O=[q([cl(V,Q)]) |I].
-insertC(cl(F,N,A,B),I,O) :- select(I,pr(F,N,Lc),Is), !, O=[pr(F,N,[cl(A,B)|Lc]) |Is].
+insertC(cl(F,N,A,B),I,O) :- select(pr(F,N,Lc),I,Is), !, O=[pr(F,N,[cl(A,B)|Lc]) |Is].
 insertC(cl(F,N,A,B),I,O) :- O=[pr(F,N,[cl(A,B)]) |I].
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-get_query(I,Q,O)	:- select(I,q(Lq),O), check_query(Lq,Q), !.
+get_query(I,Q,O)	:- select(q(Lq),I,O), check_query(Lq,Q), !.
 get_query(_,_,_)	:- fatal('no query given').
 
 check_query([cl(_,Q)],Q).

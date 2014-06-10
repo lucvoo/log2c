@@ -187,7 +187,7 @@ hash_jmp_tab(T,[E|_]) :-
 init_hash_mods(N) :-
 	need_modules(M),
 	map(util:include_module,M),
-	select(M,N,M_), Ms=[user|M_],
+	select(N,M,M_), Ms=[user|M_],
 	map(hash:decl_mod,Ms), nl,
 	flag(mods_hsize,HS,HS),
 	fill(HS,[],L), 

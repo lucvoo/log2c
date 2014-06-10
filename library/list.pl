@@ -27,9 +27,9 @@ append([], L, L).
 append([H|T], L, [H|R])	:- append(T, L, R).
 
 %%
-select([H|T], H, T).
-select([H|T], E, [H|R]) :-
-	select(T, E, R).
+select(H, [H|T], T).
+select(E, [H|T], [H|R]) :-
+	select(E, T, R).
 
 %%
 flatten(L, F) :-
