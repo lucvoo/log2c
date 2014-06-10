@@ -17,7 +17,6 @@ term_expansion(I,O)	:- translate(I,O).
 :- use_module([modules,trans]).
 :- use_module(code).
 :- use_module(util).
-:- use_module(getopt).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

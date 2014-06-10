@@ -2,7 +2,6 @@
 %%
 
 :- use_module(comp).
-:- use_module(getopt).
 
 
 main	:-	'$argv'([_,F|Opt]),
