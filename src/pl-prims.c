@@ -726,10 +726,13 @@ int PL_HashTerm(term_t term, hash_t *hval)
       case int_tag: *hval=get_val(term);
                     succeed;
       case flt_tag: { union { double f;
-                              long   l[2];
+                              long   l[sizeof(double)/sizeof(long)];
                             } flt;
                       flt.f=get_flt(term);
-                      *hval=flt.l[0] ^ flt.l[1];
+                      if (sizeof(double) == 2*sizeof(long))
+                      	*hval=flt.l[0] ^ flt.l[1];
+                      else if (sizeof(double) == sizeof(long))
+                      	*hval=flt.l[0];
                       succeed;
                     }
       case fun_tag: { hash_t h, val;
