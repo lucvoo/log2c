@@ -21,10 +21,10 @@
 cell_t *deref_dbg(cell_t *addr)
 { cell_t *p=addr;
 
-fprintf(stderr, "deref: p =      %#.8x\n", (int)p);
+fprintf(stderr, "deref: p =      %p\n", p);
   while (p->tag_val.tag==ref_tag)
   { p=p->celp;
-fprintf(stderr, "     : p =      %#.8x\n", (int)p);
+fprintf(stderr, "     : p =      %p\n", p);
   }
 
   return(p);
