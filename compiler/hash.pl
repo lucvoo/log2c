@@ -57,8 +57,7 @@ print_atom_list(A,Nxt)	:-
 	map_atom(A,Am),
 	noescape(A,As),
 	hpjw(A,H),
-	format('atom__t ATOM_~w={ {(ato_tag<<29)+(uint) ATOM(~w)}, \
-		"~w" , ~w ,~w};\n',[Am,Am,As,H,Nxt]).
+	format('atom__t ATOM_~w={ {(ato_tag<<29)+(uint) ATOM(~w)}, "~w" , ~w ,~w};\n',[Am,Am,As,H,Nxt]).
 
 hash_atom_tab([]) :-
 	format('  0,\n').
@@ -224,8 +223,7 @@ hash_mods_list([A,B|Q])	:-
 
 print_mods_list(A,Nxt)	:-
 	map_atom(A,Am),
-	format('static modules_t MODULE_~w = \
-		{ ATOM(~w), &module~w ,~w};\n',[Am,Am,Am,Nxt]).
+	format('static modules_t MODULE_~w = { ATOM(~w), &module~w ,~w};\n',[Am,Am,Am,Nxt]).
 
 hash_mods_tab([]) :-
 	format('  0,\n').
