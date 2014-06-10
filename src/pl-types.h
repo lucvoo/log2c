@@ -24,13 +24,13 @@ typedef	enum { FIRST_CALL, NEXT_CALL } ctrl_t, *control_t;
 
 #ifdef	WORDS_BIGENDIAN
 
-typedef	struct { tag_t tag:TAG_SIZE;  int  val:TAG_POS; } _val_t;
-typedef struct { tag_t tag:TAG_SIZE; unsigned int uval:TAG_POS; } uval_t;
+typedef	struct { tag_t tag:TAG_BITS;          long  val:TAG_POS; } _val_t;
+typedef struct { tag_t tag:TAG_BITS; unsigned long uval:TAG_POS; } uval_t;
 
 #else	// WORDS_BIGENDIAN
 
-typedef	struct {  int  val:TAG_POS; tag_t tag:TAG_SIZE; } _val_t;
-typedef struct { unsigned int uval:TAG_POS; tag_t tag:TAG_SIZE; } uval_t;
+typedef	struct {          long  val:TAG_POS; tag_t tag:TAG_BITS; } _val_t;
+typedef struct { unsigned long uval:TAG_POS; tag_t tag:TAG_BITS; } uval_t;
 
 #endif	// WORDS_BIGENDIAN
 

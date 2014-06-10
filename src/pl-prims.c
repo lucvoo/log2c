@@ -503,7 +503,7 @@ int struct_eq(cell_t *t1, cell_t *t2)
                   if (t1->val==__var())
                   { if (t2->val!=__var())
                       fail;
-                    t1->val=t2->val=(__var()+(unsigned int)t1);
+                    t1->val=t2->val=(__var()+(unsigned long)t1);
                     HP[0].celp=t1;
                     HP[1].celp=t2;
                     HP+=2;

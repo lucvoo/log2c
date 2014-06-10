@@ -14,7 +14,7 @@ atom_t add_atom(const char *s, hash_t H, hash_t h)
 { atom_t a;
 
   a=NEW(*a); 
-  a->atom.val=((ato_tag<<TAG_POS)+(unsigned int) a);
+  a->atom.val=((ato_tag<<TAG_POS)+(unsigned long) a);
   a->name=s;
   a->hash=H;
   a->next=PL__atoms[h];

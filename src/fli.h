@@ -35,12 +35,12 @@
 #define __isFloat(v) 	(Tag(v)==(flt_tag<<TAG_POS))
 #define __isTerm(v) 	(Tag(v)==(fun_tag<<TAG_POS))
 #define	__isCons(v)	(v==__fun(FUN(dot,2)))
-#define	__isNil(v)	(v==((ato_tag<<TAG_POS) + (unsigned int) ATOM(nil)))
+#define	__isNil(v)	(v==((ato_tag<<TAG_POS) + (unsigned long) ATOM(nil)))
 
-#define __isNumber(V)	({ unsigned int v=V; int r=(__isInteger(v) || __isFloat(v)); r; })
-#define	__isStruct(V)	({ unsigned int v=V; int r=(v!=__fun(FUN(dot,2)) && __isTerm(v)); r; })
-#define __isAtomic(V)	({ unsigned int v=V; int r=(!__isVar(v) && !__isTerm(v)); r; })
-#define __isList(V)	({ unsigned int v=V; int r=(__isCons(v) || __isNil(v)); r; })
+#define __isNumber(V)	({ unsigned long v=V; int r=(__isInteger(v) || __isFloat(v)); r; })
+#define	__isStruct(V)	({ unsigned long v=V; int r=(v!=__fun(FUN(dot,2)) && __isTerm(v)); r; })
+#define __isAtomic(V)	({ unsigned long v=V; int r=(!__isVar(v) && !__isTerm(v)); r; })
+#define __isList(V)	({ unsigned long v=V; int r=(__isCons(v) || __isNil(v)); r; })
 
 
 
