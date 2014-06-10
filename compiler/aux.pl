@@ -413,8 +413,9 @@ maplist_map_name_v([A|X],[B|Y])	:- map_name_v(A,B),
 				   maplist_map_name_v(X,Y).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-:- module_transparent	mapl/4,
-			mapli/4, mapli/5.
+:- meta_predicate	mapl(3, +, ?, ?),
+			mapli(+, 4, +, ?),
+			mapli(+, 4, +, ?, ?).
 
 mapl(_,[],L,L).
 mapl(G,[E|Q],I,O)	:- call(G,E,I,T),

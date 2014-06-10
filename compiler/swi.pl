@@ -37,7 +37,7 @@ hex_digit(V,D)	:- between(0,9,V), D is V + 0'0.
 hex_digit(V,D)	:- between(10,15,V), D is V + (0'A-10).
 
 
-:- module_transparent map/2.
+:- meta_predicate map(1, +).
 
 map(G, [E|T])	:- call(G, E), map(G, T).
 map(_,[]).
