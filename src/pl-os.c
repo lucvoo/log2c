@@ -11,6 +11,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <pwd.h>
+#include <errno.h>
 #include "pl-os.h"
 #include "pl-ctype.h"
 #include "pl-fli.h"
