@@ -122,7 +122,6 @@ term_t array_to_list(term_t *array, int n, int rem_dup)
   return(l);
 }
 
-int qsort_cmp(const void *a, const void *b) __attribute__ ((alias("pl_std_cmp"))) ;
 
 inline static
 int PL_sort(term_t list, term_t sorted, int rem_dup)
@@ -137,7 +136,7 @@ int PL_sort(term_t list, term_t sorted, int rem_dup)
     PL_warning("%s/2: first_argument is not a proper list",rem_dup ? "sort" : "msort");
 
   if (n!=0)
-    qsort(array,n,sizeof(term_t),qsort_cmp);
+    qsort(array,n,sizeof(term_t),pl_std_cmp);
    
   l=array_to_list(array,n,rem_dup);
   return(pl_unify(l,sorted));
