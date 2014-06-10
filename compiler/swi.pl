@@ -6,6 +6,7 @@
 	       , '$erase_records'/1
 	       , '$mangle'/2
 	       , map/2
+	       , hpjw/2
                ]).
 
 
@@ -43,3 +44,20 @@ map(G, [E|T])	:- call(G, E), map(G, T).
 map(_,[]).
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+hpjw(A, H) :-
+	atom_codes(A, L),
+	hpjw(L, 0, H).
+
+hpjw([], H, H).
+hpjw([C|L], S, H) :-
+	H1 is S << 4 + C,
+	G is H1 /\ 0xf0000000,
+	(
+		G =\= 0
+	->
+		H2 is H1 xor (G>>24) xor G
+	;
+		H2 = H1
+	),
+	hpjw(L, H2, H).
