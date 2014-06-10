@@ -202,7 +202,7 @@ int PL_get_pointer(cell_t *c, void **ptr)
   switch(get_tag(c))
   { case ref_tag:  c=c->celp;
                    goto debut;
-    case int_tag: *ptr=(void *) get_val(c);
+    case int_tag: *ptr=get_addr(c);
 		   succeed;
     default:       fail;
   }

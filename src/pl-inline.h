@@ -24,7 +24,7 @@
 
 #define get_val(c)	((c)->tag_val.val)
 #define get_uval(c)	((c)->tag_uval.uval)
-#define get_addr(c)	((void *) ((c)->tag_uval.uval))
+#define get_addr(c)	((void *) (unsigned long) ((c)->tag_uval.uval))
 #define get_tag(c)	((c)->tag_val.tag)
 
 #define get_fun(c)	((fun_t) get_addr(c))
