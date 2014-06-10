@@ -718,12 +718,11 @@ int pl_stream_position(term_t s, term_t old, term_t new)
 
 int pl_set_stream_position(term_t s, term_t new)
 { long char_no, line_no, col_no;
-  long told;
   pl_stream S;
   Spos_t *p;
 
   S=IOStream(s);			// FIXME : check return value
-  told=Stell(S);
+  Stell(S);
   p=Sget_pos(S);
     
   new=deref(new);
