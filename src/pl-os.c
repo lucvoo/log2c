@@ -72,10 +72,6 @@ void InitRandom(void)
 /* File Management                                                    */
 /**********************************************************************/
 
-static
-char *RealPath(const char *file, char *canonical)
-{ return(realpath(file,canonical)); }
-
 inline static
 const char *EnsureAbsolutePath(const char *path)
 { if (path[0]=='/')
