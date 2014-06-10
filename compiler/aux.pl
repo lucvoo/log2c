@@ -153,29 +153,42 @@ new_indent(N)	:- flag(indent,O,O+N).
 old_indent(N)	:- flag(indent,O,O-N).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-warning(W) :-	format(user_error,'\nWarning: ~w\n',[W]).
-warning(W,A) :-	concat_atom([     '\nWarning: ',W,'\n'],W_),
-		format(user_error,W_,A).
+fmt_msg(Type, Fmt, Args)	:-
+	concat_atom(['\nPLC: ', Type, ': ', Fmt, '\n'], Msg),
+	format(user_error, Msg, Args).
+fmt_msg(Type, Arg)	:-
+	fmt_msg(Type, '~w', [Arg]).
 
-error(W) :-	format(user_error,'\nError: ~w\n',[W]),
-		flag(error,E,E+1).
-error(W,A) :-	concat_atom([     '\nError: ',W,'\n'],W_),
-		format(user_error,W_,A),
-		flag(error,E,E+1).
+warning(Fmt, Args) :-
+	fmt_msg('Warning', Fmt, Args),
+	flag(warning,W,W+1).
+warning(Arg)	:-
+	warning('~w', [Arg]).
 
-fatal(W) :-	format(user_error,'\nFatal Error: ~w\n',[W]),
-		halt(1).
-fatal(W,A) :-	concat_atom([     '\nFatal Error: ',W,'\n'],W_),
-		format(user_error,W_,A),
-		halt(1).
+error(Fmt, Args) :-
+	fmt_msg('Error', Fmt, Args),
+	flag(error,E,E+1).
+error(Arg)	:-
+	error('~w', [Arg]).
+
+fatal(Fmt, Args) :-
+	fmt_msg('Fatal Error', Fmt, Args),
+	halt(1).
+fatal(Arg)	:-
+	fatal('~w', [Arg]).
 
 
-error_report :-	flag(error,E,E),
-		flag(warning,W,W),
-		( E==0
-		-> fail
-		;  format(user_error,'\nNumber of error: ~w\n',[E])
-		).
+error_report :-
+	flag(warning,W,W),
+	( W == 0
+	-> true
+	;  fmt_msg('Number of warning', W)
+	),
+	flag(error,E,E),
+	( E == 0
+	-> fail
+	;  fmt_msg('Number of error', E)
+	).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 merge_to_set(L1,L2,S):- list_to_set(L1,S1),
