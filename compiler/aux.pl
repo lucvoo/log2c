@@ -354,8 +354,8 @@ comp_C(F)	:- concat_atom(['make ',F],Make),
 		   format(user_error,'~a\n',Make),
 		   shell(Make,R), !,
 		   ( R = 0
-		     -> Res=done
-		     ;  Res=failed, flag(error,E,E+1),
+		     -> true
+		     ;  flag(error,E,E+1),
 		        format(user_error,'\n[ Compilation failed ]\n',[]),
 			fail
 		   ).
