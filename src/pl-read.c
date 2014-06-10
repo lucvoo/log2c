@@ -591,13 +591,6 @@ error:
 
 #define SkipSpaces(S,c)	do { c=Getc(S); } while (isSpace(c))
 
-static
-void SkipFirst(pl_stream S)
-{ int c;
-  SkipSpaces(S,c);
-  UnGetc(c);
-}
-
 // POST : valid data in token
 static
 tok_type get_token(pl_stream S)
