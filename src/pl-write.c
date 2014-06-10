@@ -249,6 +249,7 @@ void WritePrimitive(pl_stream S, term_t t, const w_opt *opt)
 	}
     case ref_tag:
     case fun_tag: // Impossible error occur
+	;
   }
 
   return;
