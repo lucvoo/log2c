@@ -47,7 +47,7 @@ cell_t *Copy2Heap(cell_t *addr, cell_t *c)
                   }
                   else                     // new var
                   if (addr)		    // write to a fun object.
-                  { addr->val=(var_tag<<29);
+                  { addr->val=(var_tag<<TAG_POS);
                     c->celp=addr;
                     trail(c);
                     return(0);
@@ -615,7 +615,7 @@ int CopyTerm(cell_t *addr, cell_t *c)
 		    addr->celp=c;
                   else                     // new var
                   { if (addr)
-                      addr->val=(var_tag<<29);
+                      addr->val=(var_tag<<TAG_POS);
                     else 
                       addr=new_var();
                     c->celp=addr;

@@ -33,7 +33,7 @@ fprintf(stderr, "     : p =      %#.8x\n", (int)p);
 cell_t *new_flt(double r)
 { typeof(HP) old_HP=HP;
 
-  HP->val = (flt_tag<<29);
+  HP->val = (flt_tag<<TAG_POS);
   get_flt(HP)=r;
   HP+=3;
   return(old_HP);

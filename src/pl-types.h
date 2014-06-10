@@ -6,6 +6,7 @@
 #ifndef PL_TYPES_H_
 #define PL_TYPES_H_
 
+#include "pl-config.h"
 #include <sys/types.h>
 
 typedef unsigned long hash_t;
@@ -23,13 +24,13 @@ typedef	enum { FIRST_CALL, NEXT_CALL } ctrl_t, *control_t;
 
 #ifdef	WORDS_BIGENDIAN
 
-typedef	struct { tag_t tag:3;  int  val:29; } _val_t;
-typedef struct { tag_t tag:3; unsigned int uval:29; } uval_t;
+typedef	struct { tag_t tag:TAG_SIZE;  int  val:TAG_POS; } _val_t;
+typedef struct { tag_t tag:TAG_SIZE; unsigned int uval:TAG_POS; } uval_t;
 
 #else	// WORDS_BIGENDIAN
 
-typedef	struct {  int  val:29; tag_t tag:3; } _val_t;
-typedef struct { unsigned int uval:29; tag_t tag:3; } uval_t;
+typedef	struct {  int  val:TAG_POS; tag_t tag:TAG_SIZE; } _val_t;
+typedef struct { unsigned int uval:TAG_POS; tag_t tag:TAG_SIZE; } uval_t;
 
 #endif	// WORDS_BIGENDIAN
 

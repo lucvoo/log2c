@@ -204,7 +204,7 @@ void reset(register tr_t *a1)
 { register tr_t *tp;
 
   for (tp=TP;a1<tp;)
-     (*(--tp))->val = var_tag<<29;
+     (*(--tp))->val = var_tag<<TAG_POS;
 
   TP=a1;
   return;

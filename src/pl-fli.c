@@ -365,6 +365,6 @@ PL_unify_arg(int index, term_t t, term_t a)
 
 int
 PL_term_type(term_t t)
-{ return(Tag(t->val)>>29);
+{ return(Tag(t->val)>>TAG_POS);
 }
 

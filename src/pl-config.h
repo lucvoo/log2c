@@ -21,7 +21,7 @@
 
 #define TAG_BITS	3
 #define TAG_POS		29	// (CELL_BITS-TAG_BITS)
-#define TAG_MASK	(7<<29)	// (((1<<TAG_BITS)-1)<<TAG_POS)
+#define TAG_MASK	(7<<TAG_POS)	// (((1<<TAG_BITS)-1)<<TAG_POS)
 #define VAL_MASK	(~TAG_MASK)
 #define GC_BITS		2
 
