@@ -136,8 +136,6 @@ return (to);
 
 #endif
 
-// this prototype is lacking from <string.h>
-void *memcpy(void *dest, const void *src, size_t n);
 
 INLINE_DECL
 int streq(const char *s, const char *d)
