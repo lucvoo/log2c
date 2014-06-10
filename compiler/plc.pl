@@ -3,8 +3,8 @@
 /*								*/
 /****************************************************************/
 
-:- initialization(op(1200,xfx,':+')).
-:- initialization(op( 900, fy,'+>')).
+:- op(1200,xfx,':+').
+:- op( 900, fy,'+>').
 :- use_module([my_dcg]).
 :- use_module(swi).
 
