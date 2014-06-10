@@ -19,7 +19,12 @@
 #include "pl-fli.h"
 #include "pl-io.h"
 
-typedef enum { T_STOP=256, T_OP, T_ATOM, T_FUN, T_INTG, T_FLT,
+typedef enum {
+	T_RPAREN = ')',
+	T_COMMA = ',',
+	T_RSQUARE = ']',
+	T_PIPE = '|',
+		T_STOP=256, T_OP, T_ATOM, T_FUN, T_INTG, T_FLT,
 	       T_STRING, T_VOID, T_VAR, T_EOF, T_ERROR } tok_type;
 
 
