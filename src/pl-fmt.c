@@ -114,7 +114,7 @@ do_format(const char *fmt, term_t argv, pl_stream S)
       if ( isDigit(*++fmt) )
       { for( ; isDigit(*fmt); fmt++ )
           arg = (arg == DEFAULT ?
-                 arg = *fmt - '0' :
+                          *fmt - '0' :
                  arg*10 + *fmt - '0');
       }
       else
