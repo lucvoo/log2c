@@ -58,18 +58,21 @@ int PL__DigitValue[256] =
 inline static 
 char *PL_mangle(const char *src)
 { void *old_HP=HP;
-
-#define dst	((char *) HP)
+  char *dst = (char *) HP;
 
   *dst++='_';
+  HP = (void *)dst;
   while(*src)
   { if (*src=='_')
     { dst[0]=dst[1]=*src++;
       dst+=2;
+      HP = (void *)dst;
     }
     else
     if (isAlphaNum(*src))
-    { *dst++=*src++; }
+    { *dst++=*src++;
+      HP = (void *)dst;
+    }
     else		// not alphanum nor underscore
     { hexdigit_t *xd;
       dst[0]='_';
@@ -77,6 +80,7 @@ char *PL_mangle(const char *src)
       *xd=HexName[(unsigned int) *src];
       src++;
       dst+=3;
+      HP = (void *)dst;
     }
   }
   *dst='\0';
