@@ -3,9 +3,6 @@
 
 :- module(my_dcg, [ translate/2 ]).
 
-:- index(tr(0,0,1,0)).
-:- index(dgc(1,1)).
-
 :- op(1200,xfx,':+').
 :- op( 900, fy,'+>').
 

@@ -7,8 +7,6 @@
                  %% , 'C_id'/2
                  ]).
 
-:- index(map_atom(1,1)).
-
 
 map_atom(A,N)	:- '$mangle'(A,N).
 
