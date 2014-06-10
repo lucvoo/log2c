@@ -200,8 +200,8 @@ noescape(F,Fs)	:-
 	noescape_(L,Ls),
 	atom_codes(Fs,Ls).
 noescape_([],[]).
-noescape_([0'\ |Q],[0'\ ,0'\ |R])	:- noescape_(Q,R).
-noescape_([0'" |Q],[0'\ ,0'" |R])	:- noescape_(Q,R).
+noescape_([0'\\ |Q],[0'\\ ,0'\\ |R])	:- noescape_(Q,R).
+noescape_([0'"  |Q],[0'\\ ,0'"  |R])	:- noescape_(Q,R).
 noescape_([E|Q],[E|R])			:- noescape_(Q,R).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
