@@ -1,5 +1,7 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Copyright (c) 1997 Luc Van Oostenryck. All rights reserved.
 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 :- module(comp, [ comp_file/1 ] ).
 
@@ -9,62 +11,72 @@
 :- use_module(util).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-init_all		:- init_hash,
-			   del_all.
+init_all :-
+	init_hash,
+	del_all.
 
-comp_file(File)	:-
+
+comp_filetype(user) :-
+	comp_user.
+comp_filetype(module(M, X)):-
+	comp_module(M, X).
+
+comp_file(File) :-
 	init_all,
 	file_type(File,Type),
-	( Type=user
-	  -> comp_user
-	  ;
-	  Type=module(M,X)
-	  -> comp_module(M,X)
-	  ;
-	  fail
-	).
+	comp_filetype(Type).
+
 
 comp_module(Mod,Export) :-
 	flag(current_module,_,Mod),
 	open_files(Mod,_Fc,Fm,_Fh),
 	set_output(c),
-	read_module(Li), 
+	read_module(Li),
 	code_module(Li,Export,Lo), !,
 	trad(Lo), nl,
 	init_hash_jmps,
 	set_output(user_output),
 	close(c), close_h, close(mod),
-	( error_report
-	  -> delete_file(Fm), % delete_file(_Fc), delete_file(_Fh),
-	     halt(1)
-	  ;  module_extension(o,Mod,_Fo),
-	     ( true		%% comp_C(_Fo) FIXME :
-	       -> true		%% delete_file(_Fc)%% leave the file for
-	       ;  true		%% inspection in case
-	     )			%% of error
+	(
+		error_report
+	->
+		delete_file(Fm), % delete_file(_Fc), delete_file(_Fh),
+		halt(1)
+	;
+		module_extension(o,Mod,_Fo),
+		(
+			true		%% comp_C(_Fo) %% FIXME :
+		->
+			true		%% delete_file(_Fc)%% leave the file for
+		;
+			true		%% inspection in case
+	     )				%% of error
 	).
 
 
-comp_user	:-
+comp_user :-
 	flag(current_module,_,user),
-	read_module(Li), 
+	read_module(Li),
 	flag(input_file,Name,Name),
 	open_files(Name,_Fc,_Fm,_Fh),
 	set_output(c),
 	code_user(Li), !,
-	init_hash_jmps, 
+	init_hash_jmps,
 	close(mod),
 	nl,
 	set_output(user_output),
 	close(c), !,
-	( error_report
-	  -> true
-	  ;  link_file(Name)
+	(
+		error_report
+	->
+		true
+	;
+		link_file(Name)
 	).
 	% delete_file(File_c),
 	% delete_file(File_mod).
-		   
-open_files(Name,C,H,M)	:-
+
+open_files(Name,C,H,M) :-
 	module_extension(c,  Name, C),
 	module_extension(mod,Name, M),
 	module_extension(h,  Name, H),
@@ -72,11 +84,11 @@ open_files(Name,C,H,M)	:-
 	open(M,write,_,[alias(mod)]),
 	open(H,write,_,[alias(h)]).
 
-close_h	:-
+close_h :-
 	format(h,'~n#endif~n',[]),
 	close(h).
 
-link_file(Name)	:-
+link_file(Name) :-
 	flag(input_file,_,Name),
 	module_extension('lnk.c', Name,File_Lnk),
 	open(File_Lnk,write,_,[alias(lnk)]),
@@ -86,40 +98,47 @@ link_file(Name)	:-
 	init_hash_mods(Name),
 	set_output(user_output),
 	close_h, close(lnk), !,
-	( error_report
-	  -> fail
-	  ;  ( link(Name)
-	       -> true		%% delete_file(File_Lnk) FIXME
-	       ;  fail
-	     )
+	(
+		error_report
+	->
+		fail
+	;
+		link(Name)
+	->
+		true		%% delete_file(File_Lnk) %% FIXME
+	;
+		fail
 	).
 
-code_anf(N)	:-
+code_anf(N) :-
 	read_mods(N,A,F,P),
 	findall(V,recorded(module_export,module_export(user,V)),Puser),
 	append(P,Puser,Pall),
 	init_hash(A,F,Pall).
 
-link(Name)	:-
+link(Name) :-
 	need_modules(Ms),
 	maplist(aux:module_extension(o),Ms,Mso_),
 	sort(Mso_,Mso),
 	concat_atom(Ms,' ',L),
 	concat_atom(Mso,' ',Lo),
-	concat_atom([	'make PROG="', Name, '" ',
-			'MODULES="',Lo,'" ',Name], Make),
+	concat_atom(['make PROG="', Name, '" MODULES="', Lo, '" ', Name], Make),
 	format(user_error,'~w\n',[Make]),
 	format(user_error,'[ Linking module(s) ~w :',[L]),
 	shell(Make,R), !,
-	( R = 0
-	  -> format(user_error,' done ]\n',[])
-	  ;  format(user_error,' failed ]\n',[]),
-	     flag(error,E,E+1),
-	     fail
+	(
+		R = 0
+	->
+		format(user_error,' done ]\n',[])
+	;
+		format(user_error,' failed ]\n',[]),
+		flag(error,E,E+1),
+		fail
 	).
 
-code_user(I)	:- code_user(I,T,[]), trad(T).
-code_user(I)	:+
+code_user(I) :-
+	code_user(I,T,[]), trad(T).
+code_user(I) :+
 	get_preds(I,Lpr),
 	get_query(Lpr,Q,P),
 	get_exports(Us,Xs),
@@ -141,9 +160,12 @@ code_module(I,X) :+
 	init_module(P,[],Xs),
 	code_P(P),
 	flag(current_module,M,M),
-	( M==system
-	  -> code_FPr
-	  ;  true
+	(
+		M == system
+	->
+		code_FPr
+	;
+		true
 	),
 	code_fin.
 
@@ -179,34 +201,45 @@ code_fin :+
 	+> format('}\n').
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-code_P(P,L,L)	:- code_P(P).
-code_P([P|Q])	:- code_Pr(P,T,[]), trad(T), code_P(Q).
+code_P(P,L,L) :-
+	code_P(P).
+code_P([P|Q]) :-
+	code_Pr(P,T,[]), trad(T), code_P(Q).
 code_P([]).
 
-code_Pr(pr(F,A,[C]))	:+ comm_pred(F,A),
-			   flag2(curr_P,F,A),
-			   ( recorded(meta,F/A)
-			     -> flag(meta,_,true)
-			     ;  flag(meta,_,false)
-			   ),
-			   code_C(F,A,C,single).
-code_Pr(pr(F,A,[C|Q]))	:+ comm_pred(F,A),
-			   flag2(curr_P,F,A),
-			   ( recorded(meta,F/A)
-			     -> flag(meta,_,true)
-			     ;  flag(meta,_,false)
-			   ),
-			   code_C(F,A,C,first),
-			   code__Pr(pr(F,A,Q)).
+set_meta(F,A)	:-
+	(
+		recorded(meta, F/A)
+	->
+		flag(meta,_,true)
+	;
+		flag(meta,_,false)
+	).
 
-code__Pr(pr(F,A,[C]))	:+ code_C(F,A,C,last).
-code__Pr(pr(F,A,[C|Q]))	:+ code_C(F,A,C,middle),
-			   code__Pr(pr(F,A,Q)).
+code_Pr(pr(F,A,[C])) :+
+	comm_pred(F,A),
+	flag2(curr_P,F,A),
+	set_meta(F,A),
+	code_C(F,A,C,single).
+code_Pr(pr(F,A,[C|Q])) :+
+	comm_pred(F,A),
+	flag2(curr_P,F,A),
+	set_meta(F,A),
+	code_C(F,A,C,first),
+	code__Pr(pr(F,A,Q)).
+
+code__Pr(pr(F,A,[C])) :+
+	code_C(F,A,C,last).
+code__Pr(pr(F,A,[C|Q])) :+
+	code_C(F,A,C,middle),
+	code__Pr(pr(F,A,Q)).
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-code_FPr	:+ ndet_pred(full,Ln),
-		   mapl(code_FPr_ndet,Ln),
-		   det_pred(full,Ld),
-		   mapl(code_FPr_det,Ld).
+code_FPr :+
+	ndet_pred(full,Ln),
+	mapl(code_FPr_ndet,Ln),
+	det_pred(full,Ld),
+	mapl(code_FPr_det,Ld).
 
 code_FPr_ndet([F,N,C]) :+
 	+> comm_pred(F,N),
@@ -216,9 +249,12 @@ code_FPr_ndet([F,N,C]) :+
 	label(F,N,Li), flag(curr_C,_,Li), label(Li,_),
 	+> fl(Li),
 	map_pred(F/N,Pm), map_fun(F/N,Fm),
-	( exported(F/N)
-	  -> +> g0('asm(".global PRED~w");',[Pm])
-	  ;  true
+	(
+		exported(F/N)
+	->
+		+> g0('asm(".global PRED~w");',[Pm])
+	;
+		true
 	),
 	+> g0('asm("PRED~w:" : : "p" (&&~w_1));',[Pm,Fm]),
 	getlabel1(F,N,Lo),
@@ -244,9 +280,12 @@ code_FPr_det([F,N,C]) :+
 	label(F,N,Li), flag(curr_C,_,Li), label(Li,_),
 	+> fl(Li),
 	map_pred(F/N,Pm), map_fun(F/N,Fm),
-	( exported(F/N)
-	  -> +> g0('asm(".global PRED~w");',[Pm])
-	  ;  true
+	(
+		exported(F/N)
+	->
+		+> g0('asm(".global PRED~w");',[Pm])
+	;
+		true
 	),
 	+> g0('asm("PRED~w:" : : "p" (&&~w_1));',[Pm,Fm]),
 	getlabel1(F,N,Lo),
@@ -259,27 +298,35 @@ code_FPr_det([F,N,C]) :+
 	+> nl, !.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-code_C(F,N,cl(La,G),T)	:+
+code_C(F,N,cl(La,G),T) :+
 	maplist(trans:trans,La,Lt),
 	trans_term(G,Gt),
 	vars(Lt,Gt,R),
 	label(F,N,Li), flag(curr_C,_,Li), label(Li,_),
 	+> fl(Li),
 	+> flag(type_cl,_,T),
-	( T==single
-	  -> flag(rho,_,0)
-	  ;  flag(rho,_,N+4)
+	(
+		T==single
+	->
+		flag(rho,_,0)
+	;
+		flag(rho,_,N+4)
 	),
-	( (T==single; T==first)
-	  -> map_pred(F/N,Pm), map_fun(F/N,Fm),
-	     ( exported(F/N)
-	       -> +> g0('asm(".global PRED~w");',[Pm])
-	       ; true
-	     ),
-	     +> g0('asm("PRED~w:" : : "p" (&&~w_1));',[Pm,Fm]),
-	     +> flag(arg,_,arg)
-	  ;  +> flag(arg,_,fp4)
+	(
+		(T==single; T==first)
+	->
+		map_pred(F/N,Pm), map_fun(F/N,Fm),
+		(
+			exported(F/N)
+		->
+			+> g0('asm(".global PRED~w");',[Pm])
+		;
+			true
+		),
+		+> g0('asm("PRED~w:" : : "p" (&&~w_1));',[Pm,Fm]),
+		+> flag(arg,_,arg)
+	;
+		+> flag(arg,_,fp4)
 	),
 	getlabel1(F,N,Lo),
 	btinit(T,Lo,N),
@@ -291,34 +338,33 @@ code_C(F,N,cl(La,G),T)	:+
 	fin(T),
 	+> nl,
 	del(vars_list).
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 reset_fvar(E) :+
 	code_X(E,X),
 	+> reset_var(X).
 
 
-code_G((G1,G2))	:+
+code_G((G1,G2)) :+
 	code_G(G1),
 	code_G(G2).
-code_G((C->T))	:+
+code_G((C->T)) :+
 	code_G((C->T;fail)).
-code_G((G1;G2))	:+
+code_G((G1;G2)) :+
 	find_fvar(G1,Fv),
 	+> alt_0(L_),
 	code_G(G1,L),
 	code_G_or(G2,Fv,L_,L).
-code_G(\+(G))	:+
+code_G(\+(G)) :+
 	code_G((G->fail;true)).
-code_G(not(G))	:+
+code_G(not(G)) :+
 	code_G(\+(G)).
-code_G(G)	:+
+code_G(G) :+
 	inline(G).	% for inlined builtin code
-code_G(G)	:+
+code_G(G) :+
 	code_call(G,L),
 	flag(curr_C,C,C), label(C,L),
 	+> fl(L).
-			   
-
 code_G((G1,G2),L) :+
 	code_G(G1),
 	code_G(G2,L).
@@ -345,24 +391,22 @@ code_G(G,L) :+
 	code_call(G,L).
 
 
-code_G_or(fail,F,L_,L)	:+
+code_G_or(fail,F,L_,L) :+
 	L_=backtrack,
 	+> alt_2,
 	mapl(reset_fvar,F),
 	flag(curr_C,Li,Li), label(Li,L),
 	+> fl_(L).
 code_G_or((G1;G2),F,L_,L) :+
-	flag(curr_C,Li,Li),
-	label(Li,L_),
+	flag(curr_C,Li,Li), label(Li,L_),
 	+> fl(L_),
 	+> alt_1(Lb),
 	mapl(reset_fvar,F),
 	find_fvar(G1,Fv),
 	code_G(G1,L),
 	code_G_or(G2,Fv,Lb,L).
-code_G_or(G,F,L_,L)	:+
-	flag(curr_C,Li,Li),
-	label(Li,L_),
+code_G_or(G,F,L_,L) :+
+	flag(curr_C,Li,Li), label(Li,L_),
 	+> fl(L_),
 	+> alt_2,
 	mapl(reset_fvar,F),
@@ -371,17 +415,20 @@ code_G_or(G,F,L_,L)	:+
 	+> fl_(L).
 
 
-code_call(G,L)	:+
+code_call(G,L) :+
 	fun(G,F,N,A),
 	check_module(F/N),
 	flag(curr_C,C,C), getlabel(C,Lab),
 	+> comm(Lab),
 	flag(meta,Meta,Meta),
-	( meta_pred(F/N,I),
-	  Meta\=true
-	  -> flag(current_module,Mod,Mod),
-	     add_module(Mod,I,A,Arg)
-	  ;  Arg=A
+	(
+		meta_pred(F/N,I),
+		Meta\=true
+	->
+		flag(current_module,Mod,Mod),
+		add_module(Mod,I,A,Arg)
+	;
+		Arg=A
 	),
 	mapli(0,code_Arg,Arg),
 	+> call_(F,N,L).
@@ -391,24 +438,30 @@ code_Q(Q) :-
 	trans_term(Q,Qt),
 	vars(Qt,R), L is R+4,
 	flag(rho,_,4),
-	flag(curr_C,_,query),
-	label(query,_),
+	flag(curr_C,_,query), label(query,_),
 	T=[init, comm('code for query'), pushenv(L)|Tq],
 	code_G(Qt,Tq,[ halt_, failed]),
 	trad(T),
 	del(vars_list).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+btinit(first,L,N) :+
+	+> setbtp(L),
+	+> saveargs(N).
+btinit(middle,L,_) :+
+	+> nextalt(L).
+btinit(last,_,_) :+
+	+> delbtp.
+btinit(single,_,_) :+
+	true.
 
-btinit(first,L,N)	:+ +> setbtp(L),
-			   +> saveargs(N).
-btinit(middle,L,_)	:+ +> nextalt(L).
-btinit(last,_,_)	:+ +> delbtp.
-btinit(single,_,_)	:+ true.
-
-fin(last)	:+ +> popenv.
-fin(single)	:+ +> popenv.
-fin(first)	:+ +> restore.
-fin(middle)	:+ +> restore.
+fin(last) :+
+	+> popenv.
+fin(single) :+
+	+> popenv.
+fin(first) :+
+	+> restore.
+fin(middle) :+
+	+> restore.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

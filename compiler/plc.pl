@@ -10,7 +10,7 @@
 
 term_expansion(I,O)	:- translate(I,O).
 
-:- use_module([comp]).
+:- use_module(comp).
 
 %% These one are only indirectly used
 :- use_module([aux, vars, builtin, trad, atoms, map_name, hash]).
@@ -20,10 +20,11 @@ term_expansion(I,O)	:- translate(I,O).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-compile(F)		:- compile(F,[]).
+compile(F) :-
+	compile(F, []).
 
-compile(F,Options)	:- process_options(Options),
-			   comp_file(F).
-
+compile(F,Opt) :-
+	process_options(Opt),
+	comp_file(F).
 
 process_options(_).
