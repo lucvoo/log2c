@@ -252,7 +252,7 @@ code_FPr_ndet([F,N,C]) :+
 	(
 		exported(F/N)
 	->
-		+> g0('asm(".global PRED~w");',[Pm])
+		+> g0('asm(".globl PRED~w");',[Pm])
 	;
 		true
 	),
@@ -283,7 +283,7 @@ code_FPr_det([F,N,C]) :+
 	(
 		exported(F/N)
 	->
-		+> g0('asm(".global PRED~w");',[Pm])
+		+> g0('asm(".globl PRED~w");',[Pm])
 	;
 		true
 	),
@@ -320,7 +320,7 @@ code_C(F,N,cl(La,G),T) :+
 		(
 			exported(F/N)
 		->
-			+> g0('asm(".global PRED~w");',[Pm])
+			+> g0('asm(".globl PRED~w");',[Pm])
 		;
 			true
 		),
