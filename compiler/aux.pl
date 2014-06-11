@@ -215,6 +215,7 @@ noescape(F,Fs)	:-
 noescape_([],[]).
 noescape_([0'\\ |Q],[0'\\ ,0'\\ |R])	:- noescape_(Q,R).
 noescape_([0'"  |Q],[0'\\ ,0'"  |R])	:- noescape_(Q,R).
+noescape_([0'\n |Q],[0'\\ ,0'n  |R])	:- noescape_(Q,R).
 noescape_([E|Q],[E|R])			:- noescape_(Q,R).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
