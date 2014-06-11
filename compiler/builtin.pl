@@ -182,6 +182,7 @@ inline(apply(Clos,Args))	:+
 		   +> g('  FP=SP+2;'),
 		   +> g('  goto *proc;'),
 		   +> g('~w:',[L]),
+		   +> g('  ;'),
 		   +> g('}').
 
 inline(Call)	:+ fun(Call,call,N,[Clos|Arg]),
@@ -207,6 +208,7 @@ inline(Call)	:+ fun(Call,call,N,[Clos|Arg]),
 		   +> g('  FP=SP+2;'),
 		   +> g('  goto *proc;'),
 		   +> g('~w:',[L]),
+		   +> g('  ;'),
 		   +> g('}').
 
 
