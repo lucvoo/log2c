@@ -3,7 +3,13 @@
 
 :- use_module(comp).
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-main	:-	'$argv'([_,F|Opt]),
-		process_options(Opt),
-		comp_file(F).
+main :-
+	'$argv'([_,F|Opt]),
+	process_options(Opt),
+	comp_file(F).
+
+process_options(_).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
