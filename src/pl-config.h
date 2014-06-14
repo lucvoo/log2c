@@ -3,17 +3,15 @@
 /*								*/
 /****************************************************************/
 
+#if	defined(__i386__)
+#include "pl-cfg-i386.h"
+#endif
+
 #ifndef PL_CONFIG_H__
 #define PL_CONFIG_H__
 
 //#define TIME_OF_DAY
 //#define DEBUG_STACKS
-
-#define SP_IN_REG
-#define FP_IN_REG
-#define HP_IN_REG
-// #define BTP_IN_REG
-// #define TP_IN_REG
 
 #define	WORDS_LITTLEENDIAN
 #define	CELL_SIZE	__SIZEOF_LONG__	// in bytes
@@ -37,14 +35,12 @@
 
 
 // FIXME : should be done by configure & C°
-#define	PL_ARCH		"i486-linux"
 #define PL_HOME		"/home/luc/log"
 #define PL_VERSION	809
 #define CC		"gcc"
 #define C_LD_FLAGS	""
 #define C_LIBS		""
 #define C_STATIC_LIBS	""
-#define C_OPTIONS	"-fno-builtin -funsigned-char -O2 -ggdb -ffixed-%ebx -ffixed-%esi -ffixed-%edi"
 
 
 #define HAVE_REMOVE

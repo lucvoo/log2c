@@ -15,19 +15,19 @@ tr_t	 *TR_STK=0;
 
 // void *PC=0;
 
-#ifndef	SP_IN_REG
+#ifndef	HWREG_SP
 pl_stack_t *SP=0;
 #endif
-#ifndef	FP_IN_REG
+#ifndef	HWREG_FP
 pl_stack_t *FP=0;
 #endif
-#ifndef	HP_IN_REG
+#ifndef	HWREG_HP
 cell_t  *HP=0;
 #endif
-#ifndef	BTP_IN_REG
+#ifndef	HWREG_BTP
 pl_stack_t  *BTP=0;
 #endif
-#ifndef	TP_IN_REG
+#ifndef	HWREG_TP
 tr_t  *TP=0;
 #endif
 

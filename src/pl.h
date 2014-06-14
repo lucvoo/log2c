@@ -10,32 +10,32 @@
 #include "pl-types.h"
 
 
-#ifdef	SP_IN_REG
-register pl_stack_t *SP asm ("%ebx");
+#ifdef	HWREG_SP
+register pl_stack_t *SP asm(HWREG_SP);
 #else
 extern pl_stack_t *SP;
 #endif
 
-#ifdef	HP_IN_REG
-register cell_t *HP asm ("%edi");
+#ifdef	HWREG_HP
+register cell_t *HP asm(HWREG_HP);
 #else
 extern cell_t  *HP;
 #endif
 
-#ifdef	FP_IN_REG
-register pl_stack_t *FP asm ("%esi");
+#ifdef	HWREG_FP
+register pl_stack_t *FP asm(HWREG_FP);
 #else
 extern pl_stack_t *FP;
 #endif
 
-#ifdef	BTP_IN_REG
-register pl_stack_t *BTP asm ("%ebx");
+#ifdef	HWREG_BTP
+register pl_stack_t *BTP asm(HWREG_BTP);
 #else
 extern pl_stack_t *BTP;
 #endif
 
-#ifdef	TP_IN_REG
-register tr_t *TP asm ("%ecx");
+#ifdef	HWREG_TP
+register tr_t *TP asm(HWREG_TP);
 #else
 extern tr_t *TP;
 #endif

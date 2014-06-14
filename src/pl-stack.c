@@ -27,14 +27,14 @@ typedef void (*sighandler_t)(int);
 
 #define	STACK_DEF(NBR,BASE,INCR,MAX,NAME) NBR,
 typedef enum { 
-#include "pl-stack.h"
+#include "pl-config.h"
              } stack_id;
 #undef  STACK_DEF
 
 #define	STACK_DEF(NBR,BASE,INCR,MAX,NAME) { (void *) BASE, 0, 0, INCR, MAX, NAME },
 static
 Stack stacks[] = { 
-#include "pl-stack.h"
+#include "pl-config.h"
                  };
 #undef  STACK_DEF
 
