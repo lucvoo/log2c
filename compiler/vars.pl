@@ -42,14 +42,14 @@ vars(Q,R)	:- % Be sure that no query variable is void or temporary !
 temp_vars(H,B,Pv,Tt,Tv)	:- to_list(B,Lg), Lg=[G1|Qg],
 		   get_void((H,B),Tv),
 		   maplist_free_vars([(H,G1)|Qg],LLv),
-		   free_variables(LLv,L1),
+		   term_variables(LLv,L1),
 		   subtract_v(L1,Tv,L2),
 		   sublist_var1(LLv,L2,Tt),
 		   subtract_v(L2,Tt,Pv).
 
 temp_vars(Q,Pv)	:- to_list(Q,Lg),
 		   maplist_free_vars(Lg,LLv),
-		   free_variables(LLv,Pv).
+		   term_variables(LLv,Pv).
 
 var1([E|Q],V)	:- member_v(V,E) -> var2(Q,V)
 				;  var1(Q,V).
@@ -82,7 +82,7 @@ keep_void([],[]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 maplist_free_vars([],[]).
-maplist_free_vars([A|X],[B|Y])	:- free_variables(A,B),
+maplist_free_vars([A|X],[B|Y])	:- term_variables(A,B),
 				   maplist_free_vars(X,Y).
 
 maplist_get_var_([],[]).

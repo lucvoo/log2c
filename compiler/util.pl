@@ -185,7 +185,7 @@ decl_import_mod(M)	:-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-max_tmp(T)	:- free_variables(T,L),
+max_tmp(T)	:- term_variables(T,L),
 		   length(L,N),
 		   flag(max_tmp,O,max(O,N)).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

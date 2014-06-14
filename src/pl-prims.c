@@ -118,7 +118,7 @@ int pl_unground(cell_t *d)
 { return(!pl_ground(d)); }
 
 static
-int free_variables(cell_t *c, int n)
+int term_variables(cell_t *c, int n)
 { debut:
 
   switch(get_tag(c))
@@ -141,7 +141,7 @@ int free_variables(cell_t *c, int n)
     case fun_tag: { int i=get_arity(c);
                 
                     for (;i>1;i--)
-                      n=free_variables(++c,n);
+                      n=term_variables(++c,n);
                 
                     c++;
                     goto debut;
@@ -151,11 +151,11 @@ int free_variables(cell_t *c, int n)
   return(n);
 }
  
-int pl_free_variables(cell_t *t, cell_t *fv)
+int pl_term_variables(cell_t *t, cell_t *fv)
 { int n;
   cell_t *l=HP;
 
-  n=free_variables(t,0);
+  n=term_variables(t,0);
   HP+=(2*n+1);
   (l+2*n)->val=__atom(ATOM(nil));
 
