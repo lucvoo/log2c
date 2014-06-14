@@ -16,12 +16,12 @@
 // #define TP_IN_REG
 
 #define	WORDS_LITTLEENDIAN
-#define	CELL_BITS	32	// in bits
-#define	CELL_SIZE	4	// in bytes
+#define	CELL_SIZE	__SIZEOF_LONG__	// in bytes
+#define	CELL_BITS	(CELL_SIZE*8)	// in bits
 
 #define TAG_BITS	3
-#define TAG_POS		29	// (CELL_BITS-TAG_BITS)
-#define TAG_MASK	(7<<TAG_POS)	// (((1<<TAG_BITS)-1)<<TAG_POS)
+#define TAG_POS		(CELL_BITS-TAG_BITS)
+#define TAG_MASK	(((1UL<<TAG_BITS)-1)<<TAG_POS)
 #define VAL_MASK	(~TAG_MASK)
 #define GC_BITS		2
 
