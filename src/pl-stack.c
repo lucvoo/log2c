@@ -76,7 +76,7 @@ void expand_stack(Stack *s)
   s->top +=s->incr;
 
 #ifdef	DEBUG_STACKS
-  fprintf(stderr, __FUNCTION__ ":%d\n", __LINE__);
+  fprintf(stderr, "%s:%d\n", __FUNCTION__, __LINE__);
   fprintf(stderr,"base=%p\t top=%p\t size=%x\t max=%x\t name=%s\n",s->base,s->top,s->size,s->max,s->name);
   fprintf(stderr, "\n");
 #endif
@@ -89,7 +89,7 @@ static
 Stack *which_stack(void)
 {
 #ifdef DEBUG_STACKS
-  fprintf(stderr, __FUNCTION__ ":%d\n", __LINE__);
+  fprintf(stderr, "%s:%d\n", __FUNCTION__, __LINE__);
   fprintf(stderr,"SP =%p\t top[local]=%p\n", SP, stacks[LOCAL_STK].top);
   fprintf(stderr,"FP =%p\t top[local]=%p\n", FP, stacks[LOCAL_STK].top);
   fprintf(stderr,"HP =%p\t top[ heap]=%p\n", HP, stacks[ HEAP_STK].top);
@@ -120,7 +120,7 @@ void segv_handler(int sig)
      { signal(SIGSEGV,SIG_DFL);
 #ifdef	DEBUG_STACKS
        { int i;
-         fprintf(stderr, __FUNCTION__ ":%d\n", __LINE__);
+         fprintf(stderr, "%s:%d\n", __FUNCTION__, __LINE__);
          fprintf(stderr,"SP=%p\t FP=%p\t HP=%p\t TP=%p\t SHP=%p\n",
          		SP,FP, HP,TP,SHP);
          for (i=0;i<NBR_STKS;i++)
