@@ -12,14 +12,6 @@
 #include <string.h>
 
 
-#define PL_REFERENCE	(ref_tag)
-#define PL_VARIABLE	(var_tag)
-#define PL_ATOM		(ato_tag)
-#define PL_INTEGER	(int_tag<<TAG_POS)
-#define PL_FLOAT	(flt_tag<<TAG_POS)
-#define PL_TERM		(fun_tag<<TAG_POS)
-
-
 #define succeed	return(SUCCEED)
 #define fail	return(FAIL)
 #define retry	return(RETRY)
