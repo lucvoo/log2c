@@ -5,6 +5,8 @@
 
 #if	defined(__i386__)
 #include "pl-cfg-i386.h"
+#elif	defined(__x86_64__)
+#include "pl-cfg-x86_64.h"
 #endif
 
 #ifndef PL_CONFIG_H__
