@@ -41,6 +41,7 @@
 #define FunName(f)	(((f)->functor)->name)
 #define FunArity(f)	((f)->arity)
 
+#define	MK_TAG(T)	(((unsigned long)(T))<<TAG_POS)
 #define MK_CELL(T,V)	((T<<TAG_POS)+(pl_word_t) (V))
 #define new_atom(A)	(&((A)->atom))
 #define __cons()	__fun(FUN(dot,2))
