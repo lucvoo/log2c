@@ -19,15 +19,15 @@
 
 
 #define Tag(v)	(v & TAG_MASK)
-#define Val(c)	({ cell_t d=*c; while (Tag(d.val)==(ref_tag<<TAG_POS)) { d=*(d.celp); }; d.val; })
+#define Val(c)	({ cell_t d=*c; while (Tag(d.val)==MK_TAG(ref_tag)) { d=*(d.celp); }; d.val; })
 
-#define	__isVar(v)	(v==(var_tag<<TAG_POS))
-#define __isAtom(v) 	(Tag(v)==(ato_tag<<TAG_POS))
-#define __isInteger(v) 	(Tag(v)==(int_tag<<TAG_POS))
-#define __isFloat(v) 	(Tag(v)==(flt_tag<<TAG_POS))
-#define __isTerm(v) 	(Tag(v)==(fun_tag<<TAG_POS))
+#define	__isVar(v)	(    v ==MK_TAG(var_tag))
+#define __isAtom(v) 	(Tag(v)==MK_TAG(ato_tag))
+#define __isInteger(v) 	(Tag(v)==MK_TAG(int_tag))
+#define __isFloat(v) 	(Tag(v)==MK_TAG(flt_tag))
+#define __isTerm(v) 	(Tag(v)==MK_TAG(fun_tag))
 #define	__isCons(v)	(v==__fun(FUN(dot,2)))
-#define	__isNil(v)	(v==((ato_tag<<TAG_POS) + (unsigned long) ATOM(nil)))
+#define	__isNil(v)	(v==(MK_TAG(ato_tag) + (unsigned long) ATOM(nil)))
 
 #define __isNumber(V)	({ unsigned long v=V; int r=(__isInteger(v) || __isFloat(v)); r; })
 #define	__isStruct(V)	({ unsigned long v=V; int r=(v!=__fun(FUN(dot,2)) && __isTerm(v)); r; })

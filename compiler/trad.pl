@@ -160,7 +160,7 @@ offset(struct(F,A,L),O)	:- map_atom(F,Fm),
 offset(atom(A),O)	:- map_atom(A,Am),
 			   recordz(tradoff, g('HP[~w].val=__atom(ATOM(~w));',[O,Am])).
 offset(intg(N),O)	:- recordz(tradoff, g('HP[~w].val=__intg(~w);',[O,N])).
-offset(flt(N),O)	:- recordz(tradoff, g('HP[~w].val=(flt_tag<<TAG_POS); get_flt(HP+~w) = ~w;',[O,O,N])).
+offset(flt(N),O)	:- recordz(tradoff, g('HP[~w].val=MK_TAG(flt_tag); get_flt(HP+~w) = ~w;',[O,O,N])).
 offset(flt(F),_)	:- error('No offset(flt(~w))', [F]).
 offset(var(I),O)	:- recorda(tradoff, g('HP[~w].val=__var(); FP[~w].celp=HP+(~w);',[O,I,O])).
 offset(var_t(I),O)	:- recorda(tradoff, g('HP[~w].val=__var(); TMP_~w=HP+(~w);',[O,I,O])).

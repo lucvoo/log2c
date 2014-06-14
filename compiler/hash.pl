@@ -57,7 +57,7 @@ print_atom_list(A,Nxt)	:-
 	map_atom(A,Am),
 	noescape(A,As),
 	hpjw(A,H),
-	format('atom__t ATOM_~w={ {(ato_tag<<TAG_POS)+(unsigned long) ATOM(~w)}, "~w" , ~w ,~w};\n',[Am,Am,As,H,Nxt]).
+	format('atom__t ATOM_~w={ {MK_CELL(ato_tag, ATOM(~w))}, "~w" , ~w ,~w};\n',[Am,Am,As,H,Nxt]).
 
 hash_atom_tab([]) :-
 	format('  0,\n').

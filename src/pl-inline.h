@@ -42,7 +42,7 @@
 #define FunArity(f)	((f)->arity)
 
 #define	MK_TAG(T)	(((unsigned long)(T))<<TAG_POS)
-#define MK_CELL(T,V)	((T<<TAG_POS)+(pl_word_t) (V))
+#define MK_CELL(T,V)	(MK_TAG(T)+(pl_word_t) (V))
 #define new_atom(A)	(&((A)->atom))
 #define __cons()	__fun(FUN(dot,2))
 #define __nil()		__atom(ATOM(nil))
@@ -205,7 +205,7 @@ void reset(register tr_t *a1)
 { register tr_t *tp;
 
   for (tp=TP;a1<tp;)
-     (*(--tp))->val = var_tag<<TAG_POS;
+     (*(--tp))->val = MK_TAG(var_tag);
 
   TP=a1;
   return;
