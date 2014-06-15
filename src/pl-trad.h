@@ -241,9 +241,11 @@ void unify_var(cell_t *a1, cell_t *a2)
 
 
 #define expand_macro(M)	M
-#define stringify(S)	#S
 
-#define ASM_JMP(L)	asm("jmp " stringify(L)) 
+#define stringifx(S)	#S
+#define stringify(S)	stringifx(S)
+
+#define ASM_LBL_STR(L)	stringify(__USER_LABEL_PREFIX__) stringify(L)
 
 #define VM_CALL(P,L)	SP[1].cod= &&L; SP[2].stk=FP; FP=SP+2; P
 

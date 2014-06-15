@@ -24,4 +24,6 @@ STACK_DEF(TRAIL_STK, 0x103000000000, 1<<28, 1<<30, "trail")
 #define	PL_ARCH		"x86-64-linux"
 #define C_OPTIONS	"-fno-builtin -funsigned-char -O2 -g"
 
+#define ASM_JMP(L)	asm("jmp " ASM_LBL_STR(L))
+
 #endif

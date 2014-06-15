@@ -252,11 +252,11 @@ code_FPr_ndet([F,N,C]) :+
 	(
 		exported(F/N)
 	->
-		+> g0('asm(".globl PRED~w");',[Pm])
+		+> g0('asm(".globl " ASM_LBL_STR(PRED~w));',[Pm])
 	;
 		true
 	),
-	+> g0('asm("PRED~w:" : : "p" (&&~w_1));',[Pm,Fm]),
+	+> g0('asm(ASM_LBL_STR(PRED~w) ":" : : "p" (&&~w_1));',[Pm,Fm]),
 	getlabel1(F,N,Lo),
 	btinit(first,Lo,N),
 	+> pushenv(L1),
@@ -283,11 +283,11 @@ code_FPr_det([F,N,C]) :+
 	(
 		exported(F/N)
 	->
-		+> g0('asm(".globl PRED~w");',[Pm])
+		+> g0('asm(".globl " ASM_LBL_STR(PRED~w));',[Pm])
 	;
 		true
 	),
-	+> g0('asm("PRED~w:" : : "p" (&&~w_1));',[Pm,Fm]),
+	+> g0('asm(ASM_LBL_STR(PRED~w) ":" : : "p" (&&~w_1));',[Pm,Fm]),
 	getlabel1(F,N,Lo),
 	btinit(single,Lo,N),
 	+> pushenv(single,0,N),
@@ -320,11 +320,11 @@ code_C(F,N,cl(La,G),T) :+
 		(
 			exported(F/N)
 		->
-			+> g0('asm(".globl PRED~w");',[Pm])
+			+> g0('asm(".globl " ASM_LBL_STR(PRED~w));',[Pm])
 		;
 			true
 		),
-		+> g0('asm("PRED~w:" : : "p" (&&~w_1));',[Pm,Fm]),
+		+> g0('asm(ASM_LBL_STR(PRED~w) ":" : : "p" (&&~w_1));',[Pm,Fm]),
 		+> flag(arg,_,arg)
 	;
 		+> flag(arg,_,fp4)
