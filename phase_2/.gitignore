@@ -1,6 +1,7 @@
 *.c
 *.h
 *.mod
+*.map
 
 plc
 .plc1

@@ -34,7 +34,7 @@ ${PLC1}:
 ${COMP}: $*.mod
 
 ${PROG}: ${PROG}.pl ${PROG}.mod ${MODULES} ${PROG}.lnk.o ${PL_LIB}
-	${CC} ${CFLAGS} $(filter %.o %.a,$^) ${LIBS} -o $@
+	${CC} -Wl,-map,$@.map ${CFLAGS} $(filter %.o %.a,$^) ${LIBS} -o $@
 	-rm -f $@.mod # $@.lnk.c $@.c
 
 %: %.pl ${PLC1} ${PL_LIB}
