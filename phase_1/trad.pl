@@ -1,0 +1,1 @@
+../compiler/trad.pl
