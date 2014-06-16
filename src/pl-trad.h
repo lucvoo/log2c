@@ -139,6 +139,9 @@ void init(void *L)
   FP[2].tr  =(typeof(TP))-1;
   FP[3].celp=(typeof(HP))-1;
   FP[4].cod =L;
+#ifdef HWREG_ARGS
+  PL_ARGS = &PL_ARGS_[0];
+#endif
 }
 
 

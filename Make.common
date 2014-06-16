@@ -9,7 +9,7 @@ CFLAGS_WARN = -Wall -Wwrite-strings -Wstrict-prototypes \
 	#-Wmissing-prototypes #-Wredundant-decls
 
 CFLAGS_ALL  = -fno-builtin -funsigned-char
-CFLAGS_REG1 = -ffixed-%rbx
+CFLAGS_REG1 = -ffixed-%rbx -ffixed-%rbp
 CFLAGS_REG2 = -ffixed-%r12 -ffixed-%r13 -ffixed-%r14 -ffixed-%r15
 IFLAGS = -I. -I${inc_dir}
 

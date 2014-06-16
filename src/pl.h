@@ -49,7 +49,12 @@ extern tr_t		*TR_STK;
 extern cell_t		*SH_STK;
 
 
+#ifdef	HWREG_ARGS
+extern cell_t *PL_ARGS_[PL_MAX_ARGS];
+register cell_t **PL_ARGS asm(HWREG_ARGS);
+#else
 extern cell_t *PL_ARGS[PL_MAX_ARGS];
+#endif
 
 
 // must be a power of two for dynamic hashing

@@ -9,7 +9,11 @@
 #include "pl-fli.h"
 #include "pl-write.h"
 
+#ifndef HWREG_ARGS
 cell_t *PL_ARGS[PL_MAX_ARGS] = { 0 };
+#else
+cell_t *PL_ARGS_[PL_MAX_ARGS] = { 0 };
+#endif
 
 extern modules_t *PL__modules[];
 extern module_t module_system;
