@@ -17,11 +17,12 @@ STACK_DEF(TRAIL_STK, 0x103000000000, 1<<28, 1<<30, "trail")
 #ifndef _PL_CFG_ARCH_H_
 #define _PL_CFG_ARCH_H_
 
-//#define HWREG_SP	"%"
-//#define HWREG_FP	"%"
-//#define HWREG_HP	"%"
-////#define HWREG_BTP	"%"
-////#define HWREG_TP	"%"
+#define HWREG_SP	"%r12"
+#define HWREG_FP	"%r13"
+#define HWREG_HP	"%r14"
+#define HWREG_BTP	"%r15"
+#define HWREG_TP	"%rbx"
+#define HWREG_ARGS	"%rbp"
 
 #define	PL_ARCH		"x86-64-linux"
 #define C_OPTIONS	"-fno-builtin -funsigned-char -O2 -g"
