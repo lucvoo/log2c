@@ -1,5 +1,9 @@
-%% Copyright (c) 1997 Luc Van Oostenryck. All rights reserved.
-%%
+/************************************************************************/
+/* Copyright (c) 1998-2014 Luc Van Oostenryck. All rights reserved.	*/
+/*									*/
+/* %@%LICENSE								*/
+/*									*/
+/************************************************************************/
 
 :- module(vars, [get_lv/4, set_lv/4, vars/3, vars/2]).
 :- use_module(var_util).

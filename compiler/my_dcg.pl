@@ -1,5 +1,9 @@
-%% Copyright (c) 1997 Luc Van Oostenryck. All rights reserved.
-%%
+/************************************************************************/
+/* Copyright (c) 1998-2014 Luc Van Oostenryck. All rights reserved.	*/
+/*									*/
+/* %@%LICENSE								*/
+/*									*/
+/************************************************************************/
 
 :- module(my_dcg, [ translate/2 ]).
 

@@ -1,5 +1,9 @@
-%% Copyright (c) 1997 Luc Van Oostenryck. All rights reserved.
-%%
+/************************************************************************/
+/* Copyright (c) 1998-2014 Luc Van Oostenryck. All rights reserved.	*/
+/*									*/
+/* %@%LICENSE								*/
+/*									*/
+/************************************************************************/
 
 :- module(aux,  [ read_module/1
 		, read_all/2

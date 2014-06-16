@@ -1,5 +1,9 @@
-%% Copyright (c) 1997 Luc Van Oostenryck. All rights reserved.
-%%
+/************************************************************************/
+/* Copyright (c) 1998-2014 Luc Van Oostenryck. All rights reserved.	*/
+/*									*/
+/* %@%LICENSE								*/
+/*									*/
+/************************************************************************/
 
 :- module(map_name, [ map_pred/3
 		    , map_pred/2

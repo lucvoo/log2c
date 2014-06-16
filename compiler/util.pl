@@ -1,5 +1,9 @@
-%% Copyright (c) 1997 Luc Van Oostenryck. All rights reserved.
-%%
+/************************************************************************/
+/* Copyright (c) 1998-2014 Luc Van Oostenryck. All rights reserved.	*/
+/*									*/
+/* %@%LICENSE								*/
+/*									*/
+/************************************************************************/
 
 :- module(util, [ make_f_args/2, make_ARGs/2
 		, find_fvar/2
