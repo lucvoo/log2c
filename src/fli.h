@@ -41,7 +41,7 @@ int pl_unify(union cell *, union cell *);
 
 inline static int PL_try_unify(union cell * a, union cell * b)
 {
-	mark_t m;
+	struct mark m;
 	int rval;
 
 	Mark(m);

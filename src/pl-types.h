@@ -81,10 +81,10 @@ union pl_stack {
 	enum control ctrl;
 };
 
-typedef struct {
+struct mark {
 	union cell **trail;
 	union cell *global;
-} mark_t;
+};
 
 typedef void *predicate_t, *pred_t;
 

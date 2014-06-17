@@ -409,7 +409,7 @@ int pl_recorded(union cell * key, union cell * term, union cell * ref, enum cont
 
 	for (; r; r = r->next) {
 		if (try_unify_static(r->term, term)) {
-			mark_t m;
+			struct mark m;
 			Mark(m);
 
 			if (pl_unify(term, copy_to_global(r)) &&

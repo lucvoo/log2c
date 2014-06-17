@@ -443,7 +443,7 @@ int pl_current_stream(union cell *file, union cell *mode, union cell *stream, en
 	}
 
 	for (; n < max_files; n++) {
-		mark_t m;
+		struct mark m;
 
 		if (!plfiles[n].S)
 			continue;
@@ -1056,7 +1056,7 @@ int pl_stream_property(union cell *stream, union cell *prop, enum control *ctrl)
 
 loop_all:
 	for (; n < max_files; n++) {
-		mark_t m;
+		struct mark m;
 		union cell *t;
 
 		if (!plfiles[n].S)
@@ -1091,7 +1091,7 @@ loop_all:
 
 loop_pro:
 	for (; p < last_prop; p++) {
-		mark_t m;
+		struct mark m;
 		union cell *t;
 
 		Mark(m);

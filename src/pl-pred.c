@@ -176,7 +176,7 @@ debut:
 int PL_can_unify(union cell * a, union cell * b)
 {
 	int r;
-	mark_t m;
+	struct mark m;
 	Mark(m);
 	r = pl_unify(a, b);
 	Undo(m);
