@@ -16,10 +16,10 @@ union cell *PL_ARGS_[PL_MAX_ARGS] = { 0 };
 #endif
 
 extern modules_t *PL__modules[];
-extern module_t module_system;
+extern struct module module_system;
 extern int PL__modules_hash_size;
 
-inline static module_t *lookup_module(struct atom *name)
+inline static struct module *lookup_module(struct atom *name)
 {
 	hash_t h;
 	modules_t *m;
@@ -32,7 +32,7 @@ inline static module_t *lookup_module(struct atom *name)
 	return (0);
 }
 
-inline static void *lookup_proc(module_t * module, struct atom *functor, int arity)
+inline static void *lookup_proc(struct module * module, struct atom *functor, int arity)
 {
 	hash_t h;
 	struct jmp *j;
@@ -55,11 +55,11 @@ inline static void *lookup_proc(module_t * module, struct atom *functor, int ari
 	PL_warning("%s/%d lookup_proc : no such procedure", functor->name, arity);
 }
 
-inline static union cell *strip_module(union cell *term, module_t ** module)
+inline static union cell *strip_module(union cell *term, struct module ** module)
 {
 	union cell *m = 0;
 	union cell *t;
-	module_t *mod;
+	struct module *mod;
 
 	t = deref(term);
 	while (t->val == __fun(FUN(module, 2))) {
@@ -86,7 +86,7 @@ void *PL_call(union cell *clos, int extra, union cell ** args)
 	union cell *t;
 	struct atom *name;
 	int arity, n;
-	module_t *mod = 0;
+	struct module *mod = 0;
 	void *proc;
 
 	if (!(t = strip_module(clos, &mod)) ||
@@ -108,7 +108,7 @@ void *PL_apply(union cell *clos, union cell *list)
 	union cell *t;
 	struct atom *name;
 	int arity, n, extra;
-	module_t *mod;
+	struct module *mod;
 	void *proc;
 
 	list = deref(list);

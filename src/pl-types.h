@@ -100,17 +100,17 @@ struct jmp_table {
 	int size;
 };
 
-typedef struct {
+struct module {
 	const char *file;
 	struct atom *module;
 	struct jmp_table pub;
 	struct jmp_table all;
-} module_t;
+};
 
 typedef struct mods_t modules_t;
 struct mods_t {
 	struct atom *name;
-	module_t *module;
+	struct module *module;
 	modules_t *next;
 };
 

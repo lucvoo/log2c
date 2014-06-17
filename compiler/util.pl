@@ -185,7 +185,7 @@ init_jmp_tbl(_,F/N)	:-
 
 decl_import_mod(M)	:-
 	map_atom(M,Mm),
-	format('extern module_t module~w;\n',Mm).
+	format('extern struct module module~w;\n',Mm).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

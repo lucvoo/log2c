@@ -131,7 +131,7 @@ init_hash_jmps	:-
 
 	flag(jmps_all_hsize,Ha,Ha),
 	hash_jmp(Ha,Pall,'JMP_all'),
-	format('module_t module~w = { __FILE__, ATOM(~w), ', [Mm,Mm]),
+	format('struct module module~w = { __FILE__, ATOM(~w), ', [Mm,Mm]),
 	format('{JMP_pub_tab, ~w}, {JMP_all_tab, ~w}};\n',[Hp,Ha]).
 
 find_pred(P)	:-
@@ -201,7 +201,7 @@ init_hash_mods(N) :-
 
 decl_mod(M) :-
 	map_atom(M,Mm),
-	format('extern module_t module~w;~n',Mm).
+	format('extern struct module module~w;~n',Mm).
 
 hash_mods_([],_,_).
 hash_mods_([A|Q],HS,V) :-
