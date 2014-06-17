@@ -22,8 +22,7 @@ typedef struct {
 	char *end;
 } pl_ubs_t;
 
-INLINE_DECL
-void PL_add_ubs(pl_ubs_t * b, int c)
+inline static void PL_add_ubs(pl_ubs_t * b, int c)
 {
 	if (b->ptr == b->end) {
 		size_t size = (b->end - b->base) + 256;
@@ -35,8 +34,7 @@ void PL_add_ubs(pl_ubs_t * b, int c)
 	*(b->ptr)++ = c;
 }
 
-INLINE_DECL
-void PL_add_x_ubs(pl_ubs_t * b, const char *s, size_t n)
+inline static void PL_add_x_ubs(pl_ubs_t * b, const char *s, size_t n)
 {
 	if ((b->end - b->ptr) <= n) {
 		size_t size = (b->end - b->base) + round_to_power(n + 1);
@@ -49,16 +47,14 @@ void PL_add_x_ubs(pl_ubs_t * b, const char *s, size_t n)
 	b->ptr += n;
 }
 
-INLINE_DECL
-char *PL_base_ubs(pl_ubs_t * b)
+inline static char *PL_base_ubs(pl_ubs_t * b)
 {
 	PL_add_ubs(b, '\0');
 	(b->ptr)--;
 	return (b->base);
 }
 
-INLINE_DECL
-void PL_clear_ubs(pl_ubs_t * b)
+inline static void PL_clear_ubs(pl_ubs_t * b)
 {
 	b->ptr = b->base;
 }

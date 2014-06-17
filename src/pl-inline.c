@@ -7,8 +7,6 @@
 
 #include "pl.h"
 
-#define INLINE_DECL
-
 #include "fli.h"
 #include "pl-trad.h"
 #include "pl-atom.h"

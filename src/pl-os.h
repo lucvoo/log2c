@@ -34,8 +34,7 @@ void PL_unsetenv(const char *name);
 char *PL_ReadLink(const char *path);
 int PL_System(const char *cmd);
 
-INLINE_DECL
-const char *PL_BaseName(const char *p)
+inline static const char *PL_BaseName(const char *p)
 {
 	char *b;
 
@@ -43,8 +42,7 @@ const char *PL_BaseName(const char *p)
 	return (b ? b + 1 : p);
 }
 
-INLINE_DECL
-char *PL_DirName(const char *path)
+inline static char *PL_DirName(const char *path)
 {
 	static char buf[PATH_MAX + 1];
 	char *p;
@@ -57,14 +55,12 @@ char *PL_DirName(const char *path)
 		fail;
 }
 
-INLINE_DECL
-int PL_PathCmp(const char *s1, const char *s2)
+inline static int PL_PathCmp(const char *s1, const char *s2)
 {
 	return (strcmp(s1, s2));
 }
 
-INLINE_DECL
-int PL_RemoveFile(const char *path)
+inline static int PL_RemoveFile(const char *path)
 {
 #ifdef HAVE_REMOVE
 	return (remove(path) == 0);
@@ -73,8 +69,7 @@ int PL_RemoveFile(const char *path)
 #endif
 }
 
-INLINE_DECL
-int PL_isAbsolutePath(const char *path)
+inline static int PL_isAbsolutePath(const char *path)
 {
 	return (path[0] == '/');
 }

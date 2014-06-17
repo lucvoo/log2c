@@ -87,8 +87,7 @@ void pl_exit(int);
 	    goto backtrack;		\
 	}
 
-INLINE_DECL
-void setbtp(void *L)
+inline static void setbtp(void *L)
 {
 	FP[1].stk = BTP;
 	FP[2].tr = TP;
@@ -97,14 +96,12 @@ void setbtp(void *L)
 	BTP = FP;
 }
 
-INLINE_DECL
-void nextalt(void *L)
+inline static void nextalt(void *L)
 {
 	FP[4].cod = L;
 }
 
-INLINE_DECL
-void delbtp(void)
+inline static void delbtp(void)
 {
 	BTP = FP[1].stk;
 }
@@ -127,8 +124,7 @@ void delbtp(void)
 	  goto *PC;			\
 	}
 
-INLINE_DECL
-void init(void *L)
+inline static void init(void *L)
 {
 	FP = STK + 1;
 	BTP = FP;
@@ -150,22 +146,19 @@ void init(void *L)
 	  }				\
 	}
 
-INLINE_DECL
-void cut_deep(void)
+inline static void cut_deep(void)
 {
 	while (BTP >= FP)		// FIXME : SEGV in : main :- p -> ! ; true.
 		BTP = BTP[1].stk;
 }
 
-INLINE_DECL
-void cut(void)
+inline static void cut(void)
 {
 	while (BTP > FP)
 		BTP = BTP[1].stk;
 }
 
-INLINE_DECL
-void not_0(void *L)
+inline static void not_0(void *L)
 {
 	SP += 2;			// enter();
 	SP[0].stk = FP;
@@ -177,8 +170,7 @@ void not_0(void *L)
 	SP += 4;
 }
 
-INLINE_DECL
-void alt_0(void *L)
+inline static void alt_0(void *L)
 {
 	SP[2].stk = FP;
 	SP[3].stk = BTP;
@@ -189,16 +181,14 @@ void alt_0(void *L)
 	SP += 6;
 }
 
-INLINE_DECL
-void alt_1(void *L)
+inline static void alt_1(void *L)
 {
 	SP = FP + 4;
 	FP[4].cod = L;
 	FP = FP->stk;
 }
 
-INLINE_DECL
-void alt_2(void)
+inline static void alt_2(void)
 {
 	BTP = FP[1].stk;		// delbtp();
 	if (FP > BTP)
@@ -208,8 +198,7 @@ void alt_2(void)
 	FP = FP->stk;
 }
 
-INLINE_DECL
-void unify_var(cell_t * a1, cell_t * a2)
+inline static void unify_var(cell_t * a1, cell_t * a2)
 {
 	mkrefp(a1, a2);
 	trail(a1);

@@ -102,14 +102,12 @@ extern inline void *__memcpy(void *to, const void *from, size_t n)
 
 #endif
 
-INLINE_DECL
-int streq(const char *s, const char *d)
+inline static int streq(const char *s, const char *d)
 {
 	return (strcmp(s, d) == 0);
 }
 
-INLINE_DECL
-int streq_2(const char *src1, const char *src2, register const char *d)
+inline static int streq_2(const char *src1, const char *src2, register const char *d)
 {
 	register const char *s;
 	register char c;
@@ -138,8 +136,7 @@ FAIL:
 	return (0);
 }
 
-INLINE_DECL
-size_t str__len(const char *s)
+inline static size_t str__len(const char *s)
 {
 	const char *p = s;
 
@@ -149,8 +146,7 @@ size_t str__len(const char *s)
 	return (p - s);
 }
 
-INLINE_DECL
-char *new_str(const char *s1)
+inline static char *new_str(const char *s1)
 {
 	char *a;
 	char *s = (char *)SHP;
@@ -164,8 +160,7 @@ char *new_str(const char *s1)
 	return (a);
 }
 
-INLINE_DECL
-const char *new_str_2(const char *s1, const char *s2)
+inline static const char *new_str_2(const char *s1, const char *s2)
 {
 	register char *d = (char *)SHP;
 	register const char *s;
@@ -183,8 +178,7 @@ const char *new_str_2(const char *s1, const char *s2)
 	return (s);
 }
 
-INLINE_DECL
-int isPrefix(const char *s, const char *q)
+inline static int isPrefix(const char *s, const char *q)
 {					/* s is prefix of q */
 	while (*s && *s == *q)
 		s++, q++;

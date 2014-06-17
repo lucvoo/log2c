@@ -5,14 +5,6 @@
 /*									*/
 /************************************************************************/
 
-#ifndef INLINE_DECL
-#ifdef  PL_DEBUG
-#define INLINE_DECL inline extern
-#else
-#define INLINE_DECL inline static
-#endif
-#endif
-
 #include "pl.h"
 #include "pl-inline.h"
 #include "fli.h"

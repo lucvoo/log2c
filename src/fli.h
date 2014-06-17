@@ -39,8 +39,7 @@
 
 int pl_unify(cell_t *, cell_t *);
 
-INLINE_DECL
-int PL_try_unify(cell_t * a, cell_t * b)
+inline static int PL_try_unify(cell_t * a, cell_t * b)
 {
 	mark_t m;
 	int rval;
@@ -52,38 +51,33 @@ int PL_try_unify(cell_t * a, cell_t * b)
 	return (rval);
 }
 
-INLINE_DECL
-void *AllocLocal(size_t n)
+inline static void *AllocLocal(size_t n)
 {
 	void *ptr = (SP + 1);		// SP is postincrement.
 	SP += Adjust(n);
 	return (ptr);
 }
 
-INLINE_DECL
-void *AllocGlobal(size_t n)
+inline static void *AllocGlobal(size_t n)
 {
 	void *ptr = HP;
 	HP += Adjust(n);
 	return (ptr);
 }
 
-INLINE_DECL
-void *AllocHeap(size_t n)
+inline static void *AllocHeap(size_t n)
 {
 	void *ptr = SHP;
 	SHP += Adjust(n);
 	return (ptr);
 }
 
-INLINE_DECL
-void *PL_foreign_context(control_t c)
+inline static void *PL_foreign_context(control_t c)
 {
 	return (((void *)c) + CELL_SIZE);
 }
 
-INLINE_DECL
-ctrl_t PL_foreign_control(control_t c)
+inline static ctrl_t PL_foreign_control(control_t c)
 {
 	return (*c);
 }
