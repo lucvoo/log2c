@@ -41,18 +41,18 @@ PLC	= plc
 	@$(CC) -MM $(CFLAGS) $*.c | sed "/: /s/[^\.]*/&.s &/" > $@
 
 %.o: %.c ${$*.dep}
-	$(CC) $(CFLAGS) -c $*.c -o $*.o
+	@$(CC) $(CFLAGS) -c $*.c -o $*.o
 %.s: %.c ${$*.dep}
-	$(CC) $(CFLAGS) -S $*.c -o $*.s
+	@$(CC) $(CFLAGS) -S $*.c -o $*.s
 %.i: %.c ${$*.dep}
-	$(CC) $(CFLAGS) -E $*.c -dD | grep -v '^[ ]*$$' > $*.i
+	@$(CC) $(CFLAGS) -E $*.c -dD | grep -v '^[ ]*$$' > $*.i
 %.so: %.c ${$*.dep}
-	$(CC) $(CFLAGS) -fpic -shared -Wl,-soname,$*.so -o $@ $(filter %.c,$^)
+	@$(CC) $(CFLAGS) -fpic -shared -Wl,-soname,$*.so -o $@ $(filter %.c,$^)
 %.sa: %.c ${$*.dep}
-	$(CC) $(CFLAGS) -shared -Wl,-soname,$*.so -o $@ $(filter %.c,$^)
+	@$(CC) $(CFLAGS) -shared -Wl,-soname,$*.so -o $@ $(filter %.c,$^)
 
 %.h_: %.c ${$*.dep}
-	cproto ${IFLAGS} -o $@ $*.c 
+	@cproto ${IFLAGS} -o $@ $*.c 
 ########################################################################
 
 all: ;

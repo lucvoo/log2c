@@ -54,7 +54,7 @@ CLEAN	= ${TRASH} ${PLLIB} *.o
 all: ${PLLIB}
 
 ${PLLIB}: ${OBJS}
-	ar rsu $@ ${OBJS}
+	@ar rsu $@ ${OBJS}
 
 ########################################################################
 # Dependencies
