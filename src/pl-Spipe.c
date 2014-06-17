@@ -22,12 +22,12 @@
 /* Pipe functions */
 /******************/
 
-static int Swrite_pipe(Shndl_t hndl, const void *s, int n)
+static int Swrite_pipe(union stream_handle hndl, const void *s, int n)
 {
 	return (write(hndl.fd, s, n));
 }
 
-static int Sread_pipe(Shndl_t hndl, void *s, int n)
+static int Sread_pipe(union stream_handle hndl, void *s, int n)
 {
 	return (read(hndl.fd, s, n));
 }
@@ -102,7 +102,7 @@ static int open_pipe(const char *cmd, enum stream_mode mode, pid_t * pid_p)
 	// return(0); // never reached : Make compiler happy
 }
 
-static Sfun_t pipe_functions = { Sread_pipe,
+static struct stream_ops pipe_functions = { Sread_pipe,
 	Swrite_pipe,
 	Sclose_pipe,
 	0,
