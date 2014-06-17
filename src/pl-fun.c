@@ -58,11 +58,11 @@ int pl_current_functor(union cell * f, union cell * n, enum control *ctrl)
 {
 	struct functor *fun;
 	hash_t h;
-	typedef enum { functor, arity, all } type_t;
+	enum type { functor, arity, all };
 	struct {
 		hash_t hash;
 		struct functor *fun;
-		type_t type;
+		enum type type;
 	}     *ctxt;
 
 	Deref(f);
