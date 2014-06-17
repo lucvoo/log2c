@@ -22,7 +22,8 @@
 
 #define	OFlags(n)	(1<<(n))
 
-typedef enum { OPT_QUOT = OFlags(0),
+enum write_flag {
+	OPT_QUOT = OFlags(0),
 	OPT_ESC = OFlags(1),
 	OPT_OPS = OFlags(2),
 	OPT_NUMV = OFlags(3),
@@ -31,15 +32,15 @@ typedef enum { OPT_QUOT = OFlags(0),
 	OPT_LIST = OFlags(6),
 	OPT_CURL = OFlags(7),
 	OPT_LAST
-} w_flags_t;
+};
 
 #define Options(O)	(opt->flags & (O))
 
-typedef struct {
+struct write_option {
 	long max_depth;
 	union cell *bind;
-	w_flags_t flags;
-} w_opt;
+	enum write_flag flags;
+};
 
 inline static void Get_arg(int index, union cell *t, union cell *a)
 {
@@ -144,7 +145,7 @@ inline static int PutToken(struct stream *S, const char *s)
 
 //#####################################################################
 
-static int WriteQuoted(struct stream *S, const char *s, int quote, const w_opt * opt)
+static int WriteQuoted(struct stream *S, const char *s, int quote, const struct write_option * opt)
 {
 	char c;
 
@@ -206,7 +207,7 @@ static int WriteQuoted(struct stream *S, const char *s, int quote, const w_opt *
 	succeed;
 }
 
-static int WriteAtom(struct stream *S, struct atom *a, const w_opt * opt)
+static int WriteAtom(struct stream *S, struct atom *a, const struct write_option * opt)
 {
 	if (Options(OPT_QUOT) && NeedQuote(a))
 		WriteQuoted(S, PL_atom_chars(a), '\'', opt);
@@ -216,7 +217,7 @@ static int WriteAtom(struct stream *S, struct atom *a, const w_opt * opt)
 	succeed;
 }
 
-inline static void WritePrimitive(struct stream *S, union cell *t, const w_opt * opt)
+inline static void WritePrimitive(struct stream *S, union cell *t, const struct write_option * opt)
 {
 	char buf[33];
 
@@ -277,7 +278,7 @@ static int priorityOperator(struct atom *atom)
 }
 
 // FIXME : stuff picked from SWI-Prolog
-static int WriteTerm(struct stream *S, union cell *t, int prec, int depth, const w_opt * opt)
+static int WriteTerm(struct stream *S, union cell *t, int prec, int depth, const struct write_option * opt)
 {
 	struct atom *functor;
 	int arity;
@@ -356,8 +357,8 @@ static int WriteTerm(struct stream *S, union cell *t, int prec, int depth, const
 
 				Get_arg(1, t, arg);
 				if ((a = PL_get_atom(arg))) {
-					w_opt opt2;
-					memcpy(&opt2, opt, sizeof(w_opt));
+					struct write_option opt2;
+					memcpy(&opt2, opt, sizeof(struct write_option));
 					opt2.flags &= ~OPT_QUOT;
 
 					WriteAtom(S, a, &opt2);
@@ -475,7 +476,7 @@ static int WriteTerm(struct stream *S, union cell *t, int prec, int depth, const
 
 inline static int writeTerm(struct stream *S, union cell *t, int numvars, int quote, int display)
 {
-	w_opt opt;
+	struct write_option opt;
 
 	opt.bind = 0;
 	opt.max_depth = LONG_MAX;
@@ -641,7 +642,7 @@ int pl_warn(const char *fmt)
 
 #include "pl-option.h"
 
-static int get_options(union cell *Options, w_opt * options, const char *pred)
+static int get_options(union cell *Options, struct write_option * options, const char *pred)
 {
 	static int opt_quoted;
 	static int opt_char_esc;
@@ -711,7 +712,7 @@ static int get_options(union cell *Options, w_opt * options, const char *pred)
 
 static int PL_write_term(struct stream *S, union cell *term, union cell *options, const char *pred)
 {
-	w_opt opt;
+	struct write_option opt;
 
 	if (!get_options(options, &opt, pred))
 		fail;
