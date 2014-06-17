@@ -13,8 +13,8 @@
 typedef struct flag_t_ *flag_t;
 
 struct flag_t_ {
-	cell_t key;			// Only atom, integer or first cell of a functor.
-	cell_t val;			// Only atom or integer (or float).
+	union cell key;			// Only atom, integer or first cell of a functor.
+	union cell val;			// Only atom or integer (or float).
 	flag_t next;
 };
 
@@ -22,7 +22,7 @@ struct flag_t_ {
 
 static flag_t flags[hash_flags_size];
 
-inline static flag_t lookup_flag(cell_t * key)
+inline static flag_t lookup_flag(union cell * key)
 {
 	hash_t h;
 	flag_t f;
@@ -58,10 +58,10 @@ debut:
 	return (f);
 }
 
-int pl_flag(cell_t * key, cell_t * old, cell_t * new)
+int pl_flag(union cell * key, union cell * old, union cell * new)
 {
 	flag_t f;
-	term_t tmp;
+	union cell *tmp;
 	int n;
 
 	f = lookup_flag(key);
@@ -84,7 +84,7 @@ int pl_flag(cell_t * key, cell_t * old, cell_t * new)
 		PL_warning("flag/3: value should be an atom, integer or expression");
 }
 
-int pl_current_flag(cell_t * c, enum control *ctrl)
+int pl_current_flag(union cell * c, enum control *ctrl)
 {
 	flag_t flag;
 	hash_t h;
@@ -127,9 +127,9 @@ int pl_current_flag(cell_t * c, enum control *ctrl)
 typedef struct flag_2_t *flag_2_t;
 
 struct flag_2_t {
-	cell_t key1;			// Only atoms, int, functor
-	cell_t key2;
-	cell_t val;			// Only atom or integer (or float).
+	union cell key1;			// Only atoms, int, functor
+	union cell key2;
+	union cell val;			// Only atom or integer (or float).
 	flag_2_t next;
 };
 // #define hash_flag_2_size     256
@@ -137,7 +137,7 @@ struct flag_2_t {
 
 static flag_2_t flag_2_tbl[hash_flag_2_size];
 
-inline static flag_2_t lookup_flag_2(term_t key1, term_t key2, int new)
+inline static flag_2_t lookup_flag_2(union cell *key1, union cell *key2, int new)
 {
 	hash_t h, h1, h2;
 	flag_2_t f;
@@ -166,7 +166,7 @@ inline static flag_2_t lookup_flag_2(term_t key1, term_t key2, int new)
 		return (0);		// inexistant flag
 }
 
-static int PL_flag_2(term_t key1, term_t key2, term_t val)
+static int PL_flag_2(union cell *key1, union cell *key2, union cell *val)
 {
 	flag_2_t f;
 
@@ -176,11 +176,11 @@ static int PL_flag_2(term_t key1, term_t key2, term_t val)
 		fail;
 }
 
-int pl_flag_2(term_t key1, term_t key2, term_t val, enum control *ctrl)
+int pl_flag_2(union cell *key1, union cell *key2, union cell *val, enum control *ctrl)
 {
 	flag_2_t f;
 	hash_t h;
-	tr_t *tr;
+	union cell **tr;
 	struct {
 		hash_t hash;
 		flag_2_t flag;
@@ -221,7 +221,7 @@ int pl_flag_2(term_t key1, term_t key2, term_t val, enum control *ctrl)
 	fail;
 }
 
-static int PL_set_flag_2(term_t key1, term_t key2, term_t val)
+static int PL_set_flag_2(union cell *key1, union cell *key2, union cell *val)
 {
 	flag_2_t f;
 
@@ -238,7 +238,7 @@ static int PL_set_flag_2(term_t key1, term_t key2, term_t val)
 		fail;
 }
 
-int pl_set_flag_2(term_t key1, term_t key2, term_t val)
+int pl_set_flag_2(union cell *key1, union cell *key2, union cell *val)
 {
 	if (PL_set_flag_2(key1, key2, val))
 		succeed;

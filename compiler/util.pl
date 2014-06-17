@@ -119,7 +119,7 @@ init_args :-
 	nl,
 	flag(max_tmp,T,T),
 	( between(1,T,I),
-	  format('cell_t *TMP_~w;\n',[I]),
+	  format('union cell *TMP_~w;\n',[I]),
 	  fail
 	; true
 	),

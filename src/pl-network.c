@@ -12,7 +12,7 @@
 #include <netdb.h>
 #include <netinet/in.h>
 
-static int PL_unify_ip(term_t Ip, const struct in_addr *addr)
+static int PL_unify_ip(union cell *Ip, const struct in_addr *addr)
 {
 	unsigned long ip;
 	unsigned char a[4];
@@ -25,7 +25,7 @@ static int PL_unify_ip(term_t Ip, const struct in_addr *addr)
 
 	Ip = deref(Ip);
 	if (is_var(Ip)) {
-		cell_t *f = new_struct(FUN(_ip, 4), 4);
+		union cell *f = new_struct(FUN(_ip, 4), 4);
 		for (i = 0; i < 4; i++) {
 			PL_put_integer(f + 1 + i, a[3 - i]);
 		}
@@ -42,7 +42,7 @@ static int PL_unify_ip(term_t Ip, const struct in_addr *addr)
 		fail;
 }
 
-static int PL_get_ip(term_t Ip, struct in_addr *addr)
+static int PL_get_ip(union cell *Ip, struct in_addr *addr)
 {
 	unsigned long ip = 0;
 
@@ -64,7 +64,7 @@ static int PL_get_ip(term_t Ip, struct in_addr *addr)
 	fail;
 }
 
-int pl_host_to_addr(term_t Host, term_t Addr)
+int pl_host_to_addr(union cell *Host, union cell *Addr)
 {
 	const char *name;
 	struct in_addr addr;

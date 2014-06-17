@@ -15,8 +15,8 @@ typedef union {
 	bool *bool;
 	const char **str;
 	struct atom **atom;
-	cell_t *cell;
-	term_t *term;
+	union cell *cell;
+	union cell **term;
 } pl_opt_val;
 
 typedef struct {
@@ -26,6 +26,6 @@ typedef struct {
 } pl_opt_spec_t, *pl_opt_spec;
 
 extern
-int PL_scan_options(term_t options, pl_opt_spec spec);
+int PL_scan_options(union cell *options, pl_opt_spec spec);
 
 #endif

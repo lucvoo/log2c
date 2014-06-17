@@ -18,9 +18,9 @@ extern union pl_stack*SP;
 #endif
 
 #ifdef	HWREG_HP
-register cell_t *HP asm(HWREG_HP);
+register union cell *HP asm(HWREG_HP);
 #else
-extern cell_t *HP;
+extern union cell *HP;
 #endif
 
 #ifdef	HWREG_FP
@@ -36,22 +36,22 @@ extern union pl_stack*BTP;
 #endif
 
 #ifdef	HWREG_TP
-register tr_t *TP asm(HWREG_TP);
+register union cell **TP asm(HWREG_TP);
 #else
-extern tr_t *TP;
+extern union cell **TP;
 #endif
 
-extern cell_t *SHP;
+extern union cell *SHP;
 extern union pl_stack*STK;
-extern cell_t *H_STK;
-extern tr_t *TR_STK;
-extern cell_t *SH_STK;
+extern union cell *H_STK;
+extern union cell **TR_STK;
+extern union cell *SH_STK;
 
 #ifdef	HWREG_ARGS
-extern cell_t *PL_ARGS_[PL_MAX_ARGS];
-register cell_t **PL_ARGS asm(HWREG_ARGS);
+extern union cell *PL_ARGS_[PL_MAX_ARGS];
+register union cell **PL_ARGS asm(HWREG_ARGS);
 #else
-extern cell_t *PL_ARGS[PL_MAX_ARGS];
+extern union cell *PL_ARGS[PL_MAX_ARGS];
 #endif
 
 // must be a power of two for dynamic hashing

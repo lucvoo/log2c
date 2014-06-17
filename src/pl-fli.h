@@ -12,26 +12,26 @@
 struct atom *PL_new_atom(const char *s);
 
 /* pl-fli.c */
-int PL_get_arg(int index, term_t t, term_t a);
-int PL_get_arg_(int index, term_t t, term_t * a);
-int PL_get_chars(term_t term, const char **s, unsigned flags);
-int PL_get_functor(term_t t, struct functor ** f);
-int PL_get_head(term_t l, term_t h);
-int PL_get_list(term_t l, term_t h, term_t t);
-int PL_get_list_(term_t l, term_t * h, term_t * t);
-int PL_get_list_chars(term_t list, const char **s, unsigned flags);
-int PL_get_list_codes(term_t list, const char **s, unsigned flags);
-int PL_get_name_arity(term_t t, struct atom ** name, int *arity);
-int PL_get_tail(term_t l, term_t t);
-int PL_term_type(term_t t);
-int PL_unify_arg(int index, term_t t, term_t a);
-int PL_unify_atom_chars(term_t t, const char *chars);
-term_t PL_new_term_ref(void);
-term_t PL_new_term_refs(int n);
-void PL_cons_functor(term_t h, struct functor *fd, ...);
-void PL_cons_list(term_t l, term_t head, term_t tail);
-void PL_put_functor(term_t t, struct functor *f);
-void PL_put_list(term_t l);
+int PL_get_arg(int index, union cell *t, union cell *a);
+int PL_get_arg_(int index, union cell *t, union cell ** a);
+int PL_get_chars(union cell *term, const char **s, unsigned flags);
+int PL_get_functor(union cell *t, struct functor ** f);
+int PL_get_head(union cell *l, union cell *h);
+int PL_get_list(union cell *l, union cell *h, union cell *t);
+int PL_get_list_(union cell *l, union cell ** h, union cell ** t);
+int PL_get_list_chars(union cell *list, const char **s, unsigned flags);
+int PL_get_list_codes(union cell *list, const char **s, unsigned flags);
+int PL_get_name_arity(union cell *t, struct atom ** name, int *arity);
+int PL_get_tail(union cell *l, union cell *t);
+int PL_term_type(union cell *t);
+int PL_unify_arg(int index, union cell *t, union cell *a);
+int PL_unify_atom_chars(union cell *t, const char *chars);
+union cell *PL_new_term_ref(void);
+union cell *PL_new_term_refs(int n);
+void PL_cons_functor(union cell *h, struct functor *fd, ...);
+void PL_cons_list(union cell *l, union cell *head, union cell *tail);
+void PL_put_functor(union cell *t, struct functor *f);
+void PL_put_list(union cell *l);
 
 		 /*******************************
                  *             ATOMS            *
@@ -54,73 +54,73 @@ inline static int PL_functor_arity(struct functor *f)
 
 //######################################################################
 
-inline static int PL_is_var(cell_t * c)
+inline static int PL_is_var(union cell * c)
 {
 	return (__isVar(Val(c)));
 }
 
-inline static int PL_is_integer(cell_t * c)
+inline static int PL_is_integer(union cell * c)
 {
 	return (__isInteger(Val(c)));
 }
 
-inline static int PL_is_number(cell_t * c)
+inline static int PL_is_number(union cell * c)
 {
 	return (__isNumber(Val(c)));
 }
 
-inline static int PL_is_atom(cell_t * c)
+inline static int PL_is_atom(union cell * c)
 {
 	return (__isAtom(Val(c)));
 }
 
-inline static int PL_is_atomic(cell_t * c)
+inline static int PL_is_atomic(union cell * c)
 {
 	return (__isAtomic(Val(c)));
 }
 
-inline static int PL_is_term(cell_t * c)
+inline static int PL_is_term(union cell * c)
 {
 	return (__isTerm(Val(c)));
 }
 
-inline static int PL_is_struct(cell_t * c)
+inline static int PL_is_struct(union cell * c)
 {
 	return (__isStruct(Val(c)));
 }
 
-inline static int PL_is_functor(term_t t, struct functor *f)
+inline static int PL_is_functor(union cell *t, struct functor *f)
 {
 	return (f == get_fun(deref(t)));
 }
 
-inline static int PL_is_list(cell_t * c)
+inline static int PL_is_list(union cell * c)
 {
 	return (__isList(Val(c)));
 }
 
-inline static int PL_is_cons(cell_t * c)
+inline static int PL_is_cons(union cell * c)
 {
 	return (__isCons(Val(c)));
 }
 
-inline static int PL_get_nil(cell_t * c)
+inline static int PL_get_nil(union cell * c)
 {
 	return (__isNil(Val(c)));
 }
 
 // The next ones must be deref
-inline static int is_cons(cell_t * c)
+inline static int is_cons(union cell * c)
 {
 	return (__isCons(c->val));
 }
 
-inline static int is_nil(cell_t * c)
+inline static int is_nil(union cell * c)
 {
 	return (__isNil(c->val));
 }
 
-inline static int is_list(cell_t * c)
+inline static int is_list(union cell * c)
 {
 	return (__isList(c->val));
 }
@@ -128,47 +128,47 @@ inline static int is_list(cell_t * c)
 		 /*******************************
                  *              PUT             *
                  *******************************/
-inline static void PL_put_var(term_t t)
+inline static void PL_put_var(union cell *t)
 {
 	mkrefp(t, new_var());
 }
 
-inline static void PL_put_integer(term_t v, long N)
+inline static void PL_put_integer(union cell *v, long N)
 {
 	v->val = __intg(N);
 	return;
 }
 
-inline static void PL_put_float(term_t v, double N)
+inline static void PL_put_float(union cell *v, double N)
 {
 	v->celp = new_flt(N);
 	return;
 }
 
-inline static void PL_put_atom(term_t v, struct atom *A)
+inline static void PL_put_atom(union cell *v, struct atom *A)
 {
 	v->celp = &(A->atom);
 	return;
 }
 
-inline static void PL_put_nil(term_t l)
+inline static void PL_put_nil(union cell *l)
 {
 	PL_put_atom(l, ATOM(nil));
 }
 
-inline static void PL_put_term(term_t t1, term_t t2)
+inline static void PL_put_term(union cell *t1, union cell *t2)
 {
 	mkrefp(t1, deref(t2));
 }
 
-inline static void PL_put_atom_chars(term_t t, const char *s)
+inline static void PL_put_atom_chars(union cell *t, const char *s)
 {
 	PL_put_atom(t, PL_new_atom(s));
 }
 
 //######################################################################
 
-inline static int PL_get_integer(cell_t * c, int *n)
+inline static int PL_get_integer(union cell * c, int *n)
 {
 debut:
 	switch (get_tag(c)) {
@@ -185,7 +185,7 @@ debut:
 
 #define PL_get_intg(c,n)	PL_get_integer(c,n)
 
-inline static int PL_get_long(cell_t * c, long *n)
+inline static int PL_get_long(union cell * c, long *n)
 {
 debut:
 	switch (get_tag(c)) {
@@ -200,7 +200,7 @@ debut:
 	}
 }
 
-inline static int PL_get_flt(cell_t * c, double *d)
+inline static int PL_get_flt(union cell * c, double *d)
 {
 debut:
 	switch (get_tag(c)) {
@@ -215,7 +215,7 @@ debut:
 	}
 }
 
-inline static int PL_get_pointer(cell_t * c, void **ptr)
+inline static int PL_get_pointer(union cell * c, void **ptr)
 {
 debut:
 	switch (get_tag(c)) {
@@ -230,7 +230,7 @@ debut:
 	}
 }
 
-inline static struct atom *PL_get_atom(cell_t * c)
+inline static struct atom *PL_get_atom(union cell * c)
 {
 debut:
 	switch (get_tag(c)) {
@@ -244,7 +244,7 @@ debut:
 	}
 }
 
-inline static int PL_get_atom_chars(cell_t * c, const char **s)
+inline static int PL_get_atom_chars(union cell * c, const char **s)
 {
 debut:
 	switch (get_tag(c)) {
@@ -259,7 +259,7 @@ debut:
 	}
 }
 
-inline static int PL_unify_flt(register cell_t * c, double d)
+inline static int PL_unify_flt(register union cell * c, double d)
 {
 debut:
 	switch (get_tag(c)) {
@@ -277,7 +277,7 @@ debut:
 	}
 }
 
-inline static int PL_unify_long(register cell_t * c, long i)
+inline static int PL_unify_long(register union cell * c, long i)
 {
 debut:
 	switch (get_tag(c)) {
@@ -295,7 +295,7 @@ debut:
 	}
 }
 
-inline static int PL_unify_intg(register cell_t * c, int i)
+inline static int PL_unify_intg(register union cell * c, int i)
 {
 debut:
 	switch (get_tag(c)) {
@@ -313,7 +313,7 @@ debut:
 	}
 }
 
-inline static int PL_unify_bool(register cell_t * c, int i)
+inline static int PL_unify_bool(register union cell * c, int i)
 {
 debut:
 	switch (get_tag(c)) {
@@ -337,7 +337,7 @@ debut:
 	}
 }
 
-inline static int PL_unify_flag(register cell_t * c, int i)
+inline static int PL_unify_flag(register union cell * c, int i)
 {
 debut:
 	switch (get_tag(c)) {
@@ -361,12 +361,12 @@ debut:
 	}
 }
 
-inline static int PL_unify_integer(cell_t * c, long i)
+inline static int PL_unify_integer(union cell * c, long i)
 {
 	return (PL_unify_intg(c, (int)i));
 }
 
-inline static int PL_unify_atom(register cell_t * c, struct atom *A)
+inline static int PL_unify_atom(register union cell * c, struct atom *A)
 {
 debut:
 	switch (get_tag(c)) {
@@ -384,7 +384,7 @@ debut:
 	}
 }
 
-inline static int PL_unify_nil(register cell_t * c)
+inline static int PL_unify_nil(register union cell * c)
 {
 debut:
 	switch (get_tag(c)) {
@@ -403,7 +403,7 @@ debut:
 }
 
 // OK for atom, intg.
-inline static int PL_unify_atomic(register cell_t * c, cell_t at)
+inline static int PL_unify_atomic(register union cell * c, union cell at)
 {
 	c = deref(c);
 
@@ -420,12 +420,12 @@ inline static int PL_unify_atomic(register cell_t * c, cell_t at)
 		fail;
 }
 
-inline static int PL_unify_fun(register cell_t * c, struct functor *F)
+inline static int PL_unify_fun(register union cell * c, struct functor *F)
 // PRE : c must be deref.
 {
 	if (is_var(c)) {
 		int n = FunArity(F);
-		cell_t *f = new_struct(F, n);
+		union cell *f = new_struct(F, n);
 
 		for (; n > 0; n--)
 			f[n].val = __var();
@@ -437,14 +437,14 @@ inline static int PL_unify_fun(register cell_t * c, struct functor *F)
 		return (c->val == __fun(F));
 }
 
-inline static int PL_unify_functor(term_t t, struct functor *f)
+inline static int PL_unify_functor(union cell *t, struct functor *f)
 {
 	return (PL_unify_fun(deref(t), f));
 }
 
-inline static int PL_unify_list(cell_t * l, cell_t ** h, cell_t ** t)
+inline static int PL_unify_list(union cell * l, union cell ** h, union cell ** t)
 {
-	term_t c;
+	union cell *c;
 debut:
 	switch (get_tag(l)) {
 	case ref_tag:
@@ -469,7 +469,7 @@ debut:
 	}
 }
 
-inline static int PL_unify_key(cell_t * c, cell_t * key)
+inline static int PL_unify_key(union cell * c, union cell * key)
 {
 	switch (get_tag(key)) {
 	case ato_tag:
@@ -490,8 +490,8 @@ void PL_halt(int status);
 
 /* pl-char.c */
 struct atom *PL_char_to_atom(int c);
-term_t PL_mk_code_list(char *s);
-term_t PL_mk_char_list(char *s);
+union cell *PL_mk_code_list(char *s);
+union cell *PL_mk_char_list(char *s);
 
 // For PL_get_chars
 #define	CVT_ATOM	(1<<0)

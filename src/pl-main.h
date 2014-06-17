@@ -11,9 +11,9 @@
 #define __MAIN__
 
 union pl_stack*STK = 0;
-cell_t *H_STK = 0;
-cell_t *SH_STK = 0;
-tr_t *TR_STK = 0;
+union cell *H_STK = 0;
+union cell *SH_STK = 0;
+union cell **TR_STK = 0;
 
 // void *PC=0;
 
@@ -24,16 +24,16 @@ union pl_stack*SP = 0;
 union pl_stack*FP = 0;
 #endif
 #ifndef	HWREG_HP
-cell_t *HP = 0;
+union cell *HP = 0;
 #endif
 #ifndef	HWREG_BTP
 union pl_stack*BTP = 0;
 #endif
 #ifndef	HWREG_TP
-tr_t *TP = 0;
+union cell **TP = 0;
 #endif
 
-cell_t *SHP = 0;
+union cell *SHP = 0;
 
 #include "pl-inline.h"
 #include "pl-pred.h"

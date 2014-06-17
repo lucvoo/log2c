@@ -38,10 +38,10 @@ inline static void cp_timev(void)
 	tv_last.tv_usec = tv_now.tv_usec;
 }
 
-int pl_statistics(term_t key, term_t pair)
+int pl_statistics(union cell *key, union cell *pair)
 {
 	struct pl_stack_stat stack_stat;
-	term_t p;
+	union cell *p;
 	int d1, d2;
 
 	Deref(key);
@@ -108,9 +108,9 @@ int pl_statistics(term_t key, term_t pair)
 	return (pl_unify(p, pair));
 }
 
-static int _pl_time(term_t t, struct tm *tm)
+static int _pl_time(union cell *t, struct tm *tm)
 {
-	term_t dt;
+	union cell *dt;
 
 	if (!tm) {			// FIXME error msg
 		fail;
@@ -129,7 +129,7 @@ static int _pl_time(term_t t, struct tm *tm)
 	return (pl_unify(t, dt));
 }
 
-int pl_gmtime(term_t t)
+int pl_gmtime(union cell *t)
 {
 	time_t now;
 	struct tm *tm;
@@ -140,7 +140,7 @@ int pl_gmtime(term_t t)
 	return (_pl_time(t, tm));
 }
 
-int pl_localtime(term_t t)
+int pl_localtime(union cell *t)
 {
 	time_t now;
 	struct tm *tm;
@@ -151,7 +151,7 @@ int pl_localtime(term_t t)
 	return (_pl_time(t, tm));
 }
 
-int pl_sleep(term_t t)
+int pl_sleep(union cell *t)
 {
 	int sec;
 

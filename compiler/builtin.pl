@@ -27,7 +27,7 @@ inline( ! )	:+ flag(rho,R,R),
 			   +> cut_deep.
 
 inline(X is Y)	:+ +> comm(is,X,Y),
-		   +> g('{ cell_t *c;'),
+		   +> g('{ union cell *c;'),
 		   +> g('  int i;'),
 		   +> new_indent(2),
 		   code_M(i,Y),
@@ -63,7 +63,7 @@ inline(X = Y)	:+ ( Y=var(f,_); Y=var(ft,_) ),
                    +> comm(=,X,Y),
 		   unify_var(Y,X), !.
 inline(X = Y)	:+ +> comm(=,X,Y),
-		   +> g('{ cell_t *a1, *a2;'),
+		   +> g('{ union cell *a1, *a2;'),
 		   +> new_indent(2),
 		   code_Assign(a1,X), code_Assign(a2,Y),
 		   +> new_indent(-2),
@@ -72,7 +72,7 @@ inline(X = Y)	:+ +> comm(=,X,Y),
 		   +> g('}').
 
 inline(X \= Y)	:+ +> comm((\=),X,Y),
-		   +> g('{ cell_t *a1, *a2;'),
+		   +> g('{ union cell *a1, *a2;'),
 		   +> new_indent(2),
 		   code_Assign(a1,X), code_Assign(a2,Y),
 		   +> new_indent(-2),
@@ -82,7 +82,7 @@ inline(X \= Y)	:+ +> comm((\=),X,Y),
 
 inline(X == Y)	:+ Y=atom(A),
 		   +> comm((==),X,Y),
-		   +> g('{ cell_t *a1;'),
+		   +> g('{ union cell *a1;'),
 		   +> new_indent(2),
 		   code_AssignD(a1,X),
 		   +> new_indent(-2),
@@ -92,7 +92,7 @@ inline(X == Y)	:+ Y=atom(A),
 		   +> g('}').
 inline(X == Y)	:+ Y=intg(I),
 		   +> comm((==),X,Y),
-		   +> g('{ cell_t *a1;'),
+		   +> g('{ union cell *a1;'),
 		   +> new_indent(2),
 		   code_AssignD(a1,X),
 		   +> new_indent(-2),
@@ -119,7 +119,7 @@ inline(X \=@=Y)	:+ str_eq(\=@=,X,Y).
 
 inline(succ(X,Y)):+ ( Y=var(f,_); Y=var(ft,_) ),
 		   +> comm(succ,X,Y),
-		   +> g('{ cell_t *c, *d;'),
+		   +> g('{ union cell *c, *d;'),
 		   +> new_indent(2),
 		   code_AssignD(c,X),
 		   +> g('if (!is_intg(c)) goto backtrack;'),
@@ -130,7 +130,7 @@ inline(succ(X,Y)):+ ( Y=var(f,_); Y=var(ft,_) ),
 		   +> g('}').
 inline(succ(X,Y)):+ ( X=var(f,_); X=var(ft,_) ),
 		   +> comm(succ,X,Y),
-		   +> g('{ cell_t *c, *d;'),
+		   +> g('{ union cell *c, *d;'),
 		   +> new_indent(2),
 		   code_AssignD(c,Y),
 		   +> g('if (!is_intg(c)) goto backtrack;'),
@@ -140,7 +140,7 @@ inline(succ(X,Y)):+ ( X=var(f,_); X=var(ft,_) ),
 		   +> g('  trail(d);'),
 		   +> g('}').
 inline(succ(X,Y)):+ +> comm(succ,X,Y),
-		   +> g('{ cell_t *d0, *d1;'),
+		   +> g('{ union cell *d0, *d1;'),
 		   +> new_indent(2),
 		   code_Assign(d0,X), code_Assign(d1,Y),
 		   +> new_indent(-2),
@@ -172,7 +172,7 @@ inline(apply(Clos,Args))	:+
 		        Clos_=fun((:),2,[atom(M),Clos])
 		   ),
 		   +> comm(apply,Clos,Args),
-		   +> g('{ term_t clos, args;'),
+		   +> g('{ union cell *clos, args;'),
 		   +> g('  void *proc;'),
 		   +> new_indent(2),
 		   code_Assign(clos,Clos_),
@@ -197,9 +197,9 @@ inline(Call)	:+ fun(Call,call,N,[Clos|Arg]),
 		   ),
 		   +> comm(Call),
 		   X is N-1,
-		   +> g('{ term_t clos;'),
+		   +> g('{ union cell *clos;'),
 		   +> g('  void *proc;'),
-		   +> g('  static term_t args[~d];',[X]),
+		   +> g('  static union cell *args[~d];',[X]),
 		   +> new_indent(2),
 		   assign_args(0,Arg),
 		   code_Assign(clos,Clos_),
@@ -226,7 +226,7 @@ inline(T)	:+ fun(T,F,N,A), foreign_pred(F/N,C,det), !,
 		   +> g('}').
 
 
-unify_var(X,Y)	:+ +> g('{ cell_t *a1, *a2;'),
+unify_var(X,Y)	:+ +> g('{ union cell *a1, *a2;'),
 		   +> new_indent(2),
 		   code_Assign(a1,X),
 		   code_Assign(a2,Y),
@@ -235,7 +235,7 @@ unify_var(X,Y)	:+ +> g('{ cell_t *a1, *a2;'),
 		   +> g('  trail(a1);'),
 		   +> g('}').
 
-unify_intg(X,I)	:+ +> g('{ cell_t *a1; int i'),
+unify_intg(X,I)	:+ +> g('{ union cell *a1; int i'),
 		   +> new_indent(2),
 		   code_Assign(a1,X),
 		   code_M(i,I),
@@ -246,7 +246,7 @@ unify_intg(X,I)	:+ +> g('{ cell_t *a1; int i'),
 
 
 decl(0,[])	:+ +> g('{').
-decl(N,L)	:+ +> f('{ cell_t'), decl_(N,L).
+decl(N,L)	:+ +> f('{ union cell'), decl_(N,L).
 
 decl_(1,[A])	:+ gensym('a_',A),
 		   +> format(' *~w;\n',[A]).
@@ -282,7 +282,7 @@ arith_cmp(Op,X,Y):+ +> comm(Op,X,Y),
 
 std_cmp(Op,X,Y)	:+ +> comm(Op,X,Y),
                    map_C_op(Op,C_Op),
-		   +> g('{ cell_t *x, *y;'),
+		   +> g('{ union cell *x, *y;'),
 		   +> new_indent(2),
 		   code_Assign(x,X), code_Assign(y,Y),
 		   +> new_indent(-2),
@@ -292,7 +292,7 @@ std_cmp(Op,X,Y)	:+ +> comm(Op,X,Y),
 
 std_eq(Op,X,Y)	:+ +> comm(Op,X,Y),
                    map_C_op(Op,C_Op),
-		   +> g('{ cell_t *x, *y;'),
+		   +> g('{ union cell *x, *y;'),
 		   +> new_indent(2),
 		   code_Assign(x,X), code_Assign(y,Y),
 		   +> new_indent(-2),
@@ -301,7 +301,7 @@ std_eq(Op,X,Y)	:+ +> comm(Op,X,Y),
 		   +> g('}').
 
 str_eq(Op,X,Y)	:+ +> comm(Op,X,Y),
-		   +> g('{ cell_t *x, *y;'),
+		   +> g('{ union cell *x, *y;'),
 		   +> new_indent(2),
 		   code_Assign(x,X), code_Assign(y,Y),
 		   +> new_indent(-2),
@@ -314,7 +314,7 @@ str_eq(Op,X,Y)	:+ +> comm(Op,X,Y),
 
 
 type(N,X,F)	:+ +> comm(N,X),
-		   +> g('{ cell_t *c;'),
+		   +> g('{ union cell *c;'),
 		   +> new_indent(2),
 		    code_AssignD(c,X),
 		   +> new_indent(-2),

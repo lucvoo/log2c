@@ -140,7 +140,7 @@ int PL_can_be_op(struct atom *operator)
 	return (get_operator(operator) != 0);
 }
 
-int pl_op(term_t precedence, term_t type, term_t operator)
+int pl_op(union cell *precedence, union cell *type, union cell *operator)
 {
 	struct atom *op;
 	struct atom *a_t;
@@ -157,7 +157,7 @@ int pl_op(term_t precedence, term_t type, term_t operator)
 	succeed;
 }
 
-int pl_current_op(term_t precedence, term_t type, term_t operator, enum control *ctrl)
+int pl_current_op(union cell *precedence, union cell *type, union cell *operator, enum control *ctrl)
 {
 	operator_t op;
 	int prec, t, fix;

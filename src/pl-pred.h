@@ -15,16 +15,16 @@
 extern void PL_write_binding(void);
 extern int PL_next_goal(void);
 extern void PL_print_time(void);
-extern int PL_eval_arith(register cell_t * c);
-extern int PL_eval_arith_(register cell_t * c, int *n);
-extern int PL_eval_(cell_t * c, int *n);
-extern int PL_do_number_vars(cell_t * c);
-extern int PL_can_unify(cell_t *, cell_t *);
-extern int PL_not_unify(cell_t *, cell_t *);
+extern int PL_eval_arith(register union cell * c);
+extern int PL_eval_arith_(register union cell * c, int *n);
+extern int PL_eval_(union cell * c, int *n);
+extern int PL_do_number_vars(union cell * c);
+extern int PL_can_unify(union cell *, union cell *);
+extern int PL_not_unify(union cell *, union cell *);
 
 /* pl-proc.c */
-void *PL_call(term_t closure, int extra, term_t * args);
-void *PL_apply(term_t closure, term_t list);
+void *PL_call(union cell *closure, int extra, union cell ** args);
+void *PL_apply(union cell *closure, union cell *list);
 
 /* pl-Sprintf.c */
 int Sprintf(const char *, ...) __attribute__ ((format(printf, 1, 2)));

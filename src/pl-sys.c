@@ -11,7 +11,7 @@
 #include "pl-atom.h"
 #include "pl-init.h"			// For PL_init_argv()
 
-int pl_shell(term_t command, term_t status)
+int pl_shell(union cell *command, union cell *status)
 {
 	const char *cmd;
 
@@ -21,7 +21,7 @@ int pl_shell(term_t command, term_t status)
 		return (PL_unify_integer(status, PL_System(cmd)));
 }
 
-int pl_get_time(term_t time)
+int pl_get_time(union cell *time)
 {
 	struct timeval tv;
 
@@ -29,8 +29,8 @@ int pl_get_time(term_t time)
 	return (PL_unify_flt(time, tv.tv_usec / 1e6 + tv.tv_sec));
 }
 
-int pl_convert_time(term_t Time, term_t Year, term_t Month, term_t Day, term_t Hour, term_t Minute,
-		    term_t Second, term_t Milli)
+int pl_convert_time(union cell *Time, union cell *Year, union cell *Month, union cell *Day, union cell *Hour, union cell *Minute,
+		    union cell *Second, union cell *Milli)
 {
 	double t;
 
@@ -50,7 +50,7 @@ int pl_convert_time(term_t Time, term_t Year, term_t Month, term_t Day, term_t H
 		PL_warning("convert_time/8: instantiation fault");
 }
 
-int pl_getenv(term_t var, term_t val)
+int pl_getenv(union cell *var, union cell *val)
 {
 	const char *n;
 
@@ -65,7 +65,7 @@ int pl_getenv(term_t var, term_t val)
 		PL_warning("getenv/2: instantiation fault");
 }
 
-int pl_setenv(term_t var, term_t val)
+int pl_setenv(union cell *var, union cell *val)
 {
 	const char *n, *v;
 
@@ -75,7 +75,7 @@ int pl_setenv(term_t var, term_t val)
 		PL_warning("setenv/2: instantiation fault");
 }
 
-int pl_unsetenv(term_t var)
+int pl_unsetenv(union cell *var)
 {
 	const char *n;
 
@@ -86,11 +86,11 @@ int pl_unsetenv(term_t var)
 		PL_warning("unsetenv/1: instantiation fault");
 }
 
-static term_t argv;
+static union cell *argv;
 
 void PL_init_argv(int arg_c, char **arg_v)
 {
-	term_t a;
+	union cell *a;
 
 	a = argv = SHP;
 	SHP += (2 * arg_c + 1);
@@ -103,7 +103,7 @@ void PL_init_argv(int arg_c, char **arg_v)
 	a[0].val = __nil();
 }
 
-int pl_argv(term_t a)
+int pl_argv(union cell *a)
 {
 	return (pl_unify(argv, a));
 }

@@ -27,9 +27,9 @@ struct atom *PL_char_to_atom(int c)
 	return (atoms_tab[c]);
 }
 
-term_t PL_mk_code_list(char *s)
+union cell *PL_mk_code_list(char *s)
 {
-	term_t t = HP;
+	union cell *t = HP;
 
 	for (; *s; s++) {
 		HP[0].val = __cons();
@@ -41,9 +41,9 @@ term_t PL_mk_code_list(char *s)
 	return (t);
 }
 
-term_t PL_mk_char_list(char *s)
+union cell *PL_mk_char_list(char *s)
 {
-	term_t t = HP;
+	union cell *t = HP;
 
 	for (; *s; s++) {
 		HP[0].val = __cons();
@@ -55,7 +55,7 @@ term_t PL_mk_char_list(char *s)
 	return (t);
 }
 
-int pl_char_code(term_t Ch, term_t Co)
+int pl_char_code(union cell *Ch, union cell *Co)
 {
 	int c;
 	struct atom *a;

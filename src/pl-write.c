@@ -37,25 +37,25 @@ typedef enum { OPT_QUOT = OFlags(0),
 
 typedef struct {
 	long max_depth;
-	term_t bind;
+	union cell *bind;
 	w_flags_t flags;
 } w_opt;
 
-inline static void Get_arg(int index, term_t t, term_t a)
+inline static void Get_arg(int index, union cell *t, union cell *a)
 {
-	cell_t *arg = deref(t) + index;
+	union cell *arg = deref(t) + index;
 	mkrefp(a, deref(arg));
 }
 
 // PRE : t is deref
-inline static char *varName(term_t t)
+inline static char *varName(union cell *t)
 {
 	long n;
 	char s;
 	static char buf[SHORT_BUF_SIZE];
 
-	if (t >= (term_t) STK) {
-		n = (t - (term_t) STK);
+	if (t >= (union cell *) STK) {
+		n = (t - (union cell *) STK);
 		s = 'L';
 	} else {
 		n = (t - H_STK);
@@ -216,7 +216,7 @@ static int WriteAtom(pl_stream S, struct atom *a, const w_opt * opt)
 	succeed;
 }
 
-inline static void WritePrimitive(pl_stream S, term_t t, const w_opt * opt)
+inline static void WritePrimitive(pl_stream S, union cell *t, const w_opt * opt)
 {
 	char buf[33];
 
@@ -277,7 +277,7 @@ static int priorityOperator(struct atom *atom)
 }
 
 // FIXME : stuff picked from SWI-Prolog
-static bool WriteTerm(pl_stream S, term_t t, int prec, int depth, const w_opt * opt)
+static bool WriteTerm(pl_stream S, union cell *t, int prec, int depth, const w_opt * opt)
 {
 	struct atom *functor;
 	int arity;
@@ -307,12 +307,12 @@ static bool WriteTerm(pl_stream S, term_t t, int prec, int depth, const w_opt * 
 		WritePrimitive(S, t, opt);
 		succeed;
 	} else {
-		term_t arg = PL_new_term_ref();
+		union cell *arg = PL_new_term_ref();
 
 		if (arity == 1) {
 			if (functor == ATOM(curl) &&	/* {a,b,c} */
 			    Options(OPT_CURL)) {
-				term_t a = PL_new_term_ref();
+				union cell *a = PL_new_term_ref();
 
 				Get_arg(1, t, arg);
 				Putc(S, '{');
@@ -368,7 +368,7 @@ static bool WriteTerm(pl_stream S, term_t t, int prec, int depth, const w_opt * 
 
 			if (Options(OPT_OPS)) {	/* op <term> */
 				if (PL_is_op(OP_PREFIX, functor, &op_type, &op_pri)) {
-					term_t arg = PL_new_term_ref();
+					union cell *arg = PL_new_term_ref();
 					int pri;
 
 					Get_arg(1, t, arg);
@@ -388,7 +388,7 @@ static bool WriteTerm(pl_stream S, term_t t, int prec, int depth, const w_opt * 
 
 				/* <term> op */
 				if (PL_is_op(OP_POSTFIX, functor, &op_type, &op_pri)) {
-					term_t arg = PL_new_term_ref();
+					union cell *arg = PL_new_term_ref();
 					int pri;
 
 					Get_arg(1, t, arg);
@@ -430,7 +430,7 @@ static bool WriteTerm(pl_stream S, term_t t, int prec, int depth, const w_opt * 
 
 			if (Options(OPT_OPS)) {	/* <term> op <term> */
 				if (PL_is_op(OP_INFIX, functor, &op_type, &op_pri)) {
-					term_t a = PL_new_term_ref();
+					union cell *a = PL_new_term_ref();
 					int pri;
 
 					if (op_pri > prec)
@@ -473,7 +473,7 @@ static bool WriteTerm(pl_stream S, term_t t, int prec, int depth, const w_opt * 
 	succeed;
 }
 
-inline static int writeTerm(pl_stream S, term_t t, int numvars, int quote, int display)
+inline static int writeTerm(pl_stream S, union cell *t, int numvars, int quote, int display)
 {
 	w_opt opt;
 
@@ -494,23 +494,23 @@ inline static int writeTerm(pl_stream S, term_t t, int numvars, int quote, int d
 	return WriteTerm(S, t, 1200, 0, &opt);
 }
 
-int PL_write(pl_stream S, term_t t)
+int PL_write(pl_stream S, union cell *t)
 {
 	return (writeTerm(S, t, 1, 0, 0));
 }
 
-int PL_writeq(pl_stream S, term_t t)
+int PL_writeq(pl_stream S, union cell *t)
 {
 	return (writeTerm(S, t, 1, 1, 0));
 }
 
-int pl_write(term_t t)
+int pl_write(union cell *t)
 {
 	writeTerm(PL_OutStream(), t, 1, 0, 0);
 	succeed;
 }
 
-int pl_write_ln(term_t t)
+int pl_write_ln(union cell *t)
 {
 	pl_stream S = PL_OutStream();
 
@@ -519,13 +519,13 @@ int pl_write_ln(term_t t)
 	succeed;
 }
 
-int pl_writeq(term_t t)
+int pl_writeq(union cell *t)
 {
 	writeTerm(PL_OutStream(), t, 1, 1, 0);
 	succeed;
 }
 
-int pl_write2(term_t stream, term_t t)
+int pl_write2(union cell *stream, union cell *t)
 {
 	pl_stream S = PL_Output_Stream(stream);
 
@@ -535,7 +535,7 @@ int pl_write2(term_t stream, term_t t)
 	succeed;
 }
 
-int pl_writeq2(term_t stream, term_t term)
+int pl_writeq2(union cell *stream, union cell *term)
 {
 	pl_stream S = PL_Output_Stream(stream);
 
@@ -545,13 +545,13 @@ int pl_writeq2(term_t stream, term_t term)
 	succeed;
 }
 
-int pl_display(term_t t)
+int pl_display(union cell *t)
 {
 	writeTerm(PL_OutStream(), t, 0, 0, 1);
 	succeed;
 }
 
-int pl_display2(term_t stream, term_t term)
+int pl_display2(union cell *stream, union cell *term)
 {
 	pl_stream S = PL_Output_Stream(stream);
 
@@ -561,13 +561,13 @@ int pl_display2(term_t stream, term_t term)
 	succeed;
 }
 
-int pl_write_canonical(term_t t)
+int pl_write_canonical(union cell *t)
 {
 	writeTerm(PL_OutStream(), t, 0, 1, 1);
 	succeed;
 }
 
-int pl_write_canonical2(term_t stream, term_t term)
+int pl_write_canonical2(union cell *stream, union cell *term)
 {
 	pl_stream S = PL_Output_Stream(stream);
 
@@ -578,22 +578,22 @@ int pl_write_canonical2(term_t stream, term_t term)
 }
 
 // Back-compatibility
-int pl_displayq(term_t t)
+int pl_displayq(union cell *t)
 {
 	return pl_write_canonical(t);
 }
 
-int pl_displayq2(term_t stream, term_t t)
+int pl_displayq2(union cell *stream, union cell *t)
 {
 	return pl_write_canonical2(stream, t);
 }
 
-int PL_display(pl_stream S, term_t t)
+int PL_display(pl_stream S, union cell *t)
 {
 	return writeTerm(S, t, 0, 0, 1);
 }
 
-int PL_displayq(pl_stream S, term_t t)
+int PL_displayq(pl_stream S, union cell *t)
 {
 	return writeTerm(S, t, 0, 1, 1);
 }
@@ -607,7 +607,7 @@ int PL_puts(char *s)
 }
 
 // FIXME : use max_depth = 5
-int pl_report(term_t t)
+int pl_report(union cell *t)
 {
 	writeTerm(Stderr, t, 1, 0, 0);
 	Sputc(Stderr, '\n');
@@ -619,18 +619,18 @@ int pl_report(term_t t)
 
 int pl_warn(const char *fmt)
 {
-	term_t term;
+	union cell *term;
 #ifdef	HAVE_ASPRINTF
 	char *buf;
 
 	asprintf(&buf, "[Warning: %s ]\n", fmt);
-	term = (term_t) PL_new_atom(buf);
+	term = (union cell *) PL_new_atom(buf);
 	free(buf);
 #else
 	static char buf[2048];		// FIXME : very dangerous
 
 	sprintf(buf, "[Warning: %s ]\n", fmt);
-	term = (term_t) PL_new_atom(buf);
+	term = (union cell *) PL_new_atom(buf);
 #endif
 
 	writeTerm(Stderr, term, 0, 0, 0);
@@ -641,14 +641,14 @@ int pl_warn(const char *fmt)
 
 #include "pl-option.h"
 
-static int get_options(term_t Options, w_opt * options, const char *pred)
+static int get_options(union cell *Options, w_opt * options, const char *pred)
 {
 	static int opt_quoted;
 	static int opt_char_esc;
 	static int opt_ignore_ops;
 	static int opt_numbervars;
 	static int opt_namevars;
-	static term_t opt_bindvars;
+	static union cell *opt_bindvars;
 	static int opt_space;
 	static int opt_list;
 	static int opt_curly;
@@ -709,7 +709,7 @@ static int get_options(term_t Options, w_opt * options, const char *pred)
 	succeed;
 }
 
-static int PL_write_term(pl_stream S, term_t term, term_t options, const char *pred)
+static int PL_write_term(pl_stream S, union cell *term, union cell *options, const char *pred)
 {
 	w_opt opt;
 
@@ -720,14 +720,14 @@ static int PL_write_term(pl_stream S, term_t term, term_t options, const char *p
 	return WriteTerm(S, term, 0, 0, &opt);
 }
 
-int pl_write_term(term_t term, term_t options)
+int pl_write_term(union cell *term, union cell *options)
 {
 	pl_stream S = PL_OutStream();
 
 	return PL_write_term(S, term, options, "write_term/2");
 }
 
-int pl_write_term3(term_t stream, term_t term, term_t options)
+int pl_write_term3(union cell *stream, union cell *term, union cell *options)
 {
 	pl_stream S = PL_Output_Stream(stream);
 

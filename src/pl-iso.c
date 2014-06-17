@@ -12,7 +12,7 @@
 #include <stdlib.h>			// For alloca
 #include "pl-atom.h"
 
-int pl_atom_concat(term_t a1, term_t a2, term_t a3, enum control *ctrl)
+int pl_atom_concat(union cell *a1, union cell *a2, union cell *a3, enum control *ctrl)
 {
 	const char *s3 = 0;
 	int l;
@@ -60,7 +60,7 @@ int pl_atom_concat(term_t a1, term_t a2, term_t a3, enum control *ctrl)
 
 // Backtracking part
 	{
-		tr_t *tr;
+		union cell **tr;
 		int l3;
 		char *tmp;
 
@@ -87,7 +87,7 @@ int pl_atom_concat(term_t a1, term_t a2, term_t a3, enum control *ctrl)
 	}
 }
 
-int pl_sub_atom(term_t A, term_t L1, term_t L2, term_t L3, term_t A2, enum control *ctrl)
+int pl_sub_atom(union cell *A, union cell *L1, union cell *L2, union cell *L3, union cell *A2, enum control *ctrl)
 {
 	const char *a = 0, *a2 = 0;
 	int t, l1, l2, l3;
@@ -143,7 +143,7 @@ int pl_sub_atom(term_t A, term_t L1, term_t L2, term_t L3, term_t A2, enum contr
 
 // Backtracking part
 	{
-		tr_t *tr;
+		union cell **tr;
 		int l;
 		char *tmp;
 

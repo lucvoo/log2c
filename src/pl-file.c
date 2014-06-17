@@ -9,7 +9,7 @@
 #include "pl-fli.h"
 #include "pl-os.h"
 
-static const char *PL_get_filename(term_t file, char *buf)
+static const char *PL_get_filename(union cell *file, char *buf)
 {
 	static char buffer[PATH_MAX + 1];
 	const char *name;
@@ -23,7 +23,7 @@ static const char *PL_get_filename(term_t file, char *buf)
 		return (0);
 }
 
-int pl_file_base_name(term_t path, term_t base)
+int pl_file_base_name(union cell *path, union cell *base)
 {
 	const char *p;
 
@@ -33,7 +33,7 @@ int pl_file_base_name(term_t path, term_t base)
 	return (PL_unify_atom_chars(base, PL_BaseName(p)));
 }
 
-int pl_file_directory_name(term_t path, term_t dir)
+int pl_file_directory_name(union cell *path, union cell *dir)
 {
 	const char *p;
 
@@ -43,7 +43,7 @@ int pl_file_directory_name(term_t path, term_t dir)
 	return (PL_unify_atom_chars(dir, PL_DirName(p)));
 }
 
-int pl_file_name_extension(term_t base, term_t ext, term_t full)
+int pl_file_name_extension(union cell *base, union cell *ext, union cell *full)
 {
 	const char *b, *e, *f;
 	static char buf[PATH_MAX];
@@ -93,7 +93,7 @@ int pl_file_name_extension(term_t base, term_t ext, term_t full)
 		PL_warning("file_name_extension/3 : instantiation fault");
 }
 
-int pl_delete_file(term_t name)
+int pl_delete_file(union cell *name)
 {
 	const char *f;
 
@@ -103,7 +103,7 @@ int pl_delete_file(term_t name)
 	return (PL_RemoveFile(f));
 }
 
-int pl_absolute_file_name(term_t file, term_t abs)
+int pl_absolute_file_name(union cell *file, union cell *abs)
 {
 	const char *f, *c;
 	static char buf[PATH_MAX + 1];
@@ -116,14 +116,14 @@ int pl_absolute_file_name(term_t file, term_t abs)
 	return (PL_unify_atom_chars(abs, c));
 }
 
-int pl_is_absolute_file_name(term_t file)
+int pl_is_absolute_file_name(union cell *file)
 {
 	const char *f;
 
 	return (PL_get_atom_chars(file, &f) && PL_isAbsolutePath(f));
 }
 
-int pl_access_file(term_t name, term_t mode)
+int pl_access_file(union cell *name, union cell *mode)
 {
 	const char *n;
 	int md;
@@ -157,7 +157,7 @@ int pl_access_file(term_t name, term_t mode)
 		fail;
 }
 
-int pl_exists_file(term_t file)
+int pl_exists_file(union cell *file)
 {
 	const char *f;
 
@@ -167,7 +167,7 @@ int pl_exists_file(term_t file)
 	return (PL_ExistsFile(f));
 }
 
-int pl_exists_directory(term_t dir)
+int pl_exists_directory(union cell *dir)
 {
 	const char *d;
 

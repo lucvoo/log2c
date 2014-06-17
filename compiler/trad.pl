@@ -67,7 +67,7 @@ unify(struct(F,N,L),V)	:- ( atom(V),
 			     -> Vn=V,
 			        g('{ if (is_var(~w))',[Vn])
 			     ;  gensym('v_',Vn),
-			        g('{ cell_t *~w;',[Vn]),
+			        g('{ union cell *~w;',[Vn]),
 			        g('  ~w=~w;',[Vn,V]),
 			        g('  if (is_var(~w))',[Vn])
 			   ),

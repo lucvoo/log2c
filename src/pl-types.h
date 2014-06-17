@@ -51,16 +51,15 @@ typedef struct {
 
 #endif					// WORDS_BIGENDIAN
 
-typedef union cell_t cell_t, *term_t, *tr_t;
-union cell_t {
+union cell {
 	unsigned long val;
 	_val_t tag_val;
 	uval_t tag_uval;
-	cell_t *celp;
+	union cell *celp;
 };
 
 struct atom {
-	cell_t atom;
+	union cell atom;
 	const char *name;
 	hash_t hash;
 	struct atom *next;
@@ -73,18 +72,18 @@ struct functor {
 };
 
 union pl_stack {
-	cell_t *celp;
-	tr_t *tr;
+	union cell *celp;
+	union cell **tr;
 	union pl_stack*stk;
 	void *cod;
 	long intg;
-	cell_t cell;
+	union cell cell;
 	enum control ctrl;
 };
 
 typedef struct {
-	tr_t *trail;
-	cell_t *global;
+	union cell **trail;
+	union cell *global;
 } mark_t;
 
 typedef void *predicate_t, *pred_t;

@@ -123,7 +123,7 @@ inline static char *PL_mangle(const char *src)
 	return (old_HP);
 }
 
-int pl_mangle(term_t name, term_t mangled)
+int pl_mangle(union cell *name, union cell *mangled)
 {
 	const char *n, *m;
 	struct atom *a;

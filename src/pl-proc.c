@@ -10,9 +10,9 @@
 #include "pl-write.h"
 
 #ifndef HWREG_ARGS
-cell_t *PL_ARGS[PL_MAX_ARGS] = { 0 };
+union cell *PL_ARGS[PL_MAX_ARGS] = { 0 };
 #else
-cell_t *PL_ARGS_[PL_MAX_ARGS] = { 0 };
+union cell *PL_ARGS_[PL_MAX_ARGS] = { 0 };
 #endif
 
 extern modules_t *PL__modules[];
@@ -51,13 +51,14 @@ inline static void *lookup_proc(module_t * module, struct atom *functor, int ari
 			return (j->pred);
 	}
 
-	PL_write(Stderr, (term_t) functor);
+	PL_write(Stderr, (union cell *) functor);
 	PL_warning("%s/%d lookup_proc : no such procedure", functor->name, arity);
 }
 
-inline static term_t strip_module(term_t term, module_t ** module)
+inline static union cell *strip_module(union cell *term, module_t ** module)
 {
-	term_t m = 0, t;
+	union cell *m = 0;
+	union cell *t;
 	module_t *mod;
 
 	t = deref(term);
@@ -80,9 +81,9 @@ inline static term_t strip_module(term_t term, module_t ** module)
 	PL_warning(" : strip_module : illegal module:term specification");
 }
 
-void *PL_call(term_t clos, int extra, term_t * args)
+void *PL_call(union cell *clos, int extra, union cell ** args)
 {
-	term_t t;
+	union cell *t;
 	struct atom *name;
 	int arity, n;
 	module_t *mod = 0;
@@ -102,9 +103,9 @@ void *PL_call(term_t clos, int extra, term_t * args)
 	return (proc);
 }
 
-void *PL_apply(term_t clos, term_t list)
+void *PL_apply(union cell *clos, union cell *list)
 {
-	term_t t;
+	union cell *t;
 	struct atom *name;
 	int arity, n, extra;
 	module_t *mod;

@@ -54,7 +54,7 @@ struct functor *PL_new_functor(struct atom *functor, int arity)
 	return (add_fun(functor, arity, h));
 }
 
-int pl_current_functor(cell_t * f, cell_t * n, enum control *ctrl)
+int pl_current_functor(union cell * f, union cell * n, enum control *ctrl)
 {
 	struct functor *fun;
 	hash_t h;

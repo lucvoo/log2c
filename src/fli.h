@@ -19,7 +19,7 @@
 #define try(G)	if (!(G)) fail; else
 
 #define Tag(v)	(v & TAG_MASK)
-#define Val(c)	({ cell_t d=*c; while (Tag(d.val)==MK_TAG(ref_tag)) { d=*(d.celp); }; d.val; })
+#define Val(c)	({ union cell d=*c; while (Tag(d.val)==MK_TAG(ref_tag)) { d=*(d.celp); }; d.val; })
 
 #define	__isVar(v)	(    v ==MK_TAG(var_tag))
 #define __isAtom(v) 	(Tag(v)==MK_TAG(ato_tag))
@@ -37,9 +37,9 @@
 #define	Mark(m)	do { m.trail =TP; m.global=HP; } while (0)
 #define	Undo(m)	do { reset(m.trail); HP=m.global; } while(0)
 
-int pl_unify(cell_t *, cell_t *);
+int pl_unify(union cell *, union cell *);
 
-inline static int PL_try_unify(cell_t * a, cell_t * b)
+inline static int PL_try_unify(union cell * a, union cell * b)
 {
 	mark_t m;
 	int rval;

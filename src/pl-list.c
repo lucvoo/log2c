@@ -8,12 +8,12 @@
 #include "Prolog.h"
 #include <stdlib.h>			// for qsort()
 
-int pl_is_list(term_t l)
+int pl_is_list(union cell *l)
 {
 	return (PL_is_cons(l));
 }
 
-int pl_proper_list(term_t l)
+int pl_proper_list(union cell *l)
 {
 	Deref(l);
 
@@ -23,7 +23,7 @@ int pl_proper_list(term_t l)
 	return (is_nil(l));
 }
 
-int pl_partial_list(term_t l)
+int pl_partial_list(union cell *l)
 {
 	Deref(l);
 
@@ -33,7 +33,7 @@ int pl_partial_list(term_t l)
 	return (is_var(l));
 }
 
-int pl_memberchk(term_t e, term_t l)
+int pl_memberchk(union cell *e, union cell *l)
 {
 	Deref(l);
 	Deref(e);
@@ -46,7 +46,7 @@ int pl_memberchk(term_t e, term_t l)
 	fail;
 }
 
-int pl_length(term_t list, term_t l)
+int pl_length(union cell *list, union cell *l)
 {
 	int m;
 	Deref(list);
@@ -65,7 +65,7 @@ int pl_length(term_t list, term_t l)
 			fail;
 		else			// var(list) && n>= 0
 		{
-			term_t c;
+			union cell *c;
 			list->celp = HP;
 			trail(list);
 			c = HP;
@@ -94,9 +94,9 @@ int pl_length(term_t list, term_t l)
 
 // Return length of the list; -1 if not a proper_list
 // Put the array in static_heap
-inline static int list_to_array(term_t list)
+inline static int list_to_array(union cell *list)
 {
-	term_t l;
+	union cell *l;
 	int n = 0;
 
 	l = deref(list);
@@ -112,10 +112,10 @@ inline static int list_to_array(term_t list)
 		return (-1);
 }
 
-inline static term_t array_to_list(term_t * array, int n, int rem_dup)
+inline static union cell *array_to_list(union cell ** array, int n, int rem_dup)
 {
-	term_t l = HP;
-	term_t last;
+	union cell *l = HP;
+	union cell *last;
 
 	while (n--) {
 		HP[0].val = __cons();
@@ -134,10 +134,10 @@ inline static term_t array_to_list(term_t * array, int n, int rem_dup)
 	return (l);
 }
 
-inline static int PL_sort(term_t list, term_t sorted, int rem_dup)
+inline static int PL_sort(union cell *list, union cell *sorted, int rem_dup)
 {
-	term_t *array = (term_t *) SHP;
-	term_t l;
+	union cell **array = (union cell **) SHP;
+	union cell *l;
 	int n;
 
 	n = list_to_array(list);
@@ -147,18 +147,18 @@ inline static int PL_sort(term_t list, term_t sorted, int rem_dup)
 		PL_warning("%s/2: first_argument is not a proper list", rem_dup ? "sort" : "msort");
 
 	if (n != 0)
-		qsort(array, n, sizeof(term_t), pl_std_cmp);
+		qsort(array, n, sizeof(union cell *), pl_std_cmp);
 
 	l = array_to_list(array, n, rem_dup);
 	return (pl_unify(l, sorted));
 }
 
-int pl_sort(term_t list, term_t sorted)
+int pl_sort(union cell *list, union cell *sorted)
 {
 	return (PL_sort(list, sorted, 1));
 }
 
-int pl_msort(term_t list, term_t sorted)
+int pl_msort(union cell *list, union cell *sorted)
 {
 	return (PL_sort(list, sorted, 0));
 }

@@ -9,11 +9,11 @@
 #include "pl-fli.h"
 #include "pl-option.h"
 
-int PL_scan_options(term_t options, pl_opt_spec spec)
+int PL_scan_options(union cell *options, pl_opt_spec spec)
 {
-	term_t list = deref(options);
-	// term_t head;
-	term_t val = PL_new_term_ref();
+	union cell *list = deref(options);
+	// union cell *head;
+	union cell *val = PL_new_term_ref();
 	pl_opt_spec s = 0;
 
 	while (is_cons(list))		// loop trough the options list
@@ -27,7 +27,7 @@ int PL_scan_options(term_t options, pl_opt_spec spec)
 			} else if (arity == 1) {
 				PL_get_arg(1, list + 1, val);
 			} else if (arity == 2 && name == ATOM(unify)) {
-				term_t head = deref(list + 1);
+				union cell *head = deref(list + 1);
 				if (!(name = PL_get_atom(head + 1)))
 					fail;
 				val = head + 2;

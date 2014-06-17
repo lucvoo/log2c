@@ -18,9 +18,9 @@
 #include "pl-string.h"
 
 #include <stdio.h>
-cell_t *deref_dbg(cell_t * addr)
+union cell *deref_dbg(union cell * addr)
 {
-	cell_t *p = addr;
+	union cell *p = addr;
 
 	fprintf(stderr, "deref: p =      %p\n", p);
 	while (p->tag_val.tag == ref_tag) {
@@ -31,7 +31,7 @@ cell_t *deref_dbg(cell_t * addr)
 	return (p);
 }
 
-cell_t *new_flt(double r)
+union cell *new_flt(double r)
 {
 	typeof(HP) old_HP = HP;
 

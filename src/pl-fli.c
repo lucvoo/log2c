@@ -13,9 +13,9 @@
 #include "pl-fli.h"
 #include "pl-buffer.h"
 
-cell_t *PL_new_term_refs(int n)
+union cell *PL_new_term_refs(int n)
 {
-	cell_t *r = HP;
+	union cell *r = HP;
 
 	for (; n > 0; n--)
 		HP[n].val = __var();
@@ -25,9 +25,9 @@ cell_t *PL_new_term_refs(int n)
 	return r;
 }
 
-cell_t *PL_new_term_ref(void)
+union cell *PL_new_term_ref(void)
 {
-	cell_t *r = HP;
+	union cell *r = HP;
 
 	HP->val = __var();
 	HP++;
@@ -39,10 +39,10 @@ cell_t *PL_new_term_ref(void)
 		 *	       CONS-*		*
 		 *******************************/
 #include <stdarg.h>
-void PL_cons_functor(term_t h, struct functor *fd, ...)
+void PL_cons_functor(union cell *h, struct functor *fd, ...)
 {
 	int arity = fd->arity;
-	cell_t *f;
+	union cell *f;
 	va_list args;
 
 	va_start(args, fd);
@@ -51,15 +51,15 @@ void PL_cons_functor(term_t h, struct functor *fd, ...)
 	f->val = __fun(fd);
 
 	for (f++; f < HP; f++)
-		f->celp = deref(va_arg(args, term_t));
+		f->celp = deref(va_arg(args, union cell *));
 
 	va_end(args);
 
 }
 
-void PL_cons_list(term_t l, term_t head, term_t tail)
+void PL_cons_list(union cell *l, union cell *head, union cell *tail)
 {
-	cell_t *a;
+	union cell *a;
 
 	l->celp = a = HP;
 	HP += 3;
@@ -85,10 +85,10 @@ static char *malloc_string(char *s)
 	return (m);
 }
 
-int PL_get_list_codes(term_t list, const char **s, unsigned flags)
+int PL_get_list_codes(union cell *list, const char **s, unsigned flags)
 {
 	pl_ubs_t *b = PL_find_ubs(flags);
-	term_t l;
+	union cell *l;
 	static int c;
 
 	l = deref(list);
@@ -111,10 +111,10 @@ failed:
 	fail;
 }
 
-int PL_get_list_chars(term_t list, const char **s, unsigned flags)
+int PL_get_list_chars(union cell *list, const char **s, unsigned flags)
 {
 	pl_ubs_t *b = PL_find_ubs(flags);
-	term_t l;
+	union cell *l;
 
 	l = deref(list);
 	while (is_cons(l)) {
@@ -141,9 +141,9 @@ failed:
 	fail;
 }
 
-int PL_get_chars(term_t term, const char **s, unsigned flags)
+int PL_get_chars(union cell *term, const char **s, unsigned flags)
 {
-	term_t t;
+	union cell *t;
 	static char tmp[24];		// FIXME : why 24 ??
 	char *r;
 	int type;
@@ -186,7 +186,7 @@ int PL_get_chars(term_t term, const char **s, unsigned flags)
 	succeed;
 }
 
-int PL_get_name_arity(term_t t, struct atom ** name, int *arity)
+int PL_get_name_arity(union cell *t, struct atom ** name, int *arity)
 {
 	Deref(t);
 
@@ -205,7 +205,7 @@ int PL_get_name_arity(term_t t, struct atom ** name, int *arity)
 	fail;
 }
 
-int PL_get_functor(term_t t, struct functor ** f)
+int PL_get_functor(union cell *t, struct functor ** f)
 {
 	Deref(t);
 
@@ -222,7 +222,7 @@ int PL_get_functor(term_t t, struct functor ** f)
 	fail;
 }
 
-int PL_get_arg(int index, term_t t, term_t a)
+int PL_get_arg(int index, union cell *t, union cell *a)
 {
 	Deref(t);
 
@@ -238,7 +238,7 @@ int PL_get_arg(int index, term_t t, term_t a)
 	fail;
 }
 
-int PL_get_list(term_t l, term_t h, term_t t)
+int PL_get_list(union cell *l, union cell *h, union cell *t)
 {
 	Deref(l);
 
@@ -250,7 +250,7 @@ int PL_get_list(term_t l, term_t h, term_t t)
 	fail;
 }
 
-int PL_get_list_(term_t l, term_t * h, term_t * t)
+int PL_get_list_(union cell *l, union cell ** h, union cell ** t)
 {
 	Deref(l);
 
@@ -262,7 +262,7 @@ int PL_get_list_(term_t l, term_t * h, term_t * t)
 	fail;
 }
 
-int PL_get_head(term_t l, term_t h)
+int PL_get_head(union cell *l, union cell *h)
 {
 	Deref(l);
 
@@ -273,7 +273,7 @@ int PL_get_head(term_t l, term_t h)
 	fail;
 }
 
-int PL_get_tail(term_t l, term_t t)
+int PL_get_tail(union cell *l, union cell *t)
 {
 	Deref(l);
 
@@ -288,14 +288,14 @@ int PL_get_tail(term_t l, term_t t)
 		 *             PUT-*  		*
 		 *******************************/
 
-void PL_put_functor(term_t t, struct functor *f)
+void PL_put_functor(union cell *t, struct functor *f)
 {
 	int arity = f->arity;
 
 	if (arity == 0) {
 		PL_put_atom(t, f->functor);
 	} else {
-		cell_t *a = new_struct(f, arity);
+		union cell *a = new_struct(f, arity);
 
 		while (arity-- > 0)
 			(++a)->val = __var();
@@ -304,9 +304,9 @@ void PL_put_functor(term_t t, struct functor *f)
 	}
 }
 
-void PL_put_list(term_t l)
+void PL_put_list(union cell *l)
 {
-	cell_t *a = new_cons();
+	union cell *a = new_cons();
 
 	a[1].val = a[2].val = __var();
 	mkrefp(l, a);
@@ -316,12 +316,12 @@ void PL_put_list(term_t l)
 		 *	       UNIFY		*
 		 *******************************/
 
-int PL_unify_atom_chars(term_t t, const char *chars)
+int PL_unify_atom_chars(union cell *t, const char *chars)
 {
 	return (PL_unify_atom(t, PL_new_atom(chars)));
 }
 
-int PL_unify_arg(int index, term_t t, term_t a)
+int PL_unify_arg(int index, union cell *t, union cell *a)
 {
 	Deref(t);
 
@@ -335,7 +335,7 @@ int PL_unify_arg(int index, term_t t, term_t a)
 		 *	       TYPE		*
 		 *******************************/
 
-int PL_term_type(term_t t)
+int PL_term_type(union cell *t)
 {
 	return (Tag(t->val) >> TAG_POS);
 }

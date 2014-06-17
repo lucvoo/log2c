@@ -26,7 +26,7 @@ typedef enum { T_VOID, T_ATOM, T_INTG, T_BOOL } pf_type;
 typedef struct pflag_t *pflag_t;
 struct pflag_t {
 	struct atom *key;
-	cell_t val;
+	union cell val;
 	union {
 		int *intg;
 		struct atom **atom;
@@ -125,7 +125,7 @@ inline static int Setpf_boo(const char *key, long val, int lock, int *addr)
 		fail;
 }
 
-int pl_set_prolog_flag(term_t key, term_t new)
+int pl_set_prolog_flag(union cell *key, union cell *new)
 {
 	pflag_t f;
 	struct atom *k;
@@ -160,7 +160,7 @@ int pl_set_prolog_flag(term_t key, term_t new)
 	}
 }
 
-static int PL_unify_prolog_flag(pflag_t f, term_t term)
+static int PL_unify_prolog_flag(pflag_t f, union cell *term)
 {
 	switch (f->type) {
 	case T_ATOM:{
@@ -183,7 +183,7 @@ static int PL_unify_prolog_flag(pflag_t f, term_t term)
 	}
 }
 
-int pl_prolog_flag(term_t key, term_t old, term_t new)
+int pl_prolog_flag(union cell *key, union cell *old, union cell *new)
 {
 	pflag_t f;
 	struct atom *k;
@@ -224,7 +224,7 @@ int pl_prolog_flag(term_t key, term_t old, term_t new)
 	}
 }
 
-int pl_prolog_flag_2(term_t key, term_t val)
+int pl_prolog_flag_2(union cell *key, union cell *val)
 {
 	return pl_prolog_flag(key, val, 0);
 }

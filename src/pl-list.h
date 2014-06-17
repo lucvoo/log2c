@@ -10,7 +10,7 @@
 
 #include "pl-types.h"
 
-int pl_memberchk(term_t e, term_t l);
-int pl_length(term_t t, term_t l);
+int pl_memberchk(union cell *e, union cell *l);
+int pl_length(union cell *t, union cell *l);
 
 #endif

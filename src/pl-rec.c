@@ -10,9 +10,9 @@
 #include "pl-pred.h"
 #include "pl-fli.h"
 
-static cell_t *base;
+static union cell *base;
 
-inline static void rtrail(cell_t * ref)
+inline static void rtrail(union cell * ref)
 {
 	HP->celp = ref;
 	HP++;
@@ -24,10 +24,10 @@ struct record__t {
 	recl_t list;
 	rec_t next;
 	int size;
-	cell_t term[0];
+	union cell term[0];
 };
 struct reclist_t {
-	cell_t key;
+	union cell key;
 	rec_t first;
 	rec_t last;
 	recl_t next;
@@ -36,7 +36,7 @@ struct reclist_t {
 #define hash_recs_size	256
 static recl_t records[hash_recs_size];
 
-static cell_t *Copy2Heap(cell_t * addr, cell_t * c)
+static union cell *Copy2Heap(union cell * addr, union cell * c)
 {
 debut:
 	switch (get_tag(c)) {
@@ -64,20 +64,20 @@ debut:
 		}
 	case ato_tag:
 		if (!addr)
-			addr = NEW(cell_t);
+			addr = NEW(union cell);
 		addr->celp = c;
 		return (addr);
 	case int_tag:
 		if (!addr)
-			addr = NEW(cell_t);
+			addr = NEW(union cell);
 		addr->val = c->val;
 		return (addr);
 	case fun_tag:{
 			int n = get_arity(c);
 			if (!addr)
-				addr = NEW_(cell_t, n + 1);
+				addr = NEW_(union cell, n + 1);
 			else {
-				addr->celp = NEW_(cell_t, n + 1);
+				addr->celp = NEW_(union cell, n + 1);
 				addr = addr->celp;
 			}
 
@@ -91,10 +91,10 @@ debut:
 	return (0);
 }
 
-inline static rec_t copy_to_heap(cell_t * c)
+inline static rec_t copy_to_heap(union cell * c)
 {
 	rec_t record;
-	tr_t *tr;
+	union cell **tr;
 
 	tr = TP;
 	record = NEW(*record);
@@ -106,10 +106,10 @@ inline static rec_t copy_to_heap(cell_t * c)
 	return (record);
 }
 
-inline static cell_t *copy_to_global(rec_t record)
+inline static union cell *copy_to_global(rec_t record)
 {
 	int n, i;
-	cell_t *c;
+	union cell *c;
 
 	c = record->term;
 	n = record->size;
@@ -132,7 +132,7 @@ inline static cell_t *copy_to_global(rec_t record)
 
 #define Trail(T)	*TP++=T
 
-static inline int unify_static_2(register cell_t * s, register cell_t * t)
+static inline int unify_static_2(register union cell * s, register union cell * t)
 {
 	s = deref(s);
 
@@ -183,7 +183,7 @@ OK:	return (1);
 KO:	return (0);
 }
 
-static inline int unify_static_1(register cell_t * s, register cell_t * t)
+static inline int unify_static_1(register union cell * s, register union cell * t)
 {
 	s = deref(s);
 
@@ -242,9 +242,9 @@ OK:	return (1);
 KO:	return (0);
 }
 
-static inline int try_unify_static(term_t s, term_t t)
+static inline int try_unify_static(union cell *s, union cell *t)
 {
-	tr_t *tr = TP;
+	union cell **tr = TP;
 	int r;
 
 	r = unify_static_1(s, t);
@@ -273,7 +273,7 @@ static inline int try_unify_static(term_t s, term_t t)
 })								\
 
 
-inline static recl_t lookup_recl__old(cell_t * key)
+inline static recl_t lookup_recl__old(union cell * key)
 {
 	hash_t h;
 	recl_t rl;
@@ -293,7 +293,7 @@ inline static recl_t lookup_recl__old(cell_t * key)
 	return (rl);
 }
 
-inline static recl_t lookup_recl__(cell_t * key, int h)
+inline static recl_t lookup_recl__(union cell * key, int h)
 {
 	recl_t rl;
 
@@ -304,7 +304,7 @@ inline static recl_t lookup_recl__(cell_t * key, int h)
 	return (0);
 }
 
-inline static recl_t add_recl__(cell_t * key, int h)
+inline static recl_t add_recl__(union cell * key, int h)
 {
 	recl_t rl;
 
@@ -317,7 +317,7 @@ inline static recl_t add_recl__(cell_t * key, int h)
 	return (rl);
 }
 
-inline static recl_t lookup_recl(term_t key, int h)
+inline static recl_t lookup_recl(union cell *key, int h)
 {
 	recl_t rl;
 
@@ -327,7 +327,7 @@ inline static recl_t lookup_recl(term_t key, int h)
 	return (rl);
 }
 
-static int pl_recordaz(cell_t * key, cell_t * term, cell_t * ref, int az)
+static int pl_recordaz(union cell * key, union cell * term, union cell * ref, int az)
 {
 	recl_t rl;
 	rec_t r;
@@ -361,29 +361,29 @@ static int pl_recordaz(cell_t * key, cell_t * term, cell_t * ref, int az)
 	succeed;
 }
 
-int pl_recorda(cell_t * k, cell_t * t, cell_t * ref)
+int pl_recorda(union cell * k, union cell * t, union cell * ref)
 {
 	return (pl_recordaz(k, t, ref, 'a'));
 }
 
-int pl_recorda_2(cell_t * k, cell_t * t)
+int pl_recorda_2(union cell * k, union cell * t)
 {
-	term_t ref = PL_new_term_ref();
+	union cell *ref = PL_new_term_ref();
 	return (pl_recordaz(k, t, ref, 'a'));
 }
 
-int pl_recordz(cell_t * k, cell_t * t, cell_t * ref)
+int pl_recordz(union cell * k, union cell * t, union cell * ref)
 {
 	return (pl_recordaz(k, t, ref, 'z'));
 }
 
-int pl_recordz_2(cell_t * k, cell_t * t)
+int pl_recordz_2(union cell * k, union cell * t)
 {
-	term_t ref = PL_new_term_ref();
+	union cell *ref = PL_new_term_ref();
 	return (pl_recordaz(k, t, ref, 'z'));
 }
 
-int pl_recorded(cell_t * key, cell_t * term, cell_t * ref, enum control *ctrl)
+int pl_recorded(union cell * key, union cell * term, union cell * ref, enum control *ctrl)
 {
 	recl_t rl;
 	rec_t r, *ctxt;
@@ -424,13 +424,13 @@ int pl_recorded(cell_t * key, cell_t * term, cell_t * ref, enum control *ctrl)
 	fail;
 }
 
-int pl_recorded_2(cell_t * key, cell_t * term, enum control *ctrl)
+int pl_recorded_2(union cell * key, union cell * term, enum control *ctrl)
 {
-	term_t ref = PL_new_term_ref();
+	union cell *ref = PL_new_term_ref();
 	return (pl_recorded(key, term, ref, ctrl));
 }
 
-int pl_current_key(cell_t * c, enum control *ctrl)
+int pl_current_key(union cell * c, enum control *ctrl)
 {
 	recl_t recl;
 	hash_t h;
@@ -504,7 +504,7 @@ inline static int Erase_rec(rec_t rec)
 
 }
 
-int pl_erase(cell_t * ref)
+int pl_erase(union cell * ref)
 {
 	rec_t rec;
 
@@ -520,12 +520,12 @@ int pl_erase(cell_t * ref)
 /* Specialized predicates                                             */
 /**********************************************************************/
 
-int pl_recorded_all(cell_t * key, cell_t * list)
+int pl_recorded_all(union cell * key, union cell * list)
 {
 	recl_t rl;
 	rec_t r;
 	hash_t h;
-	term_t head, tail;
+	union cell *head, *tail;
 
 	h = HashFromKey(key, PL_warning("$recorded_all/3 : illegal key"));
 
@@ -536,7 +536,7 @@ int pl_recorded_all(cell_t * key, cell_t * list)
 
 	head = tail = HP++;
 	for (; r; r = r->next) {
-		term_t c;
+		union cell *c;
 
 		c = copy_to_global(r);
 		HP[0].val = __cons();
@@ -550,7 +550,7 @@ int pl_recorded_all(cell_t * key, cell_t * list)
 	return (pl_unify(head, list));
 }
 
-int pl_erase_records(term_t key)
+int pl_erase_records(union cell *key)
 {
 	rec_t r;
 	recl_t rl;
@@ -576,7 +576,7 @@ int pl_erase_records(term_t key)
 
 static rec_t findall_recs = 0;
 
-int pl_findall_record(term_t t)
+int pl_findall_record(union cell *t)
 {
 	rec_t b;
 
@@ -597,10 +597,10 @@ static void freeAssoc(rec_t prev, rec_t a)
 	free_record(a);
 }
 
-int pl_findall_collect(term_t bag)
+int pl_findall_collect(union cell *bag)
 {
-	term_t list;			/* list to construct */
-	term_t tmp;
+	union cell *list;			/* list to construct */
+	union cell *tmp;
 	rec_t a, next;
 	rec_t prev = 0;
 
@@ -608,7 +608,7 @@ int pl_findall_collect(term_t bag)
 		fail;
 
 	// PL_put_nil(list);
-	list = (term_t) ATOM(nil);
+	list = (union cell *) ATOM(nil);
 	/* get variable term on global stack */
 	for (next = a->next; next; a = next, next = a->next) {
 		if (a->term->val == __atom(ATOM(_mark)))
@@ -636,7 +636,7 @@ int pl_findall_collect(term_t bag)
 // optimized for ground term
 // ( can be ineficient on deep unground tree
 //   since the ground test will be redone at each node ).
-static int CopyTerm(cell_t * addr, cell_t * c)
+static int CopyTerm(union cell * addr, union cell * c)
 {
 debut:
 	switch (get_tag(c)) {
@@ -699,10 +699,10 @@ debut:
 	succeed;
 }
 
-int pl_copy_term(term_t src, term_t copy)
+int pl_copy_term(union cell *src, union cell *copy)
 {
 	int r;
-	tr_t *tp = TP;
+	union cell **tp = TP;
 
 	base = HP;
 	r = CopyTerm(0, src);

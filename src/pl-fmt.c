@@ -105,7 +105,7 @@ inline static int update_column(int col, int c)
 	}
 }
 
-static bool do_format(const char *fmt, term_t argv, pl_stream S)
+static bool do_format(const char *fmt, union cell *argv, pl_stream S)
 {
 	while (*fmt) {
 		if (*fmt == '~') {
@@ -197,7 +197,7 @@ static bool do_format(const char *fmt, term_t argv, pl_stream S)
 					break;
 				}
 				{
-					int (*f) (pl_stream, term_t);
+					int (*f) (pl_stream, union cell *);
 			case 'k':	/* displayq */
 					f = PL_displayq;
 					goto pl_common;
@@ -245,14 +245,14 @@ pl_common:				NEED_ARG;
 	succeed;
 }
 
-static cell_t end_cell = {.celp = 0 };
+static union cell end_cell = {.celp = 0 };
 
-static term_t empty_tab = &end_cell;
+static union cell *empty_tab = &end_cell;
 
-inline static term_t list_to_tab(term_t list)
+inline static union cell *list_to_tab(union cell *list)
 {
 	int n = 0;
-	term_t l;
+	union cell *l;
 
 	l = deref(list);
 	while (is_cons(l)) {
@@ -268,7 +268,7 @@ inline static term_t list_to_tab(term_t list)
 	return (HP);
 }
 
-int pl_format(term_t fmt, term_t args)
+int pl_format(union cell *fmt, union cell *args)
 {
 	const char *f;
 
@@ -278,7 +278,7 @@ int pl_format(term_t fmt, term_t args)
 	return (do_format(f, list_to_tab(args), PL_OutStream()));
 }
 
-int pl_format3(term_t stream, term_t fmt, term_t args)
+int pl_format3(union cell *stream, union cell *fmt, union cell *args)
 {
 	const char *f;
 	pl_stream S = PL_Output_Stream(stream);
@@ -289,7 +289,7 @@ int pl_format3(term_t stream, term_t fmt, term_t args)
 	return (do_format(f, list_to_tab(args), S));
 }
 
-int pl_sformat3(term_t string, term_t fmt, term_t args)
+int pl_sformat3(union cell *string, union cell *fmt, union cell *args)
 {
 	const char *f, *s;
 	int rval;
@@ -309,7 +309,7 @@ int pl_sformat3(term_t string, term_t fmt, term_t args)
 		return (PL_unify_atom_chars(string, s));
 }
 
-int pl_sformat2(term_t string, term_t fmt)
+int pl_sformat2(union cell *string, union cell *fmt)
 {
 	const char *f, *s;
 	int rval;
@@ -329,7 +329,7 @@ int pl_sformat2(term_t string, term_t fmt)
 		return (PL_unify_atom_chars(string, s));
 }
 
-int pl_int_to_atom2(term_t num, term_t atom)
+int pl_int_to_atom2(union cell *num, union cell *atom)
 {
 	static char buf[100];		// Always large enough to store an 32 bit int
 	long int n;
@@ -348,7 +348,7 @@ int pl_int_to_atom2(term_t num, term_t atom)
 	return (PL_unify_atom_chars(atom, s));
 }
 
-int pl_int_to_atom3(term_t num, term_t base, term_t atom)
+int pl_int_to_atom3(union cell *num, union cell *base, union cell *atom)
 {
 	static char buf[100];		// Always large enough to store an 32 bit int
 	long int n;

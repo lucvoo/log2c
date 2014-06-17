@@ -75,7 +75,7 @@ void pl_exit(int);
 	}
 
 #define uatom_r(A,V)			\
-	{ cell_t *v=deref(V);		\
+	{ union cell *v=deref(V);		\
 					\
 	  if (isatom(A,v)) ;		\
 	  else				\
@@ -198,7 +198,7 @@ inline static void alt_2(void)
 	FP = FP->stk;
 }
 
-inline static void unify_var(cell_t * a1, cell_t * a2)
+inline static void unify_var(union cell * a1, union cell * a2)
 {
 	mkrefp(a1, a2);
 	trail(a1);

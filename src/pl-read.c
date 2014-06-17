@@ -34,7 +34,7 @@ typedef struct var_t var_t, *Var;
 struct var_t {
 	char *name;
 	int times;
-	cell_t *ref;
+	union cell *ref;
 	Var next;
 };
 
@@ -47,7 +47,7 @@ typedef struct {
 		long intg;
 		double flt;
 		char *string;
-		cell_t *ref;
+		union cell *ref;
 		Var var;
 	} tok_val;
 } token_t;
@@ -55,7 +55,7 @@ typedef struct {
 typedef struct node_t node_t;
 struct node_t {				// long start;
 	// long end;
-	cell_t cell;
+	union cell cell;
 	short prec;
 };
 
@@ -214,10 +214,10 @@ static void clear_var_list(void)
 	return;
 }
 
-static term_t bind_vars(int single)
+static union cell *bind_vars(int single)
 {
 	Var v = varl_first;
-	term_t l = &(ATOM(nil)->atom);
+	union cell *l = &(ATOM(nil)->atom);
 
 	if (!v)
 		return (l);
@@ -937,7 +937,7 @@ static int read_term(pl_stream S, int max, const char *stop, node_t * node);
 static inline void mk_unary(struct atom *atom, node_t * arg, node_t * node_out)
 {
 	if (atom == ATOM(minus) && is_number(&arg->cell)) {
-		cell_t *c = &arg->cell;
+		union cell *c = &arg->cell;
 
 		if (is_intg(c))
 			get_intg(c) = -get_intg(c);
@@ -947,7 +947,7 @@ static inline void mk_unary(struct atom *atom, node_t * arg, node_t * node_out)
 		node_out->cell = arg->cell;
 	} else {
 		struct functor *fun = PL_new_functor(atom, 1);
-		cell_t *addr = new_struct(fun, 1);
+		union cell *addr = new_struct(fun, 1);
 
 		addr[1] = arg->cell;
 		node_out->cell.celp = addr;
@@ -957,17 +957,17 @@ static inline void mk_unary(struct atom *atom, node_t * arg, node_t * node_out)
 static inline void mk_binary(struct atom *atom, node_t * left, node_t * right, node_t * node_out)
 {
 	struct functor *fun = PL_new_functor(atom, 2);
-	cell_t *addr = new_struct(fun, 2);
+	union cell *addr = new_struct(fun, 2);
 
 	addr[1] = left->cell;
 	addr[2] = right->cell;
 	node_out->cell.celp = addr;
 }
 
-static cell_t *read_fun(pl_stream S, struct atom *functor, int level, node_t * node_out)
+static union cell *read_fun(pl_stream S, struct atom *functor, int level, node_t * node_out)
 {
 	node_t elem;
-	cell_t *addr;
+	union cell *addr;
 
 	if (!read_term(S, 1200, ",)", &elem))
 		return (0);
@@ -995,7 +995,7 @@ static cell_t *read_fun(pl_stream S, struct atom *functor, int level, node_t * n
 
 static int read_list(pl_stream S, node_t * node_out)
 {
-	cell_t *addr;
+	union cell *addr;
 	node_t elem;
 
 	addr = new_cons();
@@ -1160,7 +1160,7 @@ static int read_term(pl_stream S, int max, const char *stop, node_t * node)
 		if (read_term(S, 1200, "}", &node_s) &&	// '{'
 		    token.type == '}')	// '{'
 		{
-			cell_t *addr = new_struct(FUN(curl, 1), 1);
+			union cell *addr = new_struct(FUN(curl, 1), 1);
 			addr[1] = node_s.cell;
 			node_s.cell.celp = addr;
 			unget_token = 0;
@@ -1217,10 +1217,10 @@ case_simple:	node_s.prec = 0;
 // singles : 0 -> no list; no message
 // singles : 1 -> print warning message
 // singles : & -> unify list of singletons
-static int Read(pl_stream S, term_t term, term_t vars, term_t singles, term_t pos)
+static int Read(pl_stream S, union cell *term, union cell *vars, union cell *singles, union cell *pos)
 {
 	node_t node;
-	cell_t *addr;
+	union cell *addr;
 
 	if (pos)			// FIXME : add position handling
 		PL_warning("read_term/[2,3] : position(P) option not implememted");
@@ -1246,7 +1246,7 @@ static int Read(pl_stream S, term_t term, term_t vars, term_t singles, term_t po
 	}
 
 	if (singles) {
-		if (singles == (term_t) 1)
+		if (singles == (union cell *) 1)
 			warn_singletons();
 		else {
 			if (!pl_unify(singles, bind_vars(1)))
@@ -1267,27 +1267,27 @@ FAIL:
 /* stuff for read_term/[2,3]                                          */
 /**********************************************************************/
 
-static term_t error;
-static term_t varnames;
-static term_t singletons;
+static union cell *error;
+static union cell *varnames;
+static union cell *singletons;
 static pl_opt_spec_t spec[] = { {ATOM(_syntax__errors), OPT_TERM, {.term = &error}},
 {ATOM(_variable__names), OPT_TERM, {.term = &varnames}},
 {ATOM(_singletons), OPT_TERM, {.term = &singletons}},
 {0, 0, {0}}
 };
 
-static int PL_read_term(pl_stream S, term_t term, term_t options)
+static int PL_read_term(pl_stream S, union cell *term, union cell *options)
 {
 	int old_se, rval;
 
 // test for eof
 	if (Seof(S)) {
-		term_t t = new_atom(ATOM(_end__of__file));
+		union cell *t = new_atom(ATOM(_end__of__file));
 		// FIXME : process eof according to eof_action of the stream !.
 		return (pl_unify(term, t));
 	}
 // Init options with default
-	error = (term_t) ATOM(_fail);
+	error = (union cell *) ATOM(_fail);
 	varnames = 0;
 	singletons = 0;
 	// position=0;
@@ -1297,9 +1297,9 @@ static int PL_read_term(pl_stream S, term_t term, term_t options)
 	if (!PL_scan_options(options, spec))
 		PL_warning("read_term/2 : illegal option list");
 // process options
-	if (error == (term_t) ATOM(_fail))
+	if (error == (union cell *) ATOM(_fail))
 		old_se = syntaxerrors(1);
-	else if (error == (term_t) ATOM(_quiet))
+	else if (error == (union cell *) ATOM(_quiet))
 		old_se = syntaxerrors(0);
 	else
 		old_se = give_syntaxerrors;
@@ -1314,7 +1314,7 @@ static int PL_read_term(pl_stream S, term_t term, term_t options)
 /* Prolog Connection                                                  */
 /**********************************************************************/
 
-int pl_read_variables(term_t t, term_t v)
+int pl_read_variables(union cell *t, union cell *v)
 {
 	int rc;
 	pl_stream S = PL_InStream();
@@ -1323,7 +1323,7 @@ int pl_read_variables(term_t t, term_t v)
 	return (rc);
 }
 
-int pl_read_variables3(term_t s, term_t t, term_t v)
+int pl_read_variables3(union cell *s, union cell *t, union cell *v)
 {
 	int rc;
 	pl_stream S = PL_Input_Stream(s);
@@ -1333,46 +1333,46 @@ int pl_read_variables3(term_t s, term_t t, term_t v)
 	return (rc);
 }
 
-int pl_read(term_t t)
+int pl_read(union cell *t)
 {
 	pl_stream S = PL_InStream();
 
 	return (Read(S, t, 0, 0, 0));
 }
 
-int pl_read2(term_t s, term_t t)
+int pl_read2(union cell *s, union cell *t)
 {
 	pl_stream S = PL_Input_Stream(s);
 
 	return (Read(S, t, 0, 0, 0));
 }
 
-int pl_read_clause(term_t t)
+int pl_read_clause(union cell *t)
 {
 	pl_stream S = PL_InStream();
 
 	// FIXME : singletons warning should depend of style_check(singletons)
 	//         set to default
-	return (Read(S, t, 0, (term_t) 1, 0));
+	return (Read(S, t, 0, (union cell *) 1, 0));
 }
 
-int pl_read_clause2(term_t s, term_t t)
+int pl_read_clause2(union cell *s, union cell *t)
 {
 	pl_stream S = PL_Input_Stream(s);
 
 	// FIXME : singletons warning should depend of style_check(singletons)
 	//         set to default
-	return (Read(S, t, 0, (term_t) 1, 0));
+	return (Read(S, t, 0, (union cell *) 1, 0));
 }
 
-int pl_read_term(term_t term, term_t options)
+int pl_read_term(union cell *term, union cell *options)
 {
 	pl_stream S = PL_InStream();
 
 	return (PL_read_term(S, term, options));
 }
 
-int pl_read_term3(term_t stream, term_t term, term_t options)
+int pl_read_term3(union cell *stream, union cell *term, union cell *options)
 {
 	int rval;
 	pl_stream S = PL_Input_Stream(stream);
@@ -1385,7 +1385,7 @@ int pl_read_term3(term_t stream, term_t term, term_t options)
 
 /*******************************************************/
 
-int pl_number_atom(term_t num, term_t a)
+int pl_number_atom(union cell *num, union cell *a)
 {
 	const char *s;
 	pl_stream S;
