@@ -69,7 +69,7 @@ int pl_between(cell_t *low, cell_t *high, cell_t *n, control_t ctrl)
 		     *ctxt=i;
 		     retry;
     default:         succeed;
-  }              
+  }
 }
 
 
@@ -132,7 +132,7 @@ int term_variables(cell_t *c, int n)
 
                     for (i=n;i>0;i--,l+=2)
                        if (c==(l+1)->celp) goto end;
-                
+
                     (l)->val=__cons();
                     (l+1)->celp=c;
                     return(n+1);
@@ -141,10 +141,10 @@ int term_variables(cell_t *c, int n)
     case flt_tag:
     case int_tag: break;
     case fun_tag: { int i=get_arity(c);
-                
+
                     for (;i>1;i--)
                       n=term_variables(++c,n);
-                
+
                     c++;
                     goto debut;
                   }
@@ -152,7 +152,7 @@ int term_variables(cell_t *c, int n)
   end:
   return(n);
 }
- 
+
 int pl_term_variables(cell_t *t, cell_t *fv)
 { int n;
   cell_t *l=HP;
@@ -181,7 +181,7 @@ int PL_unify_list_chars(term_t l, const char *s)
   }
   return(PL_unify_nil(l));
 
-write: 
+write:
   { term_t t=l;
     trail(t);
     for (;*s;s++)
@@ -210,7 +210,7 @@ int PL_unify_list_codes(term_t l, const char *s)
   }
   return(PL_unify_nil(l));
 
-write: 
+write:
   { term_t t=l;
     trail(t);
     for (;*s;s++)
@@ -238,12 +238,12 @@ write:
 int pl_atom_chars(term_t a, term_t list)
 { const char *s;
 
-  if (PL_get_atom_chars(a,&s)) 
+  if (PL_get_atom_chars(a,&s))
     return(PL_unify_list_chars(list,s));
   else
   if (PL_get_list_chars(list,&s,BUF_DISCARDABLE))
   { atom_t tmp=PL_new_atom(s);
-    return(PL_unify_atom(a,tmp));  
+    return(PL_unify_atom(a,tmp));
   }
   else
     fail;
@@ -252,12 +252,12 @@ int pl_atom_chars(term_t a, term_t list)
 int pl_atom_codes(term_t a, term_t list)
 { const char *s;
 
-  if (PL_get_atom_chars(a,&s)) 
+  if (PL_get_atom_chars(a,&s))
     return(PL_unify_list_codes(list,s));
   else
   if (PL_get_list_codes(list,&s,BUF_DISCARDABLE))
   { atom_t tmp=PL_new_atom(s);
-    return(PL_unify_atom(a,tmp));  
+    return(PL_unify_atom(a,tmp));
   }
   else
     fail;
@@ -273,11 +273,11 @@ int pl_atom_char(term_t c, term_t ascii)
        return(PL_unify_intg(ascii,s[0]));
      else
       PL_warning("atom_char/2: not a single char atom");
-  }    
+  }
   else
   if (PL_get_integer(ascii,&n) && 0<n && n<256)
   { if (n>0 && n<256)
-      return(PL_unify_atom(c,PL_char_to_atom(n)));  
+      return(PL_unify_atom(c,PL_char_to_atom(n)));
     else
       PL_warning("atom_char/2: domain error");
   }
@@ -297,7 +297,7 @@ int pl_atom_length(term_t atom, term_t len)
 int pl_atom_prefix(term_t atom, term_t prefix)
 { const char *a, *p;
 
-  if (PL_get_chars(atom,   &a, CVT_ATOMIC|BUF_RING) & 
+  if (PL_get_chars(atom,   &a, CVT_ATOMIC|BUF_RING) &
       PL_get_chars(prefix, &p, CVT_ATOMIC|BUF_RING) )
     return(isPrefix(p, a));
 
@@ -309,7 +309,7 @@ int pl_atom_prefix(term_t atom, term_t prefix)
 int pl_functor(term_t t, term_t f, term_t a)
 { int arity;
   atom_t name;
-  
+
   if (PL_get_name_arity(t, &name, &arity))
     return(PL_unify_atom(f, name) &&
            PL_unify_integer(a, arity) );
@@ -349,7 +349,7 @@ int pl_univ(term_t t, term_t l)
     { debut:
       switch(get_tag(l))
       { case ref_tag: l=l->celp; goto debut;
-        case var_tag: l->celp=HP; 
+        case var_tag: l->celp=HP;
                       trail(l);
                       { n=n-(arity+1);
                         t=t+(arity+1);
@@ -402,7 +402,7 @@ int pl_univ(term_t t, term_t l)
   else
     fail;
 }
-   
+
 inline static int cmp_flt(double d1, double d2)
 { return((d1<d2) ? -1 : ((d1==d2) ? 0 : 1)); }
 
@@ -626,7 +626,7 @@ int pl_concat_atom3(term_t list, term_t sep, term_t atom)
       l=deref(l+2);
     }
   }
-  
+
   		// add remaining elements
   while(is_cons(l) && PL_get_chars(l+1, &s, CVT_ATOMIC))
   { if (sep)	// with separator if needed
@@ -674,7 +674,7 @@ int pl_arg(term_t n, term_t term, term_t arg)
 
   if ( !PL_get_name_arity(term, &name, &arity) )
     PL_warning("arg/3: second argument in not a term");
-  
+
   if ( PL_get_integer(n, &idx) &&  idx>0 && idx<=arity )
 #else
   if ( PL_get_integer(n, &idx) &&  idx>0 )
@@ -691,7 +691,7 @@ int pl_setarg(term_t n, term_t term, term_t value)
   if ( !PL_get_integer(n, &argn) ||
        !PL_get_name_arity(term, &name, &arity) )
     PL_warning("setarg/3: instantiation fault");
-  
+
   if ( argn < 1 || argn > arity )
     fail;
 
@@ -740,9 +740,9 @@ int PL_HashTerm(term_t term, hash_t *hval)
       case fun_tag: { hash_t h, val;
                       fun_t f=get_fun(term);
                       int arity=f->arity;
-  
+
                       val=f->functor->hash + arity;
-  
+
                       for (; arity>0 ; arity--)
                       { if (!PL_HashTerm(++term,&h))
                           fail;

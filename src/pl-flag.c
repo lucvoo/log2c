@@ -54,7 +54,7 @@ flag_t lookup_flag(cell_t *key)
   f->val.val=__intg(0);		// init the value with 0
   return(f);
 }
-          
+
 
 int pl_flag(cell_t *key, cell_t *old, cell_t *new)
 { flag_t f;
@@ -161,7 +161,7 @@ flag_2_t lookup_flag_2(term_t key1, term_t key2, int new)
   else
     return(0);			// inexistant flag
 }
-          
+
 static
 int PL_flag_2(term_t key1, term_t key2, term_t val)
 { flag_2_t f;
@@ -211,7 +211,7 @@ int pl_flag_2(term_t key1, term_t key2, term_t val, control_t ctrl)
         }
       else
         reset(tr);
-       
+
 
   fail;
 }

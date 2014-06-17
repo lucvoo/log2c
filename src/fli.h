@@ -17,7 +17,7 @@
 #define succeed	return(SUCCEED)
 #define fail	return(FAIL)
 #define retry	return(RETRY)
-#define try(G)	if (!(G)) fail; else 
+#define try(G)	if (!(G)) fail; else
 
 
 #define Tag(v)	(v & TAG_MASK)
@@ -97,8 +97,8 @@ ctrl_t PL_foreign_control(control_t c)
 #define AllocCtxt(T)	AllocLocal(sizeof(T))
 
 
-#define PL_warning(fm,args...)	do { fflush(0); fprintf(stderr,"[Warning: " fm "]\n" , ## args); return(0); } while(0) 
-#define PL_warn(fm,args...)	do { fflush(0); fprintf(stderr,"[Warning: " fm "]\n" , ## args); } while(0) 
+#define PL_warning(fm,args...)	do { fflush(0); fprintf(stderr,"[Warning: " fm "]\n" , ## args); return(0); } while(0)
+#define PL_warn(fm,args...)	do { fflush(0); fprintf(stderr,"[Warning: " fm "]\n" , ## args); } while(0)
 
 #define PL_syntax_error(fm) \
 	do { fflush(0); \
@@ -108,7 +108,7 @@ ctrl_t PL_foreign_control(control_t c)
 	     else \
 	       fprintf(stderr,"[Syntax error : " fm "]\n"); \
 	     return(0); \
-	} while(0) 
+	} while(0)
 
 /**********************************************************************/
 

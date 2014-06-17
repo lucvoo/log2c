@@ -31,7 +31,7 @@ off_t Sseek_file(Shndl_t hndl, long off, int whence)
 }
 
 static
-Sfun_t file_functions = 
+Sfun_t file_functions =
 { Sread_file,
   Swrite_file,
   Sclose_file,
@@ -94,22 +94,22 @@ void pl_init_stream(void)
 
   Stdin__.hndl.fd=STDIN_FILENO;
   Stdin__.funs=&file_functions;
-  Stdin__.mode=SM_READ; 
-  Stdin__.type=ST_FILE; 
-  Stdin__.flags=SF_EOF_RESET; 
+  Stdin__.mode=SM_READ;
+  Stdin__.type=ST_FILE;
+  Stdin__.flags=SF_EOF_RESET;
   S_setbuf(&Stdin__,0,0,0);
 
   Stdout__.hndl.fd=STDOUT_FILENO;
   Stdout__.funs=&file_functions;
-  Stdout__.mode=SM_WRITE; 
-  Stdout__.type=ST_FILE; 
-  Stdout__.flags=0; 
+  Stdout__.mode=SM_WRITE;
+  Stdout__.type=ST_FILE;
+  Stdout__.flags=0;
   S_setbuf(&Stdout__,0,0,0);
 
   Stderr__.hndl.fd=STDERR_FILENO;
   Stderr__.funs=&file_functions;
-  Stderr__.mode=SM_WRITE; 
-  Stderr__.type=ST_FILE; 
-  Stderr__.flags=SF_STATIC; 
+  Stderr__.mode=SM_WRITE;
+  Stderr__.type=ST_FILE;
+  Stderr__.flags=SF_STATIC;
   S_setbuf(&Stderr__,buf_err,sizeof(buf_err),SF_NBUF);
 }

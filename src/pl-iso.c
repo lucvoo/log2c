@@ -65,7 +65,7 @@ int pl_atom_concat(term_t a1, term_t a2, term_t a3, control_t ctrl)
     tmp = alloca(l3 +1);
     while (l <= l3)
     { atom_t s1, s2;
-  
+
       strncpy(tmp, s3, l); tmp[l]='\0';
       s1=PL_new_atom(tmp);
       s2=PL_new_atom(s3+l);
@@ -154,7 +154,7 @@ int pl_sub_atom(term_t A, term_t L1, term_t L2, term_t L3, term_t A2,
 	{ while (l2 <= l -l1)
 	  { atom_t s2;
 	    int l3 = l -l1 -l2;
-	
+
 	    strncpy(tmp, a+l1, l2); tmp[l2]='\0';
 	    s2=PL_new_atom(tmp);
 	    if ( PL_unify_atom(A2, s2) &&
@@ -181,7 +181,7 @@ int pl_sub_atom(term_t A, term_t L1, term_t L2, term_t L3, term_t A2,
 	while (l2 <= l -l1)
 	{ atom_t s2;
 	  int l3 = l -l1 -l2;
-	
+
 	  strncpy(tmp, a+l1, l2); tmp[l2]='\0';
 	  s2=PL_new_atom(tmp);
 	  if ( PL_unify_atom(A2, s2) &&
@@ -204,7 +204,7 @@ int pl_sub_atom(term_t A, term_t L1, term_t L2, term_t L3, term_t A2,
 	while (l1 <= l -l2)
 	{ atom_t s2;
 	  int l3 = l -l1 -l2;
-	
+
 	  strncpy(tmp, a+l1, l2); tmp[l2]='\0';
 	  s2=PL_new_atom(tmp);
 	  if ( PL_unify_atom(A2, s2) &&
@@ -227,7 +227,7 @@ int pl_sub_atom(term_t A, term_t L1, term_t L2, term_t L3, term_t A2,
 	while (l1 <= l -l3)
 	{ atom_t s2;
 	  int l2 = l -l1 -l3;
-	
+
 	  strncpy(tmp, a+l1, l2); tmp[l2]='\0';
 	  s2=PL_new_atom(tmp);
 	  if ( PL_unify_atom(A2, s2) &&
@@ -253,7 +253,7 @@ int pl_sub_atom(term_t A, term_t L1, term_t L2, term_t L3, term_t A2,
 	{ int l2 = strlen(a2);
           l1=tmp-a;
           l3 = l - l1 - l2;
-	
+
 	  if ( // PL_unify_atom(A2, s2) &&
 	       PL_unify_intg(L1, l1) &&
 	       PL_unify_intg(L2, l2) &&

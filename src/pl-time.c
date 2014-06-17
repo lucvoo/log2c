@@ -130,7 +130,7 @@ int _pl_time(term_t t, struct tm *tm)
   { // FIXME error msg
     fail;
   }
-  
+
   dt = HP; HP+=7;
   dt[0].val = __fun(FUN(_dt, 6));
   dt[1].val = __intg(tm->tm_year + 1900);

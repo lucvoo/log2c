@@ -161,11 +161,11 @@ int PL_eval_(cell_t *c, int *n)
                     else
                       PL_warn("Unknow arithmetic operator: %s/%ld",
 			FunName(f), FunArity(f));
-                  }                  
+                  }
   }
 
   fail;		// Suppress compiler warning
-}  
+}
 
 
 int PL_can_unify(cell_t *a, cell_t *b)

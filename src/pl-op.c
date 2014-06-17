@@ -14,7 +14,7 @@ typedef struct { short 	type;
                  short	prec;
                } op_type;
 
-typedef struct operator__t *operator_t;  
+typedef struct operator__t *operator_t;
 struct operator__t { atom_t	operator;
 		     op_type    type[3];
 		     operator_t	next;
@@ -113,7 +113,7 @@ int PL_is_op(int fix, atom_t operator, int *type, int *prec)
     return(0);
 
   *type=op_t->type;
-  *prec=op_t->prec; 
+  *prec=op_t->prec;
 
   return(1);
 }
@@ -142,7 +142,7 @@ int pl_op(term_t precedence, term_t type, term_t operator)
 int pl_current_op(term_t precedence, term_t type, term_t operator, control_t ctrl)
 { operator_t op;
   int        prec, t, fix;
-  atom_t     a_t, a_op; 
+  atom_t     a_t, a_op;
   struct { hash_t hash; operator_t op; int fix; } *ctxt;
   hash_t h;
   op_type   *op_t;
@@ -161,7 +161,7 @@ int pl_current_op(term_t precedence, term_t type, term_t operator, control_t ctr
     default:
 	fail;
   }
-  
+
   if (!(a_op = PL_get_atom(operator)))
   { if (PL_is_var(operator))  a_op=0;
     else fail;
@@ -193,7 +193,7 @@ int pl_current_op(term_t precedence, term_t type, term_t operator, control_t ctr
                (t && t!=op_t->type)
              ) continue;
 
-          if (!PL_unify_atom(operator,op->operator) || 
+          if (!PL_unify_atom(operator,op->operator) ||
               !PL_unify_atom(type,OperatorType2Atom(op_t->type)) ||
               !PL_unify_intg(precedence, op_t->prec)
              ) fail;
@@ -202,8 +202,8 @@ int pl_current_op(term_t precedence, term_t type, term_t operator, control_t ctr
           ctxt->op=op->next;
           ctxt->fix=fix;
           retry;
-        } 
-      } 
+        }
+      }
     }
  }
 

@@ -115,7 +115,7 @@ cell_t *new_intg(long N)
 
 cell_t *new_flt(double r);
 
-INLINE_DECL 
+INLINE_DECL
 cell_t *new_var(void)
 { HP->val = __var();
   return(HP++);
@@ -125,7 +125,7 @@ INLINE_DECL
 cell_t *new_void(void)
 { return(new_var()); }		// FIXME : put void var in local stack
 
-INLINE_DECL 
+INLINE_DECL
 cell_t *new_struct(fun_t F, int N)
 { register typeof(HP) old_HP;
 
@@ -140,28 +140,28 @@ INLINE_DECL
 cell_t *new_cons(void)
 { return(new_struct(FUN(dot,2),2)); }
 
-INLINE_DECL 
+INLINE_DECL
 int isatom(atom_t A, cell_t *addr)
 { return( addr == &(A->atom) ); // atoms are unique !
 }
 
-INLINE_DECL 
+INLINE_DECL
 int isintg(long N, cell_t *addr)
 { return( addr->val == __intg(N)); }
 
-INLINE_DECL 
+INLINE_DECL
 int isflt(double r, cell_t *addr)
 { return( get_flt(addr) == r); }
 
 
-INLINE_DECL 
+INLINE_DECL
 int isfun(fun_t F, cell_t *addr)
 { return( addr->val == __fun(F) ); }
 
 
 cell_t *deref_dbg(cell_t *addr);
 
-INLINE_DECL 
+INLINE_DECL
 cell_t *deref(cell_t *addr)
 #if 1
 { cell_t *p=addr;
@@ -179,14 +179,14 @@ cell_t *deref(cell_t *addr)
 #define Deref(addr)	while (get_tag(addr)==ref_tag) addr=addr->celp
 
 
-INLINE_DECL 
+INLINE_DECL
 void mkref(cell_t *v, cell_t c)
 { *v=c;
 
   return;
 }
 
-INLINE_DECL 
+INLINE_DECL
 void mkrefp(cell_t *v, cell_t *c)
 { v->celp=c;
 
@@ -194,7 +194,7 @@ void mkrefp(cell_t *v, cell_t *c)
 }
 
 
-INLINE_DECL 
+INLINE_DECL
 void trail(cell_t *addr)
 { if (addr < (BTP+3)->celp)
      *(TP++)=addr;

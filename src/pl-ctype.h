@@ -10,7 +10,7 @@
 
 #define ct_bits(n)	(1<<n)
 
-typedef enum 
+typedef enum
 { ct_lower = ct_bits(0),
   ct_upper = ct_bits(1),
   ct_digit = ct_bits(2),
@@ -39,7 +39,7 @@ extern pl_ctype_t PL__char_type[];	/* array of character types */
 #define isSymbol(c)	(PL__char_type[(c) + 1] & ct_symbol)
 #define isPunct(c)	(PL__char_type[(c) + 1] & ct_punc)
 #define isSolo(c)	(PL__char_type[(c) + 1] & ct_solo)
-#define isLetter(c)	(PL__char_type[(c) + 1] & (ct_upper | ct_lower))	// FIXME 
+#define isLetter(c)	(PL__char_type[(c) + 1] & (ct_upper | ct_lower))	// FIXME
 #define isAlpha(c)	(PL__char_type[(c) + 1] & (ct_upper | ct_lower))	// FIXME
 #define isAlpha_(c)	(PL__char_type[(c) + 1] & (ct_upper | ct_lower | ct_undscr))	// FIXME
 #define isAlphaNum(c)	(PL__char_type[(c) + 1] & (ct_upper | ct_lower | ct_digit))

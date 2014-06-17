@@ -16,7 +16,7 @@ int pl_proper_list(term_t l)
 
   while(is_cons(l))
     l=deref(l+2);
-   
+
   return(is_nil(l));
 }
 
@@ -25,7 +25,7 @@ int pl_partial_list(term_t l)
 
   while(is_cons(l))
     l=deref(l+2);
-   
+
   return(is_var(l));
 }
 
@@ -50,7 +50,7 @@ int pl_length(term_t list, term_t l)
 
     while (is_cons(list) && n>0)
     { n--; list=deref(list+2); }
-     
+
     if (n==0 && is_nil(list)) succeed;
     else
     if (!is_var(list) || n<0) fail;
@@ -90,9 +90,9 @@ inline static
 int list_to_array(term_t list)
 { term_t l;
   int n=0;
-  
+
   l=deref(list);
-  while(is_cons(l))  
+  while(is_cons(l))
   { (SHP++)->celp=l+1;
     l=deref(l+2);
     n++;
@@ -108,8 +108,8 @@ inline static
 term_t array_to_list(term_t *array, int n, int rem_dup)
 { term_t l=HP;
   term_t last;
-  
-  while(n--)  
+
+  while(n--)
   { HP[0].val=__cons();
     HP[1].celp=last=*array++;
     HP+=2;
@@ -139,7 +139,7 @@ int PL_sort(term_t list, term_t sorted, int rem_dup)
 
   if (n!=0)
     qsort(array,n,sizeof(term_t),pl_std_cmp);
-   
+
   l=array_to_list(array,n,rem_dup);
   return(pl_unify(l,sorted));
 }

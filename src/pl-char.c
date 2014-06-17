@@ -77,6 +77,6 @@ int pl_char_code(term_t Ch, term_t Co)
       fail;
     }
   }
-  
+
   fail;
 }

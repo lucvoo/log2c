@@ -123,21 +123,21 @@ PL_put_var(term_t t)
 { mkrefp(t, new_var());
 }
 
-inline static 
+inline static
 void PL_put_integer(term_t v, long N)
-{ v->val=__intg(N); 
+{ v->val=__intg(N);
   return;
 }
 
-inline static 
+inline static
 void PL_put_float(term_t v, double N)
-{ v->celp=new_flt(N); 
+{ v->celp=new_flt(N);
   return;
 }
 
 inline static
 void PL_put_atom(term_t v, atom_t A)
-{ v->celp=&(A->atom); 
+{ v->celp=&(A->atom);
   return;
 }
 
@@ -382,7 +382,7 @@ int PL_unify_fun(register cell_t *c, fun_t F)
     trail(c);
     succeed;
   }
-  else 
+  else
     return(c->val==__fun(F));
 }
 

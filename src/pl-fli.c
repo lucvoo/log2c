@@ -17,22 +17,22 @@
 cell_t *
 PL_new_term_refs(int n)
 { cell_t *r=HP;
-  
+
   for (;n>0;n--)
     HP[n].val=__var();
 
   HP+=n;
-  
+
   return r;
 }
 
 cell_t *
 PL_new_term_ref(void)
 { cell_t *r=HP;
-  
+
   HP->val=__var();
   HP++;
-  
+
   return r;
 }
 
@@ -64,7 +64,7 @@ PL_cons_functor(term_t h, functor_t fd, ...)
 void
 PL_cons_list(term_t l, term_t head, term_t tail)
 { cell_t *a;
-  
+
   l->celp=a=HP;
   HP+=3;
 
@@ -86,7 +86,7 @@ char *malloc_string(char *s)
   n=strlen(s)+1;
   m=malloc(n);		// FIXME : check if fail
   memcpy(m,s,n);
- 
+
   return(m);
 }
 
@@ -181,7 +181,7 @@ PL_get_chars(term_t term, const char **s, unsigned flags)
   else
 #endif
     fail;
-    
+
   if ( flags & BUF_MALLOC )
   { *s = malloc_string(r);
   }
@@ -271,7 +271,7 @@ PL_get_list(term_t l, term_t h, term_t t)
   fail;
 }
 
-int 
+int
 PL_get_list_(term_t l, term_t *h, term_t *t)
 { Deref(l);
 

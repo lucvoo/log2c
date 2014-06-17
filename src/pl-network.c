@@ -56,14 +56,14 @@ int PL_get_ip(term_t Ip, struct in_addr *addr)
     for (i=0;i<4;i++)
     { int n;
       if (!PL_get_intg(Ip+1+i, &n))
-        fail; 
+        fail;
       ip = (ip << 8) | n;
     }
 
     addr->s_addr = htonl(ip);
     succeed;
   }
-  
+
   fail;
 }
 
@@ -81,12 +81,12 @@ int pl_host_to_addr(term_t Host, term_t Addr)
       fprintf(stderr, "gethostbyname() -> %d\n", h_errno);
       fail;
     }
-    addr=(struct in_addr*) host->h_addr;    
+    addr=(struct in_addr*) host->h_addr;
     return(PL_unify_ip(Addr, addr));
   }
 
   if (PL_get_ip(Addr, &addr))
-  { 
+  {
     host = gethostbyaddr((char *)&addr, sizeof(addr), AF_INET);
     if (! host)
     { // FIXME : errmsg
@@ -96,7 +96,7 @@ int pl_host_to_addr(term_t Host, term_t Addr)
 
     return(PL_unify_atom_chars(Host, host->h_name));
   }
-  
+
   fail;
 }
 

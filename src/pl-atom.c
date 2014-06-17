@@ -15,7 +15,7 @@ inline static
 atom_t add_atom(const char *s, hash_t H, hash_t h)
 { atom_t a;
 
-  a=NEW(*a); 
+  a=NEW(*a);
   a->atom.val=MK_CELL(ato_tag, a);
   a->name=s;
   a->hash=H;
@@ -53,7 +53,7 @@ int pl_current_atom(cell_t *c, control_t ctrl)
   switch(GetCtrl(ctrl))
   { case FIRST_CALL:
 	if (PL_is_atom(c))	succeed;
-	if (!PL_is_var(c)) fail;	
+	if (!PL_is_var(c)) fail;
 
 	ctxt=AllocCtxt(*ctxt);
 	h=0;

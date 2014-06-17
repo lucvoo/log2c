@@ -11,7 +11,7 @@
 #include "pl.h"
 #include "fli.h"
 #include <limits.h>
- 
+
 extern void	PL_write_binding(void);
 extern int	PL_next_goal(void);
 extern void	PL_print_time(void);

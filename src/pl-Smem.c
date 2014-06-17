@@ -34,7 +34,7 @@ int Sclose_wmem(pl_stream S)
 }
 
 static
-Sfun_t wmem_functions = 
+Sfun_t wmem_functions =
 { 0,
   Swrite_wmem,
   Sclose_wmem,
@@ -77,7 +77,7 @@ pl_stream Sopen_wmem(const char *buf, Smode_t mode, int flags )
 
   if (!S_setbuf(S,0,248,SF_FBUF))
     return(0);
- 
+
   S->hndl.ubs=ubs;
   S->flags=flags;
 
@@ -100,7 +100,7 @@ int Sclose_rmem(pl_stream S)
 }
 
 static
-Sfun_t rmem_functions = 
+Sfun_t rmem_functions =
 { Sread_rmem,
   0,
   Sclose_rmem,
@@ -136,12 +136,12 @@ pl_stream Sopen_rmem(const char *buf, Smode_t mode, int flags )
 
     while(*ptr++)
       size++;	// This is strlen()
-  
+
     if (!S_setbuf(S,(char *)buf,size,SF_FBUF))
       return(0);
     flags |= SF_STATIC;
-  } 
- 
+  }
+
   S->hndl.fd=-1;
   S->flags=flags;
 

@@ -28,14 +28,14 @@ typedef void (*sighandler_t)(int);
 
 
 #define	STACK_DEF(NBR,BASE,INCR,MAX,NAME) NBR,
-typedef enum { 
+typedef enum {
 #include "pl-config.h"
              } stack_id;
 #undef  STACK_DEF
 
 #define	STACK_DEF(NBR,BASE,INCR,MAX,NAME) { (void *) BASE, 0, 0, INCR, MAX, NAME },
 static
-Stack stacks[] = { 
+Stack stacks[] = {
 #include "pl-config.h"
                  };
 #undef  STACK_DEF
@@ -73,7 +73,7 @@ void expand_stack(Stack *s)
       exit(3);
       return;
     }
- 
+
   s->size+=s->incr;
   s->top +=s->incr;
 
@@ -140,7 +140,7 @@ void segv_handler(int sig)
 }
 
 // #####################################################################
-  
+
 #include "pl-init.h"
 
 void PL_init_stacks(void)

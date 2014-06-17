@@ -62,7 +62,7 @@ int pl_getenv(term_t var, term_t val)
   }
   else
     PL_warning("getenv/2: instantiation fault");
-}  
+}
 
 int pl_setenv(term_t var, term_t val)
 { const char *n, *v;

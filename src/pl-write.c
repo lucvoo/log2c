@@ -23,7 +23,7 @@
 
 #define	OFlags(n)	(1<<(n))
 
-typedef enum 
+typedef enum
 { OPT_QUOT	= OFlags(0),
   OPT_ESC	= OFlags(1),
   OPT_OPS	= OFlags(2),
@@ -88,7 +88,7 @@ int NeedQuote(atom_t a)
     return(1);
   if (a == ATOM(comma) || a == ATOM(nil) || a == ATOM(curl))
     return(0);
-  
+
   if (isSymbol(*s))
   { for( ; *s && isSymbol(*s); )
       s++;
@@ -97,7 +97,7 @@ int NeedQuote(atom_t a)
 
   if (isSolo(s[0]) && s[1] == '\0')
     return(0);
-  else 
+  else
     return(1);
 }
 
@@ -119,7 +119,7 @@ int Puts(pl_stream S, const char *str)
 
 inline static
 int Putc(pl_stream S, int c)
-{ 
+{
   lastc = c;
 
   return Sputc(S, c);
@@ -128,7 +128,7 @@ int Putc(pl_stream S, int c)
 
 inline static
 bool PutOpenToken(pl_stream S, int c)
-{ 
+{
   if ( lastc != -1 &&
        ( (isAlphaNum_(lastc) && isAlphaNum_(c)) ||
          (isSymbol(lastc) && isSymbol(c)) ||
@@ -156,7 +156,7 @@ bool PutToken(pl_stream S, const char *s)
 }
 
 //#####################################################################
-  
+
 static
 int WriteQuoted(pl_stream S, const char *s, int quote, const w_opt *opt)
 { char c;
@@ -184,7 +184,7 @@ int WriteQuoted(pl_stream S, const char *s, int quote, const w_opt *opt)
             case '\'': esc[1]='\''; break;
             case '\\': esc[1]='\\'; break;
             default  : sprintf(esc+1, "%03o", c); break;
-          } 
+          }
         }
         Puts(S, esc);
       }
@@ -233,7 +233,7 @@ void WritePrimitive(pl_stream S, term_t t, const w_opt *opt)
     case flt_tag:
 	{ double d = get_flt(t);
 	  const char *s;
- 
+
 	  if (isinf(d))
 	  { s = Options(OPT_QUOT) ? "'$Infinity'" : "Infinity";
 	  }
@@ -325,7 +325,7 @@ bool WriteTerm(pl_stream S, term_t t,
 	  Puts(S, ", ");
 	  Get_arg(2, arg, arg);
 	}
-	WriteTerm(S, arg, 999, depth+1, opt);      
+	WriteTerm(S, arg, 999, depth+1, opt);
 	Putc(S, '}');
 
 	succeed;
@@ -370,7 +370,7 @@ bool WriteTerm(pl_stream S, term_t t,
       { if ( PL_is_op(OP_PREFIX, functor, &op_type, &op_pri) )
         { term_t arg = PL_new_term_ref();
           int pri;
-  
+
   	  Get_arg(1, t, arg);
   	  if ( op_pri > prec )
   	    PutOpenBrace(S);
@@ -382,15 +382,15 @@ bool WriteTerm(pl_stream S, term_t t,
   	  WriteTerm(S, arg, pri, depth+1, opt);
   	  if ( op_pri > prec )
   	    Putc(S, ')');
-  
+
   	  succeed;
         }
-  
+
   					/* <term> op */
         if ( PL_is_op(OP_POSTFIX, functor, &op_type, &op_pri) )
         { term_t arg = PL_new_term_ref();
           int pri;
-  
+
   	  Get_arg(1, t, arg);
   	  if ( op_pri > prec )
   	    PutOpenBrace(S);
@@ -402,7 +402,7 @@ bool WriteTerm(pl_stream S, term_t t,
   	  WriteAtom(S, functor, opt);
   	  if (op_pri > prec)
   	    Putc(S, ')');
-  
+
   	  succeed;
         }
       }
@@ -416,7 +416,7 @@ bool WriteTerm(pl_stream S, term_t t,
         { WriteTerm(S, t+1, 999, depth+1, opt);
 	  t=deref(t+2);
 
-	  if (is_nil(t)) 
+	  if (is_nil(t))
 	    break;
 	  if (!is_cons(t))
 	  { Putc(S, '|');
@@ -441,7 +441,7 @@ bool WriteTerm(pl_stream S, term_t t,
           if (op_type==OP_XFX || op_type == OP_XFY)
             pri = op_pri-1;
           else
-	    pri = op_pri; 
+	    pri = op_pri;
 	  WriteTerm(S, a, pri, depth+1, opt);
 	  WriteAtom(S, functor, opt);
 	  if ( functor == ATOM(comma) )
@@ -450,7 +450,7 @@ bool WriteTerm(pl_stream S, term_t t,
           if (op_type==OP_XFX || op_type == OP_YFX)
             pri = op_pri-1;
           else
-	    pri = op_pri; 
+	    pri = op_pri;
 	  WriteTerm(S, a, pri, depth+1, opt);
 	  if ( op_pri > prec )
 	    Putc(S, ')');
@@ -478,7 +478,7 @@ inline static
 int writeTerm(pl_stream S, term_t t,
 		int numvars, int quote, int display)
 { w_opt opt;
-  
+
   opt.bind	= 0;
   opt.max_depth	= LONG_MAX;
   if (!display)
@@ -648,7 +648,7 @@ int get_options(term_t Options, w_opt *options, const char *pred)
     { ATOM(_max__depth), OPT_INTG, { .intg = &opt_max_depth} },
     { 0, 0, { 0 } }
   };
-  
+
 // Set default value;
   opt_quoted = 0;
   opt_char_esc = PL__status.char_esc;
@@ -692,8 +692,8 @@ int PL_write_term(pl_stream S,term_t term, term_t options,
 { w_opt opt;
 
   if (!get_options(options, &opt, pred))
-    fail; 
-  
+    fail;
+
   lastc = -1;
   return WriteTerm(S, term, 0, 0, &opt);
 }

@@ -172,7 +172,7 @@ void strip_PL_comment(pl_stream S)
     }
   }
 }
-   
+
 /**********************************************************************/
 /* Variables stuff                                                    */
 /**********************************************************************/
@@ -208,11 +208,11 @@ term_t bind_vars(int single)
 
   for (;;v=v->next)
   { if (v->name && !(single && (v->times!=1 || v->name[0]=='_')) )
-    { HP[0].val=__fun(FUN(unify,2)); 
-      HP[1].val=__atom(PL_new_atom(v->name)); 
-      HP[2].celp=v->ref; 
-      HP[3].val=__cons(); 
-      HP[4].celp=HP; 
+    { HP[0].val=__fun(FUN(unify,2));
+      HP[1].val=__atom(PL_new_atom(v->name));
+      HP[2].celp=v->ref;
+      HP[3].val=__cons();
+      HP[4].celp=HP;
       HP[5].celp=l;
       l=HP+3;
       HP+=6;
@@ -268,18 +268,18 @@ Var New_Var(void)
     }
   return(v);
 }
-     
+
 static
 Var lookup_var(char *name)
 { Var v=varl_first;
-  
+
     for (v=varl_first; v; v=v->next)
     { if (v->name && streq(name,v->name))
         { v->times++;
           return(v);
         }
     }
- 
+
 // Add a new var in head of list
   v=New_Var();
   v->next=varl_first;
@@ -327,7 +327,7 @@ int hex_escape(pl_stream S)
       break;		// closing '\' facultative
     }
   }
-  
+
   return(val);
 }
 
@@ -345,7 +345,7 @@ int oct_escape(pl_stream S, int c)
       break;		// closing '\' facultative
     }
   }
-  
+
   return(val);
 }
 
@@ -371,8 +371,8 @@ int read_quoted_char(pl_stream S)
                  case 't':  c='\t'; break;
                  case 'v':  c='\v'; break;
                  // case '\n': ....
-                 case '\'': 
-                 case '"':  
+                 case '\'':
+                 case '"':
                  case '`':  break;
                  case 'x':  c=hex_escape(S);
                             break;
@@ -427,8 +427,8 @@ char *read_quoted_string(pl_stream S, int quote)
                    case 'r':  c='\r'; break;
                    case 't':  c='\t'; break;
                    case 'v':  c='\v'; break;
-                   case '\'': 
-                   case '"':  
+                   case '\'':
+                   case '"':
                    case '`':  break;
                    case 'x':  c=hex_escape(S);
                               break;
@@ -516,7 +516,7 @@ int read_number(pl_stream S, int c, pl_number_t *num)
       case_iso:   UnGetc(c);
                   goto intg;
     }
-  }                
+  }
 
 // normal number or Edinburgh non-decimal number
 // PRE : [0-9] is readed
@@ -531,7 +531,7 @@ int read_number(pl_stream S, int c, pl_number_t *num)
 
     val=str2long(PL_base_ubs(b));
 
-    if (val<2 || 36<val)		// illegal radix 
+    if (val<2 || 36<val)		// illegal radix
     { UnGetc('\'');			// return the radix
       goto intg;
     }
@@ -544,14 +544,14 @@ int read_number(pl_stream S, int c, pl_number_t *num)
     }
 
     val=0;
-    while (1) 
+    while (1)
     { c=Getc(S);
       if ((digit=DigitVal(c))>=base)
       { UnGetc(c);
         goto intg;
       }
       val=val*base+digit;
-    } 
+    }
   }
   else
   if (c=='.')				// floating number
@@ -619,14 +619,14 @@ tok_type get_token(pl_stream S)
                { UnGetc(' '); UnGetc('.'); UnGetc(' ');
                  goto loop;
                }
-               token.type=T_EOF;		// FIXME 
+               token.type=T_EOF;		// FIXME
                break;
     case 'a':  case 'b': case 'c': case 'd': case 'e':
     case 'f':  case 'g': case 'h': case 'i': case 'j':
     case 'k':  case 'l': case 'm': case 'n': case 'o':
     case 'p':  case 'q': case 'r': case 's': case 't':
     case 'u':  case 'v': case 'w': case 'x': case 'y':
-    case 'z':  
+    case 'z':
     case_low:  str=read_name(S, c);
 	       atom=PL_new_atom(str);
 	       free(str);
@@ -641,7 +641,7 @@ tok_type get_token(pl_stream S)
     case 'K':  case 'L': case 'M': case 'N': case 'O':
     case 'P':  case 'Q': case 'R': case 'S': case 'T':
     case 'U':  case 'V': case 'W': case 'X': case 'Y':
-    case 'Z':  { str=read_name(S, c);			
+    case 'Z':  { str=read_name(S, c);
                  token.type=T_VAR;
                  token.tok_val.var=lookup_var(str);
                }
@@ -689,7 +689,7 @@ tok_type get_token(pl_stream S)
                  c='{';	// }
                  goto case_punc;
                }
-    case '(':	     
+    case '(':
     case ')':
     case ']':	// {
     case '}':
@@ -816,7 +816,7 @@ void mk_unary(atom_t atom, node_t *arg,node_t *node_out)
       get_intg(c)= - get_intg(c);
     else // if (is_flt(c))
       get_flt(c) = - get_flt(c);
-      
+
     node_out->cell=arg->cell;
   }
   else
@@ -891,7 +891,7 @@ loop:
     default:  return(0);
   }
 }
-  
+
 static inline
 int read_term_a(pl_stream S, int max,const char *stop, node_t *node_out)
 { int type,prec;
@@ -916,7 +916,7 @@ int read_term_a(pl_stream S, int max,const char *stop, node_t *node_out)
     { get_token(S); // skip '('
       return(read_fun(S,atom,0,node_out)!=0);
     }
-  
+
 // Otherwise simple atom
     { node_out->cell.val=__atom(atom);
       node_out->prec=0;
@@ -928,7 +928,7 @@ int read_term_a(pl_stream S, int max,const char *stop, node_t *node_out)
 static inline
 int read_term_t_(pl_stream S, int max,const char *stop,
 		node_t node_l, node_t *node_out)
-{ 
+{
 
 loop:
   must_be_op=1;
@@ -954,7 +954,7 @@ loop:
                              { m=prec; goto infix; }
 		           break;
               infix:     { node_t node_r;
-                           
+
                            if (!read_term(S,m,stop,&node_r)) return(0);
 			   mk_binary(atom,&node_l,&node_r,&node_l);
 			   node_l.prec=prec;
@@ -962,7 +962,7 @@ loop:
                          }
               default:     break;	// impossible error occur
             }
-        }                  
+        }
 
       if (PL_is_op(OP_POSTFIX,atom,&type,&prec))
         { if (max>=prec)
@@ -978,9 +978,9 @@ loop:
                           goto loop;
               default:    break;	// impossible error occur
             }
-        }                  
+        }
     }
-  
+
   *node_out=node_l;
   unget_token=1;
   return(1);
@@ -1038,7 +1038,7 @@ int read_term(pl_stream S, int max, const char *stop, node_t *node)
     case ',':
     case '|':
     case_term_a:
-    case T_OP:   
+    case T_OP:
     case T_FUN:    if (!read_term_a(S,max,stop,&node_s))
                      return(0);
 	           break;
@@ -1081,7 +1081,7 @@ int Read(pl_stream S, term_t term, term_t vars,
 
   if (!pl_unify(addr,term))
     goto FAIL;
-  
+
   if (vars)
   { if (!pl_unify(vars,bind_vars(0)))
       goto FAIL;
@@ -1098,13 +1098,13 @@ int Read(pl_stream S, term_t term, term_t vars,
 
   clear_var_list();
   succeed;
-KO:  
+KO:
   PL_warn("Read failed");
 FAIL:
   clear_var_list();
   fail;
 }
-                                                                  
+
 /**********************************************************************/
 /* stuff for read_term/[2,3]                                          */
 /**********************************************************************/

@@ -160,7 +160,7 @@ int streq_2(const char *src1, const char *src2, register const char *d)
 
   return(*d=='\0');
 
-  FAIL: 
+  FAIL:
   return(0);
 }
 
@@ -180,7 +180,7 @@ char *new_str(const char *s1)
 
   while(*s1) *s++=*s1++;
   *s++='\0';
-  
+
   a=(char *)SHP;
   SHP=Align(s);
   return(a);
@@ -196,7 +196,7 @@ const char *new_str_2(const char *s1, const char *s2)
   s=s2;
   while(*s) *d++=*s++;
   *d++='\0';
-  
+
   s=(char *)SHP;
   SHP=Align(d);
   return(s);

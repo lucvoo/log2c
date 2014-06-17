@@ -70,6 +70,6 @@ int PL_scan_options(term_t options, pl_opt_spec spec)
     loop_list:
     list=deref(list+2);
   }
- 
+
   return(is_nil(list));
 }

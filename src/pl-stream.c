@@ -16,7 +16,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-#define inline 
+#define inline
 
 //#####################################################################
 
@@ -90,7 +90,7 @@ int Sfillbuf(pl_stream S)
   {	// FIXME : msg
     return(Set_error(S));
   }
-  
+
   if (S->flags & SF_EOF)
   { S->flags|=SF_EOF2;
     if (S->flags & SF_EOF_ERR)

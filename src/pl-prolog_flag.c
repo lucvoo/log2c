@@ -59,7 +59,7 @@ pflag_t lookup_pflag(atom_t key, int new)
   else
     return(0);			// inexistant flag
 }
-          
+
 
 inline static
 int SetAtom(pflag_t f, atom_t val, int lock, atom_t *addr)
@@ -130,10 +130,10 @@ int pl_set_prolog_flag(term_t key, term_t new)
 
   if (!(f=lookup_pflag(k,0)))
     fail;
-  
+
   if (f->lock)
-    fail;		// flag is locked 
-  
+    fail;		// flag is locked
+
   new=deref(new);
   switch(get_tag(new))
   { case ref_tag: fail; 	// impossible error
@@ -155,7 +155,7 @@ int pl_set_prolog_flag(term_t key, term_t new)
 
 static
 int PL_unify_prolog_flag(pflag_t f, term_t term)
-{ 
+{
     switch(f->type)
     { case T_ATOM: { atom_t a = f->addr.atom
 				? *(f->addr.atom)
@@ -190,11 +190,11 @@ int pl_prolog_flag(term_t key, term_t old, term_t new)
   else
   if (!is_var(deref(old)) || !(f=lookup_pflag(k,1)))
     fail;
-  
+
   if (!new) succeed;
 
-  if (f->lock) fail;		// flag is locked 
-  
+  if (f->lock) fail;		// flag is locked
+
   new=deref(new);
   switch(get_tag(new))
   { case ref_tag: fail; 	// impossible error
@@ -267,13 +267,13 @@ else
   Setpf_boo("unix",		FALSE,		1,0);
 #endif
   Setpf_int("version",		PL_VERSION,	1,0);
- 
+
 /* SWI flags : style_check */
   Setpf_boo("discontiguous",	FALSE,		0,&PL__status.discont);
   Setpf_boo("dollar",		FALSE,		0,&PL__status.dollar);
   Setpf_boo("long_atom",	TRUE,		0,&PL__status.long_atom);
   Setpf_boo("singleton",	TRUE,		0,&PL__status.singleton);
- 
+
 /* SWI flags : fileerrors */
   Setpf_boo("file_error",	FALSE,		0,&PL__status.file_err);
 

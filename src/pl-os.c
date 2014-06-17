@@ -111,7 +111,7 @@ char *PL_ReadLink(const char *path)
 #include <sys/types.h>
 
 // if <user> is null
-//   return the home directory of the real user of this process 
+//   return the home directory of the real user of this process
 // else
 //   return the home directory of <user>
 static
@@ -127,7 +127,7 @@ char *PL_GetHome(const char *user)
       pw=getpwuid(getuid());
   }
   else
-    pw=getpwnam(user);  
+    pw=getpwnam(user);
 
   return(pw ? pw->pw_dir : 0);
 }
@@ -143,7 +143,7 @@ char *ExpandTilde(const char *path)
   int len=0;
 
   if (path[0]=='~')	// must do tilde expansion
-  { const char *home; 
+  { const char *home;
 
     path++;
     if (path[0]=='/' || path[0]=='\0')	// get real user home directory
@@ -178,7 +178,7 @@ char *ExpandTilde(const char *path)
     strcpy(new_path,home);
     np=new_path+len;
   }
-  
+
   if ((len+strlen(path))>=sizeof(new_path))
   { PL_msg("Pathname too long");
     return(0);
@@ -190,7 +190,7 @@ char *ExpandTilde(const char *path)
 
 
 char *PL_CanonicalPath(const char *path, char canon_path[])
-{ char *p; 
+{ char *p;
 
   if ((p=ExpandTilde(path)))
     path=p;
@@ -225,7 +225,7 @@ char *PL_ExpandFile(const char *file, char *expanded)
 int PL_AccessFile(const char *path, int mode)
 { int m = 0;
 
-  if ( mode == PL_ACCESS_EXIST ) 
+  if ( mode == PL_ACCESS_EXIST )
     m = F_OK;
   else
   { if ( mode & PL_ACCESS_READ    ) m |= R_OK;
@@ -317,7 +317,7 @@ int PL_GetSingleChar(void)
 { int c;
 
   if (isatty(STDIN_FILENO))
-  { if ( tty_cbreak(STDIN_FILENO) || 
+  { if ( tty_cbreak(STDIN_FILENO) ||
          (read(STDIN_FILENO,&c,1)!=1) ||
          tty_reset(STDIN_FILENO) )
       return(-1);

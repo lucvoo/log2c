@@ -51,7 +51,7 @@ int pl_file_name_extension(term_t base, term_t ext, term_t full)
   { const char *s=f+strlen(f);
 
     while ( *s!='.' && *s!='/' && s > f)
-      s--; 
+      s--;
 
     if (*s=='.')
     { if (PL_get_atom_chars(ext,&e))
@@ -100,7 +100,7 @@ int pl_delete_file(term_t name)
 
   if ( !(f = PL_get_filename(name, 0)) )
     PL_warning("delete_file/1: instantiation fault");
-  
+
   return(PL_RemoveFile(f));
 }
 
@@ -133,7 +133,7 @@ int pl_access_file(term_t name, term_t mode)
 
   if ( m == ATOM(_none) )
     succeed;
-  
+
   if ( m == ATOM(_write) || m == ATOM(_append) )
     md = PL_ACCESS_WRITE;
   else
@@ -165,7 +165,7 @@ int pl_exists_file(term_t file)
 
   if (!(f = PL_get_filename(file, 0)))
     PL_warning("exists_file/1: instantiation fault");
-  
+
   return(PL_ExistsFile(f));
 }
 
@@ -175,7 +175,7 @@ int pl_exists_directory(term_t dir)
 
   if (!(d = PL_get_filename(dir, 0)))
     PL_warning("exists_directory/1: instantiation fault");
-  
+
   return(PL_ExistsDirectory(d));
 }
 

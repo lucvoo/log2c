@@ -21,7 +21,7 @@ int Sread_sock(Shndl_t hndl, void *s, int n)
 
 static
 int Sclose_r_sock(pl_stream S)
-{ // FIXME 
+{ // FIXME
   return(0);
 }
 
@@ -37,7 +37,7 @@ off_t Sseek_sock(Shndl_t hndl, long off, int whence)
 }
 
 static
-Sfun_t sock_r_functions = 
+Sfun_t sock_r_functions =
 { Sread_sock,
   Swrite_sock,
   Sclose_r_sock,
@@ -46,7 +46,7 @@ Sfun_t sock_r_functions =
 };
 
 static
-Sfun_t sock_w_functions = 
+Sfun_t sock_w_functions =
 { Sread_sock,
   Swrite_sock,
   Sclose_w_sock,

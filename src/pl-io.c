@@ -25,7 +25,7 @@ typedef struct { atom_t    file;
                } pl_file_t, *pl_file;
 
 
-		 
+
 // INV : A closed pl_file have the components file, alias and S == 0
 
 static int max_files;
@@ -121,7 +121,7 @@ void PL_exit_io(void)
     Sclose(plfiles[n].S);
   }
 }
-      
+
 
 static pl_file
 openStream(term_t file, Smode_t mode, int flags)
@@ -218,7 +218,7 @@ pl_file GetStream(term_t spec, Smode_t mode)
     { f=GetAliasStream(alias);
     }
   }
-              
+
   if (!f)
     PL_warning("Illegal I/O stream specification");
 
@@ -289,13 +289,13 @@ int pl_telling(term_t s)
 
 int pl_seen(void)
 { CloseStream(Finput);
-  Finput=&plfiles[0];  
+  Finput=&plfiles[0];
   return(1);
 }
 
 int pl_told(void)
 { CloseStream(Foutput);
-  Foutput=&plfiles[1];  
+  Foutput=&plfiles[1];
   return(1);
 }
 
@@ -307,7 +307,7 @@ static atom_t opt_type;
 static atom_t opt_alias;
 static atom_t opt_eof_action;
 static int    opt_reposition;	// Don't care
-static pl_opt_spec_t spec_open4[] = 
+static pl_opt_spec_t spec_open4[] =
 {
   { ATOM(_alias), OPT_ATOM, { .atom = &opt_alias} },
   { ATOM(_eof__action), OPT_ATOM, { .atom = &opt_eof_action} },
@@ -356,9 +356,9 @@ int pl_open4(term_t srcdest, term_t mode, term_t stream, term_t options)
 
 // get eof_action flags
   if (opt_eof_action==ATOM(_error)) s_flags|=SF_EOF_ERR;
-  else 
+  else
   if (opt_eof_action==ATOM(_reset)) s_flags|=SF_EOF_RESET;
-  else 
+  else
   if (opt_eof_action!=ATOM(_eof__code))
     PL_warn("open/4 : Illegal eof_action specification");
 
@@ -416,7 +416,7 @@ int pl_current_stream(term_t file, term_t mode, term_t stream, control_t ctrl)
     default:
 	fail;
   }
-  
+
   for ( ; n<max_files; n++)
   { mark_t m;
 
@@ -436,7 +436,7 @@ int pl_current_stream(term_t file, term_t mode, term_t stream, control_t ctrl)
 
   fail;
 }
-  
+
 
 /**********************************************************************/
 /* switching between implicit and explicit stream                     */
@@ -592,9 +592,9 @@ static int Get(pl_stream S)
   while (isSpace(c));
   return(c);
 }
-  
+
 int pl_get(term_t c)
-{ return(PL_unify_intg(c,Get(Finput->S))); } 
+{ return(PL_unify_intg(c,Get(Finput->S))); }
 
 int pl_get2(term_t s, term_t c)
 { pl_stream S=InputStream(s);
@@ -685,7 +685,7 @@ int pl_stream_position(term_t s, term_t old, term_t new)
   }
   if (!pl_unify(old,pos))
     fail;
-    
+
   new=deref(new);
   if (new==deref(old)) succeed;
   o_char_no=char_no;
@@ -726,7 +726,7 @@ int pl_set_stream_position(term_t s, term_t new)
   S=IOStream(s);			// FIXME : check return value
   Stell(S);
   p=Sget_pos(S);
-    
+
   new=deref(new);
 
   if ( !isfun(FUN(str_pos,3),new) ||
@@ -973,7 +973,7 @@ int pl_stream_property(term_t stream, term_t prop, control_t ctrl)
 	fail;
   }
   fail;
-  
+
 loop_all:
   for ( ; n<max_files; n++)
   { mark_t m;
@@ -1008,7 +1008,7 @@ loop_all:
     p=0;
   }
   fail;
-    
+
 loop_pro:
   for ( ; p<last_prop; p++)
   { mark_t m;

@@ -89,10 +89,10 @@ char * formatInteger(bool split, int div, int radix, bool small, long int n)
     n /= radix;
   }
   if ( negative )
-    *--s = '-';  
+    *--s = '-';
 
   return s;
-}	  
+}
 
 
 inline static
@@ -103,7 +103,7 @@ int update_column(int col, int c)
     case '\b':	return (col <= 0 ? 0 : col - 1);
     default:	return col + 1;
   }
-}   
+}
 
 
 static bool
@@ -134,7 +134,7 @@ do_format(const char *fmt, term_t argv, pl_stream S)
       { arg = *++fmt;
         fmt++;
       }
-        
+
       switch(*fmt)		/* Build in formatting */
       { case 'a':  { const char *s;   /* Atomic */
 
@@ -147,11 +147,11 @@ do_format(const char *fmt, term_t argv, pl_stream S)
                     break;
                    }
         case 'c':  { int c;	/* ascii */
-           
+
                      NEED_ARG;
                      if ( PL_get_integer(argv, &c) && c>=0 && c<=255 )
                      { int times = (arg == DEFAULT ? 1 : arg);
-           
+
                        SHIFT;
                        while(times-- > 0)
                        { OUTCHR(c);
@@ -168,7 +168,7 @@ do_format(const char *fmt, term_t argv, pl_stream S)
         case 'R':			/* Radix number */
                    { int i;
                      char *s;
-           
+
                      NEED_ARG;
                      if ( !PL_get_integer(argv, &i) )
                        ERROR1("illegal argument to ~%c", *fmt);
@@ -180,13 +180,13 @@ do_format(const char *fmt, term_t argv, pl_stream S)
                      else
                        s=formatInteger(FALSE, 0, arg, *fmt == 'r', i);
 
-                     Sputs(S,s);			
+                     Sputs(S,s);
                      fmt++;
                      break;
                    }
         case 's':			/* string */
                    { const char *s;
-           
+
                      NEED_ARG;
                      if ( !PL_get_list_codes(argv, &s, BUF_DISCARDABLE) )
                        ERROR("illegal argument to ~s");
@@ -306,7 +306,7 @@ int pl_sformat3(term_t string, term_t fmt, term_t args)
   if (!rval)
     fail;
   else
-    return(PL_unify_atom_chars(string,s)); 
+    return(PL_unify_atom_chars(string,s));
 }
 
 int pl_sformat2(term_t string, term_t fmt)
@@ -325,7 +325,7 @@ int pl_sformat2(term_t string, term_t fmt)
   if (!rval)
     fail;
   else
-    return(PL_unify_atom_chars(string,s)); 
+    return(PL_unify_atom_chars(string,s));
 }
 
 

@@ -96,7 +96,7 @@ void *PL_call(term_t clos, int extra, term_t *args)
   { PL_write(Stderr, clos);
     PL_warning("PL_call : fail");
   }
-   
+
   for (n=1;n<=arity;n++) PL_ARGS[n]=deref(t+n);
   for (n=0;n<extra;n++)  PL_ARGS[arity+1+n]=args[n];
 
@@ -119,7 +119,7 @@ void *PL_apply(term_t clos, term_t list)
   { PL_write(Stderr, clos);
     PL_warning("PL_apply : fail");
   }
-   
+
   for (n=1;n<=arity;n++)
     PL_ARGS[n]=deref(t+n);
   for (n=0;n<extra;n++)

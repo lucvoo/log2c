@@ -70,7 +70,7 @@ cell_t *Copy2Heap(cell_t *addr, cell_t *c)
                   return(addr);
     case fun_tag: { int n=get_arity(c);
                     if (!addr)
-                      addr=NEW_(cell_t,n+1);  
+                      addr=NEW_(cell_t,n+1);
                     else
                     { addr->celp=NEW_(cell_t,n+1);
 		      addr=addr->celp;
@@ -88,7 +88,7 @@ cell_t *Copy2Heap(cell_t *addr, cell_t *c)
 
 inline static
 rec_t copy_to_heap(cell_t *c)
-{ rec_t   record; 
+{ rec_t   record;
   tr_t *tr;
 
   tr=TP;
@@ -111,7 +111,7 @@ cell_t *copy_to_global(rec_t record)
   n=record->size;
   for (i=0;i<n;i++)
   { if (is_ref(c+i ) && c[i].celp >= c && c[i].celp < c+n )
-      HP[i].celp=(c[i].celp)+(HP-c); 
+      HP[i].celp=(c[i].celp)+(HP-c);
     else
       HP[i].val=c[i].val;
   }
@@ -121,7 +121,7 @@ cell_t *copy_to_global(rec_t record)
 
   return(c);
 }
- 
+
 /**********************************************************************/
 /* unify_static == unify in the record without first copy the term    */
 /**********************************************************************/
@@ -280,7 +280,7 @@ recl_t lookup_recl__old(cell_t *key)
   records[h]=rl;
   return(rl);
 }
-          
+
 inline static
 recl_t lookup_recl__(cell_t *key, int h)
 { recl_t rl;
@@ -291,7 +291,7 @@ recl_t lookup_recl__(cell_t *key, int h)
 
   return(0);
 }
-          
+
 inline static
 recl_t add_recl__(cell_t *key, int h)
 { recl_t rl;
@@ -304,7 +304,7 @@ recl_t add_recl__(cell_t *key, int h)
   records[h]=rl;
   return(rl);
 }
-          
+
 inline static
 recl_t lookup_recl(term_t key, int h)
 { recl_t rl;
@@ -320,7 +320,7 @@ int pl_recordaz(cell_t *key, cell_t *term, cell_t *ref, int az)
 { recl_t rl;
   rec_t  r;
   hash_t h;
- 
+
   h=HashFromKey(key,PL_warning("record%c/3 : illegal key", az));
   rl=lookup_recl(key,h);
 
@@ -411,7 +411,7 @@ int pl_recorded_2(cell_t *key, cell_t *term, control_t ctrl)
   return(pl_recorded(key,term,ref,ctrl));
 }
 
- 
+
 int pl_current_key(cell_t *c, control_t ctrl)
 { recl_t recl;
   hash_t h;
@@ -453,7 +453,7 @@ void free_record(rec_t r)
 { (void) r; }		// FIXME : put it in the free list ??
 
 
-inline static 
+inline static
 int Erase_rec(rec_t rec)
 { rec_t prev;
   recl_t rl;
@@ -483,7 +483,7 @@ int pl_erase(cell_t *ref)
 { rec_t rec;
 
   Deref(ref);
-  if (!is_intg(ref)) 
+  if (!is_intg(ref))
     PL_warning("erase/1 : illegal reference\n");
 
   rec=(rec_t) (SH_STK+get_intg(ref));
@@ -560,7 +560,7 @@ int pl_findall_record(term_t t)
 }
 
 static
-void freeAssoc(rec_t prev, rec_t a) 
+void freeAssoc(rec_t prev, rec_t a)
 { if (!prev)
     findall_recs = a->next;
   else
@@ -574,7 +574,7 @@ int pl_findall_collect(term_t bag)
   term_t tmp;
   rec_t a, next;
   rec_t prev = 0;
-  
+
   if (!(a = findall_recs)) fail;
 
   // PL_put_nil(list);
@@ -605,7 +605,7 @@ int pl_findall_collect(term_t bag)
 // copy_term/2 stuff
 // ressemble to Copy2Heap but much simpler
 // optimized for ground term
-// ( can be ineficient on deep unground tree 
+// ( can be ineficient on deep unground tree
 //   since the ground test will be redone at each node ).
 static
 int CopyTerm(cell_t *addr, cell_t *c)
@@ -618,7 +618,7 @@ int CopyTerm(cell_t *addr, cell_t *c)
                   else                     // new var
                   { if (addr)
                       addr->val=MK_TAG(var_tag);
-                    else 
+                    else
                       addr=new_var();
                     c->celp=addr;
                     *TP++=c;
@@ -643,7 +643,7 @@ int CopyTerm(cell_t *addr, cell_t *c)
                   { int n=get_arity(c);
                     if (!addr)
                     { addr=HP;
-                      HP+=(n+1);  
+                      HP+=(n+1);
                     }
                     else
                     { addr=addr->celp=HP;
