@@ -9,7 +9,7 @@
 #define PL_TRAD_H_
 
 #include "Prolog.h"
-#include <stdlib.h>	// for exit( )
+#include <stdlib.h>			// for exit( )
 
 void pl_exit(int);
 
@@ -28,7 +28,6 @@ void pl_exit(int);
 	})
 */
 
-
 #define getatom(arg,A)			\
 	{ if (isatom(A,arg)) ;		\
 	  else				\
@@ -40,7 +39,6 @@ void pl_exit(int);
 	    goto backtrack;		\
 	}
 
-
 #define GETINTG(C,I)			\
 	{ int __i;			\
 	  if (PL_eval_((C),&__i))	\
@@ -48,7 +46,6 @@ void pl_exit(int);
 	  else				\
 	    goto backtrack;		\
 	}
-
 
 #define getintg(arg,N)			\
 	{ if (isintg(N,arg)) ;		\
@@ -61,7 +58,6 @@ void pl_exit(int);
 	    goto backtrack;		\
 	}
 
-
 #define getflt(arg,N)			\
 	{ if (isflt(N,arg)) ;		\
 	  else				\
@@ -73,12 +69,10 @@ void pl_exit(int);
 	    goto backtrack;		\
 	}
 
-
 #define getref(arg,ref)			\
 	{ if ( !unify(arg,ref) )	\
 	    goto backtrack;		\
 	}
-
 
 #define uatom_r(A,V)			\
 	{ cell_t *v=deref(V);		\
@@ -93,24 +87,27 @@ void pl_exit(int);
 	    goto backtrack;		\
 	}
 
-
-
 INLINE_DECL
 void setbtp(void *L)
-{ FP[1].stk =BTP;
-  FP[2].tr  =TP;
-  FP[3].celp=HP;
-  FP[4].cod =L;
-  BTP=FP;
+{
+	FP[1].stk = BTP;
+	FP[2].tr = TP;
+	FP[3].celp = HP;
+	FP[4].cod = L;
+	BTP = FP;
 }
 
 INLINE_DECL
 void nextalt(void *L)
-{ FP[4].cod=L; }
+{
+	FP[4].cod = L;
+}
 
 INLINE_DECL
 void delbtp(void)
-{ BTP=FP[1].stk; }
+{
+	BTP = FP[1].stk;
+}
 
 #define popenv()			\
 	{ void *PC;			\
@@ -132,18 +129,18 @@ void delbtp(void)
 
 INLINE_DECL
 void init(void *L)
-{ FP   =STK+1;
-  BTP  =FP;
-  TP   =TR_STK;
-  HP   =H_STK;
-  FP[2].tr  =(typeof(TP))-1;
-  FP[3].celp=(typeof(HP))-1;
-  FP[4].cod =L;
+{
+	FP = STK + 1;
+	BTP = FP;
+	TP = TR_STK;
+	HP = H_STK;
+	FP[2].tr = (typeof(TP)) - 1;
+	FP[3].celp = (typeof(HP)) - 1;
+	FP[4].cod = L;
 #ifdef HWREG_ARGS
-  PL_ARGS = &PL_ARGS_[0];
+	PL_ARGS = &PL_ARGS_[0];
 #endif
 }
-
 
 #define halt_()				\
 	{ if (PL_next_goal())		\
@@ -155,61 +152,67 @@ void init(void *L)
 
 INLINE_DECL
 void cut_deep(void)
-{ while (BTP>=FP)	// FIXME : SEGV in : main :- p -> ! ; true.
-  BTP=BTP[1].stk;
+{
+	while (BTP >= FP)		// FIXME : SEGV in : main :- p -> ! ; true.
+		BTP = BTP[1].stk;
 }
 
 INLINE_DECL
 void cut(void)
-{ while (BTP>FP)
-  BTP=BTP[1].stk;
+{
+	while (BTP > FP)
+		BTP = BTP[1].stk;
 }
-
 
 INLINE_DECL
 void not_0(void *L)
-{ SP +=2;	// enter();
-  SP[0].stk =FP;
-  SP[1].stk =BTP;
-  SP[2].tr  =TP;
-  SP[3].celp=HP;
-  SP[4].cod =L;
-  BTP=SP;
-  SP+=4;
+{
+	SP += 2;			// enter();
+	SP[0].stk = FP;
+	SP[1].stk = BTP;
+	SP[2].tr = TP;
+	SP[3].celp = HP;
+	SP[4].cod = L;
+	BTP = SP;
+	SP += 4;
 }
 
 INLINE_DECL
 void alt_0(void *L)
-{ SP[2].stk =FP;
-  SP[3].stk =BTP;
-  SP[4].tr  =TP;
-  SP[5].celp=HP;
-  SP[6].cod =L;
-  BTP=SP+2;
-  SP+=6;
+{
+	SP[2].stk = FP;
+	SP[3].stk = BTP;
+	SP[4].tr = TP;
+	SP[5].celp = HP;
+	SP[6].cod = L;
+	BTP = SP + 2;
+	SP += 6;
 }
 
 INLINE_DECL
 void alt_1(void *L)
-{ SP=FP+4;
-  FP[4].cod=L;
-  FP=FP->stk;
+{
+	SP = FP + 4;
+	FP[4].cod = L;
+	FP = FP->stk;
 }
 
 INLINE_DECL
 void alt_2(void)
-{ BTP=FP[1].stk;// delbtp();
-  if (FP > BTP)
-    SP=FP-2;
-  else
-    SP=FP;
-  FP=FP->stk;
+{
+	BTP = FP[1].stk;		// delbtp();
+	if (FP > BTP)
+		SP = FP - 2;
+	else
+		SP = FP;
+	FP = FP->stk;
 }
 
 INLINE_DECL
-void unify_var(cell_t *a1, cell_t *a2)
-{ mkrefp(a1,a2);
-  trail(a1);
+void unify_var(cell_t * a1, cell_t * a2)
+{
+	mkrefp(a1, a2);
+	trail(a1);
 }
 
 /* Prolog Arithmetic operators */
@@ -244,7 +247,6 @@ void unify_var(cell_t *a1, cell_t *a2)
 #define PL_OP_max_2(A,B)	((A>B) ? A : B)
 #define PL_OP_min_2(A,B)	((A<B) ? A : B)
 
-
 #define expand_macro(M)	M
 
 #define stringifx(S)	#S
@@ -254,5 +256,4 @@ void unify_var(cell_t *a1, cell_t *a2)
 
 #define VM_CALL(P,L)	SP[1].cod= &&L; SP[2].stk=FP; FP=SP+2; P
 
-
-#endif	// PL_TRAD_H_
+#endif

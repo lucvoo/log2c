@@ -27,7 +27,6 @@
 #define VAL_MASK	(~TAG_MASK)
 #define GC_BITS		2
 
-
 #define PL_MAX_TAG_INT	(VAL_MASK>>1)
 #define PL_MAX_INT	PL_MAX_TAG_INT
 #define PL_MIN_TAG_INT	(-(PL_MAX_TAG_INT+1))
@@ -37,7 +36,6 @@
 
 #define	PL_MAX_ARGS	256
 
-
 // FIXME : should be done by configure & C°
 #define PL_HOME		"/home/luc/log"
 #define PL_VERSION	809
@@ -46,7 +44,6 @@
 #define C_LIBS		""
 #define C_STATIC_LIBS	""
 
-
 #define HAVE_REMOVE
 #define HAVE_REALPATH
 #define HAVE_ASPRINTF
@@ -54,4 +51,4 @@
 
 typedef unsigned long pl_word_t;
 
-#endif // PL_CONFIG_H__
+#endif

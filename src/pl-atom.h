@@ -10,4 +10,4 @@
 
 atom_t PL_new_atom(const char *s);
 
-#endif	// PL_ATOM_H_
+#endif

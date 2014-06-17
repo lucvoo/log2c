@@ -10,4 +10,4 @@
 
 extern int PL__DigitValue[256];
 
-#endif	// PL_UTIL_H_
+#endif

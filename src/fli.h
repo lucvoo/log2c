@@ -13,12 +13,10 @@
 #include <stdio.h>
 #include <string.h>
 
-
 #define succeed	return(SUCCEED)
 #define fail	return(FAIL)
 #define retry	return(RETRY)
 #define try(G)	if (!(G)) fail; else
-
 
 #define Tag(v)	(v & TAG_MASK)
 #define Val(c)	({ cell_t d=*c; while (Tag(d.val)==MK_TAG(ref_tag)) { d=*(d.celp); }; d.val; })
@@ -36,66 +34,68 @@
 #define __isAtomic(V)	({ unsigned long v=V; int r=(!__isVar(v) && !__isTerm(v)); r; })
 #define __isList(V)	({ unsigned long v=V; int r=(__isCons(v) || __isNil(v)); r; })
 
-
-
-
 #define	Mark(m)	do { m.trail =TP; m.global=HP; } while (0)
 #define	Undo(m)	do { reset(m.trail); HP=m.global; } while(0)
 
 int pl_unify(cell_t *, cell_t *);
 
 INLINE_DECL
-int PL_try_unify(cell_t *a, cell_t *b)
-{ mark_t m;
-  int rval;
+int PL_try_unify(cell_t * a, cell_t * b)
+{
+	mark_t m;
+	int rval;
 
-  Mark(m);
-  if (!(rval=pl_unify(a,b)))
-    Undo(m);
+	Mark(m);
+	if (!(rval = pl_unify(a, b)))
+		Undo(m);
 
-  return(rval);
+	return (rval);
 }
-
 
 INLINE_DECL
 void *AllocLocal(size_t n)
-{ void *ptr=(SP+1);	// SP is postincrement.
-  SP+=Adjust(n);
-  return(ptr);
+{
+	void *ptr = (SP + 1);		// SP is postincrement.
+	SP += Adjust(n);
+	return (ptr);
 }
 
 INLINE_DECL
 void *AllocGlobal(size_t n)
-{ void *ptr=HP;
-  HP+=Adjust(n);
-  return(ptr);
+{
+	void *ptr = HP;
+	HP += Adjust(n);
+	return (ptr);
 }
 
 INLINE_DECL
 void *AllocHeap(size_t n)
-{ void *ptr=SHP;
-  SHP+=Adjust(n);
-  return(ptr);
+{
+	void *ptr = SHP;
+	SHP += Adjust(n);
+	return (ptr);
 }
 
 INLINE_DECL
 void *PL_foreign_context(control_t c)
-{ return(((void *) c) + CELL_SIZE); }
+{
+	return (((void *)c) + CELL_SIZE);
+}
 
 INLINE_DECL
 ctrl_t PL_foreign_control(control_t c)
-{ return(*c); }
+{
+	return (*c);
+}
 
 #define	GetCtxt(C)	PL_foreign_context(C)
 #define	GetCtrl(C)	PL_foreign_control(C)
 #define	PL_retry(C)	return(RETRY)
 
-
 #define NEW(E)		((typeof(E) *) AllocHeap(sizeof(E)) )
 #define NEW_(E,N)	((typeof(E) *) AllocHeap(sizeof(E)*(N)) )
 
 #define AllocCtxt(T)	AllocLocal(sizeof(T))
-
 
 #define PL_warning(fm,args...)	do { fflush(0); fprintf(stderr,"[Warning: " fm "]\n" , ## args); return(0); } while(0)
 #define PL_warn(fm,args...)	do { fflush(0); fprintf(stderr,"[Warning: " fm "]\n" , ## args); } while(0)
@@ -112,4 +112,4 @@ ctrl_t PL_foreign_control(control_t c)
 
 /**********************************************************************/
 
-#endif	// _FLI_H_
+#endif

@@ -11,7 +11,6 @@
 #include "pl-config.h"
 #include "pl-types.h"
 
-
 #ifdef	HWREG_SP
 register pl_stack_t *SP asm(HWREG_SP);
 #else
@@ -21,7 +20,7 @@ extern pl_stack_t *SP;
 #ifdef	HWREG_HP
 register cell_t *HP asm(HWREG_HP);
 #else
-extern cell_t  *HP;
+extern cell_t *HP;
 #endif
 
 #ifdef	HWREG_FP
@@ -42,12 +41,11 @@ register tr_t *TP asm(HWREG_TP);
 extern tr_t *TP;
 #endif
 
-extern cell_t		*SHP;
-extern pl_stack_t	*STK;
-extern cell_t		*H_STK;
-extern tr_t		*TR_STK;
-extern cell_t		*SH_STK;
-
+extern cell_t *SHP;
+extern pl_stack_t *STK;
+extern cell_t *H_STK;
+extern tr_t *TR_STK;
+extern cell_t *SH_STK;
 
 #ifdef	HWREG_ARGS
 extern cell_t *PL_ARGS_[PL_MAX_ARGS];
@@ -56,18 +54,16 @@ register cell_t **PL_ARGS asm(HWREG_ARGS);
 extern cell_t *PL_ARGS[PL_MAX_ARGS];
 #endif
 
+// must be a power of two for dynamic hashing
+extern int PL__atoms_hash_size;
+extern int PL__atoms_count;
+extern atom_t PL__atoms[];
 
 // must be a power of two for dynamic hashing
-extern int	PL__atoms_hash_size;
-extern int	PL__atoms_count;
-extern atom_t	PL__atoms[];
-
-// must be a power of two for dynamic hashing
-extern int	PL__funs_hash_size;
-extern int	PL__funs_count;
-extern fun_t	PL__funs[];
-
+extern int PL__funs_hash_size;
+extern int PL__funs_count;
+extern fun_t PL__funs[];
 
 #include "ATOMS.h"
 
-#endif	// PL_H_
+#endif

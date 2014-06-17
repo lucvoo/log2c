@@ -10,4 +10,4 @@
 
 fun_t PL_new_functor(atom_t functor, int arity);
 
-#endif	// PL_FUN_H_
+#endif

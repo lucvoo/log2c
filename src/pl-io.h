@@ -8,7 +8,6 @@
 #ifndef	PL_IO_H_
 #define	PL_IO_H_
 
-
 #include "Prolog.h"
 
 /* pl-io.c */

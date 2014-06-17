@@ -38,10 +38,9 @@
 #define NDET(F,N,C)     foreign_pred_builtin(F,N,C,ndet).
 #endif
 
-
 #include "pl-ext.def"
 
 #undef	DET
 #undef	NDET
 
-#endif // PL_EXT_H_
+#endif

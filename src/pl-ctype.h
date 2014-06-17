@@ -10,24 +10,23 @@
 
 #define ct_bits(n)	(1<<n)
 
-typedef enum
-{ ct_lower = ct_bits(0),
-  ct_upper = ct_bits(1),
-  ct_digit = ct_bits(2),
-  ct_solo  = ct_bits(3),
-  ct_symbol= ct_bits(4),
-  ct_sq    = ct_bits(5),
-  ct_dq    = ct_bits(6),
-  ct_bq    = ct_bits(7),
-  ct_punc  = ct_bits(8),
-  ct_space = ct_bits(9),
-  ct_paren = ct_bits(10),
-  ct_blank = ct_bits(11),
-  ct_bin   = ct_bits(12),
-  ct_oct   = ct_bits(13),
-  ct_hex   = ct_bits(14),
-  ct_ctrl  = ct_bits(15),
-  ct_undscr= ct_bits(16),
+typedef enum { ct_lower = ct_bits(0),
+	ct_upper = ct_bits(1),
+	ct_digit = ct_bits(2),
+	ct_solo = ct_bits(3),
+	ct_symbol = ct_bits(4),
+	ct_sq = ct_bits(5),
+	ct_dq = ct_bits(6),
+	ct_bq = ct_bits(7),
+	ct_punc = ct_bits(8),
+	ct_space = ct_bits(9),
+	ct_paren = ct_bits(10),
+	ct_blank = ct_bits(11),
+	ct_bin = ct_bits(12),
+	ct_oct = ct_bits(13),
+	ct_hex = ct_bits(14),
+	ct_ctrl = ct_bits(15),
+	ct_undscr = ct_bits(16),
 } pl_ctype_t;
 
 extern pl_ctype_t PL__char_type[];	/* array of character types */
@@ -58,5 +57,4 @@ extern pl_ctype_t PL__char_type[];	/* array of character types */
 			        '{' ? '}' :\
 			        '[' ? ']' : 0)
 
-
-#endif	// PL_CTYPE_H_
+#endif

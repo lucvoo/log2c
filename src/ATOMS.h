@@ -173,8 +173,6 @@ extern atom__t ATOM_strick_equals;
 extern atom__t ATOM_unify;
 extern atom__t ATOM_univ;
 
-
-
 #define FUN_curl_1		 FUN___7B_7D_1
 #define FUN_comma_2 		 FUN___2C_2
 #define FUN_div_2 		 FUN___2F_2F_2
@@ -215,5 +213,4 @@ extern fun__t FUN_star_2;
 extern fun__t FUN_str_pos_3;
 extern fun__t FUN_unify_2;
 
-
-#endif 	// _ATOMS_H_
+#endif

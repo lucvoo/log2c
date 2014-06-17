@@ -13,4 +13,4 @@
 int pl_memberchk(term_t e, term_t l);
 int pl_length(term_t t, term_t l);
 
-#endif	// PL_LIST_H_
+#endif

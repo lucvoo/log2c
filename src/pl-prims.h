@@ -17,7 +17,6 @@ int PL_lengthList(term_t l);
 int PL_unify_list_codes(term_t l, const char *s);
 int pl_std_cmp(term_t t1, term_t t2);
 int pl_std_eq(term_t t1, term_t t2);
-int pl_struct_eq(cell_t *t1, cell_t *t2);
+int pl_struct_eq(cell_t * t1, cell_t * t2);
 
-
-#endif	// PL_PRIMS_H_
+#endif

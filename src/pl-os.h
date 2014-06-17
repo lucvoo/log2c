@@ -12,70 +12,71 @@
 #include "pl-string.h"
 #include <stdlib.h>
 
-
-#include <string.h>	// for strerror()
-#include <sys/times.h>	// for times()
-#include <unistd.h>	// for ...
+#include <string.h>			// for strerror()
+#include <sys/times.h>			// for times()
+#include <unistd.h>			// for ...
 
 /* pl-os.c */
-char *	PL_OsError(void);
-double	PL_CpuTime(void);
-struct tm *	PL_LocalTime(long t);
-unsigned long	PL_Random(void);
-char *	PL_TempFileName(char *id);
-char *	PL_CanonicalPath(const char *path, char canon[]);
-char *	PL_ExpandFile(const char *file, char expanded[]);
-int 	PL_AccessFile(const char *path, int mode);
-int 	PL_ExistsFile(const char *path);
-int 	PL_ExistsDirectory(const char *path);
-long 	PL_SizeFile(const char *path);
-int	PL_GetSingleChar(void);
-int	PL_setenv(const char *name, const char *val);
-void	PL_unsetenv(const char *name);
-char *	PL_ReadLink(const char *path);
-int	PL_System(const char *cmd);
-
+char *PL_OsError(void);
+double PL_CpuTime(void);
+struct tm *PL_LocalTime(long t);
+unsigned long PL_Random(void);
+char *PL_TempFileName(char *id);
+char *PL_CanonicalPath(const char *path, char canon[]);
+char *PL_ExpandFile(const char *file, char expanded[]);
+int PL_AccessFile(const char *path, int mode);
+int PL_ExistsFile(const char *path);
+int PL_ExistsDirectory(const char *path);
+long PL_SizeFile(const char *path);
+int PL_GetSingleChar(void);
+int PL_setenv(const char *name, const char *val);
+void PL_unsetenv(const char *name);
+char *PL_ReadLink(const char *path);
+int PL_System(const char *cmd);
 
 INLINE_DECL
 const char *PL_BaseName(const char *p)
-{ char *b;
+{
+	char *b;
 
-  b=strrchr(p,'/');
-  return( b ? b+1 : p);
+	b = strrchr(p, '/');
+	return (b ? b + 1 : p);
 }
 
 INLINE_DECL
 char *PL_DirName(const char *path)
-{ static char buf[PATH_MAX+1];
-  char *p;
+{
+	static char buf[PATH_MAX + 1];
+	char *p;
 
-  if ((p=strrchr(path,'/')))
-  { strncpy(buf,path,p-path);
-    buf[p-path]='\0';
-    return(buf);
-  }
-  else
-    fail;
+	if ((p = strrchr(path, '/'))) {
+		strncpy(buf, path, p - path);
+		buf[p - path] = '\0';
+		return (buf);
+	} else
+		fail;
 }
 
 INLINE_DECL
 int PL_PathCmp(const char *s1, const char *s2)
-{ return(strcmp(s1,s2)); }
-
+{
+	return (strcmp(s1, s2));
+}
 
 INLINE_DECL
 int PL_RemoveFile(const char *path)
 {
 #ifdef HAVE_REMOVE
-  return(remove(path) == 0 );
+	return (remove(path) == 0);
 #else
-  return(unlink(path) == 0 );
+	return (unlink(path) == 0);
 #endif
 }
 
 INLINE_DECL
 int PL_isAbsolutePath(const char *path)
-{ return(path[0]=='/');
+{
+	return (path[0] == '/');
 }
 
 // definition for access_file/2
@@ -84,5 +85,4 @@ int PL_isAbsolutePath(const char *path)
 #define PL_ACCESS_WRITE		4
 #define PL_ACCESS_EXECUTE	8
 
-
-#endif	// PL_OS_H_
+#endif
