@@ -19,7 +19,7 @@ typedef enum { ref_tag, var_tag, ato_tag,
 	fun_tag, int_tag, flt_tag
 } tag_t;
 
-typedef enum { FAIL, SUCCEED, RETRY } foreign_t;
+enum foreign { FAIL, SUCCEED, RETRY };
 typedef enum { FIRST_CALL, NEXT_CALL } ctrl_t, *control_t;
 
 #ifdef	WORDS_BIGENDIAN
