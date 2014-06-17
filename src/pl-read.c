@@ -30,12 +30,11 @@ enum token_type {
 	T_STRING, T_VOID, T_VAR, T_EOF, T_ERROR
 };
 
-typedef struct var_t var_t, *Var;
-struct var_t {
+struct var {
 	char *name;
 	int times;
 	union cell *ref;
-	Var next;
+	struct var *next;
 };
 
 struct token {
@@ -48,7 +47,7 @@ struct token {
 		double flt;
 		char *string;
 		union cell *ref;
-		Var var;
+		struct var *var;
 	} tok_val;
 };
 
@@ -192,11 +191,11 @@ void strip_PL_comment(struct stream *S)
 /* Variables stuff                                                    */
 /**********************************************************************/
 
-static Var varl_first = 0, varl_tail = 0, varl_free = 0;
+static struct var *varl_first = 0, *varl_tail = 0, *varl_free = 0;
 
 static void clear_var_list(void)
 {
-	Var v = varl_first;
+	struct var *v = varl_first;
 
 	if (!v)
 		return;
@@ -216,7 +215,7 @@ static void clear_var_list(void)
 
 static union cell *bind_vars(int single)
 {
-	Var v = varl_first;
+	struct var *v = varl_first;
 	union cell *l = &(ATOM(nil)->atom);
 
 	if (!v)
@@ -241,7 +240,7 @@ static union cell *bind_vars(int single)
 
 static inline void warn_singletons(void)
 {
-	Var v = varl_first;
+	struct var *v = varl_first;
 	int n = 0;
 	struct ubuffer *b = PL_find_ubs(BUF_DISCARDABLE);
 
@@ -268,15 +267,15 @@ static inline void warn_singletons(void)
 	return;
 }
 
-static Var New_Var(void)
+static struct var *New_Var(void)
 {
-	Var v;
+	struct var *v;
 
 	if (varl_free) {
 		v = varl_free;
 		varl_free = varl_free->next;
 	} else {
-		v = malloc(sizeof(var_t));
+		v = malloc(sizeof(struct var));
 		if (!v) {
 			fprintf(stderr, "Malloc error in pl-read.c: New_Var()\n");
 			return (0);
@@ -285,9 +284,9 @@ static Var New_Var(void)
 	return (v);
 }
 
-static Var lookup_var(char *name)
+static struct var *lookup_var(char *name)
 {
-	Var v = varl_first;
+	struct var *v = varl_first;
 
 	for (v = varl_first; v; v = v->next) {
 		if (v->name && streq(name, v->name)) {
