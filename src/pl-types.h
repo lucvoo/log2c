@@ -29,32 +29,32 @@ enum control { FIRST_CALL, NEXT_CALL };
 
 #ifdef	WORDS_BIGENDIAN
 
-typedef struct {
+struct tag_sval {
 	enum tag tag:TAG_BITS;
 	long val:TAG_POS;
-} _val_t;
-typedef struct {
+};
+struct tag_uval {
 	enum tag tag:TAG_BITS;
 	unsigned long uval:TAG_POS;
-} uval_t;
+};
 
 #else					// WORDS_BIGENDIAN
 
-typedef struct {
+struct tag_sval {
 	long val:TAG_POS;
 	enum tag tag:TAG_BITS;
-} _val_t;
-typedef struct {
+};
+struct tag_uval {
 	unsigned long uval:TAG_POS;
 	enum tag tag:TAG_BITS;
-} uval_t;
+};
 
 #endif					// WORDS_BIGENDIAN
 
 union cell {
 	unsigned long val;
-	_val_t tag_val;
-	uval_t tag_uval;
+	struct tag_sval tag_val;
+	struct tag_uval tag_uval;
 	union cell *celp;
 };
 
