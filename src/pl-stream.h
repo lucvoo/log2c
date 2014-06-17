@@ -14,9 +14,9 @@
 
 #define S_EOF	(-1)
 
-typedef enum { SM_READ, SM_WRITE, SM_APPEND, SM_UPDATE, SM_ANY } Smode_t;
-typedef enum { ST_FILE, ST_PIPE, ST_RMEM, ST_WMEM, ST_SOCK } Stype_t;
-typedef enum { SB_NONE, SB_LINE, SB_FULL } Sbuff_t;
+enum stream_mode { SM_READ, SM_WRITE, SM_APPEND, SM_UPDATE, SM_ANY };
+enum stream_type { ST_FILE, ST_PIPE, ST_RMEM, ST_WMEM, ST_SOCK };
+enum stream_bufftype { SB_NONE, SB_LINE, SB_FULL };
 typedef unsigned long Sflag_t;
 
 #define SFlags(n)	(1<<n)
@@ -44,11 +44,11 @@ typedef unsigned long Sflag_t;
 
 struct stream;
 
-typedef struct {
+struct stream_pos {
 	long char_no;
 	long line_no;
 	long col_no;
-} Spos_t;
+};
 
 extern struct stream *Stdin;
 extern struct stream *Stdout;
@@ -67,21 +67,21 @@ int Serror(struct stream *S);
 int Sflush(struct stream *S);
 int Sclose(struct stream *S);
 int Sputs(struct stream *S, const char *s);
-struct stream *Sopen_file(const char *file, Smode_t mode, int flags);
-struct stream *Sopen_wmem(const char *str, Smode_t mode, int flags);
-struct stream *Sopen_rmem(const char *str, Smode_t mode, int flags);
+struct stream *Sopen_file(const char *file, enum stream_mode mode, int flags);
+struct stream *Sopen_wmem(const char *str, enum stream_mode mode, int flags);
+struct stream *Sopen_rmem(const char *str, enum stream_mode mode, int flags);
 char *Sstring_wmem(struct stream *S);
-struct stream *Sopen_pipe(const char *cmd, Smode_t mode, int flags);
+struct stream *Sopen_pipe(const char *cmd, enum stream_mode mode, int flags);
 long Stell(struct stream *);
 int Sseek(struct stream *, long, int);
 int Sfprintf(struct stream *, const char *, ...) __attribute__ ((format(printf, 2, 3)));
 
 void pl_init_stream(void);
 
-Stype_t StreamType(struct stream *);
-Smode_t StreamMode(struct stream *);
+enum stream_type StreamType(struct stream *);
+enum stream_mode StreamMode(struct stream *);
 Sflag_t StreamFlags(struct stream *);
-Spos_t *Sget_pos(struct stream *);
+struct stream_pos *Sget_pos(struct stream *);
 int Seof(struct stream *S);
 int Spasteof(struct stream *S);
 

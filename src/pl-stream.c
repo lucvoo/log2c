@@ -36,7 +36,7 @@ struct stream *Snew_stream(void)
 
 //#####################################################################
 
-Spos_t *Sget_pos(struct stream *S)
+struct stream_pos *Sget_pos(struct stream *S)
 {
 	if (S->flags & SF_RECPOS)
 		return (&(S->pos));
@@ -44,12 +44,12 @@ Spos_t *Sget_pos(struct stream *S)
 		return (0);
 }
 
-Stype_t StreamType(struct stream *S)
+enum stream_type StreamType(struct stream *S)
 {
 	return (S->type);
 }
 
-Smode_t StreamMode(struct stream *S)
+enum stream_mode StreamMode(struct stream *S)
 {
 	return (S->mode);
 }
@@ -63,7 +63,7 @@ Sflag_t StreamFlags(struct stream *S)
 
 inline static int S_update_pos(struct stream *S, int c)
 {
-	Spos_t *p;
+	struct stream_pos *p;
 
 	p = Sget_pos(S);
 	if (p) {
@@ -296,7 +296,7 @@ int Sclose(struct stream *S)
 // FIXME : static
 int S_setbuf(struct stream *S, char *buf, size_t size, int type)
 {
-	Sbuff_t buf_type;
+	enum stream_bufftype buf_type;
 	int static_buf = 0;
 
 	if (!buf) {

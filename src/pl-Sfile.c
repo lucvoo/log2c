@@ -36,7 +36,7 @@ static Sfun_t file_functions = { Sread_file,
 	0,
 };
 
-struct stream *Sopen_file(const char *file, Smode_t mode, int flags)
+struct stream *Sopen_file(const char *file, enum stream_mode mode, int flags)
 {
 	int fd;
 	struct stream *S;

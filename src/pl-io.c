@@ -121,12 +121,12 @@ void PL_exit_io(void)
 	}
 }
 
-static struct pl_file *openStream(union cell *file, Smode_t mode, int flags)
+static struct pl_file *openStream(union cell *file, enum stream_mode mode, int flags)
 {
 	struct stream *S;
 	struct atom *name;
 	struct functor *f;
-	Stype_t type;
+	enum stream_type type;
 	struct pl_file *fp;
 
 	if ((name = PL_get_atom(file))) {
@@ -196,7 +196,7 @@ OK:
 	return (fp);
 }
 
-static struct pl_file *GetStream(union cell *spec, Smode_t mode)
+static struct pl_file *GetStream(union cell *spec, enum stream_mode mode)
 {
 	struct pl_file *f = 0;
 	int n;
@@ -239,7 +239,7 @@ static struct pl_file *GetStream(union cell *spec, Smode_t mode)
 
 static int unifyStreamMode(union cell *mode, struct stream *S)
 {
-	Smode_t m = StreamMode(S);
+	enum stream_mode m = StreamMode(S);
 	struct atom *a;
 
 	switch (m) {
@@ -344,7 +344,7 @@ int pl_open4(union cell *srcdest, union cell *mode, union cell *stream, union ce
 	int s_flags = 0;
 	struct atom *m;
 	struct pl_file *f;
-	Smode_t s_mode;
+	enum stream_mode s_mode;
 
 // init default
 	opt_type = ATOM(_text);
@@ -716,7 +716,7 @@ int pl_stream_position(union cell *s, union cell *old, union cell *new)
 	long told;
 	struct stream *S;
 	union cell *pos;
-	Spos_t *p;
+	struct stream_pos *p;
 
 	S = IOStream(s);		// FIXME : check return value
 	told = Stell(S);
@@ -790,7 +790,7 @@ int pl_set_stream_position(union cell *s, union cell *new)
 {
 	long char_no, line_no, col_no;
 	struct stream *S;
-	Spos_t *p;
+	struct stream_pos *p;
 
 	S = IOStream(s);		// FIXME : check return value
 	Stell(S);
@@ -819,7 +819,7 @@ int pl_set_stream_position(union cell *s, union cell *new)
 int pl_line_count(union cell *s, union cell *cnt)
 {
 	struct stream *S = IOStream(s);
-	Spos_t *p;
+	struct stream_pos *p;
 
 	if ((p = Sget_pos(S)))
 		return (PL_unify_long(cnt, p->line_no));
@@ -830,7 +830,7 @@ int pl_line_count(union cell *s, union cell *cnt)
 int pl_line_position(union cell *s, union cell *cnt)
 {
 	struct stream *S = IOStream(s);
-	Spos_t *p;
+	struct stream_pos *p;
 
 	if ((p = Sget_pos(S)))
 		return (PL_unify_long(cnt, p->col_no));
@@ -841,7 +841,7 @@ int pl_line_position(union cell *s, union cell *cnt)
 int pl_character_count(union cell *s, union cell *cnt)
 {
 	struct stream *S = IOStream(s);
-	Spos_t *p;
+	struct stream_pos *p;
 
 	if ((p = Sget_pos(S)))
 		return (PL_unify_long(cnt, p->char_no));
@@ -912,7 +912,7 @@ static union cell *GetProp(int n, prop_t p)
 
 	case position:
 		{
-			Spos_t *pos;
+			struct stream_pos *pos;
 
 			if (!(pos = Sget_pos(plfiles[n].S)))
 				break;
@@ -960,7 +960,7 @@ static union cell *GetProp(int n, prop_t p)
 
 	case repos:
 		{
-			Spos_t *pos = Sget_pos(plfiles[n].S);
+			struct stream_pos *pos = Sget_pos(plfiles[n].S);
 
 			t = HP;
 			HP[0].val = __fun(FUN(_reposition, 1));

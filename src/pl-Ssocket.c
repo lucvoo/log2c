@@ -48,7 +48,7 @@ static Sfun_t sock_w_functions = { Sread_sock,
 	0,
 };
 
-struct stream *Sopen_sock(const char *file, Smode_t mode, int flags)
+struct stream *Sopen_sock(const char *file, enum stream_mode mode, int flags)
 {
 	struct stream *S;
 

@@ -41,9 +41,9 @@ struct stream {
 #ifdef	HAVE_PIPE
 	pid_t pid;			// for pipe stream
 #endif
-	Smode_t mode;
-	Stype_t type;
-	Sbuff_t buf_type;
+	enum stream_mode mode;
+	enum stream_type type;
+	enum stream_bufftype buf_type;
 	Sflag_t flags;
 	char *base;
 	char *ptr;
@@ -51,7 +51,7 @@ struct stream {
 	int lastc;
 	size_t size;
 	Sfun_t *funs;
-	Spos_t pos;
+	struct stream_pos pos;
 };
 
 #endif

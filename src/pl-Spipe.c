@@ -51,7 +51,7 @@ static int Sclose_pipe(struct stream *S)
 	return (wstatus);		// FIXME : is this adequate ??
 }
 
-static int open_pipe(const char *cmd, Smode_t mode, pid_t * pid_p)
+static int open_pipe(const char *cmd, enum stream_mode mode, pid_t * pid_p)
 {
 	int fd[2];
 	int child_fd, parent_fd, std_fd;
@@ -110,7 +110,7 @@ static Sfun_t pipe_functions = { Sread_pipe,
 };
 
 // PRE  : mode == SM_READ || mode == SM_WRITE
-struct stream *Sopen_pipe(const char *cmd, Smode_t mode, int flags)
+struct stream *Sopen_pipe(const char *cmd, enum stream_mode mode, int flags)
 {
 	struct stream *S;
 	int fd;

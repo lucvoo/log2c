@@ -40,7 +40,7 @@ static Sfun_t wmem_functions = { 0,
 	0,
 };
 
-struct stream *Sopen_wmem(const char *buf, Smode_t mode, int flags)
+struct stream *Sopen_wmem(const char *buf, enum stream_mode mode, int flags)
 {
 	struct stream *S;
 	struct ubuffer *ubs;
@@ -100,7 +100,7 @@ static Sfun_t rmem_functions = { Sread_rmem,
 	0,
 };
 
-struct stream *Sopen_rmem(const char *buf, Smode_t mode, int flags)
+struct stream *Sopen_rmem(const char *buf, enum stream_mode mode, int flags)
 {
 	struct stream *S;
 
