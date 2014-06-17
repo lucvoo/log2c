@@ -383,7 +383,7 @@ int pl_recordz_2(cell_t * k, cell_t * t)
 	return (pl_recordaz(k, t, ref, 'z'));
 }
 
-int pl_recorded(cell_t * key, cell_t * term, cell_t * ref, control_t ctrl)
+int pl_recorded(cell_t * key, cell_t * term, cell_t * ref, enum control *ctrl)
 {
 	recl_t rl;
 	rec_t r, *ctxt;
@@ -424,13 +424,13 @@ int pl_recorded(cell_t * key, cell_t * term, cell_t * ref, control_t ctrl)
 	fail;
 }
 
-int pl_recorded_2(cell_t * key, cell_t * term, control_t ctrl)
+int pl_recorded_2(cell_t * key, cell_t * term, enum control *ctrl)
 {
 	term_t ref = PL_new_term_ref();
 	return (pl_recorded(key, term, ref, ctrl));
 }
 
-int pl_current_key(cell_t * c, control_t ctrl)
+int pl_current_key(cell_t * c, enum control *ctrl)
 {
 	recl_t recl;
 	hash_t h;

@@ -157,7 +157,7 @@ int pl_op(term_t precedence, term_t type, term_t operator)
 	succeed;
 }
 
-int pl_current_op(term_t precedence, term_t type, term_t operator, control_t ctrl)
+int pl_current_op(term_t precedence, term_t type, term_t operator, enum control *ctrl)
 {
 	operator_t op;
 	int prec, t, fix;

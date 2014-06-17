@@ -15,21 +15,26 @@ typedef unsigned long hash_t;
 typedef long intg_t;
 typedef double flt_t;
 
-typedef enum { ref_tag, var_tag, ato_tag,
-	fun_tag, int_tag, flt_tag
-} tag_t;
+enum tag {
+	ref_tag,
+	var_tag,
+	ato_tag,
+	fun_tag,
+	int_tag,
+	flt_tag
+};
 
 enum foreign { FAIL, SUCCEED, RETRY };
-typedef enum { FIRST_CALL, NEXT_CALL } ctrl_t, *control_t;
+enum control { FIRST_CALL, NEXT_CALL };
 
 #ifdef	WORDS_BIGENDIAN
 
 typedef struct {
-	tag_t tag:TAG_BITS;
+	enum tag tag:TAG_BITS;
 	long val:TAG_POS;
 } _val_t;
 typedef struct {
-	tag_t tag:TAG_BITS;
+	enum tag tag:TAG_BITS;
 	unsigned long uval:TAG_POS;
 } uval_t;
 
@@ -37,11 +42,11 @@ typedef struct {
 
 typedef struct {
 	long val:TAG_POS;
-	tag_t tag:TAG_BITS;
+	enum tag tag:TAG_BITS;
 } _val_t;
 typedef struct {
 	unsigned long uval:TAG_POS;
-	tag_t tag:TAG_BITS;
+	enum tag tag:TAG_BITS;
 } uval_t;
 
 #endif					// WORDS_BIGENDIAN
@@ -74,7 +79,7 @@ union pl_stack {
 	void *cod;
 	long intg;
 	cell_t cell;
-	ctrl_t ctrl;
+	enum control ctrl;
 };
 
 typedef struct {

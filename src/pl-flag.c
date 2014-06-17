@@ -84,7 +84,7 @@ int pl_flag(cell_t * key, cell_t * old, cell_t * new)
 		PL_warning("flag/3: value should be an atom, integer or expression");
 }
 
-int pl_current_flag(cell_t * c, control_t ctrl)
+int pl_current_flag(cell_t * c, enum control *ctrl)
 {
 	flag_t flag;
 	hash_t h;
@@ -176,7 +176,7 @@ static int PL_flag_2(term_t key1, term_t key2, term_t val)
 		fail;
 }
 
-int pl_flag_2(term_t key1, term_t key2, term_t val, control_t ctrl)
+int pl_flag_2(term_t key1, term_t key2, term_t val, enum control *ctrl)
 {
 	flag_2_t f;
 	hash_t h;

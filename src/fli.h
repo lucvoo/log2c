@@ -72,12 +72,12 @@ inline static void *AllocHeap(size_t n)
 	return (ptr);
 }
 
-inline static void *PL_foreign_context(control_t c)
+inline static void *PL_foreign_context(enum control *c)
 {
 	return (((void *)c) + CELL_SIZE);
 }
 
-inline static ctrl_t PL_foreign_control(control_t c)
+inline static enum control PL_foreign_control(enum control *c)
 {
 	return (*c);
 }

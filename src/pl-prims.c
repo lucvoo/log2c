@@ -37,7 +37,7 @@ int PL_lengthList(term_t l)
 		return (-1);
 }
 
-int pl_between(cell_t * low, cell_t * high, cell_t * n, control_t ctrl)
+int pl_between(cell_t * low, cell_t * high, cell_t * n, enum control *ctrl)
 {
 	int l, h, i;
 	int *ctxt;
@@ -828,7 +828,7 @@ int pl_hash_term(term_t term, term_t hash)
 		fail;
 }
 
-int pl_repeat(control_t ctrl)
+int pl_repeat(enum control *ctrl)
 {
 	retry;
 }

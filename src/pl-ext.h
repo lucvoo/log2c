@@ -23,12 +23,12 @@
 #define PL_PROTO_D_7	term_t, term_t, term_t, term_t, term_t, term_t, term_t);
 #define PL_PROTO_D_8	term_t, term_t, term_t, term_t, term_t, term_t, term_t, term_t);
 
-#define PL_PROTO_N_0	control_t);
-#define PL_PROTO_N_1	term_t, control_t);
-#define PL_PROTO_N_2	term_t, term_t, control_t);
-#define PL_PROTO_N_3	term_t, term_t, term_t, control_t);
-#define PL_PROTO_N_4	term_t, term_t, term_t, term_t, control_t);
-#define PL_PROTO_N_5	term_t, term_t, term_t, term_t, term_t, control_t);
+#define PL_PROTO_N_0	enum control *);
+#define PL_PROTO_N_1	term_t, enum control *);
+#define PL_PROTO_N_2	term_t, term_t, enum control *);
+#define PL_PROTO_N_3	term_t, term_t, term_t, enum control *);
+#define PL_PROTO_N_4	term_t, term_t, term_t, term_t, enum control *);
+#define PL_PROTO_N_5	term_t, term_t, term_t, term_t, term_t, enum control *);
 
 #define DET(P,A,F)	int F(PL_PROTO_D(A)
 #define NDET(P,A,F)	int F(PL_PROTO_N(A)

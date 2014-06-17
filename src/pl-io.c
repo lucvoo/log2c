@@ -425,7 +425,7 @@ int pl_close(term_t stream)
 	succeed;
 }
 
-int pl_current_stream(term_t file, term_t mode, term_t stream, control_t ctrl)
+int pl_current_stream(term_t file, term_t mode, term_t stream, enum control *ctrl)
 {
 	int *ctxt, n;
 
@@ -992,7 +992,7 @@ static term_t GetProp(int n, prop_t p)
 	return (t);
 }
 
-int pl_stream_property(term_t stream, term_t prop, control_t ctrl)
+int pl_stream_property(term_t stream, term_t prop, enum control *ctrl)
 {
 	typedef enum { str, pro, all } type_t;
 	struct {
