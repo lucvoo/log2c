@@ -21,14 +21,14 @@
 #include "pl-fli.h"
 #include "pl-io.h"
 
-typedef enum {
+enum token_type {
 	T_RPAREN = ')',
 	T_COMMA = ',',
 	T_RSQUARE = ']',
 	T_PIPE = '|',
 	T_STOP = 256, T_OP, T_ATOM, T_FUN, T_INTG, T_FLT,
 	T_STRING, T_VOID, T_VAR, T_EOF, T_ERROR
-} tok_type;
+};
 
 typedef struct var_t var_t, *Var;
 struct var_t {
@@ -38,8 +38,8 @@ struct var_t {
 	Var next;
 };
 
-typedef struct {
-	tok_type type;
+struct token {
+	enum token_type type;
 	// long start;
 	// long end;
 	union {
@@ -50,7 +50,7 @@ typedef struct {
 		union cell *ref;
 		Var var;
 	} tok_val;
-} token_t;
+};
 
 typedef struct node_t node_t;
 struct node_t {				// long start;
@@ -61,7 +61,7 @@ struct node_t {				// long start;
 
 static int give_syntaxerrors = TRUE;
 
-static token_t token;			// current_token
+static struct token token;			// current_token
 static int unget_token = 0;
 static int must_be_op;
 
@@ -685,7 +685,7 @@ error:
 #define SkipSpaces(S,c)	do { c=Getc(S); } while (isSpace(c))
 
 // POST : valid data in token
-static tok_type get_token(struct stream *S)
+static enum token_type get_token(struct stream *S)
 {
 	static struct atom *atom;
 	static struct number num;
