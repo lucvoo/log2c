@@ -29,11 +29,11 @@ static off_t Sseek_file(union stream_handle hndl, long off, int whence)
 	return (lseek(hndl.fd, off, whence));
 }
 
-static struct stream_ops file_functions = { Sread_file,
-	Swrite_file,
-	Sclose_file,
-	Sseek_file,
-	0,
+static struct stream_ops file_ops = {
+	.read = Sread_file,
+	.write = Swrite_file,
+	.close = Sclose_file,
+	.seek = Sseek_file,
 };
 
 struct stream *Sopen_file(const char *file, enum stream_mode mode, int flags)
@@ -78,7 +78,7 @@ struct stream *Sopen_file(const char *file, enum stream_mode mode, int flags)
 
 	S->type = ST_FILE;
 	S->mode = mode;
-	S->funs = &file_functions;
+	S->ops = &file_ops;
 	if (!S_setbuf(S, 0, 0, (flags & SF_BUFFERING)))
 		return (0);
 
@@ -101,21 +101,21 @@ void pl_init_stream(void)
 	static char buf_err[1];
 
 	Stdin__.hndl.fd = STDIN_FILENO;
-	Stdin__.funs = &file_functions;
+	Stdin__.ops = &file_ops;
 	Stdin__.mode = SM_READ;
 	Stdin__.type = ST_FILE;
 	Stdin__.flags = SF_EOF_RESET;
 	S_setbuf(&Stdin__, 0, 0, 0);
 
 	Stdout__.hndl.fd = STDOUT_FILENO;
-	Stdout__.funs = &file_functions;
+	Stdout__.ops = &file_ops;
 	Stdout__.mode = SM_WRITE;
 	Stdout__.type = ST_FILE;
 	Stdout__.flags = 0;
 	S_setbuf(&Stdout__, 0, 0, 0);
 
 	Stderr__.hndl.fd = STDERR_FILENO;
-	Stderr__.funs = &file_functions;
+	Stderr__.ops = &file_ops;
 	Stderr__.mode = SM_WRITE;
 	Stderr__.type = ST_FILE;
 	Stderr__.flags = SF_STATIC;

@@ -34,18 +34,18 @@ static off_t Sseek_sock(union stream_handle hndl, long off, int whence)
 	return (-1);
 }
 
-static struct stream_ops sock_r_functions = { Sread_sock,
-	Swrite_sock,
-	Sclose_r_sock,
-	Sseek_sock,
-	0,
+static struct stream_ops sock_r_ops = {
+	.read = Sread_sock,
+	.write = Swrite_sock,
+	.close = Sclose_r_sock,
+	.seek = Sseek_sock,
 };
 
-static struct stream_ops sock_w_functions = { Sread_sock,
-	Swrite_sock,
-	Sclose_w_sock,
-	Sseek_sock,
-	0,
+static struct stream_ops sock_w_ops = {
+	.read = Sread_sock,
+	.write = Swrite_sock,
+	.close = Sclose_w_sock,
+	.seek = Sseek_sock,
 };
 
 struct stream *Sopen_sock(const char *file, enum stream_mode mode, int flags)
@@ -69,10 +69,10 @@ struct stream *Sopen_sock(const char *file, enum stream_mode mode, int flags)
 	S->mode = mode;
 	switch (mode) {
 	case SM_READ:
-		S->funs = &sock_r_functions;
+		S->ops = &sock_r_ops;
 		break;
 	case SM_WRITE:
-		S->funs = &sock_w_functions;
+		S->ops = &sock_w_ops;
 		break;
 	default:			// FIXME : errmsg
 		return (0);

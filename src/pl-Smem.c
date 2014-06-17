@@ -33,11 +33,9 @@ static int Sclose_wmem(struct stream *S)
 	return (0);
 }
 
-static struct stream_ops wmem_functions = { 0,
-	Swrite_wmem,
-	Sclose_wmem,
-	0,
-	0,
+static struct stream_ops wmem_ops = {
+	.write = Swrite_wmem,
+	.close = Sclose_wmem,
 };
 
 struct stream *Sopen_wmem(const char *buf, enum stream_mode mode, int flags)
@@ -68,7 +66,7 @@ struct stream *Sopen_wmem(const char *buf, enum stream_mode mode, int flags)
 
 	S->type = ST_WMEM;
 	S->mode = mode;
-	S->funs = &wmem_functions;
+	S->ops = &wmem_ops;
 
 	if (!S_setbuf(S, 0, 248, SF_FBUF))
 		return (0);
@@ -93,11 +91,9 @@ static int Sclose_rmem(struct stream *S)
 	return (0);
 }
 
-static struct stream_ops rmem_functions = { Sread_rmem,
-	0,
-	Sclose_rmem,
-	0,
-	0,
+static struct stream_ops rmem_ops = {
+	.read = Sread_rmem,
+	.close = Sclose_rmem,
 };
 
 struct stream *Sopen_rmem(const char *buf, enum stream_mode mode, int flags)
@@ -120,7 +116,7 @@ struct stream *Sopen_rmem(const char *buf, enum stream_mode mode, int flags)
 
 	S->type = ST_RMEM;
 	S->mode = mode;
-	S->funs = &rmem_functions;
+	S->ops = &rmem_ops;
 
 	{
 		int size = 0;

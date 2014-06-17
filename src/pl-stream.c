@@ -109,10 +109,10 @@ static int Sfillbuf(struct stream *S)
 		return (S_EOF);
 	}
 
-	if (S->funs->Sread) {
+	if (S->ops->read) {
 		int r;
 
-		r = (*S->funs->Sread) (S->hndl, S->base, S->size);
+		r = S->ops->read(S->hndl, S->base, S->size);
 		if (r > 0) {
 			S->ptr = S->base;
 			S->end = S->base + r;
@@ -167,10 +167,10 @@ static int S_flushbuf(struct stream *S)
 		return (S_EOF);
 	}
 
-	if (S->funs->Swrite) {
+	if (S->ops->write) {
 		int count = S->ptr - S->base;
 		if (count > 0) {
-			int w = (S->funs->Swrite) (S->hndl, S->base, count);
+			int w = S->ops->write(S->hndl, S->base, count);
 			if (w == -1)
 				return (Set_error(S));
 
@@ -284,7 +284,7 @@ int Sclose(struct stream *S)
 	if (!(S->flags & SF_STATIC))
 		free(S->base);
 
-	rval = (S->funs->Sclose) (S);
+	rval = S->ops->close(S);
 	free(S);
 
 	return (rval);
@@ -355,9 +355,9 @@ int S_setbuf(struct stream *S, char *buf, size_t size, int type)
 
 long Stell(struct stream *S)
 {
-	if (S->funs->Sseek) {
+	if (S->ops->seek) {
 		long l;
-		l = (S->funs->Sseek) (S->hndl, 0, SEEK_CUR);
+		l = S->ops->seek(S->hndl, 0, SEEK_CUR);
 		if (S->mode == SM_READ) {
 			l -= S->end - S->ptr;
 		} else {
@@ -370,11 +370,11 @@ long Stell(struct stream *S)
 
 int Sseek(struct stream *S, long off, int whence)
 {
-	if (S->funs->Sseek) {
+	if (S->ops->seek) {
 		long l;
 		// FIXME !!!
 		S->ptr = S->end;	// Will force a fillbuf
-		l = (S->funs->Sseek) (S->hndl, off, whence);
+		l = S->ops->seek(S->hndl, off, whence);
 		return (l >= 0 ? 0 : -1);
 	} else
 		return (-1);

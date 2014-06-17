@@ -102,11 +102,10 @@ static int open_pipe(const char *cmd, enum stream_mode mode, pid_t * pid_p)
 	// return(0); // never reached : Make compiler happy
 }
 
-static struct stream_ops pipe_functions = { Sread_pipe,
-	Swrite_pipe,
-	Sclose_pipe,
-	0,
-	0
+static struct stream_ops pipe_ops = {
+	.read = Sread_pipe,
+	.write = Swrite_pipe,
+	.close = Sclose_pipe,
 };
 
 // PRE  : mode == SM_READ || mode == SM_WRITE
@@ -133,7 +132,7 @@ struct stream *Sopen_pipe(const char *cmd, enum stream_mode mode, int flags)
 	S->pid = pid;
 	S->type = ST_PIPE;
 	S->mode = mode;
-	S->funs = &pipe_functions;
+	S->ops = &pipe_ops;
 
 	if (!S_setbuf(S, 0, 0, (flags & SF_BUFFERING)))
 		return (0);
