@@ -653,7 +653,7 @@ static int get_options(union cell *Options, w_opt * options, const char *pred)
 	static int opt_list;
 	static int opt_curly;
 	static long opt_max_depth;
-	static pl_opt_spec_t specs[] = { {ATOM(_quoted), OPT_BOOL, {.bool = &opt_quoted}},
+	static struct pl_option_spec specs[] = { {ATOM(_quoted), OPT_BOOL, {.bool = &opt_quoted}},
 	{ATOM(_character__escapes), OPT_BOOL, {.bool = &opt_char_esc}},
 	{ATOM(_ignore__ops), OPT_BOOL, {.bool = &opt_ignore_ops}},
 	{ATOM(_numbervars), OPT_BOOL, {.bool = &opt_numbervars}},

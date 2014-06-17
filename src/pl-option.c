@@ -9,12 +9,12 @@
 #include "pl-fli.h"
 #include "pl-option.h"
 
-int PL_scan_options(union cell *options, pl_opt_spec spec)
+int PL_scan_options(union cell *options, struct pl_option_spec *spec)
 {
 	union cell *list = deref(options);
 	// union cell *head;
 	union cell *val = PL_new_term_ref();
-	pl_opt_spec s = 0;
+	struct pl_option_spec *s = 0;
 
 	while (is_cons(list))		// loop trough the options list
 	{

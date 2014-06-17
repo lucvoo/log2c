@@ -1277,7 +1277,7 @@ FAIL:
 static union cell *error;
 static union cell *varnames;
 static union cell *singletons;
-static pl_opt_spec_t spec[] = { {ATOM(_syntax__errors), OPT_TERM, {.term = &error}},
+static struct pl_option_spec spec[] = { {ATOM(_syntax__errors), OPT_TERM, {.term = &error}},
 {ATOM(_variable__names), OPT_TERM, {.term = &varnames}},
 {ATOM(_singletons), OPT_TERM, {.term = &singletons}},
 {0, 0, {0}}

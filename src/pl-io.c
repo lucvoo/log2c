@@ -331,7 +331,7 @@ static struct atom *opt_type;
 static struct atom *opt_alias;
 static struct atom *opt_eof_action;
 static int opt_reposition;		// Don't care
-static pl_opt_spec_t spec_open4[] = {
+static struct pl_option_spec spec_open4[] = {
 	{ATOM(_alias), OPT_ATOM, {.atom = &opt_alias}},
 	{ATOM(_eof__action), OPT_ATOM, {.atom = &opt_eof_action}},
 	{ATOM(_reposition), OPT_BOOL, {.bool = &opt_reposition}},
