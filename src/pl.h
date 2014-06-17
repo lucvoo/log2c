@@ -12,9 +12,9 @@
 #include "pl-types.h"
 
 #ifdef	HWREG_SP
-register pl_stack_t *SP asm(HWREG_SP);
+register union pl_stack*SP asm(HWREG_SP);
 #else
-extern pl_stack_t *SP;
+extern union pl_stack*SP;
 #endif
 
 #ifdef	HWREG_HP
@@ -24,15 +24,15 @@ extern cell_t *HP;
 #endif
 
 #ifdef	HWREG_FP
-register pl_stack_t *FP asm(HWREG_FP);
+register union pl_stack*FP asm(HWREG_FP);
 #else
-extern pl_stack_t *FP;
+extern union pl_stack*FP;
 #endif
 
 #ifdef	HWREG_BTP
-register pl_stack_t *BTP asm(HWREG_BTP);
+register union pl_stack*BTP asm(HWREG_BTP);
 #else
-extern pl_stack_t *BTP;
+extern union pl_stack*BTP;
 #endif
 
 #ifdef	HWREG_TP
@@ -42,7 +42,7 @@ extern tr_t *TP;
 #endif
 
 extern cell_t *SHP;
-extern pl_stack_t *STK;
+extern union pl_stack*STK;
 extern cell_t *H_STK;
 extern tr_t *TR_STK;
 extern cell_t *SH_STK;

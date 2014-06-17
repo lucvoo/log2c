@@ -67,11 +67,10 @@ struct functor {
 	struct functor *next;
 };
 
-typedef union pl_stack_t pl_stack_t;
-union pl_stack_t {
+union pl_stack {
 	cell_t *celp;
 	tr_t *tr;
-	pl_stack_t *stk;
+	union pl_stack*stk;
 	void *cod;
 	long intg;
 	cell_t cell;
