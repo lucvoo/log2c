@@ -9,26 +9,25 @@
 #include "pl-op.h"
 #include "pl-init.h"			// For PL_init_ops()
 
-typedef struct {
+struct op_type {
 	short type;
 	short prec;
-} op_type;
+};
 
-typedef struct operator__t *operator_t;
-struct operator__t {
+struct operator {
 	struct atom *operator;
-	op_type type[3];
-	operator_t next;
+	struct op_type type[3];
+	struct operator *next;
 };
 
 #define OP_HASH_SIZE	256
 #define OperatorHashValue(Op)	(((Op)->hash) % OP_HASH_SIZE)
 
-static operator_t operators[OP_HASH_SIZE];
+static struct operator *operators[OP_HASH_SIZE];
 
-inline static op_type *get_op_type(struct atom *name, int fix)
+inline static struct op_type *get_op_type(struct atom *name, int fix)
 {
-	operator_t op;
+	struct operator *op;
 
 	for (op = operators[OperatorHashValue(name)]; op; op = op->next) {
 		if (op->operator!= name)
@@ -39,9 +38,9 @@ inline static op_type *get_op_type(struct atom *name, int fix)
 	return (0);
 }
 
-inline static operator_t get_operator(struct atom *name)
+inline static struct operator *get_operator(struct atom *name)
 {
-	operator_t op;
+	struct operator *op;
 
 	for (op = operators[OperatorHashValue(name)]; op; op = op->next) {
 		if (op->operator!= name)
@@ -100,9 +99,9 @@ inline static struct atom *OperatorType2Atom(int type)
 
 inline static void add_operator(int precedence, int type, struct atom *operator)
 {
-	operator_t op;
+	struct operator *op;
 	hash_t h;
-	op_type *op_t;
+	struct op_type *op_t;
 
 	op = get_operator(operator);
 
@@ -121,7 +120,7 @@ inline static void add_operator(int precedence, int type, struct atom *operator)
 
 int PL_is_op(int fix, struct atom *operator, int *type, int *prec)
 {
-	op_type *op_t;
+	struct op_type *op_t;
 
 	if (!(op_t = get_op_type(operator, fix)))
 		return (0);
@@ -159,17 +158,17 @@ int pl_op(union cell *precedence, union cell *type, union cell *operator)
 
 int pl_current_op(union cell *precedence, union cell *type, union cell *operator, enum control *ctrl)
 {
-	operator_t op;
+	struct operator *op;
 	int prec, t, fix;
 	struct atom *a_t;
 	struct atom *a_op;
 	struct {
 		hash_t hash;
-		operator_t op;
+		struct operator *op;
 		int fix;
 	}     *ctxt;
 	hash_t h;
-	op_type *op_t;
+	struct op_type *op_t;
 
 	switch (GetCtrl(ctrl)) {
 	case FIRST_CALL:
