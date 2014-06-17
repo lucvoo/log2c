@@ -660,7 +660,7 @@ int pl_concat(union cell *a1, union cell *a2, union cell *a3)
 
 __inline__ int pl_concat_atom3(union cell *list, union cell *sep, union cell *atom)
 {
-	pl_ubs_t *b;
+	struct ubuffer *b;
 	const char *sp, *s;
 	int splen;
 	union cell *l = deref(list);

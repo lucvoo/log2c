@@ -43,7 +43,7 @@ static Sfun_t wmem_functions = { 0,
 struct stream *Sopen_wmem(const char *buf, Smode_t mode, int flags)
 {
 	struct stream *S;
-	pl_ubs_t *ubs;
+	struct ubuffer *ubs;
 
 	if (mode != SM_WRITE) {		// FIXME : errmsg
 		return (0);
@@ -53,7 +53,7 @@ struct stream *Sopen_wmem(const char *buf, Smode_t mode, int flags)
 		return (0);
 	}
 
-	ubs = malloc(sizeof(pl_ubs_t));
+	ubs = malloc(sizeof(struct ubuffer));
 	if (!ubs) {			// FIXME : errmsg
 		return (0);
 	} else {

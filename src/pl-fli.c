@@ -87,7 +87,7 @@ static char *malloc_string(char *s)
 
 int PL_get_list_codes(union cell *list, const char **s, unsigned flags)
 {
-	pl_ubs_t *b = PL_find_ubs(flags);
+	struct ubuffer *b = PL_find_ubs(flags);
 	union cell *l;
 	static int c;
 
@@ -113,7 +113,7 @@ failed:
 
 int PL_get_list_chars(union cell *list, const char **s, unsigned flags)
 {
-	pl_ubs_t *b = PL_find_ubs(flags);
+	struct ubuffer *b = PL_find_ubs(flags);
 	union cell *l;
 
 	l = deref(list);
@@ -175,7 +175,7 @@ int PL_get_chars(union cell *term, const char **s, unsigned flags)
 	if (flags & BUF_MALLOC) {
 		*s = malloc_string(r);
 	} else if ((flags & BUF_RING && type != ato_tag)) {
-		pl_ubs_t *b = PL_find_ubs(flags);
+		struct ubuffer *b = PL_find_ubs(flags);
 		int l = strlen(r) + 1;
 
 		PL_add_x_ubs(b, r, l);

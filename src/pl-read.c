@@ -243,7 +243,7 @@ static inline void warn_singletons(void)
 {
 	Var v = varl_first;
 	int n = 0;
-	pl_ubs_t *b = PL_find_ubs(BUF_DISCARDABLE);
+	struct ubuffer *b = PL_find_ubs(BUF_DISCARDABLE);
 
 	if (!v)
 		return;
@@ -449,7 +449,7 @@ static					// inline
 char *read_quoted_string(struct stream *S, int quote)
 {
 	register int c;
-	pl_ubs_t *b = PL_find_ubs(BUF_DISCARDABLE);
+	struct ubuffer *b = PL_find_ubs(BUF_DISCARDABLE);
 
 	for (;;) {
 		switch (c = Getc(S)) {
@@ -525,7 +525,7 @@ char *read_quoted_string(struct stream *S, int quote)
 static inline char *read_name(struct stream *S, int c)
 // OK for non-quoted atoms and variables name
 {
-	pl_ubs_t b;
+	struct ubuffer b;
 	PL_init_ubs(&b);
 
 	for (; isAlphaNum_(c); c = Getc(S))
@@ -537,7 +537,7 @@ static inline char *read_name(struct stream *S, int c)
 
 static inline char *read_symbol(struct stream *S, int c)
 {
-	pl_ubs_t *b = PL_find_ubs(BUF_DISCARDABLE);
+	struct ubuffer *b = PL_find_ubs(BUF_DISCARDABLE);
 
 	for (; isSymbol(c); c = Getc(S))
 		PL_add_ubs(b, c);
@@ -575,7 +575,7 @@ struct number {
 static int read_number(struct stream *S, int c, struct number *num)
 {
 	unsigned long val = 0;
-	pl_ubs_t *b = PL_find_ubs(0);
+	struct ubuffer *b = PL_find_ubs(0);
 
 	if (c == '0') {
 		switch (c = Getc(S)) {

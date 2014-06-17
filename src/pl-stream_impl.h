@@ -19,7 +19,7 @@
 typedef union hndl_t {
 	int fd;
 	int sd;
-	pl_ubs_t *ubs;
+	struct ubuffer *ubs;
 } Shndl_t;
 
 typedef int (*Sread_fun) (Shndl_t hndl, void *buf, int count);
