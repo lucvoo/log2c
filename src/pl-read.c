@@ -563,7 +563,16 @@ unsigned long str2long(char *str)
                         { val=val* B +DigitVal(c); } \
                         goto case_iso
 
-static int read_number(struct stream *S, int c, pl_number_t * num)
+struct number {
+	int type;			// int_tag | flt_tag
+	union {
+		intg_t intg;
+		flt_t flt;
+		unsigned long w[sizeof(double) / sizeof(unsigned long)];
+	} val;
+};
+
+static int read_number(struct stream *S, int c, struct number *num)
 {
 	unsigned long val = 0;
 	pl_ubs_t *b = PL_find_ubs(0);
@@ -679,7 +688,7 @@ error:
 static tok_type get_token(struct stream *S)
 {
 	static struct atom *atom;
-	static pl_number_t num;
+	static struct number num;
 	int c;
 	char *str;
 

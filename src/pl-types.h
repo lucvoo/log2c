@@ -113,15 +113,6 @@ struct modules {
 	struct modules *next;
 };
 
-typedef struct {
-	int type;			// int_tag | flt_tag
-	union {
-		intg_t intg;
-		flt_t flt;
-		unsigned long w[sizeof(double) / sizeof(unsigned long)];
-	} val;
-} pl_number_t;
-
 typedef int bool;
 #define	FALSE	0
 #define	TRUE	1
