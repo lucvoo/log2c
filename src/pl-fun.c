@@ -10,9 +10,9 @@
 #include "pl-string.h"
 #include "pl-fun.h"
 
-inline static fun_t add_fun(struct atom *functor, int arity, hash_t h)
+inline static struct functor *add_fun(struct atom *functor, int arity, hash_t h)
 {
-	fun_t f;
+	struct functor *f;
 
 	f = NEW(*f);
 	f->functor = functor;
@@ -27,7 +27,7 @@ inline static fun_t add_fun(struct atom *functor, int arity, hash_t h)
 inline static int exist_fun(struct atom *functor, int arity)
 {
 	hash_t h;
-	fun_t f;
+	struct functor *f;
 
 	h = (functor->hash + arity) % PL__funs_hash_size;
 
@@ -39,10 +39,10 @@ inline static int exist_fun(struct atom *functor, int arity)
 	fail;
 }
 
-fun_t PL_new_functor(struct atom *functor, int arity)
+struct functor *PL_new_functor(struct atom *functor, int arity)
 {
 	hash_t h;
-	fun_t f;
+	struct functor *f;
 
 	h = (functor->hash + arity) % PL__funs_hash_size;
 
@@ -56,12 +56,12 @@ fun_t PL_new_functor(struct atom *functor, int arity)
 
 int pl_current_functor(cell_t * f, cell_t * n, control_t ctrl)
 {
-	fun_t fun;
+	struct functor *fun;
 	hash_t h;
 	typedef enum { functor, arity, all } type_t;
 	struct {
 		hash_t hash;
-		fun_t fun;
+		struct functor *fun;
 		type_t type;
 	}     *ctxt;
 

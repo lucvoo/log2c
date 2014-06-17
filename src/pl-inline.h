@@ -27,7 +27,7 @@
 #define get_addr(c)	((void *) (unsigned long) ((c)->tag_uval.uval))
 #define get_tag(c)	((c)->tag_val.tag)
 
-#define get_fun(c)	((fun_t) get_addr(c))
+#define get_fun(c)	((struct functor *) get_addr(c))
 #define get_atom(c)	((struct atom *) (c))
 #define get_str(c)	((char *) get_addr(c))
 #define get_arity(c)	(get_fun(c)->arity)
@@ -52,7 +52,7 @@ inline static pl_word_t __intg(intg_t N)
 	return (MK_CELL(int_tag, VAL_MASK & N));
 }
 
-inline static pl_word_t __fun(fun_t F)
+inline static pl_word_t __fun(struct functor *F)
 {
 	return (MK_CELL(fun_tag, F));
 }
@@ -133,7 +133,7 @@ inline static cell_t * new_void(void)
 	return (new_var());
 }					// FIXME : put void var in local stack
 
-inline static cell_t * new_struct(fun_t F, int N)
+inline static cell_t * new_struct(struct functor *F, int N)
 {
 	register typeof(HP) old_HP;
 
@@ -164,7 +164,7 @@ inline static int isflt(double r, cell_t * addr)
 	return (get_flt(addr) == r);
 }
 
-inline static int isfun(fun_t F, cell_t * addr)
+inline static int isfun(struct functor *F, cell_t * addr)
 {
 	return (addr->val == __fun(F));
 }

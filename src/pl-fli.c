@@ -39,7 +39,7 @@ cell_t *PL_new_term_ref(void)
 		 *	       CONS-*		*
 		 *******************************/
 #include <stdarg.h>
-void PL_cons_functor(term_t h, functor_t fd, ...)
+void PL_cons_functor(term_t h, struct functor *fd, ...)
 {
 	int arity = fd->arity;
 	cell_t *f;
@@ -191,7 +191,7 @@ int PL_get_name_arity(term_t t, struct atom ** name, int *arity)
 	Deref(t);
 
 	if (is_fun(t)) {
-		functor_t f = get_fun(t);
+		struct functor *f = get_fun(t);
 
 		*name = f->functor;
 		*arity = f->arity;
@@ -205,7 +205,7 @@ int PL_get_name_arity(term_t t, struct atom ** name, int *arity)
 	fail;
 }
 
-int PL_get_functor(term_t t, functor_t * f)
+int PL_get_functor(term_t t, struct functor ** f)
 {
 	Deref(t);
 
@@ -288,7 +288,7 @@ int PL_get_tail(term_t l, term_t t)
 		 *             PUT-*  		*
 		 *******************************/
 
-void PL_put_functor(term_t t, functor_t f)
+void PL_put_functor(term_t t, struct functor *f)
 {
 	int arity = f->arity;
 

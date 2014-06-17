@@ -8,6 +8,6 @@
 #ifndef PL_FUN_H_
 #define PL_FUN_H_
 
-fun_t PL_new_functor(struct atom *functor, int arity);
+struct functor *PL_new_functor(struct atom *functor, int arity);
 
 #endif

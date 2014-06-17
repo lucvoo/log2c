@@ -62,7 +62,7 @@ extern struct atom *PL__atoms[];
 // must be a power of two for dynamic hashing
 extern int PL__funs_hash_size;
 extern int PL__funs_count;
-extern fun_t PL__funs[];
+extern struct functor *PL__funs[];
 
 #include "ATOMS.h"
 

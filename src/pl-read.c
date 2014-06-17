@@ -946,7 +946,7 @@ static inline void mk_unary(struct atom *atom, node_t * arg, node_t * node_out)
 
 		node_out->cell = arg->cell;
 	} else {
-		fun_t fun = PL_new_functor(atom, 1);
+		struct functor *fun = PL_new_functor(atom, 1);
 		cell_t *addr = new_struct(fun, 1);
 
 		addr[1] = arg->cell;
@@ -956,7 +956,7 @@ static inline void mk_unary(struct atom *atom, node_t * arg, node_t * node_out)
 
 static inline void mk_binary(struct atom *atom, node_t * left, node_t * right, node_t * node_out)
 {
-	fun_t fun = PL_new_functor(atom, 2);
+	struct functor *fun = PL_new_functor(atom, 2);
 	cell_t *addr = new_struct(fun, 2);
 
 	addr[1] = left->cell;

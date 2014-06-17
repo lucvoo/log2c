@@ -61,11 +61,10 @@ struct atom {
 	struct atom *next;
 };
 
-typedef struct fun__t fun__t, *fun_t, *functor_t;
-struct fun__t {
+struct functor {
 	struct atom *functor;
 	long arity;
-	fun_t next;
+	struct functor *next;
 };
 
 typedef union pl_stack_t pl_stack_t;

@@ -186,31 +186,31 @@ extern struct atom ATOM_univ;
 #define FUN_str_pos_3 		 FUN___24stream__position_3
 #define FUN_unify_2 		 FUN___3D_2
 
-extern fun__t FUN__alias_1;
-extern fun__t FUN__dt_6;
-extern fun__t FUN__eof__action_1;
-extern fun__t FUN__end__of__stream_1;
-extern fun__t FUN__file__name_1;
-extern fun__t FUN__ip_4;
-extern fun__t FUN__max_2;
-extern fun__t FUN__min_2;
-extern fun__t FUN__mod_2;
-extern fun__t FUN__mode_1;
-extern fun__t FUN__pipe_1;
-extern fun__t FUN__position_1;
-extern fun__t FUN__reposition_1;
-extern fun__t FUN__type_1;
-extern fun__t FUN_comma_2;
-extern fun__t FUN_curl_1;
-extern fun__t FUN_div_2;
-extern fun__t FUN_divide_2;
-extern fun__t FUN_dot_2;
-extern fun__t FUN_minus_1;
-extern fun__t FUN_minus_2;
-extern fun__t FUN_module_2;
-extern fun__t FUN_plus_2;
-extern fun__t FUN_star_2;
-extern fun__t FUN_str_pos_3;
-extern fun__t FUN_unify_2;
+extern struct functor FUN__alias_1;
+extern struct functor FUN__dt_6;
+extern struct functor FUN__eof__action_1;
+extern struct functor FUN__end__of__stream_1;
+extern struct functor FUN__file__name_1;
+extern struct functor FUN__ip_4;
+extern struct functor FUN__max_2;
+extern struct functor FUN__min_2;
+extern struct functor FUN__mod_2;
+extern struct functor FUN__mode_1;
+extern struct functor FUN__pipe_1;
+extern struct functor FUN__position_1;
+extern struct functor FUN__reposition_1;
+extern struct functor FUN__type_1;
+extern struct functor FUN_comma_2;
+extern struct functor FUN_curl_1;
+extern struct functor FUN_div_2;
+extern struct functor FUN_divide_2;
+extern struct functor FUN_dot_2;
+extern struct functor FUN_minus_1;
+extern struct functor FUN_minus_2;
+extern struct functor FUN_module_2;
+extern struct functor FUN_plus_2;
+extern struct functor FUN_star_2;
+extern struct functor FUN_str_pos_3;
+extern struct functor FUN_unify_2;
 
 #endif

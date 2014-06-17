@@ -124,7 +124,7 @@ static pl_file openStream(term_t file, Smode_t mode, int flags)
 {
 	pl_stream S;
 	struct atom *name;
-	functor_t f;
+	struct functor *f;
 	Stype_t type;
 	pl_file fp;
 

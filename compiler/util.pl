@@ -166,7 +166,7 @@ decl_funs(Fs)	:- map(util:decl_funs_,Fs),
 		   nl(h).
 
 decl_funs_(F/N)	:- map_atom(F,Fm),
-		   format(h,'extern fun__t FUN_~w_~d;\n',[Fm,N]),
+		   format(h,'extern struct functor FUN_~w_~d;\n',[Fm,N]),
 		   format(mod,'~q.\n',[funs(F/N)]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

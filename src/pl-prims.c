@@ -357,7 +357,7 @@ int pl_univ(term_t t, term_t l)
 	t = deref(t);
 	if (is_fun(t)) {
 		int n;
-		functor_t f = get_fun(t);
+		struct functor *f = get_fun(t);
 		name = f->functor;
 		arity = f->arity;
 
@@ -478,7 +478,8 @@ loop:
 		if (get_tag(t2) < fun_tag)
 			return (1);
 		if (is_fun(t2)) {
-			functor_t f1 = get_fun(t1), f2 = get_fun(t2);
+			struct functor *f1 = get_fun(t1);
+			struct functor *f2 = get_fun(t2);
 			int r, n;
 
 			r = strcmp(FunName(f1), FunName(f2));
@@ -798,7 +799,7 @@ static int PL_HashTerm(term_t term, hash_t * hval)
 			}
 		case fun_tag:{
 				hash_t h, val;
-				fun_t f = get_fun(term);
+				struct functor *f = get_fun(term);
 				int arity = f->arity;
 
 				val = f->functor->hash + arity;
@@ -832,7 +833,7 @@ int pl_repeat(control_t ctrl)
 	retry;
 }
 
-static int NumberVars(cell_t * c, fun_t functor, int start)
+static int NumberVars(cell_t * c, struct functor *functor, int start)
 {
 	while (1)
 		switch (get_tag(c)) {
@@ -862,7 +863,7 @@ static int NumberVars(cell_t * c, fun_t functor, int start)
 int pl_numbervars(term_t term, term_t functor, term_t start, term_t end)
 {
 	struct atom *fun;
-	fun_t f;
+	struct functor *f;
 	int n;
 
 	if ((fun = PL_get_atom(functor)) && PL_get_intg(start, &n)) {

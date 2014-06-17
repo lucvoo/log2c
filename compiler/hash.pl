@@ -90,7 +90,7 @@ hash_fun_([(F/N)|Q],HS,V) :-
 hash_fun_vec(V,HS,N)	:-
 	V=..[vec|L],
 	map(hash:hash_fun_list,L), nl,
-	format('fun_t PL__funs[~d]=\n{\n',[HS]),
+	format('struct functor *PL__funs[~d]=\n{\n',[HS]),
 	map(hash:hash_fun_tab,L),
 	format('};\nint PL__funs_hash_size = ~d;\n',[HS]),
 	format('int PL__funs_count = ~d;\n\n',[N]).
@@ -107,7 +107,7 @@ hash_fun_list([F,G|Q])	:-
 
 print_fun_list(F/N,Nxt)	:-
 	map_atom(F,Na),
-	format('fun__t FUN_~w_~w={ ATOM(~w), ~w, ~w};\n',
+	format('struct functor FUN_~w_~w={ ATOM(~w), ~w, ~w};\n',
 		[Na,N,Na,N,Nxt]).
 				
 hash_fun_tab([]) :-

@@ -116,7 +116,7 @@ debut:
 		*n = get_val(c);
 		return (1);
 	case fun_tag:{
-			fun_t f = get_fun(c);	// FIXME : hash-table
+			struct functor *f = get_fun(c);	// FIXME : hash-table
 			if (f == FUN(plus, 2)) {
 				if (PL_eval_(c + 1, n) && PL_eval_(c + 2, &n2)) {
 					*n += n2;

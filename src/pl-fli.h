@@ -15,7 +15,7 @@ struct atom *PL_new_atom(const char *s);
 int PL_get_arg(int index, term_t t, term_t a);
 int PL_get_arg_(int index, term_t t, term_t * a);
 int PL_get_chars(term_t term, const char **s, unsigned flags);
-int PL_get_functor(term_t t, functor_t * f);
+int PL_get_functor(term_t t, struct functor ** f);
 int PL_get_head(term_t l, term_t h);
 int PL_get_list(term_t l, term_t h, term_t t);
 int PL_get_list_(term_t l, term_t * h, term_t * t);
@@ -28,9 +28,9 @@ int PL_unify_arg(int index, term_t t, term_t a);
 int PL_unify_atom_chars(term_t t, const char *chars);
 term_t PL_new_term_ref(void);
 term_t PL_new_term_refs(int n);
-void PL_cons_functor(term_t h, functor_t fd, ...);
+void PL_cons_functor(term_t h, struct functor *fd, ...);
 void PL_cons_list(term_t l, term_t head, term_t tail);
-void PL_put_functor(term_t t, functor_t f);
+void PL_put_functor(term_t t, struct functor *f);
 void PL_put_list(term_t l);
 
 		 /*******************************
@@ -42,12 +42,12 @@ inline static const char *PL_atom_chars(struct atom *a)
 	return a->name;
 }
 
-inline static struct atom *PL_functor_name(functor_t f)
+inline static struct atom *PL_functor_name(struct functor *f)
 {
 	return f->functor;
 }
 
-inline static int PL_functor_arity(functor_t f)
+inline static int PL_functor_arity(struct functor *f)
 {
 	return f->arity;
 }
@@ -89,7 +89,7 @@ inline static int PL_is_struct(cell_t * c)
 	return (__isStruct(Val(c)));
 }
 
-inline static int PL_is_functor(term_t t, functor_t f)
+inline static int PL_is_functor(term_t t, struct functor *f)
 {
 	return (f == get_fun(deref(t)));
 }
@@ -420,7 +420,7 @@ inline static int PL_unify_atomic(register cell_t * c, cell_t at)
 		fail;
 }
 
-inline static int PL_unify_fun(register cell_t * c, fun_t F)
+inline static int PL_unify_fun(register cell_t * c, struct functor *F)
 // PRE : c must be deref.
 {
 	if (is_var(c)) {
@@ -437,7 +437,7 @@ inline static int PL_unify_fun(register cell_t * c, fun_t F)
 		return (c->val == __fun(F));
 }
 
-inline static int PL_unify_functor(term_t t, functor_t f)
+inline static int PL_unify_functor(term_t t, struct functor *f)
 {
 	return (PL_unify_fun(deref(t), f));
 }
