@@ -18,22 +18,23 @@
 
 #define	MAX_FILES	(OPEN_MAX/2)
 
-typedef struct {
+struct pl_file {
 	struct atom *file;
 	struct atom *alias;
 	struct stream *S;
-} pl_file_t, *pl_file;
-
-// INV : A closed pl_file have the components file, alias and S == 0
-
-static int max_files;
-static pl_file_t plfiles[MAX_FILES] = { {ATOM(_user), ATOM(_user__input), 0},
-{ATOM(_user), ATOM(_user__output), 0},
-{0, ATOM(_user__error), 0}
 };
 
-static pl_file Finput = &(plfiles[0]);
-static pl_file Foutput = &(plfiles[1]);
+// INV : A closed struct pl_file *have the components file, alias and S == 0
+
+static int max_files;
+static struct pl_file plfiles[MAX_FILES] = {
+	{ATOM(_user), ATOM(_user__input), 0},
+	{ATOM(_user), ATOM(_user__output), 0},
+	{0, ATOM(_user__error), 0}
+};
+
+static struct pl_file *Finput = &(plfiles[0]);
+static struct pl_file *Foutput = &(plfiles[1]);
 
 void PL_init_io(void)
 {
@@ -47,15 +48,15 @@ void PL_init_io(void)
 /****************************************************************/
 // Function for alias handling
 
-static void AddAlias(pl_file f, struct atom *alias)
+static void AddAlias(struct pl_file *f, struct atom *alias)
 {
 	f->alias = alias;
 }
 
-inline static pl_file GetAliasStream(struct atom *alias)
+inline static struct pl_file *GetAliasStream(struct atom *alias)
 {
 	int i;
-	pl_file f = 0;
+	struct pl_file *f = 0;
 
 	for (i = 0; i < max_files; i++) {
 		if (plfiles[i].alias == alias) {
@@ -79,13 +80,13 @@ static int TestAlias(struct atom *alias)
 	return (1);
 }
 
-static void DelStreamAliases(pl_file f)
+static void DelStreamAliases(struct pl_file *f)
 {
 	f->alias = 0;
 }
 
 /****************************************************************/
-static void CloseStream(pl_file f)
+static void CloseStream(struct pl_file *f)
 {
 	if (f->S)
 		switch (f - plfiles) {
@@ -120,13 +121,13 @@ void PL_exit_io(void)
 	}
 }
 
-static pl_file openStream(union cell *file, Smode_t mode, int flags)
+static struct pl_file *openStream(union cell *file, Smode_t mode, int flags)
 {
 	struct stream *S;
 	struct atom *name;
 	struct functor *f;
 	Stype_t type;
-	pl_file fp;
+	struct pl_file *fp;
 
 	if ((name = PL_get_atom(file))) {
 		if (mode == SM_READ) {
@@ -195,9 +196,9 @@ OK:
 	return (fp);
 }
 
-static pl_file GetStream(union cell *spec, Smode_t mode)
+static struct pl_file *GetStream(union cell *spec, Smode_t mode)
 {
-	pl_file f = 0;
+	struct pl_file *f = 0;
 	int n;
 	struct atom *alias;
 
@@ -267,7 +268,7 @@ static int unifyStreamMode(union cell *mode, struct stream *S)
 
 int pl_see(union cell *s)
 {
-	pl_file f;
+	struct pl_file *f;
 
 	if ((f = openStream(s, SM_READ, 0))) {
 		Finput = f;
@@ -278,7 +279,7 @@ int pl_see(union cell *s)
 
 int pl_tell(union cell *s)
 {
-	pl_file f;
+	struct pl_file *f;
 
 	if ((f = openStream(s, SM_WRITE, 0))) {
 		Foutput = f;
@@ -289,7 +290,7 @@ int pl_tell(union cell *s)
 
 int pl_append(union cell *s)
 {
-	pl_file f;
+	struct pl_file *f;
 
 	if ((f = openStream(s, SM_APPEND, 0))) {
 		Foutput = f;
@@ -342,7 +343,7 @@ int pl_open4(union cell *srcdest, union cell *mode, union cell *stream, union ce
 {
 	int s_flags = 0;
 	struct atom *m;
-	pl_file f;
+	struct pl_file *f;
 	Smode_t s_mode;
 
 // init default
@@ -410,7 +411,7 @@ int pl_open3(union cell *srcdest, union cell *mode, union cell *stream)
 
 int pl_close(union cell *stream)
 {
-	pl_file f;
+	struct pl_file *f;
 
 	if (!(f = GetStream(stream, SM_ANY)))
 		fail;
@@ -467,7 +468,7 @@ int pl_current_stream(union cell *file, union cell *mode, union cell *stream, en
 
 int pl_set_input(union cell *s)
 {
-	pl_file f;
+	struct pl_file *f;
 
 	if (!(f = GetStream(s, SM_READ)))
 		fail;
@@ -478,7 +479,7 @@ int pl_set_input(union cell *s)
 
 int pl_set_output(union cell *s)
 {
-	pl_file f;
+	struct pl_file *f;
 
 	if (!(f = GetStream(s, SM_WRITE)))
 		fail;
@@ -508,17 +509,17 @@ int pl_current_output(union cell *s)
 /**********************************************************************/
 
 #define OutputStream(s)	\
-	({ pl_file f; \
+	({ struct pl_file *f; \
 	   if (!(f=GetStream(s,SM_WRITE)) || !f->S) fail; \
 	   f->S; \
 	})
 #define InputStream(s)	\
-	({ pl_file f; \
+	({ struct pl_file *f; \
 	   if (!(f=GetStream(s,SM_READ)) || !f->S) fail; \
 	   f->S; \
 	})
 #define IOStream(s)	\
-	({ pl_file f; \
+	({ struct pl_file *f; \
 	   if (!(f=GetStream(s,SM_ANY)) || !f->S) fail; \
 	   S=f->S; \
 	})
@@ -1000,7 +1001,7 @@ int pl_stream_property(union cell *stream, union cell *prop, enum control *ctrl)
 		prop_t p;
 		type_t type;
 	}     *ctxt;
-	pl_file file;
+	struct pl_file *file;
 	int n;
 	prop_t p;
 
