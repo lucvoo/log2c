@@ -86,8 +86,6 @@ struct mark {
 	union cell *global;
 };
 
-typedef void *predicate_t, *pred_t;
-
 struct jmp {
 	struct atom *functor;
 	long arity;
