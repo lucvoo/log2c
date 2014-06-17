@@ -12,8 +12,7 @@
 
 static cell_t *base;
 
-inline static
-void rtrail(cell_t *ref)
+inline static void rtrail(cell_t *ref)
 { HP->celp = ref;
   HP++;
 }
@@ -33,12 +32,10 @@ struct reclist_t { cell_t key;
                  };
 
 #define hash_recs_size	256
-static
-recl_t records[hash_recs_size];
+static recl_t records[hash_recs_size];
 
 
-static
-cell_t *Copy2Heap(cell_t *addr, cell_t *c)
+static cell_t *Copy2Heap(cell_t *addr, cell_t *c)
 { debut:
   switch(get_tag(c))
   { case ref_tag: c=c->celp;
@@ -86,8 +83,7 @@ cell_t *Copy2Heap(cell_t *addr, cell_t *c)
   return(0);
 }
 
-inline static
-rec_t copy_to_heap(cell_t *c)
+inline static rec_t copy_to_heap(cell_t *c)
 { rec_t   record;
   tr_t *tr;
 
@@ -102,8 +98,7 @@ rec_t copy_to_heap(cell_t *c)
 }
 
 
-inline static
-cell_t *copy_to_global(rec_t record)
+inline static cell_t *copy_to_global(rec_t record)
 { int n, i;
   cell_t *c;
 
@@ -262,8 +257,7 @@ int try_unify_static(term_t s, term_t t)
 })								\
 
 
-inline static
-recl_t lookup_recl__old(cell_t *key)
+inline static recl_t lookup_recl__old(cell_t *key)
 { hash_t h;
   recl_t rl;
 
@@ -281,8 +275,7 @@ recl_t lookup_recl__old(cell_t *key)
   return(rl);
 }
 
-inline static
-recl_t lookup_recl__(cell_t *key, int h)
+inline static recl_t lookup_recl__(cell_t *key, int h)
 { recl_t rl;
 
   for (rl=records[h]; rl!=0; rl=rl->next)
@@ -292,8 +285,7 @@ recl_t lookup_recl__(cell_t *key, int h)
   return(0);
 }
 
-inline static
-recl_t add_recl__(cell_t *key, int h)
+inline static recl_t add_recl__(cell_t *key, int h)
 { recl_t rl;
 
   rl=NEW(*rl);			// create new recl
@@ -305,8 +297,7 @@ recl_t add_recl__(cell_t *key, int h)
   return(rl);
 }
 
-inline static
-recl_t lookup_recl(term_t key, int h)
+inline static recl_t lookup_recl(term_t key, int h)
 { recl_t rl;
 
   if (!(rl=lookup_recl__(key,h)))
@@ -315,8 +306,7 @@ recl_t lookup_recl(term_t key, int h)
   return(rl);
 }
 
-static
-int pl_recordaz(cell_t *key, cell_t *term, cell_t *ref, int az)
+static int pl_recordaz(cell_t *key, cell_t *term, cell_t *ref, int az)
 { recl_t rl;
   rec_t  r;
   hash_t h;
@@ -448,13 +438,11 @@ int pl_current_key(cell_t *c, control_t ctrl)
 /* Stuff for erase/1                                                  */
 /**********************************************************************/
 
-inline static
-void free_record(rec_t r)
+inline static void free_record(rec_t r)
 { (void) r; }		// FIXME : put it in the free list ??
 
 
-inline static
-int Erase_rec(rec_t rec)
+inline static int Erase_rec(rec_t rec)
 { rec_t prev;
   recl_t rl;
 
@@ -559,8 +547,7 @@ int pl_findall_record(term_t t)
   succeed;
 }
 
-static
-void freeAssoc(rec_t prev, rec_t a)
+static void freeAssoc(rec_t prev, rec_t a)
 { if (!prev)
     findall_recs = a->next;
   else
@@ -607,8 +594,7 @@ int pl_findall_collect(term_t bag)
 // optimized for ground term
 // ( can be ineficient on deep unground tree
 //   since the ground test will be redone at each node ).
-static
-int CopyTerm(cell_t *addr, cell_t *c)
+static int CopyTerm(cell_t *addr, cell_t *c)
 { debut:
   switch(get_tag(c))
   { case ref_tag: c=c->celp;

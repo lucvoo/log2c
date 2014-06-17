@@ -44,8 +44,7 @@ typedef struct
 } w_opt;
 
 
-inline static
-void
+inline static void
 Get_arg(int index, term_t t, term_t a)
 { cell_t *arg=deref(t)+index;
   mkrefp(a,deref(arg));
@@ -53,8 +52,7 @@ Get_arg(int index, term_t t, term_t a)
 
 
 // PRE : t is deref
-inline static
-char *varName(term_t t)
+inline static char *varName(term_t t)
 { long n;
   char s;
   static char buf[SHORT_BUF_SIZE];
@@ -104,8 +102,7 @@ int NeedQuote(atom_t a)
 //#####################################################################
 
 static int lastc;
-static
-int Puts(pl_stream S, const char *str)
+static int Puts(pl_stream S, const char *str)
 { const char *s = str;
 
   while(*s)
@@ -117,8 +114,7 @@ int Puts(pl_stream S, const char *str)
   return( ! Serror(S));
 }
 
-inline static
-int Putc(pl_stream S, int c)
+inline static int Putc(pl_stream S, int c)
 {
   lastc = c;
 
@@ -126,8 +122,7 @@ int Putc(pl_stream S, int c)
 }
 
 
-inline static
-bool PutOpenToken(pl_stream S, int c)
+inline static bool PutOpenToken(pl_stream S, int c)
 {
   if ( lastc != -1 &&
        ( (isAlphaNum_(lastc) && isAlphaNum_(c)) ||
@@ -142,13 +137,11 @@ bool PutOpenToken(pl_stream S, int c)
 }
 
 
-inline static
-bool PutOpenBrace(pl_stream S)
+inline static bool PutOpenBrace(pl_stream S)
 { return PutOpenToken(S, '(') && Putc(S,'(');
 }
 
-inline static
-bool PutToken(pl_stream S, const char *s)
+inline static bool PutToken(pl_stream S, const char *s)
 { if (s[0])
     return PutOpenToken(S, s[0]) && Puts(S,s);
   else
@@ -157,8 +150,7 @@ bool PutToken(pl_stream S, const char *s)
 
 //#####################################################################
 
-static
-int WriteQuoted(pl_stream S, const char *s, int quote, const w_opt *opt)
+static int WriteQuoted(pl_stream S, const char *s, int quote, const w_opt *opt)
 { char c;
 
   Putc(S,quote);
@@ -211,8 +203,7 @@ WriteAtom(pl_stream S, atom_t a, const w_opt *opt)
 }
 
 
-inline static
-void WritePrimitive(pl_stream S, term_t t, const w_opt *opt)
+inline static void WritePrimitive(pl_stream S, term_t t, const w_opt *opt)
 { char buf[33];
 
   t=deref(t);
@@ -274,8 +265,7 @@ static int priorityOperator(atom_t atom)
 
 
 // FIXME : stuff picked from SWI-Prolog
-static
-bool WriteTerm(pl_stream S, term_t t,
+static bool WriteTerm(pl_stream S, term_t t,
 	int prec, int depth, const w_opt *opt)
 { atom_t functor;
   int arity;
@@ -474,8 +464,7 @@ bool WriteTerm(pl_stream S, term_t t,
   succeed;
 }
 
-inline static
-int writeTerm(pl_stream S, term_t t,
+inline static int writeTerm(pl_stream S, term_t t,
 		int numvars, int quote, int display)
 { w_opt opt;
 
@@ -623,8 +612,7 @@ int pl_warn(const char *fmt)
 #include "pl-option.h"
 
 
-static
-int get_options(term_t Options, w_opt *options, const char *pred)
+static int get_options(term_t Options, w_opt *options, const char *pred)
 { static int    opt_quoted;
   static int    opt_char_esc;
   static int    opt_ignore_ops;
@@ -686,8 +674,7 @@ int get_options(term_t Options, w_opt *options, const char *pred)
   succeed;
 }
 
-static
-int PL_write_term(pl_stream S,term_t term, term_t options,
+static int PL_write_term(pl_stream S,term_t term, term_t options,
 	const char *pred)
 { w_opt opt;
 

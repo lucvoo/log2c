@@ -50,14 +50,12 @@ void PL_init_io(void)
 /****************************************************************/
 // Function for alias handling
 
-static
-void AddAlias(pl_file f, atom_t alias)
+static void AddAlias(pl_file f, atom_t alias)
 { f->alias=alias;
 }
 
 
-inline static
-pl_file GetAliasStream(atom_t alias)
+inline static pl_file GetAliasStream(atom_t alias)
 { int i;
   pl_file f=0;
 
@@ -71,8 +69,7 @@ pl_file GetAliasStream(atom_t alias)
 }
 
 
-static
-int TestAlias(atom_t alias)
+static int TestAlias(atom_t alias)
 { int i;
 
   for (i=0; i<max_files; i++)
@@ -84,14 +81,12 @@ int TestAlias(atom_t alias)
   return(1);
 }
 
-static
-void DelStreamAliases(pl_file f)
+static void DelStreamAliases(pl_file f)
 { f->alias=0;
 }
 
 /****************************************************************/
-static
-void CloseStream(pl_file f)
+static void CloseStream(pl_file f)
 { if ( f->S )
     switch(f-plfiles)
     { case 0:  Sclearerr(f->S);
@@ -198,8 +193,7 @@ OK:
   return(fp);
 }
 
-static
-pl_file GetStream(term_t spec, Smode_t mode)
+static pl_file GetStream(term_t spec, Smode_t mode)
 { pl_file f=0;
   int n;
   atom_t alias;
@@ -237,8 +231,7 @@ pl_file GetStream(term_t spec, Smode_t mode)
   return(f);
 }
 
-static
-int unifyStreamMode(term_t mode, pl_stream S)
+static int unifyStreamMode(term_t mode, pl_stream S)
 { Smode_t m = StreamMode(S);
   atom_t  a;
 
@@ -506,8 +499,7 @@ pl_stream PL_OutStream(void)
 pl_stream PL_InStream(void)
 { return(Finput->S); }
 
-static
-int Put(term_t t, pl_stream S)
+static int Put(term_t t, pl_stream S)
 { int c;
   atom_t a;
 
@@ -785,8 +777,7 @@ typedef enum { file_name, mode, in_out, alias, position,
                eof, action, repos, type, last_prop
 	     } prop_t;
 
-static
-term_t GetProp(int n, prop_t p)
+static term_t GetProp(int n, prop_t p)
 { term_t t=0;
 
   switch (p)

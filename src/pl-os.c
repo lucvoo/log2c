@@ -64,8 +64,7 @@ unsigned long PL_Random(void)
 { return(rand());
 }
 
-static
-void InitRandom(void)
+static void InitRandom(void)
 { srand(time(0));
 }
 
@@ -74,8 +73,7 @@ void InitRandom(void)
 /* File Management                                                    */
 /**********************************************************************/
 
-inline static
-const char *EnsureAbsolutePath(const char *path)
+inline static const char *EnsureAbsolutePath(const char *path)
 { if (path[0]=='/')
     return(path);
   else
@@ -114,8 +112,7 @@ char *PL_ReadLink(const char *path)
 //   return the home directory of the real user of this process
 // else
 //   return the home directory of <user>
-static
-char *PL_GetHome(const char *user)
+static char *PL_GetHome(const char *user)
 { struct passwd *pw;
 
   if (!user)
@@ -136,8 +133,7 @@ char *PL_GetHome(const char *user)
 
 // expand '~[user]' in pathname
 // return expanded path or null if error
-inline static
-char *ExpandTilde(const char *path)
+inline static char *ExpandTilde(const char *path)
 { static char new_path[PATH_MAX+1];
   char *np=new_path;
   int len=0;
@@ -274,8 +270,7 @@ static struct termios	save_termios;
 static int				ttysavefd = -1;
 static enum { RESET, RAW, CBREAK }	ttystate = RESET;
 
-static
-int tty_cbreak(int fd)	/* put terminal into a cbreak mode */
+static int tty_cbreak(int fd)	/* put terminal into a cbreak mode */
 { struct termios  buf;
 
   if (tcgetattr(fd, &save_termios) < 0)
@@ -295,8 +290,7 @@ int tty_cbreak(int fd)	/* put terminal into a cbreak mode */
   return(0);
 }
 
-static
-int tty_reset(int fd)		/* restore terminal's mode */
+static int tty_reset(int fd)		/* restore terminal's mode */
 { if (ttystate != CBREAK && ttystate != RAW)
     return(0);
 
@@ -306,8 +300,7 @@ int tty_reset(int fd)		/* restore terminal's mode */
   return(0);
 }
 
-static
-void tty_atexit(void)    /* can be set up by atexit(tty_atexit) */
+static void tty_atexit(void)    /* can be set up by atexit(tty_atexit) */
 { if (ttysavefd >= 0)
     tty_reset(ttysavefd);
 }

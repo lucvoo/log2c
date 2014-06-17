@@ -20,13 +20,11 @@ struct flag_t_
 
 #define hash_flags_size	256
 
-static
-flag_t flags[hash_flags_size];
+static flag_t flags[hash_flags_size];
 
 
 
-inline static
-flag_t lookup_flag(cell_t *key)
+inline static flag_t lookup_flag(cell_t *key)
 { hash_t h;
   flag_t f;
 
@@ -127,12 +125,10 @@ struct flag_2_t { cell_t key1;		// Only atoms, int, functor
 // #define hash_flag_2_size	256
 #define hash_flag_2_size	4
 
-static
-flag_2_t flag_2_tbl[hash_flag_2_size];
+static flag_2_t flag_2_tbl[hash_flag_2_size];
 
 
-inline static
-flag_2_t lookup_flag_2(term_t key1, term_t key2, int new)
+inline static flag_2_t lookup_flag_2(term_t key1, term_t key2, int new)
 { hash_t h, h1, h2;
   flag_2_t f;
 
@@ -162,8 +158,7 @@ flag_2_t lookup_flag_2(term_t key1, term_t key2, int new)
     return(0);			// inexistant flag
 }
 
-static
-int PL_flag_2(term_t key1, term_t key2, term_t val)
+static int PL_flag_2(term_t key1, term_t key2, term_t val)
 { flag_2_t f;
 
   if ((f=lookup_flag_2(key1,key2,0)))
@@ -217,8 +212,7 @@ int pl_flag_2(term_t key1, term_t key2, term_t val, control_t ctrl)
 }
 
 
-static
-int PL_set_flag_2(term_t key1, term_t key2, term_t val)
+static int PL_set_flag_2(term_t key1, term_t key2, term_t val)
 { flag_2_t f;
 
   if ( (f=lookup_flag_2(key1,key2,1)))

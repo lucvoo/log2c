@@ -180,8 +180,7 @@ void strip_PL_comment(pl_stream S)
 static Var varl_first = 0, varl_tail = 0, varl_free = 0;
 
 
-static
-void clear_var_list(void)
+static void clear_var_list(void)
 { Var v=varl_first;
 
   if (!v) return;
@@ -199,8 +198,7 @@ void clear_var_list(void)
 }
 
 
-static
-term_t bind_vars(int single)
+static term_t bind_vars(int single)
 { Var v=varl_first;
   term_t l = &(ATOM(nil)->atom);
 
@@ -251,8 +249,7 @@ void warn_singletons(void)
 }
 
 
-static
-Var New_Var(void)
+static Var New_Var(void)
 { Var v;
 
   if (varl_free)
@@ -269,8 +266,7 @@ Var New_Var(void)
   return(v);
 }
 
-static
-Var lookup_var(char *name)
+static Var lookup_var(char *name)
 { Var v=varl_first;
 
     for (v=varl_first; v; v=v->next)
@@ -495,8 +491,7 @@ unsigned long str2long(char *str)
                         { val=val* B +DigitVal(c); } \
                         goto case_iso
 
-static
-int read_number(pl_stream S, int c, pl_number_t *num)
+static int read_number(pl_stream S, int c, pl_number_t *num)
 { unsigned long val=0;
   pl_ubs_t *b = PL_find_ubs(0);
 
@@ -599,8 +594,7 @@ error:
 #define SkipSpaces(S,c)	do { c=Getc(S); } while (isSpace(c))
 
 // POST : valid data in token
-static
-tok_type get_token(pl_stream S)
+static tok_type get_token(pl_stream S)
 { static atom_t atom;
   static pl_number_t num;
   int c;
@@ -804,8 +798,7 @@ tok_type get_token(pl_stream S)
 /* PARSER                                                             */
 /**********************************************************************/
 
-static
-int read_term(pl_stream S, int max, const char *stop, node_t *node);
+static int read_term(pl_stream S, int max, const char *stop, node_t *node);
 
 static inline
 void mk_unary(atom_t atom, node_t *arg,node_t *node_out)
@@ -838,8 +831,7 @@ void mk_binary(atom_t atom, node_t *left, node_t *right, node_t *node_out)
   node_out->cell.celp=addr;
 }
 
-static
-cell_t *read_fun(pl_stream S, atom_t functor, int level,
+static cell_t *read_fun(pl_stream S, atom_t functor, int level,
 		node_t *node_out)
 { node_t elem;
   cell_t *addr;
@@ -863,8 +855,7 @@ cell_t *read_fun(pl_stream S, atom_t functor, int level,
   }
 }
 
-static
-int read_list(pl_stream S, node_t *node_out)
+static int read_list(pl_stream S, node_t *node_out)
 { cell_t *addr;
   node_t elem;
 
@@ -988,8 +979,7 @@ loop:
 
 
 // POST: node->prec <= max
-static
-int read_term(pl_stream S, int max, const char *stop, node_t *node)
+static int read_term(pl_stream S, int max, const char *stop, node_t *node)
 { node_t node_s;
   int tok;
 
@@ -1058,8 +1048,7 @@ int read_term(pl_stream S, int max, const char *stop, node_t *node)
 // singles : 0 -> no list; no message
 // singles : 1 -> print warning message
 // singles : & -> unify list of singletons
-static
-int Read(pl_stream S, term_t term, term_t vars,
+static int Read(pl_stream S, term_t term, term_t vars,
 		term_t singles, term_t pos)
 { node_t node;
   cell_t *addr;
@@ -1119,8 +1108,7 @@ static pl_opt_spec_t spec[] =
   { 0, 0, { 0 } }
 };
 
-static
-int PL_read_term(pl_stream S, term_t term, term_t options)
+static int PL_read_term(pl_stream S, term_t term, term_t options)
 { int old_se, rval;
 
 // test for eof

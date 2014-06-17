@@ -23,12 +23,10 @@ struct operator__t { atom_t	operator;
 #define OP_HASH_SIZE	256
 #define OperatorHashValue(Op)	(((Op)->hash) % OP_HASH_SIZE)
 
-static
-operator_t operators[OP_HASH_SIZE];
+static operator_t operators[OP_HASH_SIZE];
 
 
-inline static
-op_type *get_op_type(atom_t name, int fix)
+inline static op_type *get_op_type(atom_t name, int fix)
 { operator_t op;
 
   for (op=operators[OperatorHashValue(name)]; op; op=op->next)
@@ -39,8 +37,7 @@ op_type *get_op_type(atom_t name, int fix)
   return(0);
 }
 
-inline static
-operator_t get_operator(atom_t name)
+inline static operator_t get_operator(atom_t name)
 { operator_t op;
 
   for (op=operators[OperatorHashValue(name)]; op; op=op->next)
@@ -51,8 +48,7 @@ operator_t get_operator(atom_t name)
   return(0);
 }
 
-inline static
-int OperatorAtom2Type(atom_t type)
+inline static int OperatorAtom2Type(atom_t type)
 { if (type==ATOM(_fx))  return(OP_FX);
   if (type==ATOM(_fy))  return(OP_FY);
   if (type==ATOM(_xf))  return(OP_XF);
@@ -65,8 +61,7 @@ int OperatorAtom2Type(atom_t type)
   return(0);
 }
 
-inline static
-atom_t OperatorType2Atom(int type)
+inline static atom_t OperatorType2Atom(int type)
 { switch(type)
   { case OP_FX:  return(ATOM(_fx));
     case OP_FY:  return(ATOM(_fy));
@@ -81,8 +76,7 @@ atom_t OperatorType2Atom(int type)
 }
 
 
-inline static
-void add_operator(int precedence, int type, atom_t operator)
+inline static void add_operator(int precedence, int type, atom_t operator)
 { operator_t op;
   hash_t h;
   op_type    *op_t;

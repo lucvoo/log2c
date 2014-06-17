@@ -57,8 +57,7 @@ int PL__DigitValue[256] =
    // return a malloced string
 */
 
-inline static
-char *PL_mangle(const char *src)
+inline static char *PL_mangle(const char *src)
 { void *old_HP=HP;
   char *dst = (char *) HP;
 

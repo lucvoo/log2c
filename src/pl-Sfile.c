@@ -10,28 +10,23 @@
 #include <fcntl.h>
 
 
-static
-int Swrite_file(Shndl_t hndl, const void *s, int n)
+static int Swrite_file(Shndl_t hndl, const void *s, int n)
 { return(write(hndl.fd,s,n));
 }
 
-static
-int Sread_file(Shndl_t hndl, void *s, int n)
+static int Sread_file(Shndl_t hndl, void *s, int n)
 { return(read(hndl.fd,s,n));
 }
 
-static
-int Sclose_file(pl_stream S)
+static int Sclose_file(pl_stream S)
 { return(close(S->hndl.fd));
 }
 
-static
-off_t Sseek_file(Shndl_t hndl, long off, int whence)
+static off_t Sseek_file(Shndl_t hndl, long off, int whence)
 { return(lseek(hndl.fd,off,whence));
 }
 
-static
-Sfun_t file_functions =
+static Sfun_t file_functions =
 { Sread_file,
   Swrite_file,
   Sclose_file,

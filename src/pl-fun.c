@@ -10,8 +10,7 @@
 #include "pl-string.h"
 #include "pl-fun.h"
 
-inline static
-fun_t add_fun(atom_t functor, int arity, hash_t h)
+inline static fun_t add_fun(atom_t functor, int arity, hash_t h)
 { fun_t f;
 
   f=NEW(*f);
@@ -25,8 +24,7 @@ fun_t add_fun(atom_t functor, int arity, hash_t h)
 }
 
 
-inline static
-int exist_fun(atom_t functor, int arity)
+inline static int exist_fun(atom_t functor, int arity)
 { hash_t h;
   fun_t f;
 

@@ -22,18 +22,15 @@
 /* Pipe functions */
 /******************/
 
-static
-int Swrite_pipe(Shndl_t hndl, const void *s, int n)
+static int Swrite_pipe(Shndl_t hndl, const void *s, int n)
 { return(write(hndl.fd,s,n));
 }
 
-static
-int Sread_pipe(Shndl_t hndl, void *s, int n)
+static int Sread_pipe(Shndl_t hndl, void *s, int n)
 { return(read(hndl.fd,s,n));
 }
 
-static
-int Sclose_pipe(pl_stream S)
+static int Sclose_pipe(pl_stream S)
 { int wstatus;
   pid_t pid;
 
@@ -50,8 +47,7 @@ int Sclose_pipe(pl_stream S)
   return(wstatus);			// FIXME : is this adequate ??
 }
 
-static
-int open_pipe(const char *cmd, Smode_t mode, pid_t *pid_p)
+static int open_pipe(const char *cmd, Smode_t mode, pid_t *pid_p)
 { int	fd[2];
   int child_fd, parent_fd, std_fd;
   pid_t	pid;
@@ -110,8 +106,7 @@ int open_pipe(const char *cmd, Smode_t mode, pid_t *pid_p)
   // return(0);	// never reached : Make compiler happy
 }
 
-static
-Sfun_t pipe_functions =
+static Sfun_t pipe_functions =
 { Sread_pipe,
   Swrite_pipe,
   Sclose_pipe,

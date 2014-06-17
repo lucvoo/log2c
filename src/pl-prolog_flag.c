@@ -35,8 +35,7 @@ struct pflag_t { atom_t  key;
 static pflag_t pl_flags[pl_flags_size];
 
 
-inline static
-pflag_t lookup_pflag(atom_t key, int new)
+inline static pflag_t lookup_pflag(atom_t key, int new)
 { pflag_t f;
   hash_t h;
 
@@ -61,8 +60,7 @@ pflag_t lookup_pflag(atom_t key, int new)
 }
 
 
-inline static
-int SetAtom(pflag_t f, atom_t val, int lock, atom_t *addr)
+inline static int SetAtom(pflag_t f, atom_t val, int lock, atom_t *addr)
 { f->type=T_ATOM;
   if (lock) f->lock=1;
   if (addr) f->addr.atom=addr;
@@ -73,8 +71,7 @@ int SetAtom(pflag_t f, atom_t val, int lock, atom_t *addr)
   succeed;
 }
 
-inline static
-int Setpf_atom(const char *key, atom_t val, int lock, atom_t *addr)
+inline static int Setpf_atom(const char *key, atom_t val, int lock, atom_t *addr)
 { pflag_t f;
 
   if ((f=lookup_pflag(PL_new_atom(key),1)))
@@ -83,13 +80,11 @@ int Setpf_atom(const char *key, atom_t val, int lock, atom_t *addr)
     fail;
 }
 
-inline static
-int Setpf_str(const char *key, const char *val, int lock, atom_t *addr)
+inline static int Setpf_str(const char *key, const char *val, int lock, atom_t *addr)
 { return(Setpf_atom(key,PL_new_atom(val), lock, addr)); }
 
 
-inline static
-int SetInt(pflag_t f, long val, int lock, int *addr, int type)
+inline static int SetInt(pflag_t f, long val, int lock, int *addr, int type)
 { f->type=type;
   if (lock) f->lock=1;
   if (addr) f->addr.intg=addr;
@@ -100,8 +95,7 @@ int SetInt(pflag_t f, long val, int lock, int *addr, int type)
   succeed;
 }
 
-inline static
-int Setpf_int(const char *key, long val, int lock, int *addr)
+inline static int Setpf_int(const char *key, long val, int lock, int *addr)
 { pflag_t f;
 
   if ((f=lookup_pflag(PL_new_atom(key),1)))
@@ -110,8 +104,7 @@ int Setpf_int(const char *key, long val, int lock, int *addr)
     fail;
 }
 
-inline static
-int Setpf_boo(const char *key, long val, int lock, int *addr)
+inline static int Setpf_boo(const char *key, long val, int lock, int *addr)
 { pflag_t f;
 
   if ((f=lookup_pflag(PL_new_atom(key),1)))
@@ -153,8 +146,7 @@ int pl_set_prolog_flag(term_t key, term_t new)
   }
 }
 
-static
-int PL_unify_prolog_flag(pflag_t f, term_t term)
+static int PL_unify_prolog_flag(pflag_t f, term_t term)
 {
     switch(f->type)
     { case T_ATOM: { atom_t a = f->addr.atom

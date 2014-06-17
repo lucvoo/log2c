@@ -44,8 +44,7 @@ static char DigitName[] =
   'U', 'V', 'W', 'X', 'Y', 'Z'
 };
 
-inline static
-char digitName(int n, bool small)		// FIXME : check if overflow ???
+inline static char digitName(int n, bool small)		// FIXME : check if overflow ???
 { return( small ? digitname[n] : DigitName[n] );
 }
 
@@ -61,8 +60,7 @@ char digitName(int n, bool small)		// FIXME : check if overflow ???
 
  ** Fri Aug 19 22:26:41 1988  jan@swivax.UUCP (Jan Wielemaker)
 */
-static
-char * formatInteger(bool split, int div, int radix, bool small, long int n)
+static char * formatInteger(bool split, int div, int radix, bool small, long int n)
 { static char tmp[100];
   char *s = tmp + 99;
   int before = (div == 0);
@@ -95,8 +93,7 @@ char * formatInteger(bool split, int div, int radix, bool small, long int n)
 }
 
 
-inline static
-int update_column(int col, int c)
+inline static int update_column(int col, int c)
 { switch(c)
   { case '\n':	return 0;
     case '\t':	return (col + 1) | 0x7;
@@ -251,8 +248,7 @@ static cell_t end_cell = { .celp = 0 };
 static term_t empty_tab = &end_cell;
 
 
-inline static
-term_t list_to_tab(term_t list)
+inline static term_t list_to_tab(term_t list)
 { int n=0;
   term_t l;
 

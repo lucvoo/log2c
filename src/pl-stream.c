@@ -20,8 +20,7 @@
 
 //#####################################################################
 
-inline static
-int Set_error(pl_stream S)
+inline static int Set_error(pl_stream S)
 { S->flags |= SF_ERR;
   S->ptr=S->end=S->base;
   return(S_EOF);
@@ -56,8 +55,7 @@ Sflag_t StreamFlags(pl_stream S)
 
 //#####################################################################
 
-inline static
-int S_update_pos(pl_stream S, int c)
+inline static int S_update_pos(pl_stream S, int c)
 { Spos_t *p;
 
   p = Sget_pos(S);
@@ -84,8 +82,7 @@ int S_update_pos(pl_stream S, int c)
 //#####################################################################
 
 // RETURN : S_EOF if eof or error; first char otherwise
-static
-int Sfillbuf(pl_stream S)
+static int Sfillbuf(pl_stream S)
 { if ((S->mode != SM_READ) || Serror(S))
   {	// FIXME : msg
     return(Set_error(S));
@@ -152,8 +149,7 @@ int Speekc(pl_stream S)
 //#####################################################################
 
 // RETURN : S_EOF on error; 0 otherwise.
-static
-int S_flushbuf(pl_stream S)
+static int S_flushbuf(pl_stream S)
 {
 
   if (Serror(S))

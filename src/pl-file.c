@@ -9,8 +9,7 @@
 #include "pl-fli.h"
 #include "pl-os.h"
 
-static
-const char *PL_get_filename(term_t file, char *buf)
+static const char *PL_get_filename(term_t file, char *buf)
 { static char buffer[PATH_MAX+1];
   const char *name;
 

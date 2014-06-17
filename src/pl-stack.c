@@ -34,8 +34,7 @@ typedef enum {
 #undef  STACK_DEF
 
 #define	STACK_DEF(NBR,BASE,INCR,MAX,NAME) { (void *) BASE, 0, 0, INCR, MAX, NAME },
-static
-Stack stacks[] = {
+static Stack stacks[] = {
 #include "pl-config.h"
                  };
 #undef  STACK_DEF
@@ -43,8 +42,7 @@ Stack stacks[] = {
 #define NBR_STKS	(sizeof(stacks)/sizeof(stacks[0]))
 
 
-static
-void expand_stack(Stack *s)
+static void expand_stack(Stack *s)
 { int new_size;
 
   new_size=s->size+s->incr;
@@ -87,8 +85,7 @@ void expand_stack(Stack *s)
 }
 
 // FIXME (4<<10) ?
-static
-Stack *which_stack(void)
+static Stack *which_stack(void)
 {
 #ifdef DEBUG_STACKS
   fprintf(stderr, "%s:%d\n", __FUNCTION__, __LINE__);
@@ -112,8 +109,7 @@ Stack *which_stack(void)
   return(0);
 }
 
-static
-void segv_handler(int sig)
+static void segv_handler(int sig)
 { Stack *s;
 
    s=which_stack();

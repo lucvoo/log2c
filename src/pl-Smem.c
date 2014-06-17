@@ -19,22 +19,19 @@ char *Sstring_wmem(pl_stream S)
   return(PL_base_ubs(S->hndl.ubs));
 }
 
-static
-int Swrite_wmem(Shndl_t hndl, const void *s, int n)
+static int Swrite_wmem(Shndl_t hndl, const void *s, int n)
 { PL_add_x_ubs(hndl.ubs,s,n);
   return(n);
 }
 
-static
-int Sclose_wmem(pl_stream S)
+static int Sclose_wmem(pl_stream S)
 { PL_free_ubs(S->hndl.ubs);
   free(S->hndl.ubs);
 
   return(0);
 }
 
-static
-Sfun_t wmem_functions =
+static Sfun_t wmem_functions =
 { 0,
   Swrite_wmem,
   Sclose_wmem,
@@ -89,18 +86,15 @@ pl_stream Sopen_wmem(const char *buf, Smode_t mode, int flags )
 /* Read only */
 /*************/
 
-static
-int Sread_rmem(Shndl_t hndl, void *s, int n)
+static int Sread_rmem(Shndl_t hndl, void *s, int n)
 { return(0);
 }
 
-static
-int Sclose_rmem(pl_stream S)
+static int Sclose_rmem(pl_stream S)
 { return(0);
 }
 
-static
-Sfun_t rmem_functions =
+static Sfun_t rmem_functions =
 { Sread_rmem,
   0,
   Sclose_rmem,

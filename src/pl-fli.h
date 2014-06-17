@@ -38,18 +38,15 @@ void	PL_put_list(term_t l);
                  *             ATOMS            *
                  *******************************/
 
-inline static
-const char *
+inline static const char *
 PL_atom_chars(atom_t a)
 { return a->name; }
 
-inline static
-atom_t
+inline static atom_t
 PL_functor_name(functor_t f)
 { return f->functor; }
 
-inline static
-int
+inline static int
 PL_functor_arity(functor_t f)
 { return f->arity; }
 
@@ -117,44 +114,37 @@ int is_list(cell_t *c)
                  /*******************************
                  *              PUT             *
                  *******************************/
-inline static
-void
+inline static void
 PL_put_var(term_t t)
 { mkrefp(t, new_var());
 }
 
-inline static
-void PL_put_integer(term_t v, long N)
+inline static void PL_put_integer(term_t v, long N)
 { v->val=__intg(N);
   return;
 }
 
-inline static
-void PL_put_float(term_t v, double N)
+inline static void PL_put_float(term_t v, double N)
 { v->celp=new_flt(N);
   return;
 }
 
-inline static
-void PL_put_atom(term_t v, atom_t A)
+inline static void PL_put_atom(term_t v, atom_t A)
 { v->celp=&(A->atom);
   return;
 }
 
-inline static
-void
+inline static void
 PL_put_nil(term_t l)
 { PL_put_atom(l,ATOM(nil));
 }
 
-inline static
-void
+inline static void
 PL_put_term(term_t t1, term_t t2)
 { mkrefp(t1,deref(t2));
 }
 
-inline static
-void
+inline static void
 PL_put_atom_chars(term_t t, const char *s)
 { PL_put_atom(t, PL_new_atom(s));
 }

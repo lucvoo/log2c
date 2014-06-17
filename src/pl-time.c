@@ -23,16 +23,14 @@ void PL_init_time(void)
   gettimeofday(&tv_last, 0);
 }
 
-inline static
-void cp_usage(void)
+inline static void cp_usage(void)
 { ru_last.ru_utime.tv_sec  = ru_now.ru_utime.tv_sec;
   ru_last.ru_utime.tv_usec = ru_now.ru_utime.tv_usec;
   ru_last.ru_stime.tv_sec  = ru_now.ru_stime.tv_sec;
   ru_last.ru_stime.tv_usec = ru_now.ru_stime.tv_usec;
 }
 
-inline static
-void cp_timev(void)
+inline static void cp_timev(void)
 { tv_last.tv_sec  = tv_now.tv_sec;
   tv_last.tv_usec = tv_now.tv_usec;
 }
@@ -122,8 +120,7 @@ int pl_statistics(term_t key, term_t pair)
 }
 
 
-static
-int _pl_time(term_t t, struct tm *tm)
+static int _pl_time(term_t t, struct tm *tm)
 { term_t dt;
 
   if (!tm)

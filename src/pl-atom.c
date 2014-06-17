@@ -11,8 +11,7 @@
 #include "pl-atom.h"
 
 
-inline static
-atom_t add_atom(const char *s, hash_t H, hash_t h)
+inline static atom_t add_atom(const char *s, hash_t H, hash_t h)
 { atom_t a;
 
   a=NEW(*a);

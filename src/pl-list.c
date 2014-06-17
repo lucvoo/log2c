@@ -86,8 +86,7 @@ int pl_length(term_t list, term_t l)
 
 // Return length of the list; -1 if not a proper_list
 // Put the array in static_heap
-inline static
-int list_to_array(term_t list)
+inline static int list_to_array(term_t list)
 { term_t l;
   int n=0;
 
@@ -104,8 +103,7 @@ int list_to_array(term_t list)
     return(-1);
 }
 
-inline static
-term_t array_to_list(term_t *array, int n, int rem_dup)
+inline static term_t array_to_list(term_t *array, int n, int rem_dup)
 { term_t l=HP;
   term_t last;
 
@@ -125,8 +123,7 @@ term_t array_to_list(term_t *array, int n, int rem_dup)
 }
 
 
-inline static
-int PL_sort(term_t list, term_t sorted, int rem_dup)
+inline static int PL_sort(term_t list, term_t sorted, int rem_dup)
 { term_t *array=(term_t *) SHP;
   term_t l;
   int n;

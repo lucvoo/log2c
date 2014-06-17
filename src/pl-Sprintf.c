@@ -11,8 +11,7 @@
 
 #include "pl-stream.h"
 
-static
-int Svprintf(pl_stream S, const char *fmt, va_list ap)
+static int Svprintf(pl_stream S, const char *fmt, va_list ap)
 { int rval;
   char *buf;
 

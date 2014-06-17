@@ -119,8 +119,7 @@ int pl_ground(cell_t *d)
 int pl_unground(cell_t *d)
 { return(!pl_ground(d)); }
 
-static
-int term_variables(cell_t *c, int n)
+static int term_variables(cell_t *c, int n)
 { debut:
 
   switch(get_tag(c))
@@ -164,8 +163,7 @@ int pl_term_variables(cell_t *t, cell_t *fv)
   return(pl_unify(fv,l));
 }
 
-static
-int PL_unify_list_chars(term_t l, const char *s)
+static int PL_unify_list_chars(term_t l, const char *s)
 { for (;*s;s++)
   { debut:
     switch(get_tag(l))
@@ -492,8 +490,7 @@ int pl_std_eq(term_t t1, term_t t2)
   fail;		// Suppress compiler warning
 }
 
-static
-int struct_eq(cell_t *t1, cell_t *t2)
+static int struct_eq(cell_t *t1, cell_t *t2)
 { Deref(t1);
   Deref(t2);
 
@@ -716,8 +713,7 @@ int pl_hpjw(term_t str, term_t h_val)
   return PL_unify_integer(h_val, h);
 }
 
-static
-int PL_HashTerm(term_t term, hash_t *hval)
+static int PL_HashTerm(term_t term, hash_t *hval)
 { while (1)
     switch(get_tag(term))
     { case ref_tag: term=deref(term);
@@ -769,8 +765,7 @@ int pl_repeat(control_t ctrl)
 { retry; }
 
 
-static
-int NumberVars(cell_t *c, fun_t functor, int start)
+static int NumberVars(cell_t *c, fun_t functor, int start)
 { while (1)
   switch(get_tag(c))
   { case ref_tag: c=c->celp;

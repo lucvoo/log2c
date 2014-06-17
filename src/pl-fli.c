@@ -78,8 +78,7 @@ PL_cons_list(term_t l, term_t head, term_t tail)
 		 *	      GET-*		*
 		 *******************************/
 
-static
-char *malloc_string(char *s)
+static char *malloc_string(char *s)
 { int n;
   char *m;
 

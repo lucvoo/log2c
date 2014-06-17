@@ -9,35 +9,29 @@
 
 #include <sys/socket.h>
 
-static
-int Swrite_sock(Shndl_t hndl, const void *s, int n)
+static int Swrite_sock(Shndl_t hndl, const void *s, int n)
 { return(send(hndl.sd,s,n,0));
 }
 
-static
-int Sread_sock(Shndl_t hndl, void *s, int n)
+static int Sread_sock(Shndl_t hndl, void *s, int n)
 { return(recv(hndl.sd,s,n,0));
 }
 
-static
-int Sclose_r_sock(pl_stream S)
+static int Sclose_r_sock(pl_stream S)
 { // FIXME
   return(0);
 }
 
-static
-int Sclose_w_sock(pl_stream S)
+static int Sclose_w_sock(pl_stream S)
 { // FIXME
   return(0);
 }
 
-static
-off_t Sseek_sock(Shndl_t hndl, long off, int whence)
+static off_t Sseek_sock(Shndl_t hndl, long off, int whence)
 { return(-1);
 }
 
-static
-Sfun_t sock_r_functions =
+static Sfun_t sock_r_functions =
 { Sread_sock,
   Swrite_sock,
   Sclose_r_sock,
@@ -45,8 +39,7 @@ Sfun_t sock_r_functions =
   0,
 };
 
-static
-Sfun_t sock_w_functions =
+static Sfun_t sock_w_functions =
 { Sread_sock,
   Swrite_sock,
   Sclose_w_sock,
