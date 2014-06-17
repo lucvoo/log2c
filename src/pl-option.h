@@ -12,7 +12,7 @@ typedef enum { OPT_BOOL, OPT_INTG, OPT_ATOM, OPT_TERM } pl_opt_type_t;
 
 typedef union {
 	long *intg;
-	bool *bool;
+	int *bool;
 	const char **str;
 	struct atom **atom;
 	union cell *cell;

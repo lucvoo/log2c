@@ -41,7 +41,7 @@ static char DigitName[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 	'U', 'V', 'W', 'X', 'Y', 'Z'
 };
 
-inline static char digitName(int n, bool small)	// FIXME : check if overflow ???
+inline static char digitName(int n, int small)	// FIXME : check if overflow ???
 {
 	return (small ? digitname[n] : DigitName[n]);
 }
@@ -58,13 +58,13 @@ inline static char digitName(int n, bool small)	// FIXME : check if overflow ???
 
  ** Fri Aug 19 22:26:41 1988  jan@swivax.UUCP (Jan Wielemaker)
 */
-static char *formatInteger(bool split, int div, int radix, bool small, long int n)
+static char *formatInteger(int split, int div, int radix, int small, long int n)
 {
 	static char tmp[100];
 	char *s = tmp + 99;
 	int before = (div == 0);
 	int digits = 0;
-	bool negative = FALSE;
+	int negative = FALSE;
 
 	*s = EOS;
 	if (n < 0) {
@@ -105,7 +105,7 @@ inline static int update_column(int col, int c)
 	}
 }
 
-static bool do_format(const char *fmt, union cell *argv, struct stream *S)
+static int do_format(const char *fmt, union cell *argv, struct stream *S)
 {
 	while (*fmt) {
 		if (*fmt == '~') {

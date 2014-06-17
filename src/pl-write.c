@@ -118,7 +118,7 @@ inline static int Putc(struct stream *S, int c)
 	return Sputc(S, c);
 }
 
-inline static bool PutOpenToken(struct stream *S, int c)
+inline static int PutOpenToken(struct stream *S, int c)
 {
 	if (lastc != -1 &&
 	    ((isAlphaNum_(lastc) && isAlphaNum_(c)) || (isSymbol(lastc) && isSymbol(c)) || c == '(')
@@ -129,12 +129,12 @@ inline static bool PutOpenToken(struct stream *S, int c)
 	succeed;
 }
 
-inline static bool PutOpenBrace(struct stream *S)
+inline static int PutOpenBrace(struct stream *S)
 {
 	return PutOpenToken(S, '(') && Putc(S, '(');
 }
 
-inline static bool PutToken(struct stream *S, const char *s)
+inline static int PutToken(struct stream *S, const char *s)
 {
 	if (s[0])
 		return PutOpenToken(S, s[0]) && Puts(S, s);
@@ -277,7 +277,7 @@ static int priorityOperator(struct atom *atom)
 }
 
 // FIXME : stuff picked from SWI-Prolog
-static bool WriteTerm(struct stream *S, union cell *t, int prec, int depth, const w_opt * opt)
+static int WriteTerm(struct stream *S, union cell *t, int prec, int depth, const w_opt * opt)
 {
 	struct atom *functor;
 	int arity;
