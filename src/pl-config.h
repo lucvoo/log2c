@@ -49,6 +49,4 @@
 #define HAVE_ASPRINTF
 #define HAVE_PIPE
 
-typedef unsigned long pl_word_t;
-
 #endif

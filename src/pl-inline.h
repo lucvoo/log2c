@@ -42,29 +42,29 @@
 #define FunArity(f)	((f)->arity)
 
 #define	MK_TAG(T)	(((unsigned long)(T))<<TAG_POS)
-#define MK_CELL(T,V)	(MK_TAG(T)+(pl_word_t) (V))
+#define MK_CELL(T,V)	(MK_TAG(T)+(unsigned long) (V))
 #define new_atom(A)	(&((A)->atom))
 #define __cons()	__fun(FUN(dot,2))
 #define __nil()		__atom(ATOM(nil))
 
-inline static pl_word_t __intg(intg_t N)
+inline static unsigned long __intg(intg_t N)
 {
 	return (MK_CELL(int_tag, VAL_MASK & N));
 }
 
-inline static pl_word_t __fun(struct functor *F)
+inline static unsigned long __fun(struct functor *F)
 {
 	return (MK_CELL(fun_tag, F));
 }
 
-inline static pl_word_t __var(void)
+inline static unsigned long __var(void)
 {
 	return (MK_CELL(var_tag, 0));
 }
 
-inline static pl_word_t __atom(struct atom *A)
+inline static unsigned long __atom(struct atom *A)
 {
-	return ((pl_word_t) new_atom(A));
+	return ((unsigned long) new_atom(A));
 }
 
 inline static int is_ref(union cell * c)
