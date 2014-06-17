@@ -10,22 +10,21 @@
 #include "pl-pred.h"
 #include "pl-fli.h"
 
-typedef struct flag_t_ *flag_t;
 
-struct flag_t_ {
+struct flag {
 	union cell key;			// Only atom, integer or first cell of a functor.
 	union cell val;			// Only atom or integer (or float).
-	flag_t next;
+	struct flag *next;
 };
 
 #define hash_flags_size	256
 
-static flag_t flags[hash_flags_size];
+static struct flag *flags[hash_flags_size];
 
-inline static flag_t lookup_flag(union cell * key)
+inline static struct flag *lookup_flag(union cell * key)
 {
 	hash_t h;
-	flag_t f;
+	struct flag *f;
 
 debut:
 	switch (get_tag(key))		// get the hash value if the key is OK
@@ -60,7 +59,7 @@ debut:
 
 int pl_flag(union cell * key, union cell * old, union cell * new)
 {
-	flag_t f;
+	struct flag *f;
 	union cell *tmp;
 	int n;
 
@@ -86,11 +85,11 @@ int pl_flag(union cell * key, union cell * old, union cell * new)
 
 int pl_current_flag(union cell * c, enum control *ctrl)
 {
-	flag_t flag;
+	struct flag *flag;
 	hash_t h;
 	struct {
 		hash_t hash;
-		flag_t flag;
+		struct flag *flag;
 	}     *ctxt;
 
 	switch (GetCtrl(ctrl)) {
@@ -124,23 +123,21 @@ int pl_current_flag(union cell * c, enum control *ctrl)
 /* flag2 : for internal use only ?                                    */
 /**********************************************************************/
 
-typedef struct flag_2_t *flag_2_t;
-
-struct flag_2_t {
+struct flag2 {
 	union cell key1;			// Only atoms, int, functor
 	union cell key2;
 	union cell val;			// Only atom or integer (or float).
-	flag_2_t next;
+	struct flag2 *next;
 };
 // #define hash_flag_2_size     256
 #define hash_flag_2_size	4
 
-static flag_2_t flag_2_tbl[hash_flag_2_size];
+static struct flag2 *flag_2_tbl[hash_flag_2_size];
 
-inline static flag_2_t lookup_flag_2(union cell *key1, union cell *key2, int new)
+inline static struct flag2 *lookup_flag_2(union cell *key1, union cell *key2, int new)
 {
 	hash_t h, h1, h2;
-	flag_2_t f;
+	struct flag2 *f;
 
 	key1 = deref(key1);
 	key2 = deref(key2);
@@ -168,7 +165,7 @@ inline static flag_2_t lookup_flag_2(union cell *key1, union cell *key2, int new
 
 static int PL_flag_2(union cell *key1, union cell *key2, union cell *val)
 {
-	flag_2_t f;
+	struct flag2 *f;
 
 	if ((f = lookup_flag_2(key1, key2, 0)))
 		return (PL_unify_atomic(val, f->val));
@@ -178,12 +175,12 @@ static int PL_flag_2(union cell *key1, union cell *key2, union cell *val)
 
 int pl_flag_2(union cell *key1, union cell *key2, union cell *val, enum control *ctrl)
 {
-	flag_2_t f;
+	struct flag2 *f;
 	hash_t h;
 	union cell **tr;
 	struct {
 		hash_t hash;
-		flag_2_t flag;
+		struct flag2 *flag;
 	}     *ctxt;
 
 	key1 = deref(key1);
@@ -223,7 +220,7 @@ int pl_flag_2(union cell *key1, union cell *key2, union cell *val, enum control 
 
 static int PL_set_flag_2(union cell *key1, union cell *key2, union cell *val)
 {
-	flag_2_t f;
+	struct flag2 *f;
 
 	if ((f = lookup_flag_2(key1, key2, 1))) {
 		val = deref(val);
