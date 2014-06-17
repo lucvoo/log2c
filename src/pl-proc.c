@@ -15,14 +15,14 @@ union cell *PL_ARGS[PL_MAX_ARGS] = { 0 };
 union cell *PL_ARGS_[PL_MAX_ARGS] = { 0 };
 #endif
 
-extern modules_t *PL__modules[];
+extern struct modules *PL__modules[];
 extern struct module module_system;
 extern int PL__modules_hash_size;
 
 inline static struct module *lookup_module(struct atom *name)
 {
 	hash_t h;
-	modules_t *m;
+	struct modules *m;
 
 	h = name->hash % PL__modules_hash_size;
 	for (m = PL__modules[h]; m != 0; m = m->next)

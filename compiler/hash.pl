@@ -213,7 +213,7 @@ hash_mods_vec(V) :-
 	V=..[vec|L],
 	length(L,N),
 	map(hash:hash_mods_list,L), nl,
-	format(' modules_t *PL__modules[]=\n{\n'),
+	format('struct modules *PL__modules[]=\n{\n'),
 	map(hash:hash_mods_tab,L),
 	format('};\nint PL__modules_hash_size = ~d;\n\n',[N]).
 
@@ -227,7 +227,7 @@ hash_mods_list([A,B|Q])	:-
 
 print_mods_list(A,Nxt)	:-
 	map_atom(A,Am),
-	format('static modules_t MODULE_~w = { ATOM(~w), &module~w ,~w};\n',[Am,Am,Am,Nxt]).
+	format('static struct modules MODULE_~w = { ATOM(~w), &module~w ,~w};\n',[Am,Am,Am,Nxt]).
 
 hash_mods_tab([]) :-
 	format('  0,\n').

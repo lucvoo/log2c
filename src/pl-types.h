@@ -107,11 +107,10 @@ struct module {
 	struct jmp_table all;
 };
 
-typedef struct mods_t modules_t;
-struct mods_t {
+struct modules {
 	struct atom *name;
 	struct module *module;
-	modules_t *next;
+	struct modules *next;
 };
 
 typedef struct {
