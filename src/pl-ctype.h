@@ -10,7 +10,8 @@
 
 #define ct_bits(n)	(1<<n)
 
-typedef enum { ct_lower = ct_bits(0),
+enum pl_ctype {
+	ct_lower = ct_bits(0),
 	ct_upper = ct_bits(1),
 	ct_digit = ct_bits(2),
 	ct_solo = ct_bits(3),
@@ -27,9 +28,9 @@ typedef enum { ct_lower = ct_bits(0),
 	ct_hex = ct_bits(14),
 	ct_ctrl = ct_bits(15),
 	ct_undscr = ct_bits(16),
-} pl_ctype_t;
+};
 
-extern pl_ctype_t PL__char_type[];	/* array of character types */
+extern enum pl_ctype PL__char_type[];	/* array of character types */
 
 #define isSpace(c)	(PL__char_type[(c) + 1] & ct_space)
 #define isDigit(c)	(PL__char_type[(c) + 1] & ct_digit)
