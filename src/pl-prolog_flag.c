@@ -9,7 +9,7 @@
 #include "pl-status.h"
 #include "pl-atom.h"
 
-pl_status_t PL__status;
+struct pl_status PL__status;
 
 #define	pl_flags_size	16
 

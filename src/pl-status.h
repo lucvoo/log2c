@@ -10,7 +10,7 @@
 
 #include "Prolog.h"
 
-typedef struct {
+struct pl_status {
 	struct atom *bck_quotes;
 	int char_esc;
 	int char_conv;
@@ -27,8 +27,8 @@ typedef struct {
 	int singleton;
 	int string;
 	int tty_ctrl;
-} pl_status_t;
+};
 
-extern pl_status_t PL__status;
+extern struct pl_status PL__status;
 
 #endif
