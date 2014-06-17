@@ -126,7 +126,7 @@ inline static char *PL_mangle(const char *src)
 int pl_mangle(term_t name, term_t mangled)
 {
 	const char *n, *m;
-	atom_t a;
+	struct atom *a;
 
 	if (!PL_get_atom_chars(name, &n))
 		fail;

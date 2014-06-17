@@ -127,7 +127,7 @@ int pl_access_file(term_t name, term_t mode)
 {
 	const char *n;
 	int md;
-	atom_t m;
+	struct atom *m;
 
 	if (!(m = PL_get_atom(mode)) || !(n = PL_get_filename(name, 0)))
 		PL_warning("access_file/2: instantiation fault");

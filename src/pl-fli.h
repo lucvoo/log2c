@@ -9,7 +9,7 @@
 #define PL_FLI_H_
 
 /* pl-atom.c */
-atom_t PL_new_atom(const char *s);
+struct atom *PL_new_atom(const char *s);
 
 /* pl-fli.c */
 int PL_get_arg(int index, term_t t, term_t a);
@@ -21,7 +21,7 @@ int PL_get_list(term_t l, term_t h, term_t t);
 int PL_get_list_(term_t l, term_t * h, term_t * t);
 int PL_get_list_chars(term_t list, const char **s, unsigned flags);
 int PL_get_list_codes(term_t list, const char **s, unsigned flags);
-int PL_get_name_arity(term_t t, atom_t * name, int *arity);
+int PL_get_name_arity(term_t t, struct atom ** name, int *arity);
 int PL_get_tail(term_t l, term_t t);
 int PL_term_type(term_t t);
 int PL_unify_arg(int index, term_t t, term_t a);
@@ -37,12 +37,12 @@ void PL_put_list(term_t l);
                  *             ATOMS            *
                  *******************************/
 
-inline static const char *PL_atom_chars(atom_t a)
+inline static const char *PL_atom_chars(struct atom *a)
 {
 	return a->name;
 }
 
-inline static atom_t PL_functor_name(functor_t f)
+inline static struct atom *PL_functor_name(functor_t f)
 {
 	return f->functor;
 }
@@ -145,7 +145,7 @@ inline static void PL_put_float(term_t v, double N)
 	return;
 }
 
-inline static void PL_put_atom(term_t v, atom_t A)
+inline static void PL_put_atom(term_t v, struct atom *A)
 {
 	v->celp = &(A->atom);
 	return;
@@ -230,7 +230,7 @@ debut:
 	}
 }
 
-inline static atom_t PL_get_atom(cell_t * c)
+inline static struct atom *PL_get_atom(cell_t * c)
 {
 debut:
 	switch (get_tag(c)) {
@@ -238,7 +238,7 @@ debut:
 		c = c->celp;
 		goto debut;
 	case ato_tag:
-		return (atom_t) c;
+		return (struct atom *) c;
 	default:
 		fail;
 	}
@@ -366,7 +366,7 @@ inline static int PL_unify_integer(cell_t * c, long i)
 	return (PL_unify_intg(c, (int)i));
 }
 
-inline static int PL_unify_atom(register cell_t * c, atom_t A)
+inline static int PL_unify_atom(register cell_t * c, struct atom *A)
 {
 debut:
 	switch (get_tag(c)) {
@@ -489,7 +489,7 @@ inline static int PL_unify_key(cell_t * c, cell_t * key)
 void PL_halt(int status);
 
 /* pl-char.c */
-atom_t PL_char_to_atom(int c);
+struct atom *PL_char_to_atom(int c);
 term_t PL_mk_code_list(char *s);
 term_t PL_mk_char_list(char *s);
 

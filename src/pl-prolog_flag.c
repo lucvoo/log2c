@@ -25,11 +25,11 @@ typedef enum { T_VOID, T_ATOM, T_INTG, T_BOOL } pf_type;
 
 typedef struct pflag_t *pflag_t;
 struct pflag_t {
-	atom_t key;
+	struct atom *key;
 	cell_t val;
 	union {
 		int *intg;
-		atom_t *atom;
+		struct atom **atom;
 	} addr;
 	int lock;
 	pf_type type;
@@ -38,7 +38,7 @@ struct pflag_t {
 
 static pflag_t pl_flags[pl_flags_size];
 
-inline static pflag_t lookup_pflag(atom_t key, int new)
+inline static pflag_t lookup_pflag(struct atom *key, int new)
 {
 	pflag_t f;
 	hash_t h;
@@ -62,7 +62,7 @@ inline static pflag_t lookup_pflag(atom_t key, int new)
 		return (0);		// inexistant flag
 }
 
-inline static int SetAtom(pflag_t f, atom_t val, int lock, atom_t * addr)
+inline static int SetAtom(pflag_t f, struct atom *val, int lock, struct atom ** addr)
 {
 	f->type = T_ATOM;
 	if (lock)
@@ -76,7 +76,7 @@ inline static int SetAtom(pflag_t f, atom_t val, int lock, atom_t * addr)
 	succeed;
 }
 
-inline static int Setpf_atom(const char *key, atom_t val, int lock, atom_t * addr)
+inline static int Setpf_atom(const char *key, struct atom *val, int lock, struct atom ** addr)
 {
 	pflag_t f;
 
@@ -86,7 +86,7 @@ inline static int Setpf_atom(const char *key, atom_t val, int lock, atom_t * add
 		fail;
 }
 
-inline static int Setpf_str(const char *key, const char *val, int lock, atom_t * addr)
+inline static int Setpf_str(const char *key, const char *val, int lock, struct atom ** addr)
 {
 	return (Setpf_atom(key, PL_new_atom(val), lock, addr));
 }
@@ -128,7 +128,7 @@ inline static int Setpf_boo(const char *key, long val, int lock, int *addr)
 int pl_set_prolog_flag(term_t key, term_t new)
 {
 	pflag_t f;
-	atom_t k;
+	struct atom *k;
 
 	if (!(k = PL_get_atom(key)))
 		fail;
@@ -164,8 +164,8 @@ static int PL_unify_prolog_flag(pflag_t f, term_t term)
 {
 	switch (f->type) {
 	case T_ATOM:{
-			atom_t a = f->addr.atom ? *(f->addr.atom)
-				: (atom_t) f->val.celp;
+			struct atom *a = f->addr.atom ? *(f->addr.atom)
+				: (struct atom *) f->val.celp;
 			return PL_unify_atom(term, a);
 		}
 	case T_BOOL:{
@@ -186,7 +186,7 @@ static int PL_unify_prolog_flag(pflag_t f, term_t term)
 int pl_prolog_flag(term_t key, term_t old, term_t new)
 {
 	pflag_t f;
-	atom_t k;
+	struct atom *k;
 
 	if (!(k = PL_get_atom(key)))
 		fail;
@@ -216,7 +216,7 @@ int pl_prolog_flag(term_t key, term_t old, term_t new)
 			else
 				fail;
 		} else
-			return (SetAtom(f, (atom_t) new, 0, 0));
+			return (SetAtom(f, (struct atom *) new, 0, 0));
 	case int_tag:
 		return (SetInt(f, get_val(new), 0, 0, T_INTG));
 	default:

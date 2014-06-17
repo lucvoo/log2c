@@ -8,6 +8,6 @@
 #ifndef	PL_ATOM_H_
 #define	PL_ATOM_H_
 
-atom_t PL_new_atom(const char *s);
+struct atom *PL_new_atom(const char *s);
 
 #endif

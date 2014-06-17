@@ -21,7 +21,7 @@
 #define OP_YFX		((OP_INFIX<<2) | 2)
 #define OP_YFY		((OP_INFIX<<2) | 3)
 
-int PL_is_op(int fix, atom_t operator, int *type, int *prec);
-int PL_can_be_op(atom_t operator);
+int PL_is_op(int fix, struct atom *operator, int *type, int *prec);
+int PL_can_be_op(struct atom *operator);
 
 #endif

@@ -10,9 +10,9 @@
 #include "pl-string.h"
 #include "pl-atom.h"
 
-inline static atom_t add_atom(const char *s, hash_t H, hash_t h)
+inline static struct atom *add_atom(const char *s, hash_t H, hash_t h)
 {
-	atom_t a;
+	struct atom *a;
 
 	a = NEW(*a);
 	a->atom.val = MK_CELL(ato_tag, a);
@@ -25,10 +25,10 @@ inline static atom_t add_atom(const char *s, hash_t H, hash_t h)
 	return (a);
 }
 
-atom_t PL_new_atom(const char *s)
+struct atom *PL_new_atom(const char *s)
 {
 	hash_t h, H;
-	atom_t a;
+	struct atom *a;
 	const char *copy;
 
 	H = PL_hpjw(s);
@@ -45,11 +45,11 @@ atom_t PL_new_atom(const char *s)
 
 int pl_current_atom(cell_t * c, control_t ctrl)
 {
-	atom_t atom;
+	struct atom *atom;
 	hash_t h;
 	struct {
 		hash_t hash;
-		atom_t atom;
+		struct atom *atom;
 	}     *ctxt;
 
 	switch (GetCtrl(ctrl)) {

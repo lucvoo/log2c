@@ -68,7 +68,7 @@ inline static char *varName(term_t t)
 
 //#####################################################################
 
-static inline int NeedQuote(atom_t a)
+static inline int NeedQuote(struct atom *a)
 {
 	const char *s = PL_atom_chars(a);
 
@@ -206,7 +206,7 @@ static int WriteQuoted(pl_stream S, const char *s, int quote, const w_opt * opt)
 	succeed;
 }
 
-static int WriteAtom(pl_stream S, atom_t a, const w_opt * opt)
+static int WriteAtom(pl_stream S, struct atom *a, const w_opt * opt)
 {
 	if (Options(OPT_QUOT) && NeedQuote(a))
 		WriteQuoted(S, PL_atom_chars(a), '\'', opt);
@@ -261,7 +261,7 @@ inline static void WritePrimitive(pl_stream S, term_t t, const w_opt * opt)
 	return;
 }
 
-static int priorityOperator(atom_t atom)
+static int priorityOperator(struct atom *atom)
 {
 	int type, priority;
 	int result = 0;
@@ -279,10 +279,10 @@ static int priorityOperator(atom_t atom)
 // FIXME : stuff picked from SWI-Prolog
 static bool WriteTerm(pl_stream S, term_t t, int prec, int depth, const w_opt * opt)
 {
-	atom_t functor;
+	struct atom *functor;
 	int arity;
 	int op_type, op_pri;
-	atom_t a;
+	struct atom *a;
 	char short_buf[33];
 
 	if (depth >= opt->max_depth) {
@@ -352,7 +352,7 @@ static bool WriteTerm(pl_stream S, term_t t, int prec, int depth, const w_opt * 
 
 			if (functor == ATOM(namevar) &&	/* $VARNAME/1 */
 			    Options(OPT_NAMV)) {
-				atom_t a;
+				struct atom *a;
 
 				Get_arg(1, t, arg);
 				if ((a = PL_get_atom(arg))) {

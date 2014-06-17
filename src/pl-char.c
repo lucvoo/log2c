@@ -10,9 +10,9 @@
 #include "pl-atom.h"
 #include "pl-string.h"
 
-static atom_t atoms_tab[256];
+static struct atom *atoms_tab[256];
 
-atom_t PL_char_to_atom(int c)
+struct atom *PL_char_to_atom(int c)
 {
 	static char tmp[2];
 
@@ -58,7 +58,7 @@ term_t PL_mk_char_list(char *s)
 int pl_char_code(term_t Ch, term_t Co)
 {
 	int c;
-	atom_t a;
+	struct atom *a;
 	const char *s;
 
 	if (PL_get_intg(Co, &c)) {

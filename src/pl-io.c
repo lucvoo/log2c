@@ -19,8 +19,8 @@
 #define	MAX_FILES	(OPEN_MAX/2)
 
 typedef struct {
-	atom_t file;
-	atom_t alias;
+	struct atom *file;
+	struct atom *alias;
 	pl_stream S;
 } pl_file_t, *pl_file;
 
@@ -47,12 +47,12 @@ void PL_init_io(void)
 /****************************************************************/
 // Function for alias handling
 
-static void AddAlias(pl_file f, atom_t alias)
+static void AddAlias(pl_file f, struct atom *alias)
 {
 	f->alias = alias;
 }
 
-inline static pl_file GetAliasStream(atom_t alias)
+inline static pl_file GetAliasStream(struct atom *alias)
 {
 	int i;
 	pl_file f = 0;
@@ -66,7 +66,7 @@ inline static pl_file GetAliasStream(atom_t alias)
 	return (f);
 }
 
-static int TestAlias(atom_t alias)
+static int TestAlias(struct atom *alias)
 {
 	int i;
 
@@ -123,7 +123,7 @@ void PL_exit_io(void)
 static pl_file openStream(term_t file, Smode_t mode, int flags)
 {
 	pl_stream S;
-	atom_t name;
+	struct atom *name;
 	functor_t f;
 	Stype_t type;
 	pl_file fp;
@@ -199,7 +199,7 @@ static pl_file GetStream(term_t spec, Smode_t mode)
 {
 	pl_file f = 0;
 	int n;
-	atom_t alias;
+	struct atom *alias;
 
 	if (PL_get_intg(spec, &n)) {
 		if (n < max_files && plfiles[n].S)
@@ -239,7 +239,7 @@ static pl_file GetStream(term_t spec, Smode_t mode)
 static int unifyStreamMode(term_t mode, pl_stream S)
 {
 	Smode_t m = StreamMode(S);
-	atom_t a;
+	struct atom *a;
 
 	switch (m) {
 	case SM_READ:
@@ -326,9 +326,9 @@ int pl_told(void)
 /* open and C°                                                        */
 /**********************************************************************/
 
-static atom_t opt_type;
-static atom_t opt_alias;
-static atom_t opt_eof_action;
+static struct atom *opt_type;
+static struct atom *opt_alias;
+static struct atom *opt_eof_action;
 static int opt_reposition;		// Don't care
 static pl_opt_spec_t spec_open4[] = {
 	{ATOM(_alias), OPT_ATOM, {.atom = &opt_alias}},
@@ -341,7 +341,7 @@ static pl_opt_spec_t spec_open4[] = {
 int pl_open4(term_t srcdest, term_t mode, term_t stream, term_t options)
 {
 	int s_flags = 0;
-	atom_t m;
+	struct atom *m;
 	pl_file f;
 	Smode_t s_mode;
 
@@ -546,7 +546,7 @@ pl_stream PL_InStream(void)
 static int Put(term_t t, pl_stream S)
 {
 	int c;
-	atom_t a;
+	struct atom *a;
 
 	if (PL_get_intg(t, &c)) {
 		c = (unsigned char)c;
@@ -859,7 +859,7 @@ static term_t GetProp(int n, prop_t p)
 	term_t t = 0;
 
 	switch (p) {
-		atom_t a;
+		struct atom *a;
 
 	case file_name:
 		if (StreamType(plfiles[n].S) != ST_FILE || !plfiles[n].file)

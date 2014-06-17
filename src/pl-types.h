@@ -54,17 +54,16 @@ union cell_t {
 	cell_t *celp;
 };
 
-typedef struct atom__t atom__t, *atom_t;
-struct atom__t {
+struct atom {
 	cell_t atom;
 	const char *name;
 	hash_t hash;
-	atom_t next;
+	struct atom *next;
 };
 
 typedef struct fun__t fun__t, *fun_t, *functor_t;
 struct fun__t {
-	atom_t functor;
+	struct atom *functor;
 	long arity;
 	fun_t next;
 };
@@ -89,7 +88,7 @@ typedef void *predicate_t, *pred_t;
 
 typedef struct jmp__t jmp__t;
 struct jmp__t {
-	atom_t functor;
+	struct atom *functor;
 	long arity;
 	void *pred;
 	jmp__t *next;
@@ -101,14 +100,14 @@ typedef struct {
 
 typedef struct {
 	const char *file;
-	atom_t module;
+	struct atom *module;
 	jmp_table pub;
 	jmp_table all;
 } module_t;
 
 typedef struct mods_t modules_t;
 struct mods_t {
-	atom_t name;
+	struct atom *name;
 	module_t *module;
 	modules_t *next;
 };

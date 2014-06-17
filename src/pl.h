@@ -57,7 +57,7 @@ extern cell_t *PL_ARGS[PL_MAX_ARGS];
 // must be a power of two for dynamic hashing
 extern int PL__atoms_hash_size;
 extern int PL__atoms_count;
-extern atom_t PL__atoms[];
+extern struct atom *PL__atoms[];
 
 // must be a power of two for dynamic hashing
 extern int PL__funs_hash_size;

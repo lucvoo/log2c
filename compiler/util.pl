@@ -159,7 +159,7 @@ decl_pred(P)	:-
 decl_atoms(As)	:- map(util:decl_atoms_,As),
 		   nl(h).
 decl_atoms_(A)	:- map_atom(A,Am),
-		   format(h,'extern atom__t ATOM_~w;\n',[Am]),
+		   format(h,'extern struct atom ATOM_~w;\n',[Am]),
 		   format(mod,'~q.\n',[atoms(A)]).
 
 decl_funs(Fs)	:- map(util:decl_funs_,Fs),

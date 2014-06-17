@@ -14,13 +14,13 @@ typedef union {
 	long *intg;
 	bool *bool;
 	const char **str;
-	atom_t *atom;
+	struct atom **atom;
 	cell_t *cell;
 	term_t *term;
 } pl_opt_val;
 
 typedef struct {
-	const atom_t name;
+	const struct atom *name;
 	const pl_opt_type_t type;
 	pl_opt_val val;
 } pl_opt_spec_t, *pl_opt_spec;

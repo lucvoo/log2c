@@ -16,7 +16,7 @@ typedef struct {
 
 typedef struct operator__t *operator_t;
 struct operator__t {
-	atom_t operator;
+	struct atom *operator;
 	op_type type[3];
 	operator_t next;
 };
@@ -26,7 +26,7 @@ struct operator__t {
 
 static operator_t operators[OP_HASH_SIZE];
 
-inline static op_type *get_op_type(atom_t name, int fix)
+inline static op_type *get_op_type(struct atom *name, int fix)
 {
 	operator_t op;
 
@@ -39,7 +39,7 @@ inline static op_type *get_op_type(atom_t name, int fix)
 	return (0);
 }
 
-inline static operator_t get_operator(atom_t name)
+inline static operator_t get_operator(struct atom *name)
 {
 	operator_t op;
 
@@ -52,7 +52,7 @@ inline static operator_t get_operator(atom_t name)
 	return (0);
 }
 
-inline static int OperatorAtom2Type(atom_t type)
+inline static int OperatorAtom2Type(struct atom *type)
 {
 	if (type == ATOM(_fx))
 		return (OP_FX);
@@ -74,7 +74,7 @@ inline static int OperatorAtom2Type(atom_t type)
 	return (0);
 }
 
-inline static atom_t OperatorType2Atom(int type)
+inline static struct atom *OperatorType2Atom(int type)
 {
 	switch (type) {
 	case OP_FX:
@@ -98,7 +98,7 @@ inline static atom_t OperatorType2Atom(int type)
 	}
 }
 
-inline static void add_operator(int precedence, int type, atom_t operator)
+inline static void add_operator(int precedence, int type, struct atom *operator)
 {
 	operator_t op;
 	hash_t h;
@@ -119,7 +119,7 @@ inline static void add_operator(int precedence, int type, atom_t operator)
 	op_t->prec = precedence;
 }
 
-int PL_is_op(int fix, atom_t operator, int *type, int *prec)
+int PL_is_op(int fix, struct atom *operator, int *type, int *prec)
 {
 	op_type *op_t;
 
@@ -135,14 +135,15 @@ int PL_is_op(int fix, atom_t operator, int *type, int *prec)
 	return (1);
 }
 
-int PL_can_be_op(atom_t operator)
+int PL_can_be_op(struct atom *operator)
 {
 	return (get_operator(operator) != 0);
 }
 
 int pl_op(term_t precedence, term_t type, term_t operator)
 {
-	atom_t op, a_t;
+	struct atom *op;
+	struct atom *a_t;
 	int prec, t;
 
 	if (!(op = PL_get_atom(operator)) ||
@@ -160,7 +161,8 @@ int pl_current_op(term_t precedence, term_t type, term_t operator, control_t ctr
 {
 	operator_t op;
 	int prec, t, fix;
-	atom_t a_t, a_op;
+	struct atom *a_t;
+	struct atom *a_op;
 	struct {
 		hash_t hash;
 		operator_t op;

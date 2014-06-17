@@ -186,7 +186,7 @@ int PL_get_chars(term_t term, const char **s, unsigned flags)
 	succeed;
 }
 
-int PL_get_name_arity(term_t t, atom_t * name, int *arity)
+int PL_get_name_arity(term_t t, struct atom ** name, int *arity)
 {
 	Deref(t);
 

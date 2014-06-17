@@ -43,7 +43,7 @@ hash_atom_([A|Q],HS,V)	:-
 hash_atom_vec(V,HS,N)	:-
 	V=..[vec|L],
 	map(hash:hash_atom_list,L), nl,
-	format('atom_t PL__atoms[]=\n{\n'),
+	format('struct atom *PL__atoms[]=\n{\n'),
 	map(hash:hash_atom_tab,L),
 	format('};\nint PL__atoms_hash_size = ~d;\n',[HS]),
 	format('int PL__atoms_count = ~d;\n\n', [N]).
@@ -61,7 +61,7 @@ print_atom_list(A,Nxt)	:-
 	map_atom(A,Am),
 	noescape(A,As),
 	hpjw(A,H),
-	format('atom__t ATOM_~w={ {MK_CELL(ato_tag, ATOM(~w))}, "~w" , ~w ,~w};\n',[Am,Am,As,H,Nxt]).
+	format('struct atom ATOM_~w={ {MK_CELL(ato_tag, ATOM(~w))}, "~w" , ~w ,~w};\n',[Am,Am,As,H,Nxt]).
 
 hash_atom_tab([]) :-
 	format('  0,\n').

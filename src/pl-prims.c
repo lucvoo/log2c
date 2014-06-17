@@ -266,7 +266,7 @@ int pl_atom_chars(term_t a, term_t list)
 	if (PL_get_atom_chars(a, &s))
 		return (PL_unify_list_chars(list, s));
 	else if (PL_get_list_chars(list, &s, BUF_DISCARDABLE)) {
-		atom_t tmp = PL_new_atom(s);
+		struct atom *tmp = PL_new_atom(s);
 		return (PL_unify_atom(a, tmp));
 	} else
 		fail;
@@ -279,7 +279,7 @@ int pl_atom_codes(term_t a, term_t list)
 	if (PL_get_atom_chars(a, &s))
 		return (PL_unify_list_codes(list, s));
 	else if (PL_get_list_codes(list, &s, BUF_DISCARDABLE)) {
-		atom_t tmp = PL_new_atom(s);
+		struct atom *tmp = PL_new_atom(s);
 		return (PL_unify_atom(a, tmp));
 	} else
 		fail;
@@ -328,7 +328,7 @@ int pl_atom_prefix(term_t atom, term_t prefix)
 int pl_functor(term_t t, term_t f, term_t a)
 {
 	int arity;
-	atom_t name;
+	struct atom *name;
 
 	if (PL_get_name_arity(t, &name, &arity))
 		return (PL_unify_atom(f, name) && PL_unify_integer(a, arity));
@@ -351,7 +351,7 @@ int pl_functor(term_t t, term_t f, term_t a)
 int pl_univ(term_t t, term_t l)
 {
 	int arity;
-	atom_t name;
+	struct atom *name;
 	term_t h;
 
 	t = deref(t);
@@ -689,7 +689,7 @@ __inline__ int pl_concat_atom3(term_t list, term_t sep, term_t atom)
 	}
 
 	if (is_nil(l)) {
-		atom_t a;
+		struct atom *a;
 
 		PL_add_ubs(b, '\0');
 		a = PL_new_atom(PL_base_ubs(b));
@@ -723,7 +723,7 @@ int pl_arg(term_t n, term_t term, term_t arg)
 	int idx;
 
 #ifndef	FAST_PL_ARG
-	atom_t name;
+	struct atom *name;
 	int arity;
 
 	if (!PL_get_name_arity(term, &name, &arity))
@@ -741,7 +741,7 @@ int pl_arg(term_t n, term_t term, term_t arg)
 int pl_setarg(term_t n, term_t term, term_t value)
 {
 	int arity, argn;
-	atom_t name;
+	struct atom *name;
 
 	if (!PL_get_integer(n, &argn) || !PL_get_name_arity(term, &name, &arity))
 		PL_warning("setarg/3: instantiation fault");
@@ -861,7 +861,7 @@ static int NumberVars(cell_t * c, fun_t functor, int start)
 
 int pl_numbervars(term_t term, term_t functor, term_t start, term_t end)
 {
-	atom_t fun;
+	struct atom *fun;
 	fun_t f;
 	int n;
 

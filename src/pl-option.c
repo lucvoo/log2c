@@ -18,7 +18,7 @@ int PL_scan_options(term_t options, pl_opt_spec spec)
 
 	while (is_cons(list))		// loop trough the options list
 	{
-		atom_t name;
+		struct atom *name;
 		int arity;
 
 		if (PL_get_name_arity(list + 1, &name, &arity)) {

@@ -11,15 +11,15 @@
 #include "Prolog.h"
 
 typedef struct {
-	atom_t bck_quotes;
+	struct atom *bck_quotes;
 	int char_esc;
 	int char_conv;
-	atom_t dbl_quotes;
+	struct atom *dbl_quotes;
 	int debug;
 	int discont;
 	int dollar;
 	int file_err;
-	atom_t float_fmt;
+	struct atom *float_fmt;
 	int iso;
 	int long_atom;
 	int nested_com;

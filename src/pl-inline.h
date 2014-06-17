@@ -28,7 +28,7 @@
 #define get_tag(c)	((c)->tag_val.tag)
 
 #define get_fun(c)	((fun_t) get_addr(c))
-#define get_atom(c)	((atom_t) (c))
+#define get_atom(c)	((struct atom *) (c))
 #define get_str(c)	((char *) get_addr(c))
 #define get_arity(c)	(get_fun(c)->arity)
 #define get_a_name(c)	(get_atom(c)->name)
@@ -62,7 +62,7 @@ inline static pl_word_t __var(void)
 	return (MK_CELL(var_tag, 0));
 }
 
-inline static pl_word_t __atom(atom_t A)
+inline static pl_word_t __atom(struct atom *A)
 {
 	return ((pl_word_t) new_atom(A));
 }
@@ -149,7 +149,7 @@ inline static cell_t * new_cons(void)
 	return (new_struct(FUN(dot, 2), 2));
 }
 
-inline static int isatom(atom_t A, cell_t * addr)
+inline static int isatom(struct atom *A, cell_t * addr)
 {
 	return (addr == &(A->atom));	// atoms are unique !
 }

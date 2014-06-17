@@ -43,7 +43,7 @@ typedef struct {
 	// long start;
 	// long end;
 	union {
-		atom_t atom;
+		struct atom *atom;
 		long intg;
 		double flt;
 		char *string;
@@ -678,7 +678,7 @@ error:
 // POST : valid data in token
 static tok_type get_token(pl_stream S)
 {
-	static atom_t atom;
+	static struct atom *atom;
 	static pl_number_t num;
 	int c;
 	char *str;
@@ -934,7 +934,7 @@ error:
 
 static int read_term(pl_stream S, int max, const char *stop, node_t * node);
 
-static inline void mk_unary(atom_t atom, node_t * arg, node_t * node_out)
+static inline void mk_unary(struct atom *atom, node_t * arg, node_t * node_out)
 {
 	if (atom == ATOM(minus) && is_number(&arg->cell)) {
 		cell_t *c = &arg->cell;
@@ -954,7 +954,7 @@ static inline void mk_unary(atom_t atom, node_t * arg, node_t * node_out)
 	}
 }
 
-static inline void mk_binary(atom_t atom, node_t * left, node_t * right, node_t * node_out)
+static inline void mk_binary(struct atom *atom, node_t * left, node_t * right, node_t * node_out)
 {
 	fun_t fun = PL_new_functor(atom, 2);
 	cell_t *addr = new_struct(fun, 2);
@@ -964,7 +964,7 @@ static inline void mk_binary(atom_t atom, node_t * left, node_t * right, node_t 
 	node_out->cell.celp = addr;
 }
 
-static cell_t *read_fun(pl_stream S, atom_t functor, int level, node_t * node_out)
+static cell_t *read_fun(pl_stream S, struct atom *functor, int level, node_t * node_out)
 {
 	node_t elem;
 	cell_t *addr;
@@ -1031,7 +1031,7 @@ loop:
 static inline int read_term_a(pl_stream S, int max, const char *stop, node_t * node_out)
 {
 	int type, prec;
-	atom_t atom = token.tok_val.atom;
+	struct atom *atom = token.tok_val.atom;
 
 // Try prefix operator
 	if (PL_is_op(OP_PREFIX, atom, &type, &prec) && max >= prec) {
@@ -1067,7 +1067,7 @@ loop:
 	if ((token.type < 256 && !strchr(stop, token.type)) ||	// solo or punc char
 	    (token.type == T_FUN || token.type == T_OP)) {
 		int type, prec, m;
-		atom_t atom = token.tok_val.atom;
+		struct atom *atom = token.tok_val.atom;
 
 		if (PL_is_op(OP_INFIX, atom, &type, &prec)) {
 			if (max >= prec)

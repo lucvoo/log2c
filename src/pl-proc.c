@@ -19,7 +19,7 @@ extern modules_t *PL__modules[];
 extern module_t module_system;
 extern int PL__modules_hash_size;
 
-inline static module_t *lookup_module(atom_t name)
+inline static module_t *lookup_module(struct atom *name)
 {
 	hash_t h;
 	modules_t *m;
@@ -32,7 +32,7 @@ inline static module_t *lookup_module(atom_t name)
 	return (0);
 }
 
-inline static void *lookup_proc(module_t * module, atom_t functor, int arity)
+inline static void *lookup_proc(module_t * module, struct atom *functor, int arity)
 {
 	hash_t h;
 	jmp__t *j;
@@ -83,7 +83,7 @@ inline static term_t strip_module(term_t term, module_t ** module)
 void *PL_call(term_t clos, int extra, term_t * args)
 {
 	term_t t;
-	atom_t name;
+	struct atom *name;
 	int arity, n;
 	module_t *mod = 0;
 	void *proc;
@@ -105,7 +105,7 @@ void *PL_call(term_t clos, int extra, term_t * args)
 void *PL_apply(term_t clos, term_t list)
 {
 	term_t t;
-	atom_t name;
+	struct atom *name;
 	int arity, n, extra;
 	module_t *mod;
 	void *proc;
