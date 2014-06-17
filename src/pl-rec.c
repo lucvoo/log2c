@@ -18,23 +18,21 @@ inline static void rtrail(union cell * ref)
 	HP++;
 }
 
-typedef struct record__t *rec_t;
-typedef struct reclist_t *recl_t;
-struct record__t {
-	recl_t list;
-	rec_t next;
+struct record {
+	struct reclist *list;
+	struct record *next;
 	int size;
 	union cell term[0];
 };
-struct reclist_t {
+struct reclist {
 	union cell key;
-	rec_t first;
-	rec_t last;
-	recl_t next;
+	struct record *first;
+	struct record *last;
+	struct reclist *next;
 };
 
 #define hash_recs_size	256
-static recl_t records[hash_recs_size];
+static struct reclist *records[hash_recs_size];
 
 static union cell *Copy2Heap(union cell * addr, union cell * c)
 {
@@ -91,9 +89,9 @@ debut:
 	return (0);
 }
 
-inline static rec_t copy_to_heap(union cell * c)
+inline static struct record *copy_to_heap(union cell * c)
 {
-	rec_t record;
+	struct record *record;
 	union cell **tr;
 
 	tr = TP;
@@ -106,7 +104,7 @@ inline static rec_t copy_to_heap(union cell * c)
 	return (record);
 }
 
-inline static union cell *copy_to_global(rec_t record)
+inline static union cell *copy_to_global(struct record *record)
 {
 	int n, i;
 	union cell *c;
@@ -273,10 +271,10 @@ static inline int try_unify_static(union cell *s, union cell *t)
 })								\
 
 
-inline static recl_t lookup_recl__old(union cell * key)
+inline static struct reclist *lookup_recl__old(union cell * key)
 {
 	hash_t h;
-	recl_t rl;
+	struct reclist *rl;
 
 	h = HashFromKey(key, return (0));
 
@@ -293,9 +291,9 @@ inline static recl_t lookup_recl__old(union cell * key)
 	return (rl);
 }
 
-inline static recl_t lookup_recl__(union cell * key, int h)
+inline static struct reclist *lookup_recl__(union cell * key, int h)
 {
-	recl_t rl;
+	struct reclist *rl;
 
 	for (rl = records[h]; rl != 0; rl = rl->next)
 		if (key->val == rl->key.val)	// find rec_list.
@@ -304,9 +302,9 @@ inline static recl_t lookup_recl__(union cell * key, int h)
 	return (0);
 }
 
-inline static recl_t add_recl__(union cell * key, int h)
+inline static struct reclist *add_recl__(union cell * key, int h)
 {
-	recl_t rl;
+	struct reclist *rl;
 
 	rl = NEW(*rl);			// create new recl
 	rl->key = *key;			// with this key.
@@ -317,9 +315,9 @@ inline static recl_t add_recl__(union cell * key, int h)
 	return (rl);
 }
 
-inline static recl_t lookup_recl(union cell *key, int h)
+inline static struct reclist *lookup_recl(union cell *key, int h)
 {
-	recl_t rl;
+	struct reclist *rl;
 
 	if (!(rl = lookup_recl__(key, h)))
 		rl = add_recl__(key, h);
@@ -329,8 +327,8 @@ inline static recl_t lookup_recl(union cell *key, int h)
 
 static int pl_recordaz(union cell * key, union cell * term, union cell * ref, int az)
 {
-	recl_t rl;
-	rec_t r;
+	struct reclist *rl;
+	struct record *r;
 	hash_t h;
 
 	h = HashFromKey(key, PL_warning("record%c/3 : illegal key", az));
@@ -385,13 +383,13 @@ int pl_recordz_2(union cell * k, union cell * t)
 
 int pl_recorded(union cell * key, union cell * term, union cell * ref, enum control *ctrl)
 {
-	recl_t rl;
-	rec_t r, *ctxt;
+	struct reclist *rl;
+	struct record *r, **ctxt;
 	hash_t h;
 
 	switch (GetCtrl(ctrl)) {
 	case FIRST_CALL:
-		ctxt = AllocCtxt(rec_t);
+		ctxt = AllocCtxt(struct record *);
 		h = HashFromKey(key, PL_warning("recorded/3 : illegal key"));
 
 		if (!(rl = lookup_recl__(key, h)))
@@ -432,11 +430,11 @@ int pl_recorded_2(union cell * key, union cell * term, enum control *ctrl)
 
 int pl_current_key(union cell * c, enum control *ctrl)
 {
-	recl_t recl;
+	struct reclist *recl;
 	hash_t h;
 	struct {
 		hash_t hash;
-		recl_t recl;
+		struct reclist *recl;
 	}     *ctxt;
 
 	switch (GetCtrl(ctrl)) {
@@ -470,15 +468,15 @@ int pl_current_key(union cell * c, enum control *ctrl)
 /* Stuff for erase/1                                                  */
 /**********************************************************************/
 
-inline static void free_record(rec_t r)
+inline static void free_record(struct record *r)
 {
 	(void)r;
 }					// FIXME : put it in the free list ??
 
-inline static int Erase_rec(rec_t rec)
+inline static int Erase_rec(struct record *rec)
 {
-	rec_t prev;
-	recl_t rl;
+	struct record *prev;
+	struct reclist *rl;
 
 	rl = rec->list;
 
@@ -506,13 +504,13 @@ inline static int Erase_rec(rec_t rec)
 
 int pl_erase(union cell * ref)
 {
-	rec_t rec;
+	struct record *rec;
 
 	Deref(ref);
 	if (!is_intg(ref))
 		PL_warning("erase/1 : illegal reference\n");
 
-	rec = (rec_t) (SH_STK + get_intg(ref));
+	rec = (struct record *) (SH_STK + get_intg(ref));
 	return (Erase_rec(rec));
 }
 
@@ -522,8 +520,8 @@ int pl_erase(union cell * ref)
 
 int pl_recorded_all(union cell * key, union cell * list)
 {
-	recl_t rl;
-	rec_t r;
+	struct reclist *rl;
+	struct record *r;
 	hash_t h;
 	union cell *head, *tail;
 
@@ -552,8 +550,8 @@ int pl_recorded_all(union cell * key, union cell * list)
 
 int pl_erase_records(union cell *key)
 {
-	rec_t r;
-	recl_t rl;
+	struct record *r;
+	struct reclist *rl;
 	hash_t h;
 
 	h = HashFromKey(key, PL_warning("$erase_records/1 : illegal key\n"));
@@ -574,11 +572,11 @@ int pl_erase_records(union cell *key)
 /* Stuff for findall, bagof                                           */
 /**********************************************************************/
 
-static rec_t findall_recs = 0;
+static struct record *findall_recs = 0;
 
 int pl_findall_record(union cell *t)
 {
-	rec_t b;
+	struct record *b;
 
 	b = copy_to_heap(t);
 	b->next = findall_recs;
@@ -587,7 +585,7 @@ int pl_findall_record(union cell *t)
 	succeed;
 }
 
-static void freeAssoc(rec_t prev, rec_t a)
+static void freeAssoc(struct record *prev, struct record *a)
 {
 	if (!prev)
 		findall_recs = a->next;
@@ -601,8 +599,8 @@ int pl_findall_collect(union cell *bag)
 {
 	union cell *list;			/* list to construct */
 	union cell *tmp;
-	rec_t a, next;
-	rec_t prev = 0;
+	struct record *a, *next;
+	struct record *prev = 0;
 
 	if (!(a = findall_recs))
 		fail;
