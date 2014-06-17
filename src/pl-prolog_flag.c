@@ -170,12 +170,12 @@ static int PL_unify_prolog_flag(pflag_t f, union cell *term)
 		}
 	case T_BOOL:{
 			int i = f->addr.intg ? *(f->addr.intg)
-				: f->val.tag_val.val;
+				: f->val.tag_sval.val;
 			return PL_unify_bool(term, i);
 		}
 	case T_INTG:{
 			int i = f->addr.intg ? *(f->addr.intg)
-				: f->val.tag_val.val;
+				: f->val.tag_sval.val;
 			return PL_unify_intg(term, i);
 		}
 	default:

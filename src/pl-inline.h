@@ -22,10 +22,10 @@
 #define Adjust_N(i,align)	((i+align-1) / align )
 #define Adjust(i)		Adjust_N(i,CELL_SIZE)
 
-#define get_val(c)	((c)->tag_val.val)
+#define get_val(c)	((c)->tag_sval.val)
 #define get_uval(c)	((c)->tag_uval.uval)
 #define get_addr(c)	((void *) (unsigned long) ((c)->tag_uval.uval))
-#define get_tag(c)	((c)->tag_val.tag)
+#define get_tag(c)	((c)->tag_sval.tag)
 
 #define get_fun(c)	((struct functor *) get_addr(c))
 #define get_atom(c)	((struct atom *) (c))
@@ -176,7 +176,7 @@ inline static union cell * deref(union cell * addr)
 {
 	union cell *p = addr;
 
-	while (p->tag_val.tag == ref_tag) {
+	while (p->tag_sval.tag == ref_tag) {
 		p = p->celp;
 	}
 

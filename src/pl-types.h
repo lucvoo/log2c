@@ -53,7 +53,7 @@ struct tag_uval {
 
 union cell {
 	unsigned long val;
-	struct tag_sval tag_val;
+	struct tag_sval tag_sval;
 	struct tag_uval tag_uval;
 	union cell *celp;
 };

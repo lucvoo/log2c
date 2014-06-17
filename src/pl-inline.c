@@ -23,7 +23,7 @@ union cell *deref_dbg(union cell * addr)
 	union cell *p = addr;
 
 	fprintf(stderr, "deref: p =      %p\n", p);
-	while (p->tag_val.tag == ref_tag) {
+	while (p->tag_sval.tag == ref_tag) {
 		p = p->celp;
 		fprintf(stderr, "     : p =      %p\n", p);
 	}

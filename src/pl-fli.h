@@ -410,7 +410,7 @@ inline static int PL_unify_atomic(register union cell * c, union cell at)
 	if (c->val == at.val)
 		succeed;
 	else if (is_var(c)) {
-		if (at.tag_val.tag == ato_tag)
+		if (at.tag_sval.tag == ato_tag)
 			c->val = at.val & VAL_MASK;
 		else
 			c->val = at.val;
