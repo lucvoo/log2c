@@ -35,7 +35,7 @@ inline static module_t *lookup_module(struct atom *name)
 inline static void *lookup_proc(module_t * module, struct atom *functor, int arity)
 {
 	hash_t h;
-	jmp__t *j;
+	struct jmp *j;
 
 	h = (functor->hash + arity) % module->all.size;
 	for (j = module->all.tab[h]; j != 0; j = j->next) {

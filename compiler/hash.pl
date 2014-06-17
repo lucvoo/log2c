@@ -158,7 +158,7 @@ hash_jmp_([(F/N)|Q],HS,V) :-
 hash_jmp_vec(V,T) :-
 	V=..[vec|L],
 	map(hash:hash_jmp_list(T),L), nl,
-	format('static jmp__t *~w_tab[]=\n{\n',[T]),
+	format('static struct jmp *~w_tab[]=\n{\n',[T]),
 	map(hash:hash_jmp_tab(T),L),
 	format('};\n\n').
 
@@ -177,7 +177,7 @@ print_jmp_list(T,F/N,X)	:-
 	map_atom(F,Am),
 	import_from_module(F/N,M),
 	map_pred(F/N,M,Pm),
-	format('static jmp__t ~w~w={ ATOM(~w), ~d, &PRED~w, ~w};\n',
+	format('static struct jmp ~w~w={ ATOM(~w), ~d, &PRED~w, ~w};\n',
 		[T,Fm,Am,N,Pm,X]).
 				
 hash_jmp_tab(_,[]) :-

@@ -88,23 +88,23 @@ struct mark {
 
 typedef void *predicate_t, *pred_t;
 
-typedef struct jmp__t jmp__t;
-struct jmp__t {
+struct jmp {
 	struct atom *functor;
 	long arity;
 	void *pred;
-	jmp__t *next;
+	struct jmp *next;
 };
-typedef struct {
-	jmp__t **tab;
+
+struct jmp_table {
+	struct jmp **tab;
 	int size;
-} jmp_table;
+};
 
 typedef struct {
 	const char *file;
 	struct atom *module;
-	jmp_table pub;
-	jmp_table all;
+	struct jmp_table pub;
+	struct jmp_table all;
 } module_t;
 
 typedef struct mods_t modules_t;
