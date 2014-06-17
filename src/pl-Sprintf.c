@@ -11,7 +11,7 @@
 
 #include "pl-stream.h"
 
-static int Svprintf(pl_stream S, const char *fmt, va_list ap)
+static int Svprintf(struct stream *S, const char *fmt, va_list ap)
 {
 	int rval;
 	char *buf;
@@ -46,7 +46,7 @@ int Sprintf_err(const char *fmt, ...)
 	return (rval);
 }
 
-int Sfprintf(pl_stream S, const char *fmt, ...)
+int Sfprintf(struct stream *S, const char *fmt, ...)
 {
 	int rval;
 	va_list ap;

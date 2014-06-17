@@ -42,10 +42,7 @@ typedef unsigned long Sflag_t;
 // #define S_BUFSIZ     8196
 #define S_BUFSIZ	8
 
-#ifndef	STRUCT_PL_STREAM
-#define STRUCT_PL_STREAM
-typedef struct pl_stream_t pl_stream_t, *pl_stream;
-#endif
+struct stream;
 
 typedef struct {
 	long char_no;
@@ -53,39 +50,39 @@ typedef struct {
 	long col_no;
 } Spos_t;
 
-extern pl_stream Stdin;
-extern pl_stream Stdout;
-extern pl_stream Stderr;
+extern struct stream *Stdin;
+extern struct stream *Stdout;
+extern struct stream *Stderr;
 
-int S_setbuf(pl_stream S, char *buf, size_t size, int buf_type);
-pl_stream Snew_stream(void);
-void Sfree_stream(pl_stream S);
-int Sgetc(pl_stream S);
-int Sungetc(pl_stream S, int c);
-int Speekc(pl_stream S);
-int Sputc(pl_stream S, int c);
-int Slastc(pl_stream S);
-void Sclearerr(pl_stream S);
-int Serror(pl_stream S);
-int Sflush(pl_stream S);
-int Sclose(pl_stream S);
-int Sputs(pl_stream S, const char *s);
-pl_stream Sopen_file(const char *file, Smode_t mode, int flags);
-pl_stream Sopen_wmem(const char *str, Smode_t mode, int flags);
-pl_stream Sopen_rmem(const char *str, Smode_t mode, int flags);
-char *Sstring_wmem(pl_stream S);
-pl_stream Sopen_pipe(const char *cmd, Smode_t mode, int flags);
-long Stell(pl_stream);
-int Sseek(pl_stream, long, int);
-int Sfprintf(pl_stream, const char *, ...) __attribute__ ((format(printf, 2, 3)));
+int S_setbuf(struct stream *S, char *buf, size_t size, int buf_type);
+struct stream *Snew_stream(void);
+void Sfree_stream(struct stream *S);
+int Sgetc(struct stream *S);
+int Sungetc(struct stream *S, int c);
+int Speekc(struct stream *S);
+int Sputc(struct stream *S, int c);
+int Slastc(struct stream *S);
+void Sclearerr(struct stream *S);
+int Serror(struct stream *S);
+int Sflush(struct stream *S);
+int Sclose(struct stream *S);
+int Sputs(struct stream *S, const char *s);
+struct stream *Sopen_file(const char *file, Smode_t mode, int flags);
+struct stream *Sopen_wmem(const char *str, Smode_t mode, int flags);
+struct stream *Sopen_rmem(const char *str, Smode_t mode, int flags);
+char *Sstring_wmem(struct stream *S);
+struct stream *Sopen_pipe(const char *cmd, Smode_t mode, int flags);
+long Stell(struct stream *);
+int Sseek(struct stream *, long, int);
+int Sfprintf(struct stream *, const char *, ...) __attribute__ ((format(printf, 2, 3)));
 
 void pl_init_stream(void);
 
-Stype_t StreamType(pl_stream);
-Smode_t StreamMode(pl_stream);
-Sflag_t StreamFlags(pl_stream);
-Spos_t *Sget_pos(pl_stream);
-int Seof(pl_stream S);
-int Spasteof(pl_stream S);
+Stype_t StreamType(struct stream *);
+Smode_t StreamMode(struct stream *);
+Sflag_t StreamFlags(struct stream *);
+Spos_t *Sget_pos(struct stream *);
+int Seof(struct stream *S);
+int Spasteof(struct stream *S);
 
 #endif

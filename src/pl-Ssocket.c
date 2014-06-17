@@ -19,12 +19,12 @@ static int Sread_sock(Shndl_t hndl, void *s, int n)
 	return (recv(hndl.sd, s, n, 0));
 }
 
-static int Sclose_r_sock(pl_stream S)
+static int Sclose_r_sock(struct stream *S)
 {					// FIXME
 	return (0);
 }
 
-static int Sclose_w_sock(pl_stream S)
+static int Sclose_w_sock(struct stream *S)
 {					// FIXME
 	return (0);
 }
@@ -48,9 +48,9 @@ static Sfun_t sock_w_functions = { Sread_sock,
 	0,
 };
 
-pl_stream Sopen_sock(const char *file, Smode_t mode, int flags)
+struct stream *Sopen_sock(const char *file, Smode_t mode, int flags)
 {
-	pl_stream S;
+	struct stream *S;
 
 // FIXME : what to do with SF_BINARY flag ???
 

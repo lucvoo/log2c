@@ -137,12 +137,4 @@ typedef struct {
 } time__t;
 #endif
 
-#ifndef	STRUCT_PL_STREAM
-#define STRUCT_PL_STREAM
-typedef struct pl_stream_t pl_stream_t, *pl_stream;
-#endif
-
-// extern pl_stream Stdin, Stdout, Stderr;
-// extern pl_stream_t Stdin__, Stdout__, Stderr__;
-
 #endif

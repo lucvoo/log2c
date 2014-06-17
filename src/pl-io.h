@@ -11,9 +11,9 @@
 #include "Prolog.h"
 
 /* pl-io.c */
-pl_stream PL_Output_Stream(union cell *s);
-pl_stream PL_Input_Stream(union cell *s);
-pl_stream PL_OutStream(void);
-pl_stream PL_InStream(void);
+struct stream *PL_Output_Stream(union cell *s);
+struct stream *PL_Input_Stream(union cell *s);
+struct stream *PL_OutStream(void);
+struct stream *PL_InStream(void);
 
 #endif

@@ -98,7 +98,7 @@ static inline int NeedQuote(struct atom *a)
 //#####################################################################
 
 static int lastc;
-static int Puts(pl_stream S, const char *str)
+static int Puts(struct stream *S, const char *str)
 {
 	const char *s = str;
 
@@ -111,14 +111,14 @@ static int Puts(pl_stream S, const char *str)
 	return (!Serror(S));
 }
 
-inline static int Putc(pl_stream S, int c)
+inline static int Putc(struct stream *S, int c)
 {
 	lastc = c;
 
 	return Sputc(S, c);
 }
 
-inline static bool PutOpenToken(pl_stream S, int c)
+inline static bool PutOpenToken(struct stream *S, int c)
 {
 	if (lastc != -1 &&
 	    ((isAlphaNum_(lastc) && isAlphaNum_(c)) || (isSymbol(lastc) && isSymbol(c)) || c == '(')
@@ -129,12 +129,12 @@ inline static bool PutOpenToken(pl_stream S, int c)
 	succeed;
 }
 
-inline static bool PutOpenBrace(pl_stream S)
+inline static bool PutOpenBrace(struct stream *S)
 {
 	return PutOpenToken(S, '(') && Putc(S, '(');
 }
 
-inline static bool PutToken(pl_stream S, const char *s)
+inline static bool PutToken(struct stream *S, const char *s)
 {
 	if (s[0])
 		return PutOpenToken(S, s[0]) && Puts(S, s);
@@ -144,7 +144,7 @@ inline static bool PutToken(pl_stream S, const char *s)
 
 //#####################################################################
 
-static int WriteQuoted(pl_stream S, const char *s, int quote, const w_opt * opt)
+static int WriteQuoted(struct stream *S, const char *s, int quote, const w_opt * opt)
 {
 	char c;
 
@@ -206,7 +206,7 @@ static int WriteQuoted(pl_stream S, const char *s, int quote, const w_opt * opt)
 	succeed;
 }
 
-static int WriteAtom(pl_stream S, struct atom *a, const w_opt * opt)
+static int WriteAtom(struct stream *S, struct atom *a, const w_opt * opt)
 {
 	if (Options(OPT_QUOT) && NeedQuote(a))
 		WriteQuoted(S, PL_atom_chars(a), '\'', opt);
@@ -216,7 +216,7 @@ static int WriteAtom(pl_stream S, struct atom *a, const w_opt * opt)
 	succeed;
 }
 
-inline static void WritePrimitive(pl_stream S, union cell *t, const w_opt * opt)
+inline static void WritePrimitive(struct stream *S, union cell *t, const w_opt * opt)
 {
 	char buf[33];
 
@@ -277,7 +277,7 @@ static int priorityOperator(struct atom *atom)
 }
 
 // FIXME : stuff picked from SWI-Prolog
-static bool WriteTerm(pl_stream S, union cell *t, int prec, int depth, const w_opt * opt)
+static bool WriteTerm(struct stream *S, union cell *t, int prec, int depth, const w_opt * opt)
 {
 	struct atom *functor;
 	int arity;
@@ -473,7 +473,7 @@ static bool WriteTerm(pl_stream S, union cell *t, int prec, int depth, const w_o
 	succeed;
 }
 
-inline static int writeTerm(pl_stream S, union cell *t, int numvars, int quote, int display)
+inline static int writeTerm(struct stream *S, union cell *t, int numvars, int quote, int display)
 {
 	w_opt opt;
 
@@ -494,12 +494,12 @@ inline static int writeTerm(pl_stream S, union cell *t, int numvars, int quote, 
 	return WriteTerm(S, t, 1200, 0, &opt);
 }
 
-int PL_write(pl_stream S, union cell *t)
+int PL_write(struct stream *S, union cell *t)
 {
 	return (writeTerm(S, t, 1, 0, 0));
 }
 
-int PL_writeq(pl_stream S, union cell *t)
+int PL_writeq(struct stream *S, union cell *t)
 {
 	return (writeTerm(S, t, 1, 1, 0));
 }
@@ -512,7 +512,7 @@ int pl_write(union cell *t)
 
 int pl_write_ln(union cell *t)
 {
-	pl_stream S = PL_OutStream();
+	struct stream *S = PL_OutStream();
 
 	writeTerm(S, t, 1, 0, 0);
 	Sputc(S, '\n');
@@ -527,7 +527,7 @@ int pl_writeq(union cell *t)
 
 int pl_write2(union cell *stream, union cell *t)
 {
-	pl_stream S = PL_Output_Stream(stream);
+	struct stream *S = PL_Output_Stream(stream);
 
 	if (!S)
 		fail;
@@ -537,7 +537,7 @@ int pl_write2(union cell *stream, union cell *t)
 
 int pl_writeq2(union cell *stream, union cell *term)
 {
-	pl_stream S = PL_Output_Stream(stream);
+	struct stream *S = PL_Output_Stream(stream);
 
 	if (!S)
 		fail;
@@ -553,7 +553,7 @@ int pl_display(union cell *t)
 
 int pl_display2(union cell *stream, union cell *term)
 {
-	pl_stream S = PL_Output_Stream(stream);
+	struct stream *S = PL_Output_Stream(stream);
 
 	if (!S)
 		fail;
@@ -569,7 +569,7 @@ int pl_write_canonical(union cell *t)
 
 int pl_write_canonical2(union cell *stream, union cell *term)
 {
-	pl_stream S = PL_Output_Stream(stream);
+	struct stream *S = PL_Output_Stream(stream);
 
 	if (!S)
 		fail;
@@ -588,12 +588,12 @@ int pl_displayq2(union cell *stream, union cell *t)
 	return pl_write_canonical2(stream, t);
 }
 
-int PL_display(pl_stream S, union cell *t)
+int PL_display(struct stream *S, union cell *t)
 {
 	return writeTerm(S, t, 0, 0, 1);
 }
 
-int PL_displayq(pl_stream S, union cell *t)
+int PL_displayq(struct stream *S, union cell *t)
 {
 	return writeTerm(S, t, 0, 1, 1);
 }
@@ -601,7 +601,7 @@ int PL_displayq(pl_stream S, union cell *t)
 // FIXME : move this to pl-io.c
 int PL_puts(char *s)
 {
-	pl_stream S = PL_OutStream();
+	struct stream *S = PL_OutStream();
 	Sputs(S, s);
 	succeed;
 }
@@ -709,7 +709,7 @@ static int get_options(union cell *Options, w_opt * options, const char *pred)
 	succeed;
 }
 
-static int PL_write_term(pl_stream S, union cell *term, union cell *options, const char *pred)
+static int PL_write_term(struct stream *S, union cell *term, union cell *options, const char *pred)
 {
 	w_opt opt;
 
@@ -722,14 +722,14 @@ static int PL_write_term(pl_stream S, union cell *term, union cell *options, con
 
 int pl_write_term(union cell *term, union cell *options)
 {
-	pl_stream S = PL_OutStream();
+	struct stream *S = PL_OutStream();
 
 	return PL_write_term(S, term, options, "write_term/2");
 }
 
 int pl_write_term3(union cell *stream, union cell *term, union cell *options)
 {
-	pl_stream S = PL_Output_Stream(stream);
+	struct stream *S = PL_Output_Stream(stream);
 
 	if (!S)
 		fail;

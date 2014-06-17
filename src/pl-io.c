@@ -21,7 +21,7 @@
 typedef struct {
 	struct atom *file;
 	struct atom *alias;
-	pl_stream S;
+	struct stream *S;
 } pl_file_t, *pl_file;
 
 // INV : A closed pl_file have the components file, alias and S == 0
@@ -122,7 +122,7 @@ void PL_exit_io(void)
 
 static pl_file openStream(union cell *file, Smode_t mode, int flags)
 {
-	pl_stream S;
+	struct stream *S;
 	struct atom *name;
 	struct functor *f;
 	Stype_t type;
@@ -236,7 +236,7 @@ static pl_file GetStream(union cell *spec, Smode_t mode)
 	return (f);
 }
 
-static int unifyStreamMode(union cell *mode, pl_stream S)
+static int unifyStreamMode(union cell *mode, struct stream *S)
 {
 	Smode_t m = StreamMode(S);
 	struct atom *a;
@@ -523,27 +523,27 @@ int pl_current_output(union cell *s)
 	   S=f->S; \
 	})
 
-pl_stream PL_Output_Stream(union cell *s)
+struct stream *PL_Output_Stream(union cell *s)
 {
 	return (OutputStream(s));
 }
 
-pl_stream PL_Input_Stream(union cell *s)
+struct stream *PL_Input_Stream(union cell *s)
 {
 	return (InputStream(s));
 }
 
-pl_stream PL_OutStream(void)
+struct stream *PL_OutStream(void)
 {
 	return (Foutput->S);
 }
 
-pl_stream PL_InStream(void)
+struct stream *PL_InStream(void)
 {
 	return (Finput->S);
 }
 
-static int Put(union cell *t, pl_stream S)
+static int Put(union cell *t, struct stream *S)
 {
 	int c;
 	struct atom *a;
@@ -568,7 +568,7 @@ int pl_put(union cell *c)
 
 int pl_put2(union cell *s, union cell *c)
 {
-	pl_stream S = OutputStream(s);
+	struct stream *S = OutputStream(s);
 	return (Put(c, S));
 }
 
@@ -580,7 +580,7 @@ int pl_nl(void)
 
 int pl_nl1(union cell *s)
 {
-	pl_stream S = OutputStream(s);
+	struct stream *S = OutputStream(s);
 	Sputc(S, '\n');
 	return (1);
 }
@@ -598,7 +598,7 @@ int pl_tab(union cell *N)
 int pl_tab2(union cell *s, union cell *N)
 {
 	int n;
-	pl_stream S;
+	struct stream *S;
 
 	if (!PL_eval_(N, &n) || n < 0)
 		fail;
@@ -615,11 +615,11 @@ int pl_flush(void)
 
 int pl_flush_output(union cell *s)
 {
-	pl_stream S = OutputStream(s);
+	struct stream *S = OutputStream(s);
 	return (!Sflush(S));
 }
 
-static int Get0(pl_stream S)
+static int Get0(struct stream *S)
 {
 	int c = Sgetc(S);
 	return (c);
@@ -632,7 +632,7 @@ int pl_get0(union cell *c)
 
 int pl_get02(union cell *s, union cell *c)
 {
-	pl_stream S = InputStream(s);
+	struct stream *S = InputStream(s);
 	return (PL_unify_intg(c, Get0(S)));
 }
 
@@ -641,7 +641,7 @@ int pl_get_single_char(union cell *c)
 	return (PL_unify_intg(c, PL_GetSingleChar()));
 }
 
-static int Get(pl_stream S)
+static int Get(struct stream *S)
 {
 	int c;
 	do
@@ -657,7 +657,7 @@ int pl_get(union cell *c)
 
 int pl_get2(union cell *s, union cell *c)
 {
-	pl_stream S = InputStream(s);
+	struct stream *S = InputStream(s);
 	return (PL_unify_intg(c, Get(S)));
 }
 
@@ -668,7 +668,7 @@ int pl_peek_byte(union cell *c)
 
 int pl_peek_byte2(union cell *s, union cell *c)
 {
-	pl_stream S = InputStream(s);
+	struct stream *S = InputStream(s);
 	return (PL_unify_intg(c, Speekc(S)));
 }
 
@@ -688,7 +688,7 @@ int pl_skip(union cell *c)
 
 int pl_skip2(union cell *s, union cell *c)
 {
-	pl_stream S = InputStream(s);
+	struct stream *S = InputStream(s);
 	Skip(c, S, "skip/2");
 	succeed;
 }
@@ -713,7 +713,7 @@ int pl_stream_position(union cell *s, union cell *old, union cell *new)
 {
 	long o_char_no, char_no, line_no, col_no;
 	long told;
-	pl_stream S;
+	struct stream *S;
 	union cell *pos;
 	Spos_t *p;
 
@@ -788,7 +788,7 @@ int pl_stream_position(union cell *s, union cell *old, union cell *new)
 int pl_set_stream_position(union cell *s, union cell *new)
 {
 	long char_no, line_no, col_no;
-	pl_stream S;
+	struct stream *S;
 	Spos_t *p;
 
 	S = IOStream(s);		// FIXME : check return value
@@ -817,7 +817,7 @@ int pl_set_stream_position(union cell *s, union cell *new)
 
 int pl_line_count(union cell *s, union cell *cnt)
 {
-	pl_stream S = IOStream(s);
+	struct stream *S = IOStream(s);
 	Spos_t *p;
 
 	if ((p = Sget_pos(S)))
@@ -828,7 +828,7 @@ int pl_line_count(union cell *s, union cell *cnt)
 
 int pl_line_position(union cell *s, union cell *cnt)
 {
-	pl_stream S = IOStream(s);
+	struct stream *S = IOStream(s);
 	Spos_t *p;
 
 	if ((p = Sget_pos(S)))
@@ -839,7 +839,7 @@ int pl_line_position(union cell *s, union cell *cnt)
 
 int pl_character_count(union cell *s, union cell *cnt)
 {
-	pl_stream S = IOStream(s);
+	struct stream *S = IOStream(s);
 	Spos_t *p;
 
 	if ((p = Sget_pos(S)))

@@ -19,7 +19,7 @@ static int Sread_file(Shndl_t hndl, void *s, int n)
 	return (read(hndl.fd, s, n));
 }
 
-static int Sclose_file(pl_stream S)
+static int Sclose_file(struct stream *S)
 {
 	return (close(S->hndl.fd));
 }
@@ -36,10 +36,10 @@ static Sfun_t file_functions = { Sread_file,
 	0,
 };
 
-pl_stream Sopen_file(const char *file, Smode_t mode, int flags)
+struct stream *Sopen_file(const char *file, Smode_t mode, int flags)
 {
 	int fd;
-	pl_stream S;
+	struct stream *S;
 	int o_flags = 0;
 
 // FIXME : what to do with SF_BINARY flag ???
@@ -88,13 +88,13 @@ pl_stream Sopen_file(const char *file, Smode_t mode, int flags)
 	return (S);
 }
 
-static pl_stream_t Stdin__;
-static pl_stream_t Stdout__;
-static pl_stream_t Stderr__;
+static struct stream Stdin__;
+static struct stream Stdout__;
+static struct stream Stderr__;
 
-pl_stream Stdin = &Stdin__;
-pl_stream Stdout = &Stdout__;
-pl_stream Stderr = &Stderr__;
+struct stream *Stdin = &Stdin__;
+struct stream *Stdout = &Stdout__;
+struct stream *Stderr = &Stderr__;
 
 void pl_init_stream(void)
 {

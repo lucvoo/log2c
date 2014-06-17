@@ -11,7 +11,7 @@
 /* Write only */
 /**************/
 
-char *Sstring_wmem(pl_stream S)
+char *Sstring_wmem(struct stream *S)
 {
 	Sputc(S, '\0');
 	Sflush(S);
@@ -25,7 +25,7 @@ static int Swrite_wmem(Shndl_t hndl, const void *s, int n)
 	return (n);
 }
 
-static int Sclose_wmem(pl_stream S)
+static int Sclose_wmem(struct stream *S)
 {
 	PL_free_ubs(S->hndl.ubs);
 	free(S->hndl.ubs);
@@ -40,9 +40,9 @@ static Sfun_t wmem_functions = { 0,
 	0,
 };
 
-pl_stream Sopen_wmem(const char *buf, Smode_t mode, int flags)
+struct stream *Sopen_wmem(const char *buf, Smode_t mode, int flags)
 {
-	pl_stream S;
+	struct stream *S;
 	pl_ubs_t *ubs;
 
 	if (mode != SM_WRITE) {		// FIXME : errmsg
@@ -88,7 +88,7 @@ static int Sread_rmem(Shndl_t hndl, void *s, int n)
 	return (0);
 }
 
-static int Sclose_rmem(pl_stream S)
+static int Sclose_rmem(struct stream *S)
 {
 	return (0);
 }
@@ -100,9 +100,9 @@ static Sfun_t rmem_functions = { Sread_rmem,
 	0,
 };
 
-pl_stream Sopen_rmem(const char *buf, Smode_t mode, int flags)
+struct stream *Sopen_rmem(const char *buf, Smode_t mode, int flags)
 {
-	pl_stream S;
+	struct stream *S;
 
 	if (!(S = Snew_stream())) {	// FIXME : errmsg
 		return (0);

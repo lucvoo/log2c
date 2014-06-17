@@ -25,7 +25,7 @@ typedef union hndl_t {
 typedef int (*Sread_fun) (Shndl_t hndl, void *buf, int count);
 typedef int (*Swrite_fun) (Shndl_t hndl, const void *buf, int count);
 typedef off_t(*Sseek_fun) (Shndl_t hndl, long pos, int whence);
-typedef int (*Sclose_fun) (pl_stream S);
+typedef int (*Sclose_fun) (struct stream *S);
 typedef int (*Scntl_fun) (Shndl_t hndl, int action, void *arg);
 
 typedef struct Sfunctions {
@@ -36,7 +36,7 @@ typedef struct Sfunctions {
 	Scntl_fun Scntl;
 } Sfun_t;
 
-struct pl_stream_t {
+struct stream {
 	Shndl_t hndl;
 #ifdef	HAVE_PIPE
 	pid_t pid;			// for pipe stream

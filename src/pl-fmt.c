@@ -105,7 +105,7 @@ inline static int update_column(int col, int c)
 	}
 }
 
-static bool do_format(const char *fmt, union cell *argv, pl_stream S)
+static bool do_format(const char *fmt, union cell *argv, struct stream *S)
 {
 	while (*fmt) {
 		if (*fmt == '~') {
@@ -197,7 +197,7 @@ static bool do_format(const char *fmt, union cell *argv, pl_stream S)
 					break;
 				}
 				{
-					int (*f) (pl_stream, union cell *);
+					int (*f) (struct stream *, union cell *);
 			case 'k':	/* displayq */
 					f = PL_displayq;
 					goto pl_common;
@@ -281,7 +281,7 @@ int pl_format(union cell *fmt, union cell *args)
 int pl_format3(union cell *stream, union cell *fmt, union cell *args)
 {
 	const char *f;
-	pl_stream S = PL_Output_Stream(stream);
+	struct stream *S = PL_Output_Stream(stream);
 
 	if (!PL_get_chars(fmt, &f, CVT_ALL | BUF_RING))
 		PL_warning("format/2: format is not an atom or string");
@@ -293,7 +293,7 @@ int pl_sformat3(union cell *string, union cell *fmt, union cell *args)
 {
 	const char *f, *s;
 	int rval;
-	pl_stream S = Sopen_wmem(0, SM_WRITE, 0);
+	struct stream *S = Sopen_wmem(0, SM_WRITE, 0);
 
 	if (!PL_get_chars(fmt, &f, CVT_ALL | BUF_RING)) {
 		Sclose(S);
@@ -313,7 +313,7 @@ int pl_sformat2(union cell *string, union cell *fmt)
 {
 	const char *f, *s;
 	int rval;
-	pl_stream S = Sopen_wmem(0, SM_WRITE, 0);
+	struct stream *S = Sopen_wmem(0, SM_WRITE, 0);
 
 	if (!PL_get_chars(fmt, &f, CVT_ALL | BUF_RING)) {
 		Sclose(S);

@@ -12,10 +12,10 @@
 #include "pl-stream.h"
 
 /* pl-write.c */
-int PL_display(pl_stream S, union cell *t);
-int PL_displayq(pl_stream S, union cell *t);
-int PL_write(pl_stream S, union cell *t);
-int PL_writeq(pl_stream S, union cell *t);
+int PL_display(struct stream *S, union cell *t);
+int PL_displayq(struct stream *S, union cell *t);
+int PL_write(struct stream *S, union cell *t);
+int PL_writeq(struct stream *S, union cell *t);
 int PL_puts(char *s);
 int pl_warn(const char *fmt);
 

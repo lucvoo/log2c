@@ -32,7 +32,7 @@ static int Sread_pipe(Shndl_t hndl, void *s, int n)
 	return (read(hndl.fd, s, n));
 }
 
-static int Sclose_pipe(pl_stream S)
+static int Sclose_pipe(struct stream *S)
 {
 	int wstatus;
 	pid_t pid;
@@ -110,9 +110,9 @@ static Sfun_t pipe_functions = { Sread_pipe,
 };
 
 // PRE  : mode == SM_READ || mode == SM_WRITE
-pl_stream Sopen_pipe(const char *cmd, Smode_t mode, int flags)
+struct stream *Sopen_pipe(const char *cmd, Smode_t mode, int flags)
 {
-	pl_stream S;
+	struct stream *S;
 	int fd;
 	pid_t pid;
 

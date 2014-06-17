@@ -20,23 +20,23 @@
 
 //#####################################################################
 
-inline static int Set_error(pl_stream S)
+inline static int Set_error(struct stream *S)
 {
 	S->flags |= SF_ERR;
 	S->ptr = S->end = S->base;
 	return (S_EOF);
 }
 
-pl_stream Snew_stream(void)
+struct stream *Snew_stream(void)
 {
-	pl_stream S;
+	struct stream *S;
 
 	return (malloc(sizeof(S[0])));
 }
 
 //#####################################################################
 
-Spos_t *Sget_pos(pl_stream S)
+Spos_t *Sget_pos(struct stream *S)
 {
 	if (S->flags & SF_RECPOS)
 		return (&(S->pos));
@@ -44,24 +44,24 @@ Spos_t *Sget_pos(pl_stream S)
 		return (0);
 }
 
-Stype_t StreamType(pl_stream S)
+Stype_t StreamType(struct stream *S)
 {
 	return (S->type);
 }
 
-Smode_t StreamMode(pl_stream S)
+Smode_t StreamMode(struct stream *S)
 {
 	return (S->mode);
 }
 
-Sflag_t StreamFlags(pl_stream S)
+Sflag_t StreamFlags(struct stream *S)
 {
 	return (S->flags);
 }
 
 //#####################################################################
 
-inline static int S_update_pos(pl_stream S, int c)
+inline static int S_update_pos(struct stream *S, int c)
 {
 	Spos_t *p;
 
@@ -95,7 +95,7 @@ inline static int S_update_pos(pl_stream S, int c)
 //#####################################################################
 
 // RETURN : S_EOF if eof or error; first char otherwise
-static int Sfillbuf(pl_stream S)
+static int Sfillbuf(struct stream *S)
 {
 	if ((S->mode != SM_READ) || Serror(S)) {	// FIXME : msg
 		return (Set_error(S));
@@ -132,7 +132,7 @@ static int Sfillbuf(pl_stream S)
 
 }
 
-int Sgetc(pl_stream S)
+int Sgetc(struct stream *S)
 {
 	int c;
 	if (S->ptr < S->end)
@@ -146,7 +146,7 @@ int Sgetc(pl_stream S)
 	return (S_update_pos(S, c));
 }
 
-int Speekc(pl_stream S)
+int Speekc(struct stream *S)
 {
 	int c;
 	if (S->ptr < S->end)
@@ -160,7 +160,7 @@ int Speekc(pl_stream S)
 //#####################################################################
 
 // RETURN : S_EOF on error; 0 otherwise.
-static int S_flushbuf(pl_stream S)
+static int S_flushbuf(struct stream *S)
 {
 
 	if (Serror(S)) {
@@ -183,7 +183,7 @@ static int S_flushbuf(pl_stream S)
 	}
 }
 
-int Sputc(pl_stream S, int c)
+int Sputc(struct stream *S, int c)
 {
 	int rval;
 
@@ -202,7 +202,7 @@ int Sputc(pl_stream S, int c)
 	return (S_update_pos(S, c));
 }
 
-int Sputs(pl_stream S, register const char *s)
+int Sputs(struct stream *S, register const char *s)
 {
 
 	if (S->mode == SM_READ) {	// FIXME : msg
@@ -215,7 +215,7 @@ int Sputs(pl_stream S, register const char *s)
 	return (!Serror(S));
 }
 
-int Slastc(pl_stream S)
+int Slastc(struct stream *S)
 {
 	if (S->ptr == S->base)
 		return (S->lastc);
@@ -225,7 +225,7 @@ int Slastc(pl_stream S)
 
 //#####################################################################
 
-int Sungetc(pl_stream S, int c)
+int Sungetc(struct stream *S, int c)
 {
 	if (S->ptr > S->base) {
 		if (S->flags & SF_STATIC) {
@@ -243,27 +243,27 @@ int Sungetc(pl_stream S, int c)
 
 //#####################################################################
 
-void Sclearerr(pl_stream S)
+void Sclearerr(struct stream *S)
 {
 	S->flags &= ~(SF_ERR | SF_EOF | SF_EOF2);
 }
 
-int Seof(pl_stream S)
+int Seof(struct stream *S)
 {
 	return (S->flags & SF_EOF);
 }
 
-int Serror(pl_stream S)
+int Serror(struct stream *S)
 {
 	return (S->flags & SF_ERR);
 }
 
-int Spasteof(pl_stream S)
+int Spasteof(struct stream *S)
 {
 	return ((S->flags & (SF_EOF2 | SF_EOF_ERR)) == (SF_EOF2 | SF_EOF_ERR));
 }
 
-int Sflush(pl_stream S)
+int Sflush(struct stream *S)
 {
 	if (S->mode == SM_READ)
 		return (0);
@@ -273,7 +273,7 @@ int Sflush(pl_stream S)
 
 //#####################################################################
 
-int Sclose(pl_stream S)
+int Sclose(struct stream *S)
 {
 	int rval = 0;
 
@@ -294,7 +294,7 @@ int Sclose(pl_stream S)
 
 // PRE : type = 0 | SF_NBUF | SF_LBUF | SF_FBUF
 // FIXME : static
-int S_setbuf(pl_stream S, char *buf, size_t size, int type)
+int S_setbuf(struct stream *S, char *buf, size_t size, int type)
 {
 	Sbuff_t buf_type;
 	int static_buf = 0;
@@ -353,7 +353,7 @@ int S_setbuf(pl_stream S, char *buf, size_t size, int type)
 
 //#####################################################################
 
-long Stell(pl_stream S)
+long Stell(struct stream *S)
 {
 	if (S->funs->Sseek) {
 		long l;
@@ -368,7 +368,7 @@ long Stell(pl_stream S)
 		return (-1);
 }
 
-int Sseek(pl_stream S, long off, int whence)
+int Sseek(struct stream *S, long off, int whence)
 {
 	if (S->funs->Sseek) {
 		long l;
