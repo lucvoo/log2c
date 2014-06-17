@@ -44,8 +44,7 @@ typedef struct
 } w_opt;
 
 
-inline static void
-Get_arg(int index, term_t t, term_t a)
+inline static void Get_arg(int index, term_t t, term_t a)
 { cell_t *arg=deref(t)+index;
   mkrefp(a,deref(arg));
 }
@@ -192,8 +191,7 @@ static int WriteQuoted(pl_stream S, const char *s, int quote, const w_opt *opt)
   succeed;
 }
 
-static int
-WriteAtom(pl_stream S, atom_t a, const w_opt *opt)
+static int WriteAtom(pl_stream S, atom_t a, const w_opt *opt)
 { if (Options(OPT_QUOT) && NeedQuote(a))
     WriteQuoted(S, PL_atom_chars(a), '\'', opt);
   else

@@ -103,8 +103,7 @@ inline static int update_column(int col, int c)
 }
 
 
-static bool
-do_format(const char *fmt, term_t argv, pl_stream S)
+static bool do_format(const char *fmt, term_t argv, pl_stream S)
 {
   while(*fmt)
   { if (*fmt=='~')

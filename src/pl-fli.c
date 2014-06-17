@@ -14,8 +14,7 @@
 #include "pl-buffer.h"
 
 
-cell_t *
-PL_new_term_refs(int n)
+cell_t *PL_new_term_refs(int n)
 { cell_t *r=HP;
 
   for (;n>0;n--)
@@ -26,8 +25,7 @@ PL_new_term_refs(int n)
   return r;
 }
 
-cell_t *
-PL_new_term_ref(void)
+cell_t *PL_new_term_ref(void)
 { cell_t *r=HP;
 
   HP->val=__var();
@@ -42,8 +40,7 @@ PL_new_term_ref(void)
 		 *	       CONS-*		*
 		 *******************************/
 #include <stdarg.h>
-void
-PL_cons_functor(term_t h, functor_t fd, ...)
+void PL_cons_functor(term_t h, functor_t fd, ...)
 { int arity = fd->arity;
   cell_t *f;
   va_list args;
@@ -61,8 +58,7 @@ PL_cons_functor(term_t h, functor_t fd, ...)
 }
 
 
-void
-PL_cons_list(term_t l, term_t head, term_t tail)
+void PL_cons_list(term_t l, term_t head, term_t tail)
 { cell_t *a;
 
   l->celp=a=HP;
@@ -143,8 +139,7 @@ failed:
 }
 
 
-int
-PL_get_chars(term_t term, const char **s, unsigned flags)
+int PL_get_chars(term_t term, const char **s, unsigned flags)
 { term_t t;
   static char tmp[24];		// FIXME : why 24 ??
   char *r;
@@ -199,8 +194,7 @@ PL_get_chars(term_t term, const char **s, unsigned flags)
 }
 
 
-int
-PL_get_name_arity(term_t t, atom_t *name, int *arity)
+int PL_get_name_arity(term_t t, atom_t *name, int *arity)
 { Deref(t);
 
   if (is_fun(t))
@@ -221,8 +215,7 @@ PL_get_name_arity(term_t t, atom_t *name, int *arity)
 }
 
 
-int
-PL_get_functor(term_t t, functor_t *f)
+int PL_get_functor(term_t t, functor_t *f)
 { Deref(t);
 
   if ( is_term(t) )
@@ -241,8 +234,7 @@ PL_get_functor(term_t t, functor_t *f)
 
 
 
-int
-PL_get_arg(int index, term_t t, term_t a)
+int PL_get_arg(int index, term_t t, term_t a)
 { Deref(t);
 
   if (is_term(t))
@@ -258,8 +250,7 @@ PL_get_arg(int index, term_t t, term_t a)
 }
 
 
-int
-PL_get_list(term_t l, term_t h, term_t t)
+int PL_get_list(term_t l, term_t h, term_t t)
 { Deref(l);
 
   if (is_cons(l))
@@ -270,8 +261,7 @@ PL_get_list(term_t l, term_t h, term_t t)
   fail;
 }
 
-int
-PL_get_list_(term_t l, term_t *h, term_t *t)
+int PL_get_list_(term_t l, term_t *h, term_t *t)
 { Deref(l);
 
   if (is_cons(l))
@@ -283,8 +273,7 @@ PL_get_list_(term_t l, term_t *h, term_t *t)
 }
 
 
-int
-PL_get_head(term_t l, term_t h)
+int PL_get_head(term_t l, term_t h)
 { Deref(l);
 
   if (is_list(l))
@@ -294,8 +283,7 @@ PL_get_head(term_t l, term_t h)
   fail;
 }
 
-int
-PL_get_tail(term_t l, term_t t)
+int PL_get_tail(term_t l, term_t t)
 { Deref(l);
 
   if (is_list(l))
@@ -311,8 +299,7 @@ PL_get_tail(term_t l, term_t t)
 		 *******************************/
 
 
-void
-PL_put_functor(term_t t, functor_t f)
+void PL_put_functor(term_t t, functor_t f)
 { int arity = f->arity;
 
   if ( arity == 0 )
@@ -328,8 +315,7 @@ PL_put_functor(term_t t, functor_t f)
 }
 
 
-void
-PL_put_list(term_t l)
+void PL_put_list(term_t l)
 { cell_t *a = new_cons();
 
   a[1].val=a[2].val=__var();
@@ -341,15 +327,13 @@ PL_put_list(term_t l)
 		 *	       UNIFY		*
 		 *******************************/
 
-int
-PL_unify_atom_chars(term_t t, const char *chars)
+int PL_unify_atom_chars(term_t t, const char *chars)
 { return(PL_unify_atom(t,PL_new_atom(chars)));
 }
 
 
 
-int
-PL_unify_arg(int index, term_t t, term_t a)
+int PL_unify_arg(int index, term_t t, term_t a)
 { Deref(t);
 
   if ( (get_tag(t)==fun_tag) && index > 0 && index <= get_arity(t) )
@@ -364,8 +348,7 @@ PL_unify_arg(int index, term_t t, term_t a)
 		 *******************************/
 
 
-int
-PL_term_type(term_t t)
+int PL_term_type(term_t t)
 { return(Tag(t->val)>>TAG_POS);
 }
 

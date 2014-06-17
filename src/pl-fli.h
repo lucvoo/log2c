@@ -38,16 +38,13 @@ void	PL_put_list(term_t l);
                  *             ATOMS            *
                  *******************************/
 
-inline static const char *
-PL_atom_chars(atom_t a)
+inline static const char *PL_atom_chars(atom_t a)
 { return a->name; }
 
-inline static atom_t
-PL_functor_name(functor_t f)
+inline static atom_t PL_functor_name(functor_t f)
 { return f->functor; }
 
-inline static int
-PL_functor_arity(functor_t f)
+inline static int PL_functor_arity(functor_t f)
 { return f->arity; }
 
 //######################################################################
@@ -81,8 +78,7 @@ int PL_is_struct(cell_t *c)
 { return(__isStruct(Val(c))); }
 
 INLINE_DECL
-int
-PL_is_functor(term_t t, functor_t f)
+int PL_is_functor(term_t t, functor_t f)
 { return(f==get_fun(deref(t))); }
 
 INLINE_DECL
@@ -114,8 +110,7 @@ int is_list(cell_t *c)
                  /*******************************
                  *              PUT             *
                  *******************************/
-inline static void
-PL_put_var(term_t t)
+inline static void PL_put_var(term_t t)
 { mkrefp(t, new_var());
 }
 
@@ -134,18 +129,15 @@ inline static void PL_put_atom(term_t v, atom_t A)
   return;
 }
 
-inline static void
-PL_put_nil(term_t l)
+inline static void PL_put_nil(term_t l)
 { PL_put_atom(l,ATOM(nil));
 }
 
-inline static void
-PL_put_term(term_t t1, term_t t2)
+inline static void PL_put_term(term_t t1, term_t t2)
 { mkrefp(t1,deref(t2));
 }
 
-inline static void
-PL_put_atom_chars(term_t t, const char *s)
+inline static void PL_put_atom_chars(term_t t, const char *s)
 { PL_put_atom(t, PL_new_atom(s));
 }
 

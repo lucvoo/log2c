@@ -118,8 +118,7 @@ void PL_exit_io(void)
 }
 
 
-static pl_file
-openStream(term_t file, Smode_t mode, int flags)
+static pl_file openStream(term_t file, Smode_t mode, int flags)
 { pl_stream S;
   atom_t name;
   functor_t f;
