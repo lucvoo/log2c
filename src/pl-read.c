@@ -51,8 +51,7 @@ struct token {
 	} tok_val;
 };
 
-typedef struct node_t node_t;
-struct node_t {				// long start;
+struct node {				// long start;
 	// long end;
 	union cell cell;
 	short prec;
@@ -940,9 +939,9 @@ error:
 /* PARSER                                                             */
 /**********************************************************************/
 
-static int read_term(struct stream *S, int max, const char *stop, node_t * node);
+static int read_term(struct stream *S, int max, const char *stop, struct node * node);
 
-static inline void mk_unary(struct atom *atom, node_t * arg, node_t * node_out)
+static inline void mk_unary(struct atom *atom, struct node * arg, struct node * node_out)
 {
 	if (atom == ATOM(minus) && is_number(&arg->cell)) {
 		union cell *c = &arg->cell;
@@ -962,7 +961,7 @@ static inline void mk_unary(struct atom *atom, node_t * arg, node_t * node_out)
 	}
 }
 
-static inline void mk_binary(struct atom *atom, node_t * left, node_t * right, node_t * node_out)
+static inline void mk_binary(struct atom *atom, struct node * left, struct node * right, struct node * node_out)
 {
 	struct functor *fun = PL_new_functor(atom, 2);
 	union cell *addr = new_struct(fun, 2);
@@ -972,9 +971,9 @@ static inline void mk_binary(struct atom *atom, node_t * left, node_t * right, n
 	node_out->cell.celp = addr;
 }
 
-static union cell *read_fun(struct stream *S, struct atom *functor, int level, node_t * node_out)
+static union cell *read_fun(struct stream *S, struct atom *functor, int level, struct node * node_out)
 {
-	node_t elem;
+	struct node elem;
 	union cell *addr;
 
 	if (!read_term(S, 1200, ",)", &elem))
@@ -1001,10 +1000,10 @@ static union cell *read_fun(struct stream *S, struct atom *functor, int level, n
 	}
 }
 
-static int read_list(struct stream *S, node_t * node_out)
+static int read_list(struct stream *S, struct node * node_out)
 {
 	union cell *addr;
-	node_t elem;
+	struct node elem;
 
 	addr = new_cons();
 	node_out->prec = 0;
@@ -1036,14 +1035,14 @@ loop:
 	}
 }
 
-static inline int read_term_a(struct stream *S, int max, const char *stop, node_t * node_out)
+static inline int read_term_a(struct stream *S, int max, const char *stop, struct node * node_out)
 {
 	int type, prec;
 	struct atom *atom = token.tok_val.atom;
 
 // Try prefix operator
 	if (PL_is_op(OP_PREFIX, atom, &type, &prec) && max >= prec) {
-		node_t node_r;
+		struct node node_r;
 
 		if ((type == OP_FX && read_term(S, prec - 1, stop, &node_r)) ||
 		    (type == OP_FY && read_term(S, prec, stop, &node_r))) {
@@ -1066,7 +1065,7 @@ static inline int read_term_a(struct stream *S, int max, const char *stop, node_
 	}
 }
 
-static inline int read_term_t_(struct stream *S, int max, const char *stop, node_t node_l, node_t * node_out)
+static inline int read_term_t_(struct stream *S, int max, const char *stop, struct node node_l, struct node * node_out)
 {
 
 loop:
@@ -1105,7 +1104,7 @@ loop:
 					}
 					break;
 infix:					{
-						node_t node_r;
+						struct node node_r;
 
 						if (!read_term(S, m, stop, &node_r))
 							return (0);
@@ -1144,9 +1143,9 @@ postfix:				mk_unary(atom, &node_l, &node_l);
 }
 
 // POST: node->prec <= max
-static int read_term(struct stream *S, int max, const char *stop, node_t * node)
+static int read_term(struct stream *S, int max, const char *stop, struct node * node)
 {
-	node_t node_s;
+	struct node node_s;
 	int tok;
 
 	must_be_op = 0;
@@ -1227,7 +1226,7 @@ case_simple:	node_s.prec = 0;
 // singles : & -> unify list of singletons
 static int Read(struct stream *S, union cell *term, union cell *vars, union cell *singles, union cell *pos)
 {
-	node_t node;
+	struct node node;
 	union cell *addr;
 
 	if (pos)			// FIXME : add position handling
