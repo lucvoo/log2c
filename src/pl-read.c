@@ -564,8 +564,8 @@ unsigned long str2long(char *str)
 struct number {
 	int type;			// int_tag | flt_tag
 	union {
-		intg_t intg;
-		flt_t flt;
+		long intg;
+		double flt;
 		unsigned long w[sizeof(double) / sizeof(unsigned long)];
 	} val;
 };

@@ -12,8 +12,6 @@
 #include <sys/types.h>
 
 typedef unsigned long hash_t;
-typedef long intg_t;
-typedef double flt_t;
 
 enum tag {
 	ref_tag,

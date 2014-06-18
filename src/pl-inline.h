@@ -47,7 +47,7 @@
 #define __cons()	__fun(FUN(dot,2))
 #define __nil()		__atom(ATOM(nil))
 
-inline static unsigned long __intg(intg_t N)
+inline static unsigned long __intg(long N)
 {
 	return (MK_CELL(int_tag, VAL_MASK & N));
 }
