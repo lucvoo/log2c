@@ -10,16 +10,14 @@
 
 // #define  DEBUG_STACKS
 
-typedef struct {
+struct stack {
 	void *base;
 	void *top;
 	int size;
 	int incr;
 	int max;
 	const char *name;
-} Stack;
-
-typedef void (*sighandler_t) (int);
+};
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -28,13 +26,13 @@ typedef void (*sighandler_t) (int);
 #include <signal.h>
 
 #define	STACK_DEF(NBR,BASE,INCR,MAX,NAME) NBR,
-typedef enum {
+enum stack_id {
 #include "pl-config.h"
-} stack_id;
+};
 #undef  STACK_DEF
 
 #define	STACK_DEF(NBR,BASE,INCR,MAX,NAME) { (void *) BASE, 0, 0, INCR, MAX, NAME },
-static Stack stacks[] = {
+static struct stack stacks[] = {
 #include "pl-config.h"
 };
 
@@ -42,7 +40,7 @@ static Stack stacks[] = {
 
 #define NBR_STKS	(sizeof(stacks)/sizeof(stacks[0]))
 
-static void expand_stack(Stack * s)
+static void expand_stack(struct stack * s)
 {
 	int new_size;
 
@@ -87,7 +85,7 @@ static void expand_stack(Stack * s)
 }
 
 // FIXME (4<<10) ?
-static Stack *which_stack(void)
+static struct stack *which_stack(void)
 {
 #ifdef DEBUG_STACKS
 	fprintf(stderr, "%s:%d\n", __FUNCTION__, __LINE__);
@@ -113,7 +111,7 @@ static Stack *which_stack(void)
 
 static void segv_handler(int sig)
 {
-	Stack *s;
+	struct stack *s;
 
 	s = which_stack();
 
