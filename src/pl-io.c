@@ -851,11 +851,21 @@ int pl_character_count(union cell *s, union cell *cnt)
 
 /**********************************************************************/
 
-typedef enum { file_name, mode, in_out, alias, position,
-	eof, action, repos, type, last_prop
-} prop_t;
+enum stream_property {
+	file_name,
+	mode,
+	in_out,
+	alias,
+	position,
+	eof,
+	action,
+	repos,
+	type,
 
-static union cell *GetProp(int n, prop_t p)
+	last_prop
+};
+
+static union cell *GetProp(int n, enum stream_property p)
 {
 	union cell *t = 0;
 
@@ -995,15 +1005,15 @@ static union cell *GetProp(int n, prop_t p)
 
 int pl_stream_property(union cell *stream, union cell *prop, enum control *ctrl)
 {
-	typedef enum { str, pro, all } type_t;
+	enum type { str, pro, all };
 	struct {
 		int n;
-		prop_t p;
-		type_t type;
+		enum stream_property p;
+		enum type type;
 	}     *ctxt;
 	struct pl_file *file;
 	int n;
-	prop_t p;
+	enum stream_property p;
 
 	Deref(stream);
 	Deref(prop);
