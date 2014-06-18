@@ -66,7 +66,7 @@ static char *formatInteger(int split, int div, int radix, int small, long int n)
 	int digits = 0;
 	int negative = FALSE;
 
-	*s = EOS;
+	*s = '\0';
 	if (n < 0) {
 		n = -n;
 		negative = TRUE;
