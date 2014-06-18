@@ -133,5 +133,5 @@ int pl_mangle(union cell *name, union cell *mangled)
 
 	m = PL_mangle(n);
 	a = PL_new_atom(m);
-	return (PL_unify_atom(mangled, a));
+	return PL_unify_atom(mangled, a);
 }

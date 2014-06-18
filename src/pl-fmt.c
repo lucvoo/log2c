@@ -43,7 +43,7 @@ static char DigitName[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 
 inline static char digitName(int n, int small)	// FIXME : check if overflow ???
 {
-	return (small ? digitname[n] : DigitName[n]);
+	return small ? digitname[n] : DigitName[n];
 }
 
 		/********************************
@@ -99,7 +99,7 @@ inline static int update_column(int col, int c)
 	case '\t':
 		return (col + 1) | 0x7;
 	case '\b':
-		return (col <= 0 ? 0 : col - 1);
+		return col <= 0 ? 0 : col - 1;
 	default:
 		return col + 1;
 	}
@@ -265,7 +265,7 @@ inline static union cell *list_to_tab(union cell *list)
 		n = 1;
 	}
 	HP[n] = end_cell;
-	return (HP);
+	return HP;
 }
 
 int pl_format(union cell *fmt, union cell *args)
@@ -275,7 +275,7 @@ int pl_format(union cell *fmt, union cell *args)
 	if (!PL_get_chars(fmt, &f, CVT_ALL | BUF_RING))
 		PL_warning("format/2: format is not an atom or string");
 
-	return (do_format(f, list_to_tab(args), PL_OutStream()));
+	return do_format(f, list_to_tab(args), PL_OutStream());
 }
 
 int pl_format3(union cell *stream, union cell *fmt, union cell *args)
@@ -286,7 +286,7 @@ int pl_format3(union cell *stream, union cell *fmt, union cell *args)
 	if (!PL_get_chars(fmt, &f, CVT_ALL | BUF_RING))
 		PL_warning("format/2: format is not an atom or string");
 
-	return (do_format(f, list_to_tab(args), S));
+	return do_format(f, list_to_tab(args), S);
 }
 
 int pl_sformat3(union cell *string, union cell *fmt, union cell *args)
@@ -306,7 +306,7 @@ int pl_sformat3(union cell *string, union cell *fmt, union cell *args)
 	if (!rval)
 		fail;
 	else
-		return (PL_unify_atom_chars(string, s));
+		return PL_unify_atom_chars(string, s);
 }
 
 int pl_sformat2(union cell *string, union cell *fmt)
@@ -326,7 +326,7 @@ int pl_sformat2(union cell *string, union cell *fmt)
 	if (!rval)
 		fail;
 	else
-		return (PL_unify_atom_chars(string, s));
+		return PL_unify_atom_chars(string, s);
 }
 
 int pl_int_to_atom2(union cell *num, union cell *atom)
@@ -345,7 +345,7 @@ int pl_int_to_atom2(union cell *num, union cell *atom)
 		for (; n > 0; n /= 10)
 			*--s = digitName(n % 10, 1);
 
-	return (PL_unify_atom_chars(atom, s));
+	return PL_unify_atom_chars(atom, s);
 }
 
 int pl_int_to_atom3(union cell *num, union cell *base, union cell *atom)
@@ -381,5 +381,5 @@ int pl_int_to_atom3(union cell *num, union cell *base, union cell *atom)
 		}
 	}
 
-	return (PL_unify_atom_chars(atom, s));
+	return PL_unify_atom_chars(atom, s);
 }

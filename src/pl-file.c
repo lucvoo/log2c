@@ -18,9 +18,9 @@ static const char *PL_get_filename(union cell *file, char *buf)
 		buf = buffer;
 
 	if (PL_get_chars(file, &name, CVT_ALL) && (name = PL_ExpandFile(name, buf)))
-		return (name);
+		return name;
 	else
-		return (0);
+		return 0;
 }
 
 int pl_file_base_name(union cell *path, union cell *base)
@@ -30,7 +30,7 @@ int pl_file_base_name(union cell *path, union cell *base)
 	if (!PL_get_atom_chars(path, &p))
 		PL_warning("file_base_name/2 : instantiation fault");
 
-	return (PL_unify_atom_chars(base, PL_BaseName(p)));
+	return PL_unify_atom_chars(base, PL_BaseName(p));
 }
 
 int pl_file_directory_name(union cell *path, union cell *dir)
@@ -40,7 +40,7 @@ int pl_file_directory_name(union cell *path, union cell *dir)
 	if (!PL_get_atom_chars(path, &p))
 		PL_warning("file_directory_name/2 : instantiation fault");
 
-	return (PL_unify_atom_chars(dir, PL_DirName(p)));
+	return PL_unify_atom_chars(dir, PL_DirName(p));
 }
 
 int pl_file_name_extension(union cell *base, union cell *ext, union cell *full)
@@ -68,7 +68,7 @@ int pl_file_name_extension(union cell *base, union cell *ext, union cell *full)
 
 			strncpy(buf, f, s - f);
 			buf[s - f] = '\0';
-			return (PL_unify_atom_chars(base, buf));
+			return PL_unify_atom_chars(base, buf);
 		}
 
 		if (PL_unify_atom(ext, ATOM(_)) && pl_unify(full, base))
@@ -88,7 +88,7 @@ int pl_file_name_extension(union cell *base, union cell *ext, union cell *full)
 		*s++ = '.';
 		strcpy(s, e);
 
-		return (PL_unify_atom_chars(full, buf));
+		return PL_unify_atom_chars(full, buf);
 	} else
 		PL_warning("file_name_extension/3 : instantiation fault");
 }
@@ -100,7 +100,7 @@ int pl_delete_file(union cell *name)
 	if (!(f = PL_get_filename(name, 0)))
 		PL_warning("delete_file/1: instantiation fault");
 
-	return (PL_RemoveFile(f));
+	return PL_RemoveFile(f);
 }
 
 int pl_absolute_file_name(union cell *file, union cell *abs)
@@ -113,14 +113,14 @@ int pl_absolute_file_name(union cell *file, union cell *abs)
 
 	c = PL_CanonicalPath(f, buf);
 
-	return (PL_unify_atom_chars(abs, c));
+	return PL_unify_atom_chars(abs, c);
 }
 
 int pl_is_absolute_file_name(union cell *file)
 {
 	const char *f;
 
-	return (PL_get_atom_chars(file, &f) && PL_isAbsolutePath(f));
+	return PL_get_atom_chars(file, &f) && PL_isAbsolutePath(f);
 }
 
 int pl_access_file(union cell *name, union cell *mode)
@@ -152,7 +152,7 @@ int pl_access_file(union cell *name, union cell *mode)
 	if (md == PL_ACCESS_WRITE && !PL_AccessFile(n, PL_ACCESS_EXIST)) {
 		const char *dir = PL_DirName(n);
 		dir = (dir ? dir : ".");
-		return (PL_AccessFile(dir, md));
+		return PL_AccessFile(dir, md);
 	} else
 		fail;
 }
@@ -164,7 +164,7 @@ int pl_exists_file(union cell *file)
 	if (!(f = PL_get_filename(file, 0)))
 		PL_warning("exists_file/1: instantiation fault");
 
-	return (PL_ExistsFile(f));
+	return PL_ExistsFile(f);
 }
 
 int pl_exists_directory(union cell *dir)
@@ -174,5 +174,5 @@ int pl_exists_directory(union cell *dir)
 	if (!(d = PL_get_filename(dir, 0)))
 		PL_warning("exists_directory/1: instantiation fault");
 
-	return (PL_ExistsDirectory(d));
+	return PL_ExistsDirectory(d);
 }

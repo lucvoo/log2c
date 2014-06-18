@@ -27,9 +27,9 @@ inline static struct module *lookup_module(struct atom *name)
 	h = name->hash % PL__modules_hash_size;
 	for (m = PL__modules[h]; m != 0; m = m->next)
 		if (m->name == name)
-			return (m->module);
+			return m->module;
 
-	return (0);
+	return 0;
 }
 
 inline static void *lookup_proc(struct module * module, struct atom *functor, int arity)
@@ -40,7 +40,7 @@ inline static void *lookup_proc(struct module * module, struct atom *functor, in
 	h = (functor->hash + arity) % module->all.size;
 	for (j = module->all.tab[h]; j != 0; j = j->next) {
 		if (j->functor == functor && j->arity == arity)
-			return (j->pred);
+			return j->pred;
 	}
 
 // if fail : try default module : system        // FIXME
@@ -48,7 +48,7 @@ inline static void *lookup_proc(struct module * module, struct atom *functor, in
 	h = (functor->hash + arity) % module->pub.size;
 	for (j = module->pub.tab[h]; j != 0; j = j->next) {
 		if (j->functor == functor && j->arity == arity)
-			return (j->pred);
+			return j->pred;
 	}
 
 	PL_write(Stderr, (union cell *) functor);
@@ -74,7 +74,7 @@ inline static union cell *strip_module(union cell *term, struct module ** module
 
 	if (is_atom(m) && (mod = lookup_module(get_atom(m)))) {
 		*module = mod;
-		return (deref(t));
+		return deref(t);
 	}
 
 	PL_write(Stderr, term);
@@ -100,7 +100,7 @@ void *PL_call(union cell *clos, int extra, union cell ** args)
 	for (n = 0; n < extra; n++)
 		PL_ARGS[arity + 1 + n] = args[n];
 
-	return (proc);
+	return proc;
 }
 
 void *PL_apply(union cell *clos, union cell *list)
@@ -127,5 +127,5 @@ void *PL_apply(union cell *clos, union cell *list)
 		list = deref(list + 2);
 	}
 
-	return (proc);
+	return proc;
 }

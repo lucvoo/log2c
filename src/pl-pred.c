@@ -10,7 +10,7 @@
 
 int PL_next_goal(void)
 {
-	return (0);
+	return 0;
 }
 
 int pl_unify(register union cell * d1, register union cell * d2)
@@ -92,8 +92,8 @@ debut:
 
 	}
 
-OK:	return (1);
-KO:	return (0);
+OK:	return 1;
+KO:	return 0;
 }
 
 // FIXME : add floating number
@@ -108,13 +108,13 @@ debut:
 		goto debut;
 	case var_tag:
 		PL_warn("Unbound variable in arithmetic expression");
-		return (0);
+		return 0;
 	case ato_tag:
 		PL_warn("Unknow arithmetic operator: %s/%d", AtomName(get_atom(c)), 0);
-		return (0);
+		return 0;
 	case int_tag:
 		*n = get_val(c);
-		return (1);
+		return 1;
 	case fun_tag:{
 			struct functor *f = get_fun(c);	// FIXME : hash-table
 			if (f == FUN(plus, 2)) {
@@ -180,10 +180,10 @@ int PL_can_unify(union cell * a, union cell * b)
 	Mark(m);
 	r = pl_unify(a, b);
 	Undo(m);
-	return (r);
+	return r;
 }
 
 int PL_not_unify(union cell * a, union cell * b)
 {
-	return (!PL_can_unify(a, b));
+	return !PL_can_unify(a, b);
 }

@@ -48,38 +48,38 @@ inline static int PL_try_unify(union cell * a, union cell * b)
 	if (!(rval = pl_unify(a, b)))
 		Undo(m);
 
-	return (rval);
+	return rval;
 }
 
 inline static void *AllocLocal(size_t n)
 {
 	void *ptr = (SP + 1);		// SP is postincrement.
 	SP += Adjust(n);
-	return (ptr);
+	return ptr;
 }
 
 inline static void *AllocGlobal(size_t n)
 {
 	void *ptr = HP;
 	HP += Adjust(n);
-	return (ptr);
+	return ptr;
 }
 
 inline static void *AllocHeap(size_t n)
 {
 	void *ptr = SHP;
 	SHP += Adjust(n);
-	return (ptr);
+	return ptr;
 }
 
 inline static void *PL_foreign_context(enum control *c)
 {
-	return (((void *)c) + CELL_SIZE);
+	return ((void *)c) + CELL_SIZE;
 }
 
 inline static enum control PL_foreign_control(enum control *c)
 {
-	return (*c);
+	return *c;
 }
 
 #define	GetCtxt(C)	PL_foreign_context(C)

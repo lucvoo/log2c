@@ -28,7 +28,7 @@ union cell *deref_dbg(union cell * addr)
 		fprintf(stderr, "     : p =      %p\n", p);
 	}
 
-	return (p);
+	return p;
 }
 
 union cell *new_flt(double r)
@@ -38,5 +38,5 @@ union cell *new_flt(double r)
 	HP->val = MK_TAG(flt_tag);
 	get_flt(HP) = r;
 	HP += 3;
-	return (old_HP);
+	return old_HP;
 }

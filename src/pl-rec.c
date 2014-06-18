@@ -45,31 +45,31 @@ debut:
 		if ((c >= base) && (c < SHP))	// ref to the copy
 		{
 			addr->celp = c;
-			return (c);
+			return c;
 		} else			// new var
 		if (addr)		// write to a fun object.
 		{
 			addr->val = MK_TAG(var_tag);
 			c->celp = addr;
 			trail(c);
-			return (0);
+			return 0;
 		} else			// single object
 		{
 			addr = new_var();
 			c->celp = addr;
 			trail(c);
-			return (addr);
+			return addr;
 		}
 	case ato_tag:
 		if (!addr)
 			addr = NEW(union cell);
 		addr->celp = c;
-		return (addr);
+		return addr;
 	case int_tag:
 		if (!addr)
 			addr = NEW(union cell);
 		addr->val = c->val;
-		return (addr);
+		return addr;
 	case fun_tag:{
 			int n = get_arity(c);
 			if (!addr)
@@ -83,10 +83,10 @@ debut:
 			for (; n > 0; n--)
 				Copy2Heap(addr + n, c + n);
 
-			return (addr);
+			return addr;
 		}
 	}
-	return (0);
+	return 0;
 }
 
 inline static struct record *copy_to_heap(union cell * c)
@@ -101,7 +101,7 @@ inline static struct record *copy_to_heap(union cell * c)
 
 	record->size = SHP - base;	// == SHP-record->term
 	reset(tr);
-	return (record);
+	return record;
 }
 
 inline static union cell *copy_to_global(struct record *record)
@@ -121,7 +121,7 @@ inline static union cell *copy_to_global(struct record *record)
 	c = HP;
 	HP += record->size;
 
-	return (c);
+	return c;
 }
 
 /**********************************************************************/
@@ -177,8 +177,8 @@ debut:
 
 		// default:  goto KO;
 	}
-OK:	return (1);
-KO:	return (0);
+OK:	return 1;
+KO:	return 0;
 }
 
 static inline int unify_static_1(register union cell * s, register union cell * t)
@@ -236,8 +236,8 @@ debut:
 	default:
 		goto KO;
 	}
-OK:	return (1);
-KO:	return (0);
+OK:	return 1;
+KO:	return 0;
 }
 
 static inline int try_unify_static(union cell *s, union cell *t)
@@ -248,7 +248,7 @@ static inline int try_unify_static(union cell *s, union cell *t)
 	r = unify_static_1(s, t);
 	reset(tr);
 
-	return (r);
+	return r;
 }
 
 #define	SimpleHash(Val,Size)	((Val>>GC_BITS)%Size)
@@ -276,11 +276,11 @@ inline static struct reclist *lookup_recl__old(union cell * key)
 	hash_t h;
 	struct reclist *rl;
 
-	h = HashFromKey(key, return (0));
+	h = HashFromKey(key, return 0);
 
 	for (rl = records[h]; rl != 0; rl = rl->next)
 		if (key->val == rl->key.val)
-			return (rl);	// find rec_list.
+			return rl;	// find rec_list.
 
 	rl = NEW(*rl);			// else create new flag
 	rl->key = *key;			// with this key.
@@ -288,7 +288,7 @@ inline static struct reclist *lookup_recl__old(union cell * key)
 	rl->last = 0;
 	rl->next = records[h];		// insert this recl in the table
 	records[h] = rl;
-	return (rl);
+	return rl;
 }
 
 inline static struct reclist *lookup_recl__(union cell * key, int h)
@@ -297,9 +297,9 @@ inline static struct reclist *lookup_recl__(union cell * key, int h)
 
 	for (rl = records[h]; rl != 0; rl = rl->next)
 		if (key->val == rl->key.val)	// find rec_list.
-			return (rl);
+			return rl;
 
-	return (0);
+	return 0;
 }
 
 inline static struct reclist *add_recl__(union cell * key, int h)
@@ -312,7 +312,7 @@ inline static struct reclist *add_recl__(union cell * key, int h)
 	rl->last = 0;
 	rl->next = records[h];		// insert this recl in the table
 	records[h] = rl;
-	return (rl);
+	return rl;
 }
 
 inline static struct reclist *lookup_recl(union cell *key, int h)
@@ -322,7 +322,7 @@ inline static struct reclist *lookup_recl(union cell *key, int h)
 	if (!(rl = lookup_recl__(key, h)))
 		rl = add_recl__(key, h);
 
-	return (rl);
+	return rl;
 }
 
 static int pl_recordaz(union cell * key, union cell * term, union cell * ref, int az)
@@ -361,24 +361,24 @@ static int pl_recordaz(union cell * key, union cell * term, union cell * ref, in
 
 int pl_recorda(union cell * k, union cell * t, union cell * ref)
 {
-	return (pl_recordaz(k, t, ref, 'a'));
+	return pl_recordaz(k, t, ref, 'a');
 }
 
 int pl_recorda_2(union cell * k, union cell * t)
 {
 	union cell *ref = PL_new_term_ref();
-	return (pl_recordaz(k, t, ref, 'a'));
+	return pl_recordaz(k, t, ref, 'a');
 }
 
 int pl_recordz(union cell * k, union cell * t, union cell * ref)
 {
-	return (pl_recordaz(k, t, ref, 'z'));
+	return pl_recordaz(k, t, ref, 'z');
 }
 
 int pl_recordz_2(union cell * k, union cell * t)
 {
 	union cell *ref = PL_new_term_ref();
-	return (pl_recordaz(k, t, ref, 'z'));
+	return pl_recordaz(k, t, ref, 'z');
 }
 
 int pl_recorded(union cell * key, union cell * term, union cell * ref, enum control *ctrl)
@@ -425,7 +425,7 @@ int pl_recorded(union cell * key, union cell * term, union cell * ref, enum cont
 int pl_recorded_2(union cell * key, union cell * term, enum control *ctrl)
 {
 	union cell *ref = PL_new_term_ref();
-	return (pl_recorded(key, term, ref, ctrl));
+	return pl_recorded(key, term, ref, ctrl);
 }
 
 int pl_current_key(union cell * c, enum control *ctrl)
@@ -511,7 +511,7 @@ int pl_erase(union cell * ref)
 		PL_warning("erase/1 : illegal reference\n");
 
 	rec = (struct record *) (SH_STK + get_intg(ref));
-	return (Erase_rec(rec));
+	return Erase_rec(rec);
 }
 
 /**********************************************************************/
@@ -545,7 +545,7 @@ int pl_recorded_all(union cell * key, union cell * list)
 	}
 	tail->val = __nil();
 
-	return (pl_unify(head, list));
+	return pl_unify(head, list);
 }
 
 int pl_erase_records(union cell *key)
@@ -707,7 +707,7 @@ int pl_copy_term(union cell *src, union cell *copy)
 	reset(tp);
 
 	if (r)
-		return (pl_unify(base, copy));
+		return pl_unify(base, copy);
 
 	fail;
 }

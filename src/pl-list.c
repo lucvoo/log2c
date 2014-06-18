@@ -10,7 +10,7 @@
 
 int pl_is_list(union cell *l)
 {
-	return (PL_is_cons(l));
+	return PL_is_cons(l);
 }
 
 int pl_proper_list(union cell *l)
@@ -20,7 +20,7 @@ int pl_proper_list(union cell *l)
 	while (is_cons(l))
 		l = deref(l + 2);
 
-	return (is_nil(l));
+	return is_nil(l);
 }
 
 int pl_partial_list(union cell *l)
@@ -30,7 +30,7 @@ int pl_partial_list(union cell *l)
 	while (is_cons(l))
 		l = deref(l + 2);
 
-	return (is_var(l));
+	return is_var(l);
 }
 
 int pl_memberchk(union cell *e, union cell *l)
@@ -82,7 +82,7 @@ int pl_length(union cell *list, union cell *l)
 	} else if (PL_is_var(l)) {
 		int n = PL_lengthList(list);
 		if (n >= 0)
-			return (PL_unify_intg(l, n));
+			return PL_unify_intg(l, n);
 	}
 
 	fail;
@@ -107,9 +107,9 @@ inline static int list_to_array(union cell *list)
 	}
 
 	if (is_nil(l))
-		return (n);
+		return n;
 	else
-		return (-1);
+		return -1;
 }
 
 inline static union cell *array_to_list(union cell ** array, int n, int rem_dup)
@@ -131,7 +131,7 @@ inline static union cell *array_to_list(union cell ** array, int n, int rem_dup)
 
 	HP[0].val = __nil();
 	HP++;
-	return (l);
+	return l;
 }
 
 inline static int PL_sort(union cell *list, union cell *sorted, int rem_dup)
@@ -150,15 +150,15 @@ inline static int PL_sort(union cell *list, union cell *sorted, int rem_dup)
 		qsort(array, n, sizeof(union cell *), pl_std_cmp);
 
 	l = array_to_list(array, n, rem_dup);
-	return (pl_unify(l, sorted));
+	return pl_unify(l, sorted);
 }
 
 int pl_sort(union cell *list, union cell *sorted)
 {
-	return (PL_sort(list, sorted, 1));
+	return PL_sort(list, sorted, 1);
 }
 
 int pl_msort(union cell *list, union cell *sorted)
 {
-	return (PL_sort(list, sorted, 0));
+	return PL_sort(list, sorted, 0);
 }

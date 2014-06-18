@@ -25,12 +25,12 @@
 // Return a string describing the last OS call error
 char *PL_OsError(void)
 {
-	return (strerror(errno));
+	return strerror(errno);
 }
 
 int PL_System(const char *cmd)
 {
-	return (system(cmd));		// FIXME : close I/O       ?
+	return system(cmd);		// FIXME : close I/O       ?
 	//         signal handling ?
 }
 
@@ -47,14 +47,14 @@ double PL_CpuTime(void)
 	struct tms t;
 
 	times(&t);
-	return ((t.tms_utime + t.tms_stime) / clk_tck);
+	return (t.tms_utime + t.tms_stime) / clk_tck;
 }
 
 // Wrapper for localtime
 struct tm *PL_LocalTime(long t)
 {
 	time_t T = t;
-	return (localtime(&T));
+	return localtime(&T);
 }
 
 /**********************************************************************/
@@ -64,7 +64,7 @@ struct tm *PL_LocalTime(long t)
 // Return a Random Number (in the range ... )
 unsigned long PL_Random(void)
 {
-	return (rand());
+	return rand();
 }
 
 static void InitRandom(void)
@@ -79,17 +79,17 @@ static void InitRandom(void)
 inline static const char *EnsureAbsolutePath(const char *path)
 {
 	if (path[0] == '/')
-		return (path);
+		return path;
 	else {
 		static char buf[PATH_MAX + 1], *cwd;
 		int len;
 		cwd = getcwd(buf, sizeof(buf) - 1);
 		if (cwd != buf)
-			return (0);	// FIXME : msg ?
+			return 0;	// FIXME : msg ?
 		len = strlen(buf);
 		buf[len] = '/';
 		strcpy(buf + (len + 1), path);
-		return (buf);
+		return buf;
 	}
 }
 
@@ -100,9 +100,9 @@ char *PL_ReadLink(const char *path)
 
 	if ((n = readlink(path, buf, sizeof(buf) - 1)) >= 0) {
 		buf[n] = '\0';		// readlink doesn't add the null char
-		return (buf);
+		return buf;
 	} else
-		return (0);
+		return 0;
 }
 
 /**********************************************************************/
@@ -124,13 +124,13 @@ static char *PL_GetHome(const char *user)
 		char *home;
 
 		if ((home = getenv("HOME")))
-			return (home);
+			return home;
 		else
 			pw = getpwuid(getuid());
 	} else
 		pw = getpwnam(user);
 
-	return (pw ? pw->pw_dir : 0);
+	return pw ? pw->pw_dir : 0;
 }
 
 // expand '~[user]' in pathname
@@ -158,7 +158,7 @@ inline static char *ExpandTilde(const char *path)
 			len = (stop ? stop - path : strlen(path));
 			if (!(user = alloca(len + 1))) {
 				PL_msg("alloca failed");
-				return (0);
+				return 0;
 			}
 
 			strncpy(user, path, len);
@@ -174,7 +174,7 @@ inline static char *ExpandTilde(const char *path)
 		len = strlen(home);
 		if (len >= sizeof(new_path)) {
 			PL_msg("Pathname too long");
-			return (0);
+			return 0;
 		}
 
 		strcpy(new_path, home);
@@ -183,10 +183,10 @@ inline static char *ExpandTilde(const char *path)
 
 	if ((len + strlen(path)) >= sizeof(new_path)) {
 		PL_msg("Pathname too long");
-		return (0);
+		return 0;
 	}
 	strcpy(np, path);
-	return (new_path);
+	return new_path;
 }
 
 char *PL_CanonicalPath(const char *path, char canon_path[])
@@ -198,10 +198,10 @@ char *PL_CanonicalPath(const char *path, char canon_path[])
 
 #ifdef HAVE_REALPATH
 	if ((p = realpath(path, canon_path)))
-		return (p);
+		return p;
 	else
 #endif
-		return ((char *)path);
+		return (char *)path;
 }
 
 // For the moment interprete only '~' and '~<user>' construct.
@@ -218,7 +218,7 @@ char *PL_ExpandFile(const char *file, char *expanded)
 	}
 
 	strcpy(expanded, file);
-	return (expanded);
+	return expanded;
 }
 
 int PL_AccessFile(const char *path, int mode)
@@ -236,7 +236,7 @@ int PL_AccessFile(const char *path, int mode)
 			m |= X_OK;
 	}
 
-	return (!access(path, m));
+	return !access(path, m);
 }
 
 int PL_ExistsFile(const char *path)
@@ -262,9 +262,9 @@ long PL_SizeFile(const char *path)
 	struct stat buf;
 
 	if (stat(path, &buf))
-		return (-1);
+		return -1;
 
-	return (buf.st_size);
+	return buf.st_size;
 }
 
 /**********************************************************************/
@@ -281,9 +281,9 @@ static int tty_cbreak(int fd)
 	struct termios buf;
 
 	if (tcgetattr(fd, &save_termios) < 0)
-		return (-1);
+		return -1;
 	if (tcgetattr(fd, &buf) < 0)
-		return (-1);
+		return -1;
 
 	buf.c_lflag &= ~(ECHO | ICANON);	/* echo off, canonical mode off */
 
@@ -291,21 +291,21 @@ static int tty_cbreak(int fd)
 	buf.c_cc[VTIME] = 0;
 
 	if (tcsetattr(fd, TCSAFLUSH, &buf) < 0)
-		return (-1);
+		return -1;
 	ttystate = CBREAK;
 	ttysavefd = fd;
-	return (0);
+	return 0;
 }
 
 static int tty_reset(int fd)
 {					/* restore terminal's mode */
 	if (ttystate != CBREAK && ttystate != RAW)
-		return (0);
+		return 0;
 
 	if (tcsetattr(fd, TCSAFLUSH, &save_termios) < 0)
-		return (-1);
+		return -1;
 	ttystate = RESET;
-	return (0);
+	return 0;
 }
 
 static void tty_atexit(void)
@@ -321,13 +321,13 @@ int PL_GetSingleChar(void)
 	if (isatty(STDIN_FILENO)) {
 		if (tty_cbreak(STDIN_FILENO) ||
 		    (read(STDIN_FILENO, &c, 1) != 1) || tty_reset(STDIN_FILENO))
-			return (-1);
+			return -1;
 	} else {
 		if (read(STDIN_FILENO, &c, 1) != 1)
-			return (-1);
+			return -1;
 	}
 
-	return (c);
+	return c;
 }
 
 /**********************************************************************/

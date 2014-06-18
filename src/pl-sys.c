@@ -19,7 +19,7 @@ int pl_shell(union cell *command, union cell *status)
 	if (!PL_get_atom_chars(command, &cmd))	// FIXME : use PL_get_chars ?
 		PL_warning("shell/2: instantiation fault");
 	else
-		return (PL_unify_integer(status, PL_System(cmd)));
+		return PL_unify_integer(status, PL_System(cmd));
 }
 
 int pl_get_time(union cell *time)
@@ -27,7 +27,7 @@ int pl_get_time(union cell *time)
 	struct timeval tv;
 
 	gettimeofday(&tv, 0);
-	return (PL_unify_flt(time, tv.tv_usec / 1e6 + tv.tv_sec));
+	return PL_unify_flt(time, tv.tv_usec / 1e6 + tv.tv_sec);
 }
 
 int pl_convert_time(union cell *Time, union cell *Year, union cell *Month, union cell *Day, union cell *Hour, union cell *Minute,
@@ -59,7 +59,7 @@ int pl_getenv(union cell *var, union cell *val)
 		char *v;
 
 		if ((v = getenv(n)))
-			return (PL_unify_atom_chars(val, v));
+			return PL_unify_atom_chars(val, v);
 		else
 			fail;
 	} else
@@ -71,7 +71,7 @@ int pl_setenv(union cell *var, union cell *val)
 	const char *n, *v;
 
 	if (PL_get_chars(var, &n, CVT_ALL | BUF_RING) && PL_get_chars(val, &v, CVT_ALL)) {
-		return (PL_setenv(n, v) != 0);
+		return PL_setenv(n, v) != 0;
 	} else
 		PL_warning("setenv/2: instantiation fault");
 }
@@ -106,5 +106,5 @@ void PL_init_argv(int arg_c, char **arg_v)
 
 int pl_argv(union cell *a)
 {
-	return (pl_unify(argv, a));
+	return pl_unify(argv, a);
 }

@@ -17,14 +17,14 @@ struct atom *PL_char_to_atom(int c)
 	static char tmp[2];
 
 	if (0 > c || c > 255)
-		return (0);
+		return 0;
 
 	if (!atoms_tab[c]) {
 		tmp[0] = c;
 		tmp[1] = '\0';
 		atoms_tab[c] = PL_new_atom(tmp);
 	}
-	return (atoms_tab[c]);
+	return atoms_tab[c];
 }
 
 union cell *PL_mk_code_list(char *s)
@@ -38,7 +38,7 @@ union cell *PL_mk_code_list(char *s)
 	}
 	HP[0].val = __nil();
 	HP++;
-	return (t);
+	return t;
 }
 
 union cell *PL_mk_char_list(char *s)
@@ -52,7 +52,7 @@ union cell *PL_mk_char_list(char *s)
 	}
 	HP[0].val = __nil();
 	HP++;
-	return (t);
+	return t;
 }
 
 int pl_char_code(union cell *Ch, union cell *Co)
@@ -63,7 +63,7 @@ int pl_char_code(union cell *Ch, union cell *Co)
 
 	if (PL_get_intg(Co, &c)) {
 		if ((a = PL_char_to_atom(c)))
-			return (PL_unify_atom(Ch, a));
+			return PL_unify_atom(Ch, a);
 		else {			// Representation_error ...
 			fail;
 		}
@@ -71,7 +71,7 @@ int pl_char_code(union cell *Ch, union cell *Co)
 
 	if (PL_get_atom_chars(Ch, &s)) {
 		if (s[0] != 0 && s[1] == 0)	// one char atom
-			return (PL_unify_intg(Co, s[0]));
+			return PL_unify_intg(Co, s[0]);
 		else {			// Type_error ...
 			fail;
 		}

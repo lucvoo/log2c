@@ -38,7 +38,7 @@ int pl_atom_concat(union cell *a1, union cell *a2, union cell *a3, enum control 
 				tmp = alloca(l1 + l2 + 1);
 				strcpy(tmp, s1);
 				strcpy(tmp + l1, s2);
-				return (PL_unify_atom_chars(a3, tmp));
+				return PL_unify_atom_chars(a3, tmp);
 			}
 		}
 

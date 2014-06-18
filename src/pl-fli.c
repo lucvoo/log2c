@@ -82,7 +82,7 @@ static char *malloc_string(char *s)
 	m = malloc(n);			// FIXME : check if fail
 	memcpy(m, s, n);
 
-	return (m);
+	return m;
 }
 
 int PL_get_list_codes(union cell *list, const char **s, unsigned flags)
@@ -158,7 +158,7 @@ int PL_get_chars(union cell *term, const char **s, unsigned flags)
 		sprintf(tmp, "%ld", (long)get_val(t));
 		r = tmp;
 	} else if (flags & CVT_LIST)
-		return (PL_get_list_codes(t, s, flags));
+		return PL_get_list_codes(t, s, flags);
 	else if ((flags & CVT_FLOAT) && is_flt(t)) {
 		type = flt_tag;
 		sprintf(tmp, "%f", get_flt(t));
@@ -318,7 +318,7 @@ void PL_put_list(union cell *l)
 
 int PL_unify_atom_chars(union cell *t, const char *chars)
 {
-	return (PL_unify_atom(t, PL_new_atom(chars)));
+	return PL_unify_atom(t, PL_new_atom(chars));
 }
 
 int PL_unify_arg(int index, union cell *t, union cell *a)
@@ -337,5 +337,5 @@ int PL_unify_arg(int index, union cell *t, union cell *a)
 
 int PL_term_type(union cell *t)
 {
-	return (Tag(t->val) >> TAG_POS);
+	return Tag(t->val) >> TAG_POS;
 }

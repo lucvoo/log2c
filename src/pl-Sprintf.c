@@ -17,11 +17,11 @@ static int Svprintf(struct stream *S, const char *fmt, va_list ap)
 	char *buf;
 
 	if ((rval = vasprintf(&buf, fmt, ap)) < 0)
-		return (rval);
+		return rval;
 
 	rval = Sputs(S, buf);
 	free(buf);
-	return (rval);
+	return rval;
 }
 
 int Sprintf(const char *fmt, ...)
@@ -32,7 +32,7 @@ int Sprintf(const char *fmt, ...)
 	va_start(ap, fmt);
 	rval = Svprintf(Stdout, fmt, ap);
 	va_end(ap);
-	return (rval);
+	return rval;
 }
 
 int Sprintf_err(const char *fmt, ...)
@@ -43,7 +43,7 @@ int Sprintf_err(const char *fmt, ...)
 	va_start(ap, fmt);
 	rval = Svprintf(Stderr, fmt, ap);
 	va_end(ap);
-	return (rval);
+	return rval;
 }
 
 int Sfprintf(struct stream *S, const char *fmt, ...)
@@ -54,5 +54,5 @@ int Sfprintf(struct stream *S, const char *fmt, ...)
 	va_start(ap, fmt);
 	rval = Svprintf(S, fmt, ap);
 	va_end(ap);
-	return (rval);
+	return rval;
 }

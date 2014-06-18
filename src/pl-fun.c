@@ -21,7 +21,7 @@ inline static struct functor *add_fun(struct atom *functor, int arity, hash_t h)
 	PL__funs[h] = f;
 	PL__funs_count++;
 
-	return (f);
+	return f;
 }
 
 inline static int exist_fun(struct atom *functor, int arity)
@@ -48,10 +48,10 @@ struct functor *PL_new_functor(struct atom *functor, int arity)
 
 	for (f = PL__funs[h]; f != 0; f = f->next) {
 		if (f->functor == functor && f->arity == arity)
-			return (f);
+			return f;
 	}
 
-	return (add_fun(functor, arity, h));
+	return add_fun(functor, arity, h);
 }
 
 int pl_current_functor(union cell * f, union cell * n, enum control *ctrl)
@@ -72,7 +72,7 @@ int pl_current_functor(union cell * f, union cell * n, enum control *ctrl)
 	case FIRST_CALL:
 		if (is_atom(f)) {
 			if (is_intg(n))
-				return (exist_fun(get_atom(f), get_val(n)));
+				return exist_fun(get_atom(f), get_val(n));
 			else if (!is_var(n))
 				fail;
 			else {

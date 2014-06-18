@@ -41,20 +41,20 @@ debut:
 		break;
 	case flt_tag:
 	default:
-		return (0);
+		return 0;
 	}
 	h = h % hash_flags_size;
 
 	for (f = flags[h]; f != 0; f = f->next)
 		if (key->val == f->key.val)
-			return (f);	// find flag.
+			return f;	// find flag.
 
 	f = NEW(*f);			// else create new flag
 	f->key = *key;			// with this key.
 	f->next = flags[h];		// insert this flag in the table
 	flags[h] = f;
 	f->val.val = __intg(0);		// init the value with 0
-	return (f);
+	return f;
 }
 
 int pl_flag(union cell * key, union cell * old, union cell * new)
@@ -145,12 +145,12 @@ inline static struct flag2 *lookup_flag_2(union cell *key1, union cell *key2, in
 	if ((h1 = SimpleHashValue(key1)) && (h2 = SimpleHashValue(key2)))
 		h = (h1 + h2) % hash_flag_2_size;
 	else {				// FIXME : msg : illegal key
-		return (0);
+		return 0;
 	}
 
 	for (f = flag_2_tbl[h]; f; f = f->next)
 		if ((key1->val == f->key1.val) && (key2->val == f->key2.val))
-			return (f);	// find flag.
+			return f;	// find flag.
 
 	if (new) {
 		f = NEW(*f);		// create new flag
@@ -158,9 +158,9 @@ inline static struct flag2 *lookup_flag_2(union cell *key1, union cell *key2, in
 		f->key2 = *key2;
 		f->next = flag_2_tbl[h];	// insert this flag in the table
 		flag_2_tbl[h] = f;
-		return (f);
+		return f;
 	} else
-		return (0);		// inexistant flag
+		return 0;		// inexistant flag
 }
 
 static int PL_flag_2(union cell *key1, union cell *key2, union cell *val)
@@ -168,7 +168,7 @@ static int PL_flag_2(union cell *key1, union cell *key2, union cell *val)
 	struct flag2 *f;
 
 	if ((f = lookup_flag_2(key1, key2, 0)))
-		return (PL_unify_atomic(val, f->val));
+		return PL_unify_atomic(val, f->val);
 	else
 		fail;
 }
@@ -187,7 +187,7 @@ int pl_flag_2(union cell *key1, union cell *key2, union cell *val, enum control 
 	key2 = deref(key2);
 
 	if (!is_var(key1) && !is_var(key2))
-		return (PL_flag_2(key1, key2, val));
+		return PL_flag_2(key1, key2, val);
 
 	switch (GetCtrl(ctrl)) {
 	case FIRST_CALL:

@@ -22,7 +22,7 @@ inline static struct atom *add_atom(const char *s, hash_t H, hash_t h)
 	PL__atoms[h] = a;
 	PL__atoms_count++;
 
-	return (a);
+	return a;
 }
 
 struct atom *PL_new_atom(const char *s)
@@ -36,11 +36,11 @@ struct atom *PL_new_atom(const char *s)
 
 	for (a = PL__atoms[h]; a != 0; a = a->next) {
 		if (streq(s, a->name))
-			return (a);
+			return a;
 	}
 
 	copy = new_str(s);
-	return (add_atom(copy, H, h));
+	return add_atom(copy, H, h);
 }
 
 int pl_current_atom(union cell * c, enum control *ctrl)

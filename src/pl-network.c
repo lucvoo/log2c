@@ -79,7 +79,7 @@ int pl_host_to_addr(union cell *Host, union cell *Addr)
 			fail;
 		}
 		addr = (struct in_addr *)host->h_addr;
-		return (PL_unify_ip(Addr, addr));
+		return PL_unify_ip(Addr, addr);
 	}
 
 	if (PL_get_ip(Addr, &addr)) {
@@ -89,7 +89,7 @@ int pl_host_to_addr(union cell *Host, union cell *Addr)
 			fail;
 		}
 
-		return (PL_unify_atom_chars(Host, host->h_name));
+		return PL_unify_atom_chars(Host, host->h_name);
 	}
 
 	fail;

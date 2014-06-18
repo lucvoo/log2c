@@ -11,27 +11,27 @@
 
 static int Swrite_sock(union stream_handle hndl, const void *s, int n)
 {
-	return (send(hndl.sd, s, n, 0));
+	return send(hndl.sd, s, n, 0);
 }
 
 static int Sread_sock(union stream_handle hndl, void *s, int n)
 {
-	return (recv(hndl.sd, s, n, 0));
+	return recv(hndl.sd, s, n, 0);
 }
 
 static int Sclose_r_sock(struct stream *S)
 {					// FIXME
-	return (0);
+	return 0;
 }
 
 static int Sclose_w_sock(struct stream *S)
 {					// FIXME
-	return (0);
+	return 0;
 }
 
 static off_t Sseek_sock(union stream_handle hndl, long off, int whence)
 {
-	return (-1);
+	return -1;
 }
 
 static struct stream_ops sock_r_ops = {
@@ -56,7 +56,7 @@ struct stream *Sopen_sock(const char *file, enum stream_mode mode, int flags)
 
 	S = Snew_stream();
 	if (!S) {			// FIXME : errmsg
-		return (0);
+		return 0;
 	}
 	// if (flags & SF_RECPOS)
 	{
@@ -75,13 +75,13 @@ struct stream *Sopen_sock(const char *file, enum stream_mode mode, int flags)
 		S->ops = &sock_w_ops;
 		break;
 	default:			// FIXME : errmsg
-		return (0);
+		return 0;
 	}
 	if (!S_setbuf(S, 0, 0, (flags & SF_BUFFERING)))
-		return (0);
+		return 0;
 
 	flags &= ~(SF_BUFFERING);
 	S->flags = flags;		// FIXME
 
-	return (S);
+	return S;
 }

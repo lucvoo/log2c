@@ -29,5 +29,5 @@ int main(int argc, char **argv)
 	module__user();
 
 	pl_exit(0);
-	return (0);
+	return 0;
 }

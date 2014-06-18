@@ -32,9 +32,9 @@ int PL_lengthList(union cell *l)
 		l = deref(l + 2);
 	}
 	if (is_nil(l))
-		return (n);
+		return n;
 	else
-		return (-1);
+		return -1;
 }
 
 int pl_between(union cell * low, union cell * high, union cell * n, enum control *ctrl)
@@ -81,13 +81,13 @@ int pl_plus(union cell * d1, union cell * d2, union cell * d3)
 
 	if (PL_get_long(d1, &a)) {
 		if (PL_get_long(d2, &b))
-			return (PL_unify_integer(d3, a + b));
+			return PL_unify_integer(d3, a + b);
 		else if (PL_get_long(d3, &c))
-			return (PL_unify_integer(d2, c - a));
+			return PL_unify_integer(d2, c - a);
 	} else				// d1 not intg
 	if (PL_get_long(d2, &b)) {
 		if (PL_get_long(d3, &c))
-			return (PL_unify_integer(d1, c - b));
+			return PL_unify_integer(d1, c - b);
 	}
 
 	PL_warning("plus/3 : instantiation fault");
@@ -101,16 +101,16 @@ debut:
 		d = d->celp;
 		goto debut;
 	case var_tag:
-		return (0);
+		return 0;
 	case ato_tag:
 	case int_tag:
 	case flt_tag:
-		return (1);
+		return 1;
 	case fun_tag:{
 			int n = get_arity(d);
 			for (; n > 1; n--)
 				if (!pl_ground(++d))
-					return (0);
+					return 0;
 
 			// if (n==0) return(1);     // nulladic functor
 			d = deref(d + 1);
@@ -118,12 +118,12 @@ debut:
 		}
 	}
 
-	return (0);			// Suppress warning
+	return 0;			// Suppress warning
 }
 
 int pl_unground(union cell * d)
 {
-	return (!pl_ground(d));
+	return !pl_ground(d);
 }
 
 static int term_variables(union cell * c, int n)
@@ -145,7 +145,7 @@ debut:
 
 			(l)->val = __cons();
 			(l + 1)->celp = c;
-			return (n + 1);
+			return n + 1;
 		}
 	case ato_tag:
 	case flt_tag:
@@ -162,7 +162,7 @@ debut:
 		}
 	}
 end:
-	return (n);
+	return n;
 }
 
 int pl_term_variables(union cell * t, union cell * fv)
@@ -174,7 +174,7 @@ int pl_term_variables(union cell * t, union cell * fv)
 	HP += (2 * n + 1);
 	(l + 2 * n)->val = __atom(ATOM(nil));
 
-	return (pl_unify(fv, l));
+	return pl_unify(fv, l);
 }
 
 static int PL_unify_list_chars(union cell *l, const char *s)
@@ -197,7 +197,7 @@ debut:
 			fail;
 		}
 	}
-	return (PL_unify_nil(l));
+	return PL_unify_nil(l);
 
 write:
 	{
@@ -234,7 +234,7 @@ debut:
 			fail;
 		}
 	}
-	return (PL_unify_nil(l));
+	return PL_unify_nil(l);
 
 write:
 	{
@@ -264,10 +264,10 @@ int pl_atom_chars(union cell *a, union cell *list)
 	const char *s;
 
 	if (PL_get_atom_chars(a, &s))
-		return (PL_unify_list_chars(list, s));
+		return PL_unify_list_chars(list, s);
 	else if (PL_get_list_chars(list, &s, BUF_DISCARDABLE)) {
 		struct atom *tmp = PL_new_atom(s);
-		return (PL_unify_atom(a, tmp));
+		return PL_unify_atom(a, tmp);
 	} else
 		fail;
 }
@@ -277,10 +277,10 @@ int pl_atom_codes(union cell *a, union cell *list)
 	const char *s;
 
 	if (PL_get_atom_chars(a, &s))
-		return (PL_unify_list_codes(list, s));
+		return PL_unify_list_codes(list, s);
 	else if (PL_get_list_codes(list, &s, BUF_DISCARDABLE)) {
 		struct atom *tmp = PL_new_atom(s);
-		return (PL_unify_atom(a, tmp));
+		return PL_unify_atom(a, tmp);
 	} else
 		fail;
 }
@@ -292,12 +292,12 @@ int pl_atom_char(union cell *c, union cell *ascii)
 
 	if (PL_get_atom_chars(c, &s)) {
 		if (s[0] != '\0' && s[1] == '\0')
-			return (PL_unify_intg(ascii, s[0]));
+			return PL_unify_intg(ascii, s[0]);
 		else
 			PL_warning("atom_char/2: not a single char atom");
 	} else if (PL_get_integer(ascii, &n) && 0 < n && n < 256) {
 		if (n > 0 && n < 256)
-			return (PL_unify_atom(c, PL_char_to_atom(n)));
+			return PL_unify_atom(c, PL_char_to_atom(n));
 		else
 			PL_warning("atom_char/2: domain error");
 	} else
@@ -309,7 +309,7 @@ int pl_atom_length(union cell *atom, union cell *len)
 	const char *s;
 
 	if (PL_get_chars(atom, &s, CVT_ALL))
-		return (PL_unify_integer(len, strlen(s)));
+		return PL_unify_integer(len, strlen(s));
 
 	PL_warning("atom_length/2: instantiation fault");
 }
@@ -320,7 +320,7 @@ int pl_atom_prefix(union cell *atom, union cell *prefix)
 
 	if (PL_get_chars(atom, &a, CVT_ATOMIC | BUF_RING) &
 	    PL_get_chars(prefix, &p, CVT_ATOMIC | BUF_RING))
-		return (isPrefix(p, a));
+		return isPrefix(p, a);
 
 	PL_warning("atom_prefix/2: instantiation fault");
 }
@@ -331,19 +331,19 @@ int pl_functor(union cell *t, union cell *f, union cell *a)
 	struct atom *name;
 
 	if (PL_get_name_arity(t, &name, &arity))
-		return (PL_unify_atom(f, name) && PL_unify_integer(a, arity));
+		return PL_unify_atom(f, name) && PL_unify_integer(a, arity);
 
 	if (PL_is_atomic(t))
-		return (pl_unify(f, t) && PL_unify_integer(a, 0));
+		return pl_unify(f, t) && PL_unify_integer(a, 0);
 
 	try(PL_get_integer(a, &arity));
 
 	if (arity == 0 && PL_is_atomic(f))
-		return (pl_unify(t, f));
+		return pl_unify(t, f);
 	else if (arity < 0)
 		PL_warning("functor/3: illegal arity");
 	else if ((name = PL_get_atom(f)))
-		return (PL_unify_functor(t, PL_new_functor(name, arity)));
+		return PL_unify_functor(t, PL_new_functor(name, arity));
 	else
 		fail;
 }
@@ -394,15 +394,15 @@ debut:
 				fail;
 			}
 		}
-		return (PL_unify_nil(l));
+		return PL_unify_nil(l);
 	} else if (is_atomic(t))
-		return (PL_unify_list(l, &h, &l) && PL_unify_nil(l) && pl_unify(t, h));
+		return PL_unify_list(l, &h, &l) && PL_unify_nil(l) && pl_unify(t, h);
 	else if (is_var(t)) {
 		union cell *term;
 		try(PL_unify_list(l, &h, &l));
 		l = deref(l);
 		if (is_nil(l))
-			return (pl_unify(t, h));
+			return pl_unify(t, h);
 		h = deref(h);
 		try(is_atom(h));
 
@@ -424,17 +424,17 @@ debut:
 
 inline static int cmp_flt(double d1, double d2)
 {
-	return ((d1 < d2) ? -1 : ((d1 == d2) ? 0 : 1));
+	return (d1 < d2) ? -1 : ((d1 == d2) ? 0 : 1);
 }
 
 inline static int cmp_addr(void *a1, void *a2)
 {
-	return ((a1 < a2) ? -1 : ((a1 == a2) ? 0 : 1));
+	return (a1 < a2) ? -1 : ((a1 == a2) ? 0 : 1);
 }
 
 inline static int cmp_intg(int i1, int i2)
 {
-	return ((i1 < i2) ? -1 : ((i1 == i2) ? 0 : 1));
+	return (i1 < i2) ? -1 : ((i1 == i2) ? 0 : 1);
 }
 
 int pl_std_cmp(union cell *t1, union cell *t2)
@@ -442,7 +442,7 @@ int pl_std_cmp(union cell *t1, union cell *t2)
 loop:
 	Deref(t2);
 	if (t1 == t2)
-		return (0);
+		return 0;
 
 	switch (get_tag(t1)) {
 	case ref_tag:
@@ -450,33 +450,33 @@ loop:
 		goto loop;
 	case var_tag:
 		if (is_var(t2))
-			return (cmp_addr(t1, t2));
+			return cmp_addr(t1, t2);
 		break;
 	case ato_tag:
 		if (is_var(t2))
-			return (1);
+			return 1;
 		if (is_atom(t2))
-			return (strcmp(get_a_name(t1), get_a_name(t2)));
+			return strcmp(get_a_name(t1), get_a_name(t2));
 		break;
 	case int_tag:
 		if (get_tag(t2) < int_tag)
-			return (1);
+			return 1;
 		if (is_intg(t2))
-			return (cmp_intg(get_intg(t1), get_intg(t2)));
+			return cmp_intg(get_intg(t1), get_intg(t2));
 		if (is_flt(t2))
-			return (cmp_flt((double)get_intg(t1), get_flt(t2)));
+			return cmp_flt((double)get_intg(t1), get_flt(t2));
 		break;
 	case flt_tag:
 		if (get_tag(t2) < int_tag)
-			return (1);
+			return 1;
 		if (is_intg(t2))
-			return (cmp_flt(get_flt(t1), (double)get_intg(t2)));
+			return cmp_flt(get_flt(t1), (double)get_intg(t2));
 		if (is_flt(t2))
-			return (cmp_flt(get_flt(t1), get_flt(t2)));
+			return cmp_flt(get_flt(t1), get_flt(t2));
 		break;
 	case fun_tag:
 		if (get_tag(t2) < fun_tag)
-			return (1);
+			return 1;
 		if (is_fun(t2)) {
 			struct functor *f1 = get_fun(t1);
 			struct functor *f2 = get_fun(t2);
@@ -484,14 +484,14 @@ loop:
 
 			r = strcmp(FunName(f1), FunName(f2));
 			if (r)
-				return (r);
+				return r;
 			r = cmp_intg(n = FunArity(f1), FunArity(f2));
 			if (r)
-				return (r);
+				return r;
 
 			for (; n > 1; n--)
 				if ((r = pl_std_cmp(++t1, ++t2)))
-					return (r);
+					return r;
 
 			t2++;
 			t1++;
@@ -499,7 +499,7 @@ loop:
 		}
 		break;
 	}
-	return (-1);
+	return -1;
 }
 
 int pl_std_eq(union cell *t1, union cell *t2)
@@ -518,7 +518,7 @@ loop:
 	case ato_tag:
 		fail;
 	case int_tag:
-		return (t1->val == t2->val);
+		return t1->val == t2->val;
 	case flt_tag:
 		if (is_flt(t2) && (get_flt(t1) == get_flt(t2)))
 			succeed;
@@ -602,7 +602,7 @@ int pl_struct_eq(union cell * t1, union cell * t2)
 	for (; HP != old_HP;)
 		(--HP)->celp->val = __var();
 
-	return (rval);
+	return rval;
 }
 
 int pl_concat(union cell *a1, union cell *a2, union cell *a3)
@@ -621,7 +621,7 @@ int pl_concat(union cell *a1, union cell *a2, union cell *a3)
 		tmp = alloca(l1 + l2 + 1);
 		strcpy(tmp, s1);
 		strcpy(tmp + l1, s2);
-		return (PL_unify_atom_chars(a3, tmp));
+		return PL_unify_atom_chars(a3, tmp);
 	}
 
 	if (!s3)
@@ -629,7 +629,7 @@ int pl_concat(union cell *a1, union cell *a2, union cell *a3)
 
 	if (s1) {
 		if (isPrefix(s1, s3))
-			return (PL_unify_atom_chars(a2, s3 + strlen(s1)));
+			return PL_unify_atom_chars(a2, s3 + strlen(s1));
 		else
 			fail;
 	}
@@ -652,7 +652,7 @@ int pl_concat(union cell *a1, union cell *a2, union cell *a3)
 			SHP = (typeof(SHP)) q;
 		}
 		q[ld] = '\0';
-		return (PL_unify_atom_chars(a1, q));
+		return PL_unify_atom_chars(a1, q);
 	}
 
 	PL_warning("concat/3: instantiation fault(2)");
@@ -694,7 +694,7 @@ __inline__ int pl_concat_atom3(union cell *list, union cell *sep, union cell *at
 
 		PL_add_ubs(b, '\0');
 		a = PL_new_atom(PL_base_ubs(b));
-		return (PL_unify_atom(atom, a));
+		return PL_unify_atom(atom, a);
 	} else {
 		if (sep)
 			PL_warning("concat_atom/3: instantiation fault");
@@ -705,7 +705,7 @@ __inline__ int pl_concat_atom3(union cell *list, union cell *sep, union cell *at
 
 int pl_concat_atom2(union cell *list, union cell *atom)
 {
-	return (pl_concat_atom3(list, 0, atom));
+	return pl_concat_atom3(list, 0, atom);
 }
 
 int pl_halt(union cell *stat)
@@ -734,7 +734,7 @@ int pl_arg(union cell *n, union cell *term, union cell *arg)
 #else
 	if (PL_get_integer(n, &idx) && idx > 0)
 #endif
-		return (pl_unify(arg, deref(term) + idx));
+		return pl_unify(arg, deref(term) + idx);
 	else
 		fail;
 }
@@ -823,7 +823,7 @@ int pl_hash_term(union cell *term, union cell *hash)
 	hash_t h;
 
 	if (PL_HashTerm(term, &h))
-		return (PL_unify_long(hash, (long)h));
+		return PL_unify_long(hash, (long)h);
 	else
 		fail;
 }
@@ -845,7 +845,7 @@ static int NumberVars(union cell * c, struct functor *functor, int start)
 				val[1].val = __intg(start++);
 				mkrefp(c, val);
 				trail(c);
-				return (start);
+				return start;
 			}
 		case fun_tag:{
 				int a = get_arity(c);
@@ -856,7 +856,7 @@ static int NumberVars(union cell * c, struct functor *functor, int start)
 				continue;
 			}
 		default:
-			return (start);
+			return start;
 		}
 }
 
@@ -869,7 +869,7 @@ int pl_numbervars(union cell *term, union cell *functor, union cell *start, unio
 	if ((fun = PL_get_atom(functor)) && PL_get_intg(start, &n)) {
 		f = PL_new_functor(fun, 1);
 		n = NumberVars(term, f, n);
-		return (PL_unify_intg(end, n));
+		return PL_unify_intg(end, n);
 	} else
 		PL_warning("numbervars/4: instantiation fault");
 }

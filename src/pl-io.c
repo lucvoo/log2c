@@ -64,7 +64,7 @@ inline static struct pl_file *GetAliasStream(struct atom *alias)
 			break;
 		}
 	}
-	return (f);
+	return f;
 }
 
 static int TestAlias(struct atom *alias)
@@ -74,10 +74,10 @@ static int TestAlias(struct atom *alias)
 	for (i = 0; i < max_files; i++) {
 		if (plfiles[i].alias == alias) {
 			PL_warn("Stream Name '%s' already in use", alias->name);
-			return (0);
+			return 0;
 		}
 	}
-	return (1);
+	return 1;
 }
 
 static void DelStreamAliases(struct pl_file *f)
@@ -132,14 +132,14 @@ static struct pl_file *openStream(union cell *file, enum stream_mode mode, int f
 	if ((name = PL_get_atom(file))) {
 		if (mode == SM_READ) {
 			if (name == ATOM(_user) || name == ATOM(_user__input)) {
-				return (&plfiles[0]);
+				return &plfiles[0];
 			}
 		} else {
 			if (name == ATOM(_user) || name == ATOM(_user__output)) {
-				return (&plfiles[1]);
+				return &plfiles[1];
 			}
 			if (name == ATOM(_user__error)) {
-				return (&plfiles[2]);
+				return &plfiles[2];
 			}
 		}
 		type = ST_FILE;
@@ -193,7 +193,7 @@ static struct pl_file *openStream(union cell *file, enum stream_mode mode, int f
 	fp->S = S;
 
 OK:
-	return (fp);
+	return fp;
 }
 
 static struct pl_file *GetStream(union cell *spec, enum stream_mode mode)
@@ -234,7 +234,7 @@ static struct pl_file *GetStream(union cell *spec, enum stream_mode mode)
 		break;
 	}
 
-	return (f);
+	return f;
 }
 
 static int unifyStreamMode(union cell *mode, struct stream *S)
@@ -259,7 +259,7 @@ static int unifyStreamMode(union cell *mode, struct stream *S)
 		fail;
 	}
 
-	return (PL_unify_atom(mode, a));
+	return PL_unify_atom(mode, a);
 }
 
 /**********************************************************************/
@@ -301,26 +301,26 @@ int pl_append(union cell *s)
 
 int pl_seeing(union cell *s)
 {
-	return (PL_unify_atom(s, Finput->file));
+	return PL_unify_atom(s, Finput->file);
 }					// FIXME : if pipe ???
 
 int pl_telling(union cell *s)
 {
-	return (PL_unify_atom(s, Foutput->file));
+	return PL_unify_atom(s, Foutput->file);
 }					// FIXME : if pipe ???
 
 int pl_seen(void)
 {
 	CloseStream(Finput);
 	Finput = &plfiles[0];
-	return (1);
+	return 1;
 }
 
 int pl_told(void)
 {
 	CloseStream(Foutput);
 	Foutput = &plfiles[1];
-	return (1);
+	return 1;
 }
 
 /**********************************************************************/
@@ -397,14 +397,14 @@ int pl_open4(union cell *srcdest, union cell *mode, union cell *stream, union ce
 			fail;
 
 		AddAlias(f, opt_alias);
-		return (PL_unify_atom(stream, opt_alias));
+		return PL_unify_atom(stream, opt_alias);
 	} else
-		return (PL_unify_intg(stream, f - plfiles));
+		return PL_unify_intg(stream, f - plfiles);
 }
 
 int pl_open3(union cell *srcdest, union cell *mode, union cell *stream)
 {
-	return (pl_open4(srcdest, mode, stream, 0));
+	return pl_open4(srcdest, mode, stream, 0);
 }
 
 // FIXME : open_null_stream ???
@@ -490,12 +490,12 @@ int pl_set_output(union cell *s)
 
 int pl_current_input(union cell *s)
 {
-	return (PL_unify_intg(s, Finput - plfiles));
+	return PL_unify_intg(s, Finput - plfiles);
 }
 
 int pl_current_output(union cell *s)
 {
-	return (PL_unify_intg(s, Foutput - plfiles));
+	return PL_unify_intg(s, Foutput - plfiles);
 }
 
 /**********************************************************************/
@@ -526,22 +526,22 @@ int pl_current_output(union cell *s)
 
 struct stream *PL_Output_Stream(union cell *s)
 {
-	return (OutputStream(s));
+	return OutputStream(s);
 }
 
 struct stream *PL_Input_Stream(union cell *s)
 {
-	return (InputStream(s));
+	return InputStream(s);
 }
 
 struct stream *PL_OutStream(void)
 {
-	return (Foutput->S);
+	return Foutput->S;
 }
 
 struct stream *PL_InStream(void)
 {
-	return (Finput->S);
+	return Finput->S;
 }
 
 static int Put(union cell *t, struct stream *S)
@@ -564,26 +564,26 @@ static int Put(union cell *t, struct stream *S)
 
 int pl_put(union cell *c)
 {
-	return (Put(c, Foutput->S));
+	return Put(c, Foutput->S);
 }
 
 int pl_put2(union cell *s, union cell *c)
 {
 	struct stream *S = OutputStream(s);
-	return (Put(c, S));
+	return Put(c, S);
 }
 
 int pl_nl(void)
 {
 	Sputc(Foutput->S, '\n');
-	return (1);
+	return 1;
 }
 
 int pl_nl1(union cell *s)
 {
 	struct stream *S = OutputStream(s);
 	Sputc(S, '\n');
-	return (1);
+	return 1;
 }
 
 int pl_tab(union cell *N)
@@ -593,7 +593,7 @@ int pl_tab(union cell *N)
 		fail;
 	for (; n--;)
 		Sputc(Foutput->S, ' ');
-	return (1);
+	return 1;
 }
 
 int pl_tab2(union cell *s, union cell *N)
@@ -606,40 +606,40 @@ int pl_tab2(union cell *s, union cell *N)
 	S = OutputStream(s);
 	for (; n--;)
 		Sputc(S, ' ');
-	return (1);
+	return 1;
 }
 
 int pl_flush(void)
 {
-	return (!Sflush(Foutput->S));
+	return !Sflush(Foutput->S);
 }
 
 int pl_flush_output(union cell *s)
 {
 	struct stream *S = OutputStream(s);
-	return (!Sflush(S));
+	return !Sflush(S);
 }
 
 static int Get0(struct stream *S)
 {
 	int c = Sgetc(S);
-	return (c);
+	return c;
 }
 
 int pl_get0(union cell *c)
 {
-	return (PL_unify_intg(c, Get0(Finput->S)));
+	return PL_unify_intg(c, Get0(Finput->S));
 }
 
 int pl_get02(union cell *s, union cell *c)
 {
 	struct stream *S = InputStream(s);
-	return (PL_unify_intg(c, Get0(S)));
+	return PL_unify_intg(c, Get0(S));
 }
 
 int pl_get_single_char(union cell *c)
 {
-	return (PL_unify_intg(c, PL_GetSingleChar()));
+	return PL_unify_intg(c, PL_GetSingleChar());
 }
 
 static int Get(struct stream *S)
@@ -648,29 +648,29 @@ static int Get(struct stream *S)
 	do
 		c = Get0(S);
 	while (isSpace(c));
-	return (c);
+	return c;
 }
 
 int pl_get(union cell *c)
 {
-	return (PL_unify_intg(c, Get(Finput->S)));
+	return PL_unify_intg(c, Get(Finput->S));
 }
 
 int pl_get2(union cell *s, union cell *c)
 {
 	struct stream *S = InputStream(s);
-	return (PL_unify_intg(c, Get(S)));
+	return PL_unify_intg(c, Get(S));
 }
 
 int pl_peek_byte(union cell *c)
 {
-	return (PL_unify_intg(c, Speekc(Finput->S)));
+	return PL_unify_intg(c, Speekc(Finput->S));
 }
 
 int pl_peek_byte2(union cell *s, union cell *c)
 {
 	struct stream *S = InputStream(s);
-	return (PL_unify_intg(c, Speekc(S)));
+	return PL_unify_intg(c, Speekc(S));
 }
 
 #define Skip(C,S,M)	\
@@ -705,7 +705,7 @@ int pl_getline(union cell *line)
 	if (!gets(buf + 1))
 		buf[1] = '\0';
 
-	return (PL_unify_atom_chars(line, buf));
+	return PL_unify_atom_chars(line, buf);
 }
 
 // FIXME : at_end_of_stream
@@ -822,7 +822,7 @@ int pl_line_count(union cell *s, union cell *cnt)
 	struct stream_pos *p;
 
 	if ((p = Sget_pos(S)))
-		return (PL_unify_long(cnt, p->line_no));
+		return PL_unify_long(cnt, p->line_no);
 	else
 		PL_warning("Stream doesn't maintain position");
 }
@@ -833,7 +833,7 @@ int pl_line_position(union cell *s, union cell *cnt)
 	struct stream_pos *p;
 
 	if ((p = Sget_pos(S)))
-		return (PL_unify_long(cnt, p->col_no));
+		return PL_unify_long(cnt, p->col_no);
 	else
 		PL_warning("Stream doesn't maintain position");
 }
@@ -844,7 +844,7 @@ int pl_character_count(union cell *s, union cell *cnt)
 	struct stream_pos *p;
 
 	if ((p = Sget_pos(S)))
-		return (PL_unify_long(cnt, p->char_no));
+		return PL_unify_long(cnt, p->char_no);
 	else
 		PL_warning("Stream doesn't maintain position");
 }
@@ -896,7 +896,7 @@ static union cell *GetProp(int n, enum stream_property p)
 			a = ATOM(_update);
 			break;
 		default:
-			return (0);	// impossible error
+			return 0;	// impossible error
 		}
 		t = HP;
 		HP[0].val = __fun(FUN(_mode, 1));
@@ -1000,7 +1000,7 @@ static union cell *GetProp(int n, enum stream_property p)
 		break;
 	}
 
-	return (t);
+	return t;
 }
 
 int pl_stream_property(union cell *stream, union cell *prop, enum control *ctrl)

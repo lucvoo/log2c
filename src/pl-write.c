@@ -64,7 +64,7 @@ inline static char *varName(union cell *t)
 	}
 
 	sprintf(buf, "_%c%ld", s, n);
-	return (buf);
+	return buf;
 }
 
 //#####################################################################
@@ -76,24 +76,24 @@ static inline int NeedQuote(struct atom *a)
 	if (isLower(*s)) {
 		for (; *s && isAlphaNum_(*s);)
 			s++;
-		return (*s != '\0');
+		return *s != '\0';
 	}
 
 	if (a == ATOM(dot) || a == ATOM(percent))
-		return (1);
+		return 1;
 	if (a == ATOM(comma) || a == ATOM(nil) || a == ATOM(curl))
-		return (0);
+		return 0;
 
 	if (isSymbol(*s)) {
 		for (; *s && isSymbol(*s);)
 			s++;
-		return (*s != '\0');
+		return *s != '\0';
 	}
 
 	if (isSolo(s[0]) && s[1] == '\0')
-		return (0);
+		return 0;
 	else
-		return (1);
+		return 1;
 }
 
 //#####################################################################
@@ -109,7 +109,7 @@ static int Puts(struct stream *S, const char *str)
 	if (s != str)
 		lastc = s[-1];
 
-	return (!Serror(S));
+	return !Serror(S);
 }
 
 inline static int Putc(struct stream *S, int c)
@@ -497,12 +497,12 @@ inline static int writeTerm(struct stream *S, union cell *t, int numvars, int qu
 
 int PL_write(struct stream *S, union cell *t)
 {
-	return (writeTerm(S, t, 1, 0, 0));
+	return writeTerm(S, t, 1, 0, 0);
 }
 
 int PL_writeq(struct stream *S, union cell *t)
 {
-	return (writeTerm(S, t, 1, 1, 0));
+	return writeTerm(S, t, 1, 1, 0);
 }
 
 int pl_write(union cell *t)

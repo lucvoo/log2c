@@ -96,17 +96,17 @@ static struct stack *which_stack(void)
 	fprintf(stderr, "SHP=%p\t top[sheap]=%p\n", SHP, stacks[SHEAP_STK].top);
 #endif
 	if ((void *)SP >= stacks[LOCAL_STK].top - (4 << 10))
-		return (stacks + LOCAL_STK);
+		return stacks + LOCAL_STK;
 	if ((void *)FP >= stacks[LOCAL_STK].top - (4 << 10))
-		return (stacks + LOCAL_STK);
+		return stacks + LOCAL_STK;
 	if ((void *)HP >= stacks[HEAP_STK].top - (4 << 10))
-		return (stacks + HEAP_STK);
+		return stacks + HEAP_STK;
 	if ((void *)TP >= stacks[TRAIL_STK].top - (4 << 10))
-		return (stacks + TRAIL_STK);
+		return stacks + TRAIL_STK;
 	if ((void *)SHP >= stacks[SHEAP_STK].top - (4 << 10))
-		return (stacks + SHEAP_STK);
+		return stacks + SHEAP_STK;
 
-	return (0);
+	return 0;
 }
 
 static void segv_handler(int sig)
@@ -186,5 +186,5 @@ int PL_get_stack_stat(struct pl_stack_stat *ss)
 	ss->used.sheap = p - stacks[SHEAP_STK].base;
 	ss->free.sheap = stacks[SHEAP_STK].top - p;
 
-	return (0);
+	return 0;
 }

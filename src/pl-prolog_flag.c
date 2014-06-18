@@ -46,7 +46,7 @@ inline static struct prolog_flag *lookup_pflag(struct atom *key, int new)
 
 	for (f = pl_flags[h]; f; f = f->next)
 		if (key == f->key)
-			return (f);	// find flag.
+			return f;	// find flag.
 
 	if (new) {
 		f = NEW(*f);		// create new flag
@@ -56,9 +56,9 @@ inline static struct prolog_flag *lookup_pflag(struct atom *key, int new)
 		f->type = T_VOID;
 		f->next = pl_flags[h];	// insert this flag in the table
 		pl_flags[h] = f;
-		return (f);
+		return f;
 	} else
-		return (0);		// inexistant flag
+		return 0;		// inexistant flag
 }
 
 inline static int SetAtom(struct prolog_flag *f, struct atom *val, int lock, struct atom ** addr)
@@ -87,7 +87,7 @@ inline static int Setpf_atom(const char *key, struct atom *val, int lock, struct
 
 inline static int Setpf_str(const char *key, const char *val, int lock, struct atom ** addr)
 {
-	return (Setpf_atom(key, PL_new_atom(val), lock, addr));
+	return Setpf_atom(key, PL_new_atom(val), lock, addr);
 }
 
 inline static int SetInt(struct prolog_flag *f, long val, int lock, int *addr, int type)
@@ -145,15 +145,15 @@ int pl_set_prolog_flag(union cell *key, union cell *new)
 	case ato_tag:
 		if (f->type == T_BOOL) {
 			if (isatom(ATOM(_true), new))
-				return (SetInt(f, TRUE, 0, 0, T_BOOL));
+				return SetInt(f, TRUE, 0, 0, T_BOOL);
 			else if (isatom(ATOM(_false), new))
-				return (SetInt(f, FALSE, 0, 0, T_BOOL));
+				return SetInt(f, FALSE, 0, 0, T_BOOL);
 			else
 				fail;
 		} else
-			return (SetAtom(f, get_atom(new), 0, 0));
+			return SetAtom(f, get_atom(new), 0, 0);
 	case int_tag:
-		return (SetInt(f, get_val(new), 0, 0, T_INTG));
+		return SetInt(f, get_val(new), 0, 0, T_INTG);
 	default:
 		fail;
 	}
@@ -215,9 +215,9 @@ int pl_prolog_flag(union cell *key, union cell *old, union cell *new)
 			else
 				fail;
 		} else
-			return (SetAtom(f, (struct atom *) new, 0, 0));
+			return SetAtom(f, (struct atom *) new, 0, 0);
 	case int_tag:
-		return (SetInt(f, get_val(new), 0, 0, T_INTG));
+		return SetInt(f, get_val(new), 0, 0, T_INTG);
 	default:
 		fail;
 	}

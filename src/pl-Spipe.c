@@ -24,12 +24,12 @@
 
 static int Swrite_pipe(union stream_handle hndl, const void *s, int n)
 {
-	return (write(hndl.fd, s, n));
+	return write(hndl.fd, s, n);
 }
 
 static int Sread_pipe(union stream_handle hndl, void *s, int n)
 {
-	return (read(hndl.fd, s, n));
+	return read(hndl.fd, s, n);
 }
 
 static int Sclose_pipe(struct stream *S)
@@ -38,7 +38,7 @@ static int Sclose_pipe(struct stream *S)
 	pid_t pid;
 
 	if (close(S->hndl.fd) < 0)
-		return (-1);
+		return -1;
 
 	do {
 		pid = waitpid(S->pid, &wstatus, 0);
@@ -46,9 +46,9 @@ static int Sclose_pipe(struct stream *S)
 	while (pid == -1 && errno == EINTR);
 
 	if (pid == -1)
-		return (-1);
+		return -1;
 
-	return (wstatus);		// FIXME : is this adequate ??
+	return wstatus;		// FIXME : is this adequate ??
 }
 
 static int open_pipe(const char *cmd, enum stream_mode mode, pid_t * pid_p)
@@ -70,14 +70,14 @@ static int open_pipe(const char *cmd, enum stream_mode mode, pid_t * pid_p)
 		parent_fd = fd[0];
 		std_fd = STDOUT_FILENO;
 	} else
-		return (-1);
+		return -1;
 
 /* forking */
 	pid = fork();
 	if (pid < 0) {			/* fork failed */
 		close(child_fd);
 		close(parent_fd);
-		return (-1);
+		return -1;
 	} else if (pid == 0) {		/* Child */
 
 		close(parent_fd);
@@ -96,7 +96,7 @@ static int open_pipe(const char *cmd, enum stream_mode mode, pid_t * pid_p)
 		fcntl(parent_fd, F_SETFD, FD_CLOEXEC);
 
 		*pid_p = pid;
-		return (parent_fd);
+		return parent_fd;
 	}
 
 	// return(0); // never reached : Make compiler happy
@@ -117,15 +117,15 @@ struct stream *Sopen_pipe(const char *cmd, enum stream_mode mode, int flags)
 
 /* some check */
 	if (cmd == 0)
-		return (0);
+		return 0;
 	if (mode != SM_READ && mode != SM_WRITE) {
 		PL_warn("Cannot open a pipe in `append' mode");
-		return (0);
+		return 0;
 	}
 
 	fd = open_pipe(cmd, mode, &pid);
 	if (fd == -1 || !(S = Snew_stream())) {	// FIXME : errmsg
-		return (0);
+		return 0;
 	}
 // FIXME : initialize
 	S->hndl.fd = fd;
@@ -135,10 +135,10 @@ struct stream *Sopen_pipe(const char *cmd, enum stream_mode mode, int flags)
 	S->ops = &pipe_ops;
 
 	if (!S_setbuf(S, 0, 0, (flags & SF_BUFFERING)))
-		return (0);
+		return 0;
 
 	flags &= ~(SF_BUFFERING);
 	S->flags |= flags;
 
-	return (S);
+	return S;
 }

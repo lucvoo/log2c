@@ -51,7 +51,7 @@ inline static char *PL_base_ubs(struct ubuffer * b)
 {
 	PL_add_ubs(b, '\0');
 	(b->ptr)--;
-	return (b->base);
+	return b->base;
 }
 
 inline static void PL_clear_ubs(struct ubuffer * b)

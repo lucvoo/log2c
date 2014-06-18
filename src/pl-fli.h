@@ -56,73 +56,73 @@ inline static int PL_functor_arity(struct functor *f)
 
 inline static int PL_is_var(union cell * c)
 {
-	return (__isVar(Val(c)));
+	return __isVar(Val(c));
 }
 
 inline static int PL_is_integer(union cell * c)
 {
-	return (__isInteger(Val(c)));
+	return __isInteger(Val(c));
 }
 
 inline static int PL_is_number(union cell * c)
 {
-	return (__isNumber(Val(c)));
+	return __isNumber(Val(c));
 }
 
 inline static int PL_is_atom(union cell * c)
 {
-	return (__isAtom(Val(c)));
+	return __isAtom(Val(c));
 }
 
 inline static int PL_is_atomic(union cell * c)
 {
-	return (__isAtomic(Val(c)));
+	return __isAtomic(Val(c));
 }
 
 inline static int PL_is_term(union cell * c)
 {
-	return (__isTerm(Val(c)));
+	return __isTerm(Val(c));
 }
 
 inline static int PL_is_struct(union cell * c)
 {
-	return (__isStruct(Val(c)));
+	return __isStruct(Val(c));
 }
 
 inline static int PL_is_functor(union cell *t, struct functor *f)
 {
-	return (f == get_fun(deref(t)));
+	return f == get_fun(deref(t));
 }
 
 inline static int PL_is_list(union cell * c)
 {
-	return (__isList(Val(c)));
+	return __isList(Val(c));
 }
 
 inline static int PL_is_cons(union cell * c)
 {
-	return (__isCons(Val(c)));
+	return __isCons(Val(c));
 }
 
 inline static int PL_get_nil(union cell * c)
 {
-	return (__isNil(Val(c)));
+	return __isNil(Val(c));
 }
 
 // The next ones must be deref
 inline static int is_cons(union cell * c)
 {
-	return (__isCons(c->val));
+	return __isCons(c->val);
 }
 
 inline static int is_nil(union cell * c)
 {
-	return (__isNil(c->val));
+	return __isNil(c->val);
 }
 
 inline static int is_list(union cell * c)
 {
-	return (__isList(c->val));
+	return __isList(c->val);
 }
 
 		 /*******************************
@@ -271,7 +271,7 @@ debut:
 		trail(c);
 		succeed;
 	case flt_tag:
-		return (isflt(d, c));
+		return isflt(d, c);
 	default:
 		fail;
 	}
@@ -289,7 +289,7 @@ debut:
 		trail(c);
 		succeed;
 	case int_tag:
-		return (isintg(i, c));
+		return isintg(i, c);
 	default:
 		fail;
 	}
@@ -307,7 +307,7 @@ debut:
 		trail(c);
 		succeed;
 	case int_tag:
-		return (isintg(i, c));
+		return isintg(i, c);
 	default:
 		fail;
 	}
@@ -329,9 +329,9 @@ debut:
 		succeed;
 	case ato_tag:
 		if (i)
-			return (isatom(ATOM(_true), c) || isatom(ATOM(_on), c));
+			return isatom(ATOM(_true), c) || isatom(ATOM(_on), c);
 		else
-			return (isatom(ATOM(_false), c) || isatom(ATOM(_off), c));
+			return isatom(ATOM(_false), c) || isatom(ATOM(_off), c);
 	default:
 		fail;
 	}
@@ -353,9 +353,9 @@ debut:
 		succeed;
 	case ato_tag:
 		if (i)
-			return (isatom(ATOM(_true), c) || isatom(ATOM(_on), c));
+			return isatom(ATOM(_true), c) || isatom(ATOM(_on), c);
 		else
-			return (isatom(ATOM(_false), c) || isatom(ATOM(_off), c));
+			return isatom(ATOM(_false), c) || isatom(ATOM(_off), c);
 	default:
 		fail;
 	}
@@ -363,7 +363,7 @@ debut:
 
 inline static int PL_unify_integer(union cell * c, long i)
 {
-	return (PL_unify_intg(c, (int)i));
+	return PL_unify_intg(c, (int)i);
 }
 
 inline static int PL_unify_atom(register union cell * c, struct atom *A)
@@ -378,7 +378,7 @@ debut:
 		trail(c);
 		succeed;
 	case ato_tag:
-		return (isatom(A, c));
+		return isatom(A, c);
 	default:
 		fail;
 	}
@@ -396,7 +396,7 @@ debut:
 		trail(c);
 		succeed;
 	case ato_tag:
-		return (isatom(ATOM(nil), c));
+		return isatom(ATOM(nil), c);
 	default:
 		fail;
 	}
@@ -434,12 +434,12 @@ inline static int PL_unify_fun(register union cell * c, struct functor *F)
 		trail(c);
 		succeed;
 	} else
-		return (c->val == __fun(F));
+		return c->val == __fun(F);
 }
 
 inline static int PL_unify_functor(union cell *t, struct functor *f)
 {
-	return (PL_unify_fun(deref(t), f));
+	return PL_unify_fun(deref(t), f);
 }
 
 inline static int PL_unify_list(union cell * l, union cell ** h, union cell ** t)
@@ -473,11 +473,11 @@ inline static int PL_unify_key(union cell * c, union cell * key)
 {
 	switch (get_tag(key)) {
 	case ato_tag:
-		return (PL_unify_atom(c, get_addr(key)));
+		return PL_unify_atom(c, get_addr(key));
 	case int_tag:
-		return (PL_unify_integer(c, get_val(key)));
+		return PL_unify_integer(c, get_val(key));
 	case fun_tag:
-		return (PL_unify_functor(c, get_fun(key)));
+		return PL_unify_functor(c, get_fun(key));
 	default:
 		fail;
 	}

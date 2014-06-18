@@ -74,25 +74,25 @@ static					// inline
 int Getc(struct stream *S)
 {
 	if (pbp > pushback)
-		return (*--pbp);
+		return *--pbp;
 	else
-		return (Sgetc(S));
+		return Sgetc(S);
 }
 
 static					// inline
 int Peekc(struct stream *S)
 {
 	if (pbp > pushback)
-		return (pbp[-1]);
+		return pbp[-1];
 	else
-		return (Speekc(S));
+		return Speekc(S);
 }
 
 static					// inline
 int UnGetc(int c)
 {
 	*pbp++ = c;
-	return (c);
+	return c;
 }
 
 /**********************************************************************/
@@ -104,7 +104,7 @@ int syntaxerrors(int new_se)
 {
 	int old_se = give_syntaxerrors;
 	give_syntaxerrors = new_se;
-	return (old_se);
+	return old_se;
 }
 
 static const char *error_msg;
@@ -135,7 +135,7 @@ int strip_C_comment(struct stream *S)
 			case '*':
 				if ((c = Getc(S)) == '/') {
 					if (--nesting == 0)
-						return (1);
+						return 1;
 					break;
 				}
 				continue;
@@ -147,7 +147,7 @@ int strip_C_comment(struct stream *S)
 				continue;
 			case EOF:
 				SyntaxError("Unexpected EOF in bracketed comment");
-				return (0);
+				return 0;
 			}
 			c = Getc(S);
 		}
@@ -158,11 +158,11 @@ int strip_C_comment(struct stream *S)
 			switch (c) {
 			case '*':
 				if ((c = Getc(S)) == '/')
-					return (1);
+					return 1;
 				continue;
 			case EOF:
 				SyntaxError("Unexpected EOF");
-				return (0);
+				return 0;
 			}
 			c = Getc(S);
 		}
@@ -218,7 +218,7 @@ static union cell *bind_vars(int single)
 	union cell *l = &(ATOM(nil)->atom);
 
 	if (!v)
-		return (l);
+		return l;
 
 	for (;; v = v->next) {
 		if (v->name && !(single && (v->times != 1 || v->name[0] == '_'))) {
@@ -234,7 +234,7 @@ static union cell *bind_vars(int single)
 		if (v == varl_tail)
 			break;
 	}
-	return (l);
+	return l;
 }
 
 static inline void warn_singletons(void)
@@ -277,10 +277,10 @@ static struct var *New_Var(void)
 		v = malloc(sizeof(struct var));
 		if (!v) {
 			fprintf(stderr, "Malloc error in pl-read.c: New_Var()\n");
-			return (0);
+			return 0;
 		}
 	}
-	return (v);
+	return v;
 }
 
 static struct var *lookup_var(char *name)
@@ -290,7 +290,7 @@ static struct var *lookup_var(char *name)
 	for (v = varl_first; v; v = v->next) {
 		if (v->name && streq(name, v->name)) {
 			v->times++;
-			return (v);
+			return v;
 		}
 	}
 
@@ -305,7 +305,7 @@ static struct var *lookup_var(char *name)
 	v->name = name;
 	v->times = 1;
 	v->ref = new_var();
-	return (v);
+	return v;
 }
 
 /**********************************************************************/
@@ -314,12 +314,12 @@ static struct var *lookup_var(char *name)
 
 static inline int seeingString(struct stream *S)
 {
-	return (StreamType(S) == ST_RMEM);
+	return StreamType(S) == ST_RMEM;
 }
 
 static inline int DigitVal(int c)
 {
-	return (PL__DigitValue[c]);
+	return PL__DigitValue[c];
 }
 
 static inline int hex_escape(struct stream *S)
@@ -330,7 +330,7 @@ static inline int hex_escape(struct stream *S)
 	c = Getc(S);
 	if (!isHexDigit(c)) {
 		UnGetc(c);		// FIXME : this make  '\xg'
-		return ('x');		//         the same as 'xg'
+		return 'x';		//         the same as 'xg'
 	}
 
 	for (val = 0;;) {
@@ -344,7 +344,7 @@ static inline int hex_escape(struct stream *S)
 		}
 	}
 
-	return (val);
+	return val;
 }
 
 static					// inline
@@ -363,7 +363,7 @@ int oct_escape(struct stream *S, int c)
 		}
 	}
 
-	return (val);
+	return val;
 }
 
 static					// inline
@@ -435,12 +435,12 @@ int read_quoted_char(struct stream *S)
 	case EOF:
 		SyntaxError("Unexpected EOF in quoted string");
 		UnGetc(c);
-		return (-1);
+		return -1;
 	default:
 		break;
 	}
 
-	return (c);
+	return c;
 }
 
 static					// inline
@@ -458,7 +458,7 @@ char *read_quoted_string(struct stream *S, int quote)
 				if (Peekc(S) == quote)
 					Getc(S);
 				else
-					return (PL_base_ubs(b));
+					return PL_base_ubs(b);
 			}
 			break;
 		case '\\':
@@ -512,7 +512,7 @@ char *read_quoted_string(struct stream *S, int quote)
 		case EOF:
 			SyntaxError("Unexpected EOF in quoted string");
 			UnGetc(c);
-			return (0);
+			return 0;
 		default:
 			break;		// FIXME : non-ISO
 		}
@@ -530,7 +530,7 @@ static inline char *read_name(struct stream *S, int c)
 		PL_add_ubs(&b, c);
 
 	UnGetc(c);
-	return (PL_base_ubs(&b));
+	return PL_base_ubs(&b);
 }
 
 static inline char *read_symbol(struct stream *S, int c)
@@ -541,7 +541,7 @@ static inline char *read_symbol(struct stream *S, int c)
 		PL_add_ubs(b, c);
 
 	UnGetc(c);
-	return (PL_base_ubs(b));
+	return PL_base_ubs(b);
 }
 
 static					// inline
@@ -552,7 +552,7 @@ unsigned long str2long(char *str)
 	while (*str)
 		val = val * 10 + DigitVal(*str++);
 
-	return (val);
+	return val;
 }
 
 #define ISO_NUM(S,P,B)	if (!P(Peekc(S))) \
@@ -663,7 +663,7 @@ case_iso:		UnGetc(c);
 		UnGetc(c);
 		num->val.flt = strtod(PL_base_ubs(b), 0);	// FIXME : overflow or underflow
 		num->type = flt_tag;
-		return (1);
+		return 1;
 	} else {
 		UnGetc(c);
 		val = str2long(PL_base_ubs(b));
@@ -673,9 +673,9 @@ case_iso:		UnGetc(c);
 intg:
 	num->val.intg = val;
 	num->type = int_tag;
-	return (1);
+	return 1;
 error:
-	return (0);
+	return 0;
 }
 
 #undef	ISO_NUM
@@ -692,7 +692,7 @@ static enum token_type get_token(struct stream *S)
 
 	if (unget_token) {
 		unget_token = 0;
-		return (token.type);
+		return token.type;
 	}
 
 loop:
@@ -794,7 +794,7 @@ case_low:	str = read_name(S, c);
 			}
 			break;
 		} else {
-			return (0);
+			return 0;
 		}
 	case '!':
 	case ';':
@@ -929,10 +929,10 @@ case_atom:	token.tok_val.atom = atom;
 			goto case_punc;
 	}
 
-	return (token.type);
+	return token.type;
 
 error:
-	return (token.type = T_ERROR);
+	return token.type = T_ERROR;
 }
 
 /**********************************************************************/
@@ -977,7 +977,7 @@ static union cell *read_fun(struct stream *S, struct atom *functor, int level, s
 	union cell *addr;
 
 	if (!read_term(S, 1200, ",)", &elem))
-		return (0);
+		return 0;
 	else
 		level++;
 
@@ -988,15 +988,15 @@ static union cell *read_fun(struct stream *S, struct atom *functor, int level, s
 		node_out->prec = 0;
 		node_out->cell.celp = addr;
 		unget_token = 0;
-		return (addr);
+		return addr;
 	case ',':
 		get_token(S);
 		if (!(addr = read_fun(S, functor, level, node_out)))
-			return (0);
+			return 0;
 		addr[level] = elem.cell;
-		return (addr);
+		return addr;
 	default:
-		return (0);
+		return 0;
 	}
 }
 
@@ -1011,27 +1011,27 @@ static int read_list(struct stream *S, struct node * node_out)
 
 loop:
 	if (!read_term(S, 1200, "|,]", &elem))
-		return (0);
+		return 0;
 	addr[1] = elem.cell;
 
 	switch (token.type) {
 	case ']':
 		addr[2].celp = new_atom(ATOM(nil));
 		unget_token = 0;
-		return (1);
+		return 1;
 	case '|':
 		get_token(S);
 		if (!read_term(S, 1200, "]", &elem) || token.type != ']')
-			return (0);
+			return 0;
 		addr[2] = elem.cell;
 		unget_token = 0;
-		return (1);
+		return 1;
 	case ',':
 		get_token(S);
 		addr = addr[2].celp = new_cons();
 		goto loop;
 	default:
-		return (0);
+		return 0;
 	}
 }
 
@@ -1048,20 +1048,20 @@ static inline int read_term_a(struct stream *S, int max, const char *stop, struc
 		    (type == OP_FY && read_term(S, prec, stop, &node_r))) {
 			mk_unary(atom, &node_r, node_out);
 			node_out->prec = prec;
-			return (1);
+			return 1;
 		} else
 			unget_token = 1;
 	}
 // Try functor
 	if (token.type == T_FUN) {
 		get_token(S);		// skip '('
-		return (read_fun(S, atom, 0, node_out) != 0);
+		return read_fun(S, atom, 0, node_out) != 0;
 	}
 // Otherwise simple atom
 	{
 		node_out->cell.val = __atom(atom);
 		node_out->prec = 0;
-		return (1);
+		return 1;
 	}
 }
 
@@ -1107,7 +1107,7 @@ infix:					{
 						struct node node_r;
 
 						if (!read_term(S, m, stop, &node_r))
-							return (0);
+							return 0;
 						mk_binary(atom, &node_l, &node_r, &node_l);
 						node_l.prec = prec;
 						goto loop;
@@ -1139,7 +1139,7 @@ postfix:				mk_unary(atom, &node_l, &node_l);
 
 	*node_out = node_l;
 	unget_token = 1;
-	return (1);
+	return 1;
 }
 
 // POST: node->prec <= max
@@ -1151,7 +1151,7 @@ static int read_term(struct stream *S, int max, const char *stop, struct node * 
 	must_be_op = 0;
 	tok = get_token(S);
 	if (token.type < 256 && strchr(stop, token.type))
-		return (0);
+		return 0;
 
 	switch (tok) {
 	case '(':
@@ -1206,16 +1206,16 @@ case_term_a:
 	case T_OP:
 	case T_FUN:
 		if (!read_term_a(S, max, stop, &node_s))
-			return (0);
+			return 0;
 		break;
 	default:
-		return (0);
+		return 0;
 case_simple:	node_s.prec = 0;
 		must_be_op = 1;
 	}
 	// POST : token is the next token
 
-	return (read_term_t_(S, max, stop, node_s, node));
+	return read_term_t_(S, max, stop, node_s, node);
 }
 
 /**********************************************************************/
@@ -1291,7 +1291,7 @@ static int PL_read_term(struct stream *S, union cell *term, union cell *options)
 	if (Seof(S)) {
 		union cell *t = new_atom(ATOM(_end__of__file));
 		// FIXME : process eof according to eof_action of the stream !.
-		return (pl_unify(term, t));
+		return pl_unify(term, t);
 	}
 // Init options with default
 	error = (union cell *) ATOM(_fail);
@@ -1314,7 +1314,7 @@ static int PL_read_term(struct stream *S, union cell *term, union cell *options)
 // read the term
 	rval = Read(S, term, varnames, singletons, 0);
 	syntaxerrors(old_se);
-	return (rval);
+	return rval;
 }
 
 /**********************************************************************/
@@ -1327,7 +1327,7 @@ int pl_read_variables(union cell *t, union cell *v)
 	struct stream *S = PL_InStream();
 
 	rc = Read(S, t, v, 0, 0);
-	return (rc);
+	return rc;
 }
 
 int pl_read_variables3(union cell *s, union cell *t, union cell *v)
@@ -1337,21 +1337,21 @@ int pl_read_variables3(union cell *s, union cell *t, union cell *v)
 
 	rc = Read(S, t, v, 0, 0);
 
-	return (rc);
+	return rc;
 }
 
 int pl_read(union cell *t)
 {
 	struct stream *S = PL_InStream();
 
-	return (Read(S, t, 0, 0, 0));
+	return Read(S, t, 0, 0, 0);
 }
 
 int pl_read2(union cell *s, union cell *t)
 {
 	struct stream *S = PL_Input_Stream(s);
 
-	return (Read(S, t, 0, 0, 0));
+	return Read(S, t, 0, 0, 0);
 }
 
 int pl_read_clause(union cell *t)
@@ -1360,7 +1360,7 @@ int pl_read_clause(union cell *t)
 
 	// FIXME : singletons warning should depend of style_check(singletons)
 	//         set to default
-	return (Read(S, t, 0, (union cell *) 1, 0));
+	return Read(S, t, 0, (union cell *) 1, 0);
 }
 
 int pl_read_clause2(union cell *s, union cell *t)
@@ -1369,14 +1369,14 @@ int pl_read_clause2(union cell *s, union cell *t)
 
 	// FIXME : singletons warning should depend of style_check(singletons)
 	//         set to default
-	return (Read(S, t, 0, (union cell *) 1, 0));
+	return Read(S, t, 0, (union cell *) 1, 0);
 }
 
 int pl_read_term(union cell *term, union cell *options)
 {
 	struct stream *S = PL_InStream();
 
-	return (PL_read_term(S, term, options));
+	return PL_read_term(S, term, options);
 }
 
 int pl_read_term3(union cell *stream, union cell *term, union cell *options)
@@ -1387,7 +1387,7 @@ int pl_read_term3(union cell *stream, union cell *term, union cell *options)
 	if (!S)
 		fail;
 	rval = PL_read_term(S, term, options);
-	return (rval);
+	return rval;
 }
 
 /*******************************************************/

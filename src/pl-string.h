@@ -97,14 +97,14 @@ extern inline void *__memcpy(void *to, const void *from, size_t n)
 			     :"di", "si", "cx", "memory");
 	HP = HP_;
 	FP = FP_;
-	return (to);
+	return to;
 }
 
 #endif
 
 inline static int streq(const char *s, const char *d)
 {
-	return (strcmp(s, d) == 0);
+	return strcmp(s, d) == 0;
 }
 
 inline static int streq_2(const char *src1, const char *src2, register const char *d)
@@ -130,10 +130,10 @@ inline static int streq_2(const char *src1, const char *src2, register const cha
 			d++;
 		}
 
-	return (*d == '\0');
+	return *d == '\0';
 
 FAIL:
-	return (0);
+	return 0;
 }
 
 inline static size_t str__len(const char *s)
@@ -143,7 +143,7 @@ inline static size_t str__len(const char *s)
 	while (*p)
 		p++;
 
-	return (p - s);
+	return p - s;
 }
 
 inline static char *new_str(const char *s1)
@@ -157,7 +157,7 @@ inline static char *new_str(const char *s1)
 
 	a = (char *)SHP;
 	SHP = Align(s);
-	return (a);
+	return a;
 }
 
 inline static const char *new_str_2(const char *s1, const char *s2)
@@ -175,7 +175,7 @@ inline static const char *new_str_2(const char *s1, const char *s2)
 
 	s = (char *)SHP;
 	SHP = Align(d);
-	return (s);
+	return s;
 }
 
 inline static int isPrefix(const char *s, const char *q)

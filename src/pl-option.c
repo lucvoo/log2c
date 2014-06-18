@@ -77,5 +77,5 @@ loop_list:
 		list = deref(list + 2);
 	}
 
-	return (is_nil(list));
+	return is_nil(list);
 }

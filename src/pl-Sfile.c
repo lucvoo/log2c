@@ -11,22 +11,22 @@
 
 static int Swrite_file(union stream_handle hndl, const void *s, int n)
 {
-	return (write(hndl.fd, s, n));
+	return write(hndl.fd, s, n);
 }
 
 static int Sread_file(union stream_handle hndl, void *s, int n)
 {
-	return (read(hndl.fd, s, n));
+	return read(hndl.fd, s, n);
 }
 
 static int Sclose_file(struct stream *S)
 {
-	return (close(S->hndl.fd));
+	return close(S->hndl.fd);
 }
 
 static off_t Sseek_file(union stream_handle hndl, long off, int whence)
 {
-	return (lseek(hndl.fd, off, whence));
+	return lseek(hndl.fd, off, whence);
 }
 
 static struct stream_ops file_ops = {
@@ -60,12 +60,12 @@ struct stream *Sopen_file(const char *file, enum stream_mode mode, int flags)
 		o_flags |= O_APPEND | O_WRONLY | O_CREAT;
 		break;
 	default:
-		return (0);		// impossible error
+		return 0;		// impossible error
 	}
 
 	fd = open(file, o_flags, 0666);
 	if (fd == -1 || !(S = Snew_stream())) {
-		return (0);		// FIXME : msg
+		return 0;		// FIXME : msg
 	}
 	S->hndl.fd = fd;
 
@@ -80,12 +80,12 @@ struct stream *Sopen_file(const char *file, enum stream_mode mode, int flags)
 	S->mode = mode;
 	S->ops = &file_ops;
 	if (!S_setbuf(S, 0, 0, (flags & SF_BUFFERING)))
-		return (0);
+		return 0;
 
 	flags &= ~(SF_BUFFERING);
 	S->flags = flags;		// FIXME
 
-	return (S);
+	return S;
 }
 
 static struct stream Stdin__;

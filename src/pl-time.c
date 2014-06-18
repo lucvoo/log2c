@@ -105,7 +105,7 @@ int pl_statistics(union cell *key, union cell *pair)
 	p[3].val = __intg(d2);
 	p[4].val = __nil();
 
-	return (pl_unify(p, pair));
+	return pl_unify(p, pair);
 }
 
 static int _pl_time(union cell *t, struct tm *tm)
@@ -126,7 +126,7 @@ static int _pl_time(union cell *t, struct tm *tm)
 	dt[5].val = __intg(tm->tm_min);
 	dt[6].val = __intg(tm->tm_sec);
 
-	return (pl_unify(t, dt));
+	return pl_unify(t, dt);
 }
 
 int pl_gmtime(union cell *t)
@@ -137,7 +137,7 @@ int pl_gmtime(union cell *t)
 	now = time(0);
 	tm = gmtime(&now);
 
-	return (_pl_time(t, tm));
+	return _pl_time(t, tm);
 }
 
 int pl_localtime(union cell *t)
@@ -148,7 +148,7 @@ int pl_localtime(union cell *t)
 	now = time(0);
 	tm = localtime(&now);
 
-	return (_pl_time(t, tm));
+	return _pl_time(t, tm);
 }
 
 int pl_sleep(union cell *t)

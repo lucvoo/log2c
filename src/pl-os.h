@@ -39,7 +39,7 @@ inline static const char *PL_BaseName(const char *p)
 	char *b;
 
 	b = strrchr(p, '/');
-	return (b ? b + 1 : p);
+	return b ? b + 1 : p;
 }
 
 inline static char *PL_DirName(const char *path)
@@ -50,28 +50,28 @@ inline static char *PL_DirName(const char *path)
 	if ((p = strrchr(path, '/'))) {
 		strncpy(buf, path, p - path);
 		buf[p - path] = '\0';
-		return (buf);
+		return buf;
 	} else
 		fail;
 }
 
 inline static int PL_PathCmp(const char *s1, const char *s2)
 {
-	return (strcmp(s1, s2));
+	return strcmp(s1, s2);
 }
 
 inline static int PL_RemoveFile(const char *path)
 {
 #ifdef HAVE_REMOVE
-	return (remove(path) == 0);
+	return remove(path) == 0;
 #else
-	return (unlink(path) == 0);
+	return unlink(path) == 0;
 #endif
 }
 
 inline static int PL_isAbsolutePath(const char *path)
 {
-	return (path[0] == '/');
+	return path[0] == '/';
 }
 
 // definition for access_file/2

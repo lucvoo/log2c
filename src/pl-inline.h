@@ -49,75 +49,75 @@
 
 inline static unsigned long __intg(long N)
 {
-	return (MK_CELL(int_tag, VAL_MASK & N));
+	return MK_CELL(int_tag, VAL_MASK & N);
 }
 
 inline static unsigned long __fun(struct functor *F)
 {
-	return (MK_CELL(fun_tag, F));
+	return MK_CELL(fun_tag, F);
 }
 
 inline static unsigned long __var(void)
 {
-	return (MK_CELL(var_tag, 0));
+	return MK_CELL(var_tag, 0);
 }
 
 inline static unsigned long __atom(struct atom *A)
 {
-	return ((unsigned long) new_atom(A));
+	return (unsigned long) new_atom(A);
 }
 
 inline static int is_ref(union cell * c)
 {
-	return (get_tag(c) == ref_tag);
+	return get_tag(c) == ref_tag;
 }
 
 inline static int is_var(union cell * c)
 {
-	return (c->val == __var());
+	return c->val == __var();
 }
 
 inline static int is_atom(union cell * c)
 {
-	return (get_tag(c) == ato_tag);
+	return get_tag(c) == ato_tag;
 }
 
 inline static int is_intg(union cell * c)
 {
-	return (get_tag(c) == int_tag);
+	return get_tag(c) == int_tag;
 }
 
 inline static int is_flt(union cell * c)
 {
-	return (get_tag(c) == flt_tag);
+	return get_tag(c) == flt_tag;
 }
 
 inline static int is_number(union cell * c)
 {
 	int tag = get_tag(c);
-	return (tag == int_tag || tag == flt_tag);
+	return tag == int_tag || tag == flt_tag;
 }
 
 inline static int is_atomic(union cell * c)
 {
 	int tag = get_tag(c);
-	return (tag == ato_tag || tag == int_tag || tag == flt_tag);
+	return tag == ato_tag || tag == int_tag || tag == flt_tag;
 }
 
 inline static int is_fun(union cell * c)
 {
-	return (get_tag(c) == fun_tag);
+	return get_tag(c) == fun_tag;
 }
 
 inline static int is_term(union cell * c)
 {
-	return (is_fun(c));
+	return is_fun(c);
 }
 
 inline static union cell * new_intg(long N)
 {
 	HP->val = __intg(N);
-	return (HP++);
+	return HP++;
 }
 
 union cell *new_flt(double r);
@@ -125,12 +125,12 @@ union cell *new_flt(double r);
 inline static union cell * new_var(void)
 {
 	HP->val = __var();
-	return (HP++);
+	return HP++;
 }
 
 inline static union cell * new_void(void)
 {
-	return (new_var());
+	return new_var();
 }					// FIXME : put void var in local stack
 
 inline static union cell * new_struct(struct functor *F, int N)
@@ -141,32 +141,32 @@ inline static union cell * new_struct(struct functor *F, int N)
 	HP->val = __fun(F);
 	HP += (N + 1);
 
-	return (old_HP);
+	return old_HP;
 }
 
 inline static union cell * new_cons(void)
 {
-	return (new_struct(FUN(dot, 2), 2));
+	return new_struct(FUN(dot, 2), 2);
 }
 
 inline static int isatom(struct atom *A, union cell * addr)
 {
-	return (addr == &(A->atom));	// atoms are unique !
+	return addr == &(A->atom);	// atoms are unique !
 }
 
 inline static int isintg(long N, union cell * addr)
 {
-	return (addr->val == __intg(N));
+	return addr->val == __intg(N);
 }
 
 inline static int isflt(double r, union cell * addr)
 {
-	return (get_flt(addr) == r);
+	return get_flt(addr) == r;
 }
 
 inline static int isfun(struct functor *F, union cell * addr)
 {
-	return (addr->val == __fun(F));
+	return addr->val == __fun(F);
 }
 
 union cell *deref_dbg(union cell * addr);
@@ -180,7 +180,7 @@ inline static union cell * deref(union cell * addr)
 		p = p->celp;
 	}
 
-	return (p);
+	return p;
 }
 #else
 {
@@ -242,7 +242,7 @@ inline static unsigned long round_to_power(unsigned long n)
 	}
 	while (n != 0);
 
-	return (r);
+	return r;
 }
 
 // 0 and -1 are never a valid value
@@ -256,11 +256,11 @@ debut:
 		goto debut;
 	case ato_tag:
 	case fun_tag:
-		return ((key->val) >> GC_BITS);
+		return (key->val) >> GC_BITS;
 	case int_tag:
-		return (key->val);
+		return key->val;
 	default:
-		return (0);
+		return 0;
 	}
 }
 

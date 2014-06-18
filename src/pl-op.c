@@ -32,10 +32,10 @@ inline static struct op_type *get_op_type(struct atom *name, int fix)
 	for (op = operators[OperatorHashValue(name)]; op; op = op->next) {
 		if (op->operator!= name)
 			continue;
-		return (&(op->type[fix - 1]));
+		return &(op->type[fix - 1]);
 	}
 
-	return (0);
+	return 0;
 }
 
 inline static struct operator *get_operator(struct atom *name)
@@ -45,55 +45,55 @@ inline static struct operator *get_operator(struct atom *name)
 	for (op = operators[OperatorHashValue(name)]; op; op = op->next) {
 		if (op->operator!= name)
 			continue;
-		return (op);
+		return op;
 	}
 
-	return (0);
+	return 0;
 }
 
 inline static int OperatorAtom2Type(struct atom *type)
 {
 	if (type == ATOM(_fx))
-		return (OP_FX);
+		return OP_FX;
 	if (type == ATOM(_fy))
-		return (OP_FY);
+		return OP_FY;
 	if (type == ATOM(_xf))
-		return (OP_XF);
+		return OP_XF;
 	if (type == ATOM(_yf))
-		return (OP_YF);
+		return OP_YF;
 	if (type == ATOM(_xfx))
-		return (OP_XFX);
+		return OP_XFX;
 	if (type == ATOM(_xfy))
-		return (OP_XFY);
+		return OP_XFY;
 	if (type == ATOM(_yfx))
-		return (OP_YFX);
+		return OP_YFX;
 	if (type == ATOM(_yfy))
-		return (OP_YFY);
+		return OP_YFY;
 
-	return (0);
+	return 0;
 }
 
 inline static struct atom *OperatorType2Atom(int type)
 {
 	switch (type) {
 	case OP_FX:
-		return (ATOM(_fx));
+		return ATOM(_fx);
 	case OP_FY:
-		return (ATOM(_fy));
+		return ATOM(_fy);
 	case OP_XF:
-		return (ATOM(_xf));
+		return ATOM(_xf);
 	case OP_YF:
-		return (ATOM(_yf));
+		return ATOM(_yf);
 	case OP_XFX:
-		return (ATOM(_xfx));
+		return ATOM(_xfx);
 	case OP_XFY:
-		return (ATOM(_xfy));
+		return ATOM(_xfy);
 	case OP_YFX:
-		return (ATOM(_yfx));
+		return ATOM(_yfx);
 	case OP_YFY:
-		return (ATOM(_yfy));
+		return ATOM(_yfy);
 	default:
-		return (0);
+		return 0;
 	}
 }
 
@@ -123,20 +123,20 @@ int PL_is_op(int fix, struct atom *operator, int *type, int *prec)
 	struct op_type *op_t;
 
 	if (!(op_t = get_op_type(operator, fix)))
-		return (0);
+		return 0;
 
 	if (op_t->prec <= 0)
-		return (0);
+		return 0;
 
 	*type = op_t->type;
 	*prec = op_t->prec;
 
-	return (1);
+	return 1;
 }
 
 int PL_can_be_op(struct atom *operator)
 {
-	return (get_operator(operator) != 0);
+	return get_operator(operator) != 0;
 }
 
 int pl_op(union cell *precedence, union cell *type, union cell *operator)

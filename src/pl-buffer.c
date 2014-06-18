@@ -35,7 +35,7 @@ struct ubuffer *PL_find_ubs(unsigned flags)
 		b = &discardable_buffer;
 
 	PL_clear_ubs(b);
-	return (b);
+	return b;
 }
 
 void PL_lost_ubs(unsigned flags)
