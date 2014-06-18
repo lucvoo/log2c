@@ -22,6 +22,7 @@ SRC = \
 	pl-list.c \
 	pl-main.c \
 	pl-network.c \
+	pl-mangle.c \
 	pl-op.c \
 	pl-option.c \
 	pl-os.c \
