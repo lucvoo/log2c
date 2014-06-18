@@ -13,7 +13,7 @@ struct pl_status PL__status;
 
 #define	pl_flags_size	16
 
-typedef enum { T_VOID, T_ATOM, T_INTG, T_BOOL } pf_type;
+enum prolog_flag_type { T_VOID, T_ATOM, T_INTG, T_BOOL };
 
 #define OFF	0
 #define ON	1
@@ -23,8 +23,7 @@ typedef enum { T_VOID, T_ATOM, T_INTG, T_BOOL } pf_type;
 #define TRUE	1
 #endif
 
-typedef struct pflag_t *pflag_t;
-struct pflag_t {
+struct prolog_flag {
 	struct atom *key;
 	union cell val;
 	union {
@@ -32,15 +31,15 @@ struct pflag_t {
 		struct atom **atom;
 	} addr;
 	int lock;
-	pf_type type;
-	pflag_t next;
+	enum prolog_flag_type type;
+	struct prolog_flag *next;
 };
 
-static pflag_t pl_flags[pl_flags_size];
+static struct prolog_flag *pl_flags[pl_flags_size];
 
-inline static pflag_t lookup_pflag(struct atom *key, int new)
+inline static struct prolog_flag *lookup_pflag(struct atom *key, int new)
 {
-	pflag_t f;
+	struct prolog_flag *f;
 	hash_t h;
 
 	h = key->hash % pl_flags_size;
@@ -62,7 +61,7 @@ inline static pflag_t lookup_pflag(struct atom *key, int new)
 		return (0);		// inexistant flag
 }
 
-inline static int SetAtom(pflag_t f, struct atom *val, int lock, struct atom ** addr)
+inline static int SetAtom(struct prolog_flag *f, struct atom *val, int lock, struct atom ** addr)
 {
 	f->type = T_ATOM;
 	if (lock)
@@ -78,7 +77,7 @@ inline static int SetAtom(pflag_t f, struct atom *val, int lock, struct atom ** 
 
 inline static int Setpf_atom(const char *key, struct atom *val, int lock, struct atom ** addr)
 {
-	pflag_t f;
+	struct prolog_flag *f;
 
 	if ((f = lookup_pflag(PL_new_atom(key), 1)))
 		return SetAtom(f, val, lock, addr);
@@ -91,7 +90,7 @@ inline static int Setpf_str(const char *key, const char *val, int lock, struct a
 	return (Setpf_atom(key, PL_new_atom(val), lock, addr));
 }
 
-inline static int SetInt(pflag_t f, long val, int lock, int *addr, int type)
+inline static int SetInt(struct prolog_flag *f, long val, int lock, int *addr, int type)
 {
 	f->type = type;
 	if (lock)
@@ -107,7 +106,7 @@ inline static int SetInt(pflag_t f, long val, int lock, int *addr, int type)
 
 inline static int Setpf_int(const char *key, long val, int lock, int *addr)
 {
-	pflag_t f;
+	struct prolog_flag *f;
 
 	if ((f = lookup_pflag(PL_new_atom(key), 1)))
 		return SetInt(f, val, lock, addr, T_INTG);
@@ -117,7 +116,7 @@ inline static int Setpf_int(const char *key, long val, int lock, int *addr)
 
 inline static int Setpf_boo(const char *key, long val, int lock, int *addr)
 {
-	pflag_t f;
+	struct prolog_flag *f;
 
 	if ((f = lookup_pflag(PL_new_atom(key), 1)))
 		return SetInt(f, val, lock, addr, T_BOOL);
@@ -127,7 +126,7 @@ inline static int Setpf_boo(const char *key, long val, int lock, int *addr)
 
 int pl_set_prolog_flag(union cell *key, union cell *new)
 {
-	pflag_t f;
+	struct prolog_flag *f;
 	struct atom *k;
 
 	if (!(k = PL_get_atom(key)))
@@ -160,7 +159,7 @@ int pl_set_prolog_flag(union cell *key, union cell *new)
 	}
 }
 
-static int PL_unify_prolog_flag(pflag_t f, union cell *term)
+static int PL_unify_prolog_flag(struct prolog_flag *f, union cell *term)
 {
 	switch (f->type) {
 	case T_ATOM:{
@@ -185,7 +184,7 @@ static int PL_unify_prolog_flag(pflag_t f, union cell *term)
 
 int pl_prolog_flag(union cell *key, union cell *old, union cell *new)
 {
-	pflag_t f;
+	struct prolog_flag *f;
 	struct atom *k;
 
 	if (!(k = PL_get_atom(key)))
