@@ -91,19 +91,15 @@ int PL__DigitValue[256] = { 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 
 
 inline static char *PL_mangle(const char *src)
 {
-	void *old_HP = HP;
 	char *dst = (char *)HP;
 
 	*dst++ = '_';
-	HP = (void *)dst;
 	while (*src) {
 		if (*src == '_') {
 			dst[0] = dst[1] = *src++;
 			dst += 2;
-			HP = (void *)dst;
 		} else if (isAlphaNum(*src)) {
 			*dst++ = *src++;
-			HP = (void *)dst;
 		} else			// not alphanum nor underscore
 		{
 			hexdigit_t *xd;
@@ -112,15 +108,11 @@ inline static char *PL_mangle(const char *src)
 			*xd = HexName[(unsigned int)*src];
 			src++;
 			dst += 3;
-			HP = (void *)dst;
 		}
 	}
 	*dst = '\0';
 
-#undef dst
-
-	HP = old_HP;
-	return (old_HP);
+	return (char *)HP;
 }
 
 int pl_mangle(union cell *name, union cell *mangled)
