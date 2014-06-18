@@ -10,6 +10,7 @@
 #include "pl-fli.h"
 #include "pl-atom.h"
 #include "pl-init.h"			// For PL_init_argv()
+#include <sys/time.h>
 
 int pl_shell(union cell *command, union cell *status)
 {

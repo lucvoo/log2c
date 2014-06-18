@@ -11,6 +11,7 @@
 #include <string.h>
 #include <termios.h>
 #include <sys/stat.h>
+#include <sys/time.h>
 #include <unistd.h>
 #include <pwd.h>
 #include <errno.h>

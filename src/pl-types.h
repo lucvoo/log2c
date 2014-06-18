@@ -114,13 +114,4 @@ struct modules {
 #define	TRUE	1
 #define	EOS	'\0'
 
-#include <sys/time.h>
-
-#ifndef TIME_OF_DAY
-typedef struct {
-	double utime;
-	double stime;
-} time__t;
-#endif
-
 #endif
