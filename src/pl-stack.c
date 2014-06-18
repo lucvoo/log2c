@@ -54,7 +54,6 @@ static void expand_stack(struct stack *s)
 			s->max);
 #endif
 		exit(2);
-//      signal(SIGSEGV, SIG_DFL);
 		return;
 	}
 
@@ -84,6 +83,8 @@ static void expand_stack(struct stack *s)
 	return;
 }
 
+
+#if 0 || defined(CONFIG_DYNAMIC_STACKS)
 // FIXME (4<<10) ?
 static struct stack *which_stack(void)
 {
@@ -136,6 +137,7 @@ static void segv_handler(int sig)
 		signal(SIGSEGV, segv_handler);
 	}
 }
+#endif
 
 // #####################################################################
 
@@ -161,7 +163,9 @@ void PL_init_stacks(void)
 	TR_STK = stacks[TRAIL_STK].base;
 	TP = TR_STK;
 
+#if 0 || defined(CONFIG_DYNAMIC_STACKS)
 	signal(SIGSEGV, segv_handler);
+#endif
 }
 
 /*******************************************************/
