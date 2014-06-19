@@ -130,7 +130,7 @@ inline static union cell *copy_to_global(struct record *record)
 
 #define Trail(T)	*TP++=T
 
-static inline int unify_static_2(register union cell *s, register union cell *t)
+static inline int unify_static_2(union cell *s, union cell *t)
 {
 	s = deref(s);
 
@@ -181,7 +181,7 @@ OK:	return 1;
 KO:	return 0;
 }
 
-static inline int unify_static_1(register union cell *s, register union cell *t)
+static inline int unify_static_1(union cell *s, union cell *t)
 {
 	s = deref(s);
 

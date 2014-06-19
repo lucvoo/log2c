@@ -14,8 +14,8 @@
 
 extern void PL_write_binding(void);
 extern void PL_print_time(void);
-extern int PL_eval_arith(register union cell *c);
-extern int PL_eval_arith_(register union cell *c, long *n);
+extern int PL_eval_arith(union cell *c);
+extern int PL_eval_arith_(union cell *c, long *n);
 extern int PL_eval_(union cell *c, long *n);
 extern int PL_do_number_vars(union cell *c);
 extern int PL_can_unify(union cell *, union cell *);

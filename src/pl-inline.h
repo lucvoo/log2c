@@ -135,7 +135,7 @@ inline static union cell *new_void(void)
 
 inline static union cell *new_struct(struct functor *F, int N)
 {
-	register typeof(HP) old_HP;
+	typeof(HP) old_HP;
 
 	old_HP = HP;
 	HP->val = __fun(F);
@@ -212,9 +212,9 @@ inline static void trail(union cell *addr)
 	return;
 }
 
-inline static void reset(register union cell **a1)
+inline static void reset(union cell **a1)
 {
-	register union cell **tp;
+	union cell **tp;
 
 	for (tp = TP; a1 < tp;)
 		(*(--tp))->val = MK_TAG(var_tag);

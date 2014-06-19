@@ -369,7 +369,7 @@ int oct_escape(struct stream *S, int c)
 static					// inline
 int read_quoted_char(struct stream *S)
 {
-	register int c;
+	int c;
 
 	switch (c = Getc(S)) {
 	case '`':
@@ -446,7 +446,7 @@ int read_quoted_char(struct stream *S)
 static					// inline
 char *read_quoted_string(struct stream *S, int quote)
 {
-	register int c;
+	int c;
 	struct ubuffer *b = PL_find_ubs(BUF_DISCARDABLE);
 
 	for (;;) {

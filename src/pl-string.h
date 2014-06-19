@@ -55,7 +55,7 @@ extern inline char *strcat(char *dest, const char *src)
 extern inline int strcmp(const char *cs, const char *ct)
 {
 	void *HP_ = HP, *FP_ = FP;
-	register int __res;
+	int __res;
 	HP = (void *)ct;
 	FP = (void *)cs;
 	__asm__ __volatile__("cld\n"
@@ -75,7 +75,7 @@ extern inline int strcmp(const char *cs, const char *ct)
 extern inline size_t strlen(const char *s)
 {
 	void *HP_ = HP;
-	register int __res;
+	int __res;
 	HP = (void *)s;
 	__asm__ __volatile__("cld\n\t"
 			     "repne\n\t"
@@ -107,10 +107,10 @@ inline static int streq(const char *s, const char *d)
 	return strcmp(s, d) == 0;
 }
 
-inline static int streq_2(const char *src1, const char *src2, register const char *d)
+inline static int streq_2(const char *src1, const char *src2, const char *d)
 {
-	register const char *s;
-	register char c;
+	const char *s;
+	char c;
 
 	s = src1;
 	while ((c = *s))
@@ -162,8 +162,8 @@ inline static char *new_str(const char *s1)
 
 inline static const char *new_str_2(const char *s1, const char *s2)
 {
-	register char *d = (char *)SHP;
-	register const char *s;
+	char *d = (char *)SHP;
+	const char *s;
 
 	s = s1;
 	while (*s)

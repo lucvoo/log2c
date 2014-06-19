@@ -52,7 +52,7 @@ int pl_length(union cell *list, union cell *l)
 	Deref(list);
 
 	if (PL_get_intg(l, &m)) {
-		register int n = m;
+		int n = m;
 
 		while (is_cons(list) && n > 0) {
 			n--;

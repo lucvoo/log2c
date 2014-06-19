@@ -9,7 +9,7 @@
 #include "pl-pred.h"
 
 
-int pl_unify(register union cell *d1, register union cell *d2)
+int pl_unify(union cell *d1, union cell *d2)
 {
 	d1 = deref(d1);
 
@@ -99,7 +99,7 @@ int PL_not_unify(union cell *a, union cell *b)
 
 /************************************************************************/
 
-int PL_unify_intg(register union cell *c, long i)
+int PL_unify_intg(union cell *c, long i)
 {
 debut:
 	switch (get_tag(c)) {
@@ -117,7 +117,7 @@ debut:
 	}
 }
 
-int PL_unify_flt(register union cell *c, double d)
+int PL_unify_flt(union cell *c, double d)
 {
 debut:
 	switch (get_tag(c)) {
@@ -135,7 +135,7 @@ debut:
 	}
 }
 
-int PL_unify_atom(register union cell *c, struct atom *A)
+int PL_unify_atom(union cell *c, struct atom *A)
 {
 debut:
 	switch (get_tag(c)) {
@@ -155,7 +155,7 @@ debut:
 
 // OK for atom, intg.
 // KO for float
-int PL_unify_atomic(register union cell *c, union cell at)
+int PL_unify_atomic(union cell *c, union cell at)
 {
 debut:
 	switch (get_tag(c)) {
@@ -179,7 +179,7 @@ debut:
 	}
 }
 
-int PL_unify_functor(register union cell *c, struct functor *F)
+int PL_unify_functor(union cell *c, struct functor *F)
 {
 debut:
 	switch (get_tag(c)) {
@@ -231,7 +231,7 @@ debut:
 
 /************************************************************************/
 
-int PL_unify_bool(register union cell *c, int i)
+int PL_unify_bool(union cell *c, int i)
 {
 debut:
 	switch (get_tag(c)) {
@@ -255,7 +255,7 @@ debut:
 	}
 }
 
-int PL_unify_flag(register union cell *c, int i)
+int PL_unify_flag(union cell *c, int i)
 {
 debut:
 	switch (get_tag(c)) {

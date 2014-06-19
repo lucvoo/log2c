@@ -202,7 +202,7 @@ int Sputc(struct stream *S, int c)
 	return S_update_pos(S, c);
 }
 
-int Sputs(struct stream *S, register const char *s)
+int Sputs(struct stream *S, const char *s)
 {
 
 	if (S->mode == SM_READ) {	// FIXME : msg

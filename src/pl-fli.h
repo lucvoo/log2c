@@ -263,17 +263,17 @@ debut:
 }
 
 /* pl-unify.c */
-int pl_unify(register union cell *d1, register union cell *d2);
+int pl_unify(union cell *d1, union cell *d2);
 int PL_can_unify(union cell *a, union cell *b);
 int PL_not_unify(union cell *a, union cell *b);
-int PL_unify_intg(register union cell *c, long i);
-int PL_unify_flt(register union cell *c, double d);
-int PL_unify_atom(register union cell *c, struct atom *A);
-int PL_unify_functor(register union cell *c, struct functor *F);
+int PL_unify_intg(union cell *c, long i);
+int PL_unify_flt(union cell *c, double d);
+int PL_unify_atom(union cell *c, struct atom *A);
+int PL_unify_functor(union cell *c, struct functor *F);
 int PL_unify_list(union cell *l, union cell **h, union cell **t);
-int PL_unify_bool(register union cell *c, int i);
-int PL_unify_flag(register union cell *c, int i);
-int PL_unify_atomic(register union cell *c, union cell at);
+int PL_unify_bool(union cell *c, int i);
+int PL_unify_flag(union cell *c, int i);
+int PL_unify_atomic(union cell *c, union cell at);
 int PL_unify_key(union cell *c, union cell *key);
 
 inline static int PL_unify_nil(union cell *c)
