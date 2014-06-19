@@ -27,7 +27,6 @@ SRC = \
 	pl-op.c \
 	pl-option.c \
 	pl-os.c \
-	pl-pred.c \
 	pl-prims.c \
 	pl-proc.c \
 	pl-prolog_flag.c \
@@ -42,6 +41,7 @@ SRC = \
 	pl-Ssocket.c \
 	pl-sys.c \
 	pl-time.c \
+	pl-unify.c \
 	pl-util.c \
 	pl-Ssocket.c \
 	pl-write.c \
