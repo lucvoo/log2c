@@ -588,7 +588,7 @@ int pl_nl1(union cell *s)
 
 int pl_tab(union cell *N)
 {
-	int n;
+	long n;
 	if (!PL_eval_(N, &n) || n < 0)
 		fail;
 	for (; n--;)
@@ -598,7 +598,7 @@ int pl_tab(union cell *N)
 
 int pl_tab2(union cell *s, union cell *N)
 {
-	int n;
+	long n;
 	struct stream *S;
 
 	if (!PL_eval_(N, &n) || n < 0)

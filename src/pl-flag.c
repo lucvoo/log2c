@@ -61,7 +61,7 @@ int pl_flag(union cell *key, union cell *old, union cell *new)
 {
 	struct flag *f;
 	union cell *tmp;
-	int n;
+	long n;
 
 	f = lookup_flag(key);
 	if (!f)

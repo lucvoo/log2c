@@ -9,7 +9,7 @@
 #define PL_FLI_H_
 
 /* pl-arith.c */
-int PL_eval_(union cell *c, int *n);
+int PL_eval_(union cell *c, long *n);
 
 /* pl-atom.c */
 struct atom *PL_new_atom(const char *s);

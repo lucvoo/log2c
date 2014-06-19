@@ -21,7 +21,7 @@ void pl_exit(int);
 
 /*
 #define getref_m(ref)			\
-	({ int n;			\
+	({ long n;			\
 	   if (!PL_eval_(ref,&n))	\
 	     goto backtrack;		\
 	   return(n);			\
@@ -40,7 +40,7 @@ void pl_exit(int);
 	}
 
 #define GETINTG(C,I)			\
-	{ int __i;			\
+	{ long __i;			\
 	  if (PL_eval_((C),&__i))	\
 	    I=__i;			\
 	  else				\

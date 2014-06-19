@@ -9,9 +9,9 @@
 #include "pl-pred.h"
 
 // FIXME : add floating number
-int PL_eval_(union cell *c, int *n)
+int PL_eval_(union cell *c, long *n)
 {
-	int n2;				//, n2;
+	long n2;				//, n2;
 
 debut:
 	switch (get_tag(c)) {
