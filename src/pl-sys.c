@@ -19,7 +19,7 @@ int pl_shell(union cell *command, union cell *status)
 	if (!PL_get_atom_chars(command, &cmd))	// FIXME : use PL_get_chars ?
 		PL_warning("shell/2: instantiation fault");
 	else
-		return PL_unify_integer(status, PL_System(cmd));
+		return PL_unify_intg(status, PL_System(cmd));
 }
 
 int pl_get_time(union cell *time)

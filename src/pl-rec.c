@@ -336,7 +336,7 @@ static int pl_recordaz(union cell *key, union cell *term, union cell *ref, int a
 
 	r = copy_to_heap(term);
 
-	try(PL_unify_integer(ref, ((typeof(SHP)) r) - ((typeof(SHP)) 0x14000000)));
+	try(PL_unify_intg(ref, ((typeof(SHP)) r) - ((typeof(SHP)) 0x14000000)));
 
 	if (rl->first == 0 || rl->last == 0)	// if rlist is empty
 	{
@@ -411,7 +411,7 @@ int pl_recorded(union cell *key, union cell *term, union cell *ref, enum control
 			Mark(m);
 
 			if (pl_unify(term, copy_to_global(r)) &&
-			    PL_unify_integer(ref, ((typeof(SHP)) r) - (SH_STK))) {
+			    PL_unify_intg(ref, ((typeof(SHP)) r) - (SH_STK))) {
 				*ctxt = r->next;
 				retry;
 			} else

@@ -81,13 +81,13 @@ int pl_plus(union cell *d1, union cell *d2, union cell *d3)
 
 	if (PL_get_long(d1, &a)) {
 		if (PL_get_long(d2, &b))
-			return PL_unify_integer(d3, a + b);
+			return PL_unify_intg(d3, a + b);
 		else if (PL_get_long(d3, &c))
-			return PL_unify_integer(d2, c - a);
+			return PL_unify_intg(d2, c - a);
 	} else				// d1 not intg
 	if (PL_get_long(d2, &b)) {
 		if (PL_get_long(d3, &c))
-			return PL_unify_integer(d1, c - b);
+			return PL_unify_intg(d1, c - b);
 	}
 
 	PL_warning("plus/3 : instantiation fault");
@@ -309,7 +309,7 @@ int pl_atom_length(union cell *atom, union cell *len)
 	const char *s;
 
 	if (PL_get_chars(atom, &s, CVT_ALL))
-		return PL_unify_integer(len, strlen(s));
+		return PL_unify_intg(len, strlen(s));
 
 	PL_warning("atom_length/2: instantiation fault");
 }
@@ -331,10 +331,10 @@ int pl_functor(union cell *t, union cell *f, union cell *a)
 	struct atom *name;
 
 	if (PL_get_name_arity(t, &name, &arity))
-		return PL_unify_atom(f, name) && PL_unify_integer(a, arity);
+		return PL_unify_atom(f, name) && PL_unify_intg(a, arity);
 
 	if (PL_is_atomic(t))
-		return pl_unify(f, t) && PL_unify_integer(a, 0);
+		return pl_unify(f, t) && PL_unify_intg(a, 0);
 
 	try(PL_get_integer(a, &arity));
 
@@ -767,7 +767,7 @@ int pl_hpjw(union cell *str, union cell *h_val)
 
 	h = PL_hpjw(s);
 
-	return PL_unify_integer(h_val, h);
+	return PL_unify_intg(h_val, h);
 }
 
 static int PL_HashTerm(union cell *term, hash_t *hval)
@@ -823,7 +823,7 @@ int pl_hash_term(union cell *term, union cell *hash)
 	hash_t h;
 
 	if (PL_HashTerm(term, &h))
-		return PL_unify_long(hash, (long)h);
+		return PL_unify_intg(hash, h);
 	else
 		fail;
 }

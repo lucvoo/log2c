@@ -822,7 +822,7 @@ int pl_line_count(union cell *s, union cell *cnt)
 	struct stream_pos *p;
 
 	if ((p = Sget_pos(S)))
-		return PL_unify_long(cnt, p->line_no);
+		return PL_unify_intg(cnt, p->line_no);
 	else
 		PL_warning("Stream doesn't maintain position");
 }
@@ -833,7 +833,7 @@ int pl_line_position(union cell *s, union cell *cnt)
 	struct stream_pos *p;
 
 	if ((p = Sget_pos(S)))
-		return PL_unify_long(cnt, p->col_no);
+		return PL_unify_intg(cnt, p->col_no);
 	else
 		PL_warning("Stream doesn't maintain position");
 }
@@ -844,7 +844,7 @@ int pl_character_count(union cell *s, union cell *cnt)
 	struct stream_pos *p;
 
 	if ((p = Sget_pos(S)))
-		return PL_unify_long(cnt, p->char_no);
+		return PL_unify_intg(cnt, p->char_no);
 	else
 		PL_warning("Stream doesn't maintain position");
 }

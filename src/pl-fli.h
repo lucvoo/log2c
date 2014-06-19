@@ -277,25 +277,7 @@ debut:
 	}
 }
 
-inline static int PL_unify_long(register union cell *c, long i)
-{
-debut:
-	switch (get_tag(c)) {
-	case ref_tag:
-		c = c->celp;
-		goto debut;
-	case var_tag:
-		PL_put_integer(c, i);
-		trail(c);
-		succeed;
-	case int_tag:
-		return isintg(i, c);
-	default:
-		fail;
-	}
-}
-
-inline static int PL_unify_intg(register union cell *c, int i)
+inline static int PL_unify_intg(register union cell *c, long i)
 {
 debut:
 	switch (get_tag(c)) {
@@ -359,11 +341,6 @@ debut:
 	default:
 		fail;
 	}
-}
-
-inline static int PL_unify_integer(union cell *c, long i)
-{
-	return PL_unify_intg(c, (int)i);
 }
 
 inline static int PL_unify_atom(register union cell *c, struct atom *A)
@@ -475,7 +452,7 @@ inline static int PL_unify_key(union cell *c, union cell *key)
 	case ato_tag:
 		return PL_unify_atom(c, get_addr(key));
 	case int_tag:
-		return PL_unify_integer(c, get_val(key));
+		return PL_unify_intg(c, get_val(key));
 	case fun_tag:
 		return PL_unify_functor(c, get_fun(key));
 	default:
