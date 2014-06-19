@@ -8,10 +8,6 @@
 #include "Prolog.h"
 #include "pl-pred.h"
 
-int PL_next_goal(void)
-{
-	return 0;
-}
 
 int pl_unify(register union cell *d1, register union cell *d2)
 {

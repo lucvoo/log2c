@@ -139,12 +139,7 @@ inline static void init(void *L)
 }
 
 #define halt_()				\
-	{ if (PL_next_goal())		\
-	    goto backtrack;		\
-	  else				\
-	  { pl_exit(0);			\
-	  }				\
-	}
+	pl_exit(0)
 
 inline static void cut_deep(void)
 {
