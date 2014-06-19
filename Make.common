@@ -16,7 +16,7 @@ IFLAGS = -I. -I${inc_dir}
 ifdef DEBUG
 CFLAGS_OPT  = -O2 -g -DPL_DEBUG=1
 else
-CFLAGS_OPT  = -O2 -g -fomit-frame-pointer #-march=i686
+CFLAGS_OPT  = -O2 -fomit-frame-pointer #-march=i686
 # CFLAGS_OPT  = -O2 -ggdb 
 # CFLAGS_OPT  = -O2 -pg
 endif
