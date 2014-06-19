@@ -3,7 +3,6 @@
 * Add the new predicates of ISO Cor2
 * Add the new arithmetic functions of ISO Cor2
 * Reformat all the C code
-* merge pl-write.c & pl-write_term.c ?
 * Reformat all the Prolog code
 * Partly undo the "trad" part:
 	- to have access to the generated virtual instructions
