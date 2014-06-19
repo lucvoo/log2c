@@ -6,6 +6,7 @@ include	../Make.common
 inc_dir = .
 
 SRC = \
+	pl-arith.c \
 	pl-atom.c \
 	pl-buffer.c \
 	pl-char.c \
