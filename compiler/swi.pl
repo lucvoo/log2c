@@ -5,47 +5,65 @@
 /*									*/
 /************************************************************************/
 
-:- module(swi, [ report/1
-	       , '$recorded_all'/2
-	       , '$erase_records'/1
-	       , '$mangle'/2
-	       , map/2
-	       , hpjw/2
-               ]).
+:- module(swi, [
+		'$erase_records'/1,
+		'$mangle'/2,
+		'$recorded_all'/2,
+		hpjw/2,
+		map/2,
+		report/1
+	]).
 
 
-report(T)	:- write(user_error,T),
-		   put(user_error,'\n').
+report(T) :-
+	write(user_error, T),
+	put(user_error, '\n').
 
 
-'$recorded_all'(K,L)	:- findall(R,recorded(K,R),L).
+'$recorded_all'(K, L) :-
+	findall(R, recorded(K, R), L).
 
-'$erase_records'(K)	:- recorded(K,_,R),
-			   erase(R),
-			   fail.
+'$erase_records'(K) :-
+	recorded(K, _, R),
+	erase(R),
+	fail.
 '$erase_records'(_).
 
 
 
-'$mangle'(A,Ma)	:- atom_codes(A,L),
-		c_id(L,Ml), !,
-		atom_codes(Ma,[0'_|Ml]).
+'$mangle'(A, Ma) :-
+	atom_codes(A, L),
+	c_id(L, Ml), !,
+	atom_codes(Ma, [95|Ml]).
 
-c_id([],[])			:- !.
-c_id([0'_|Q],[0'_,0'_|Mq])	:- !, c_id(Q,Mq).
-c_id([C|Q],[C|Mq])		:- is_csym(C), !, c_id(Q,Mq).
-c_id([C|Q],M)			:- A is C//16, hex_digit(A,XA),
-				   B is C mod 16, hex_digit(B,XB),
-				   M=[0'_,XA,XB|Mq], c_id(Q,Mq).
+c_id([], []) :- !.
+c_id([95|Q], [95, 95|Mq]) :- !,
+	c_id(Q, Mq).
+c_id([C|Q], [C|Mq]) :-
+	is_csym(C), !,
+	c_id(Q, Mq).
+c_id([C|Q], M) :-
+	A is C//16,
+	hex_digit(A, XA),
+	B is C mod 16,
+	hex_digit(B, XB),
+	M=[95, XA, XB|Mq],
+	c_id(Q, Mq).
 
-hex_digit(V,D)	:- between(0,9,V), D is V + 0'0.
-hex_digit(V,D)	:- between(10,15,V), D is V + (0'A-10).
+hex_digit(V, D) :-
+	between(0, 9, V),
+	D is V+48.
+hex_digit(V, D) :-
+	between(10, 15, V),
+	D is V+ (65-10).
 
 
 :- meta_predicate map(1, +).
 
-map(G, [E|T])	:- call(G, E), map(G, T).
-map(_,[]).
+map(G, [E|T]) :-
+	call(G, E),
+	map(G, T).
+map(_, []).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

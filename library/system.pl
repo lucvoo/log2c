@@ -5,72 +5,84 @@
 /*									*/
 /************************************************************************/
 
-:-module(system, [ is_csym/1
-		 , shell/1
-		 , halt/0
-		 , arg/3
-		 , gensym/2
-		 , format/1
-		 , 'C'/3
-		 , phrase/3, phrase/2
-		 , library_directory/1
-		 , once/1 , ignore/1
-		 ]).
+:- module(system, [
+		'C'/3,
+		arg/3,
+		format/1,
+		gensym/2,
+		halt/0,
+		ignore/1,
+		is_csym/1,
+		library_directory/1,
+		once/1,
+		phrase/2,
+		phrase/3,
+		shell/1
+	]).
 
 :- reexport('$bags').
 :- reexport('$grammar').
 :- reexport('$list').
 :- reexport('$apply').
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
-%% End of Interface
-%%
-
-%%
-is_csym(C)	:- between(0'a,0'z,C).
-is_csym(0'_).
-is_csym(C)	:- between(0'A,0'Z,C).
-is_csym(C)	:- between(0'0,0'9,C).
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-shell(Cmd)	:- shell(Cmd,0).
-halt		:- halt(0).
+is_csym(C) :-
+	between(97, 122, C).
+is_csym(95).
+is_csym(C) :-
+	between(65, 90, C).
+is_csym(C) :-
+	between(48, 57, C).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-arg(I,T,V)	:- '$arg'(I,T,V), !.
-arg(I,T,V)	:- var(I),
-                   functor(T,_,N),
-                   between(1,N,I),
-                   '$arg'(I,T,V).
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-gensym(B,V)	:- concat('$gs_', B, K),
-		   flag(K, Old, Old+1),
-		   succ(Old, New),
-		   concat(B, New, V).
+shell(Cmd) :-
+	shell(Cmd, 0).
+halt :-
+	halt(0).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-format(F)	:- format(F,[]).
+arg(I, T, V) :-
+	'$arg'(I, T, V), !.
+arg(I, T, V) :-
+	var(I),
+	functor(T, _, N),
+	between(1, N, I),
+	'$arg'(I, T, V).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-'C'([X|S],X,S).
+gensym(B, V) :-
+	concat('$gs_', B, K),
+	flag(K, Old, Old+1),
+	succ(Old, New),
+	concat(B, New, V).
 
-phrase(Rule, Input, Rest)	:- call(Rule, Input, Rest).
-phrase(Rule, Input)		:- phrase(Rule, Input, []).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+format(F) :-
+	format(F, []).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+'C'([X|S], X, S).
+
+phrase(Rule, Input, Rest) :-
+	call(Rule, Input, Rest).
+phrase(Rule, Input) :-
+	phrase(Rule, Input, []).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% FIXME
 library_directory('.').
-library_directory('library').
+library_directory(library).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% FIXME : meta_predicate ...
 
-ignore(Goal)	:- call(Goal), !.
+ignore(Goal) :-
+	call(Goal), !.
 ignore(_).
 
-once(Goal)	:- call(Goal), !.
-
+once(Goal) :-
+	call(Goal), !.

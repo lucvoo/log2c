@@ -5,14 +5,15 @@
 /*									*/
 /************************************************************************/
 
-:- module(atoms, [ map_atom/2
-                 , atoms/1
-                 , functors/1
-                 %% , 'C_id'/2
-                 ]).
+:- module(atoms, [
+		atoms/1,
+		functors/1,
+		map_atom/2
+	]).
 
 
-map_atom(A,N)	:- '$mangle'(A,N).
+map_atom(A, N) :-
+	'$mangle'(A, N).
 
 
 atoms(A):- L = [ []
