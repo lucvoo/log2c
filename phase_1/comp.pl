@@ -198,8 +198,8 @@ init_module(P, Q, X) :-
 get_atom_from_fun(A/_, A).
 
 init_hash(La, Lf, Lp) :-
-	atoms(Ba),
-	functors(Bf),
+	findall(A, atoms(A), Ba),
+	findall(F, functors(B), Bf),
 	append(La, Ba, Ca),
 	append(Lf, Bf, F),
 	maplist(get_atom_from_fun, F, Af),

@@ -16,81 +16,156 @@ map_atom(A, N) :-
 	'$mangle'(A, N).
 
 
-atoms(A):- L = [ []
-		%% pl-op.c
-		, (:-) , ('|'), (*->), (,), (-->), (->), (;)
-		, (:+), (+>)
-		, * , ** , + , - , / , // , /\ , \/ , << , >> , \ , ^
-		, is , mod , rem , xor
-		, = , \= , == , \== , =@= , \=@= , =:= , =\=
-		, < , > , =< , >= , @< , @=< , @> , @>=
-		, =..  , : , {} , \+ , not
-		, fx , fy , xf , yf , xfx , xfy , yfx , yfy
-		, (module_transparent)
-		% , (discontiguous) , (dynamic) , (initialization) , (multifile) , (volatile)
+atoms('$VAR').
+atoms('$VARNAME').
+atoms('$stream_position').
+atoms('%').
+atoms('').
+atoms(',').
+atoms('.').
+atoms('|').
+atoms(**).
+atoms(*).
+atoms(*->).
+atoms(+).
+atoms(+>).
+atoms(-).
+atoms(-->).
+atoms(->).
+atoms(/).
+atoms(//).
+atoms(/\).
+atoms(:+).
+atoms(:).
+atoms(:-).
+atoms(;).
+atoms(<).
+atoms(<<).
+atoms(=).
+atoms(=..).
+atoms(=:=).
+atoms(=<).
+atoms(==).
+atoms(=@=).
+atoms(=\=).
+atoms(>).
+atoms(>=).
+atoms(>>).
+atoms(@<).
+atoms(@=<).
+atoms(@>).
+atoms(@>=).
+atoms([]).
+atoms([]).
+atoms(\+).
+atoms(\).
+atoms(\/).
+atoms(\=).
+atoms(\==).
+atoms(\=@=).
+atoms(^).
+atoms(alias).
+atoms(append).
+atoms(at).
+atoms(binary).
+atoms(bindvars).
+atoms(character_escapes).
+atoms(cpu_time).
+atoms(curly_notation).
+atoms(dt).
+atoms(end_of_file).
+atoms(end_of_file).
+atoms(eof_action).
+atoms(eof_code).
+atoms(error).
+atoms(execute).
+atoms(exist).
+atoms(fail).
+atoms(false).
+atoms(fx).
+atoms(fy).
+atoms(heap_stack).
+atoms(ignore_ops).
+atoms(input).
+atoms(is).
+atoms(list_notation).
+atoms(local_stack).
+atoms(mark).
+atoms(max_depth).
+atoms(mod).
+atoms(module_transparent).
+atoms(namevars).
+atoms(none).
+atoms(not).
+atoms(not).
+atoms(numbervars).
+atoms(off).
+atoms(on).
+atoms(output).
+atoms(past).
+atoms(quiet).
+atoms(quoted).
+atoms(read).
+atoms(real_time).
+atoms(rem).
+atoms(reposition).
+atoms(reset).
+atoms(runtime).
+atoms(sheap_stack).
+atoms(singletons).
+atoms(space_args).
+atoms(stderr).
+atoms(subterm_positions).
+atoms(syntax_errors).
+atoms(system_time).
+atoms(term_position).
+atoms(text).
+atoms(trail_stack).
+atoms(true).
+atoms(type).
+atoms(update).
+atoms(user).
+atoms(user_error).
+atoms(user_input).
+atoms(user_output).
+atoms(user_time).
+atoms(variable_names).
+atoms(write).
+atoms(xf).
+atoms(xfx).
+atoms(xfy).
+atoms(xor).
+atoms(yf).
+atoms(yfx).
+atoms(yfy).
+atoms({}).
 
-		%% pl-io.c
-		, user , user_input , user_output , user_error , stderr
-		, type , alias , eof_action , eof_code , reposition
-		, text , binary , error , reset , end_of_file
-		, read , write , append, update
-		, input, output, at, past, not
 
-		%% pl-option.c
-		, true , false , on , off
-
-		%% pl-rec.c
-		, mark
-
-		%% pl-read.c
-		, syntax_errors, variable_names, singletons
-		, term_position, subterm_positions
-		, fail, quiet, end_of_file
-
-		%% pl-time.c
-		, dt
-		, cpu_time, user_time, system_time, real_time, runtime
-		, local_stack, heap_stack, sheap_stack, trail_stack
-
-		%% pl-file.c
-		, '$stream_position', ''
-		, none, execute, exist
-
-		%% diverse
-		, '.', [], '$VAR', '$VARNAME', '%'
-
-		%% pl-write.c
-		, quoted
-		, character_escapes
-		, ignore_ops
-		, numbervars
-		, namevars
-		, bindvars
-		, max_depth
-		, space_args
-		, list_notation
-		, curly_notation
-	       ],
-	   A = L.
-
-functors(F)	:- L =	[ (*)/2 , (+)/2 , (-)/1 , (-)/2 , (.)/2 , (,)/2
-			, (/)/2 , (//)/2 , (:)/2 , '{}'/1 , pipe/1
-			, (=)/2
-			, '$stream_position'/3
-			, (max)/2, (min)/2, (mod)/2
-			, '$VAR'/1, '$VARNAME'/1
-
-		%% pl-io.c
-			, file_name/1, mode/1, type/1, alias/1
-			, position/1, end_of_stream/1
-			, eof_action/1, reposition/1
-
-		%% pl-network.c
-			, ip/4
-
-		%% pl-time.c
-			, dt/6
-
-                       ],
-                   F = L.
-
+functors('$VAR'/1).
+functors('$VARNAME'/1).
+functors('$stream_position'/3).
+functors('.'/2).
+functors((',')/2).
+functors((*)/2).
+functors((+)/2).
+functors((-)/1).
+functors((-)/2).
+functors((/)/2).
+functors((//)/2).
+functors((:)/2).
+functors((=)/2).
+functors((mod)/2).
+functors(alias/1).
+functors(dt/6).
+functors(end_of_stream/1).
+functors(eof_action/1).
+functors(file_name/1).
+functors(ip/4).
+functors(max/2).
+functors(min/2).
+functors(mode/1).
+functors(pipe/1).
+functors(position/1).
+functors(reposition/1).
+functors(type/1).
+functors({}/1).
