@@ -606,8 +606,10 @@ int pl_findall_collect(union cell *bag)
 	for (rec = findall_recs; rec; rec = next) {
 		union cell *tmp;
 
-		if (rec->size == 0)
+		if (rec->size == 0) {
+			free_record(rec);
 			break;
+		}
 
 		tmp = copy_to_global(rec);
 		HP[0].val = __cons();
