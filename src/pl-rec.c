@@ -10,7 +10,6 @@
 #include "pl-pred.h"
 #include "pl-fli.h"
 
-static union cell *base;
 
 inline static void rtrail(union cell *ref)
 {
@@ -34,7 +33,7 @@ struct reclist {
 #define hash_recs_size	256
 static struct reclist *records[hash_recs_size];
 
-static union cell *Copy2Heap(union cell *addr, union cell *c)
+static union cell *Copy2Heap(union cell *addr, union cell *c, const union cell *base)
 {
 debut:
 	switch (get_tag(c)) {
@@ -81,7 +80,7 @@ debut:
 
 			addr->val = c->val;
 			for (; n > 0; n--)
-				Copy2Heap(addr + n, c + n);
+				Copy2Heap(addr + n, c + n, base);
 
 			return addr;
 		}
@@ -91,13 +90,14 @@ debut:
 
 inline static struct record *copy_to_heap(union cell *c)
 {
+	union cell *base;
 	struct record *record;
 	union cell **tr;
 
 	tr = TP;
 	record = NEW(*record);
 	base = SHP;			// == record->term == record+1;
-	Copy2Heap(0, c);
+	Copy2Heap(0, c, base);
 
 	record->size = SHP - base;	// == SHP-record->term
 	reset(tr);
@@ -634,7 +634,7 @@ int pl_findall_collect(union cell *bag)
 // optimized for ground term
 // ( can be ineficient on deep unground tree
 //   since the ground test will be redone at each node ).
-static int CopyTerm(union cell *addr, union cell *c)
+static int CopyTerm(union cell *addr, union cell *c, const union cell *base)
 {
 debut:
 	switch (get_tag(c)) {
@@ -685,7 +685,7 @@ debut:
 
 			addr->val = c->val;
 			for (; n > 1; n--)
-				if (!CopyTerm(++addr, ++c))
+				if (!CopyTerm(++addr, ++c, base))
 					fail;
 
 			++addr;
@@ -699,11 +699,12 @@ debut:
 
 int pl_copy_term(union cell *src, union cell *copy)
 {
+	union cell *base;
 	int r;
 	union cell **tp = TP;
 
 	base = HP;
-	r = CopyTerm(0, src);
+	r = CopyTerm(0, src, base);
 	reset(tp);
 
 	if (r)
