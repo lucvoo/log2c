@@ -597,22 +597,11 @@ int pl_findall_record(union cell *t)
 	succeed;
 }
 
-static void freeAssoc(struct record *prev, struct record *rec)
-{
-	if (!prev)
-		findall_recs = rec->next;
-	else
-		prev->next = rec->next;
-
-	free_record(rec);
-}
-
 int pl_findall_collect(union cell *bag)
 {
 	union cell *list;			/* list to construct */
 	union cell *tmp;
 	struct record *rec, *next;
-	struct record *prev = 0;
 
 	if (!(rec = findall_recs))
 		fail;
@@ -630,7 +619,8 @@ int pl_findall_collect(union cell *bag)
 		HP[2].celp = list;
 		list = HP;
 		HP += 3;
-		freeAssoc(prev, rec);
+		findall_recs = rec->next;
+		free_record(rec);
 	}
 
 	return pl_unify(bag, list);
