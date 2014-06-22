@@ -599,7 +599,7 @@ int pl_findall_record(union cell *t)
 
 int pl_findall_collect(union cell *bag)
 {
-	union cell *list = new_atom(ATOM(nil));
+	union cell *tail = new_atom(ATOM(nil));
 	struct record *rec, *next;
 
 	/* get variable term on global stack */
@@ -614,15 +614,15 @@ int pl_findall_collect(union cell *bag)
 		tmp = copy_to_global(rec);
 		HP[0].val = __cons();
 		HP[1].celp = tmp;
-		HP[2].celp = list;
-		list = HP;
+		HP[2].celp = tail;
+		tail = HP;
 		HP += 3;
 		next = rec->next;
 		free_record(rec);
 	}
 
 	findall_recs = rec;
-	return pl_unify(bag, list);
+	return pl_unify(bag, tail);
 }
 
 /**********************************************************************/
