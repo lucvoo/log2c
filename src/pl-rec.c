@@ -599,16 +599,11 @@ int pl_findall_record(union cell *t)
 
 int pl_findall_collect(union cell *bag)
 {
-	union cell *list;			/* list to construct */
+	union cell *list = new_atom(ATOM(nil));
 	struct record *rec, *next;
 
-	if (!(rec = findall_recs))
-		fail;
-
-	// PL_put_nil(list);
-	list = (union cell *) ATOM(nil);
 	/* get variable term on global stack */
-	for (next = rec->next; next; rec = next, next = rec->next) {
+	for (rec = findall_recs; rec; rec = next) {
 		union cell *tmp;
 
 		if (rec->size == 0)
@@ -620,10 +615,11 @@ int pl_findall_collect(union cell *bag)
 		HP[2].celp = list;
 		list = HP;
 		HP += 3;
-		findall_recs = rec->next;
+		next = rec->next;
 		free_record(rec);
 	}
 
+	findall_recs = rec;
 	return pl_unify(bag, list);
 }
 
