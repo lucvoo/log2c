@@ -12,3 +12,5 @@
 #include "pl-pred.h"
 #include "pl-prims.h"
 #include "pl-ext.h"
+
+void PL_format(const char *fmt, union cell *argv);

@@ -245,6 +245,11 @@ pl_common:				NEED_ARG;
 	succeed;
 }
 
+void PL_format(const char *fmt, union cell *argv)
+{
+	do_format(fmt, argv, Stderr);
+}
+
 static union cell end_cell = {.celp = 0 };
 
 static union cell *empty_tab = &end_cell;
