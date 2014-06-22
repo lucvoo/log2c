@@ -574,6 +574,18 @@ int pl_erase_records(union cell *key)
 
 static struct record *findall_recs = 0;
 
+int pl_findall_start(void)
+{
+	struct record *b;
+
+	b = NEW(*b);
+	b->next = findall_recs;
+	b->size = 0;			// Mark the start of a set of records
+	findall_recs = b;
+
+	succeed;
+}
+
 int pl_findall_record(union cell *t)
 {
 	struct record *b;
@@ -609,7 +621,7 @@ int pl_findall_collect(union cell *bag)
 	list = (union cell *) ATOM(nil);
 	/* get variable term on global stack */
 	for (next = a->next; next; a = next, next = a->next) {
-		if (a->term->val == __atom(ATOM(_mark)))
+		if (a->size == 0)
 			break;
 
 		tmp = copy_to_global(a);

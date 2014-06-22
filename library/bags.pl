@@ -15,7 +15,7 @@ findall(V, G, B) :-
 	'$findall_collect'(B), !.
 
 findall_recording(V, G) :-
-	'$findall_record'(mark),
+	'$findall_start',
 	call(G),
 	'$findall_record'(V),
 	fail.
