@@ -11,11 +11,11 @@
 
 
 findall(V, G, B) :-
-	findall_recording(v-V, G),
+	'$findall_start',
+	findall_recording(V, G),
 	'$findall_collect'(B), !.
 
 findall_recording(V, G) :-
-	'$findall_start',
 	call(G),
 	'$findall_record'(V),
 	fail.

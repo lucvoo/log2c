@@ -625,7 +625,6 @@ int pl_findall_collect(union cell *bag)
 			break;
 
 		tmp = copy_to_global(a);
-		tmp = tmp + 2;
 		HP[0].val = __cons();
 		HP[1].celp = tmp;
 		HP[2].celp = list;
