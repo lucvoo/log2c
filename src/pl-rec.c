@@ -576,61 +576,61 @@ static struct record *findall_recs = 0;
 
 int pl_findall_start(void)
 {
-	struct record *b;
+	struct record *rec;
 
-	b = NEW(*b);
-	b->next = findall_recs;
-	b->size = 0;			// Mark the start of a set of records
-	findall_recs = b;
+	rec = NEW(*rec);
+	rec->next = findall_recs;
+	rec->size = 0;			// Mark the start of a set of records
+	findall_recs = rec;
 
 	succeed;
 }
 
 int pl_findall_record(union cell *t)
 {
-	struct record *b;
+	struct record *rec;
 
-	b = copy_to_heap(t);
-	b->next = findall_recs;
-	findall_recs = b;
+	rec = copy_to_heap(t);
+	rec->next = findall_recs;
+	findall_recs = rec;
 
 	succeed;
 }
 
-static void freeAssoc(struct record *prev, struct record *a)
+static void freeAssoc(struct record *prev, struct record *rec)
 {
 	if (!prev)
-		findall_recs = a->next;
+		findall_recs = rec->next;
 	else
-		prev->next = a->next;
+		prev->next = rec->next;
 
-	free_record(a);
+	free_record(rec);
 }
 
 int pl_findall_collect(union cell *bag)
 {
 	union cell *list;			/* list to construct */
 	union cell *tmp;
-	struct record *a, *next;
+	struct record *rec, *next;
 	struct record *prev = 0;
 
-	if (!(a = findall_recs))
+	if (!(rec = findall_recs))
 		fail;
 
 	// PL_put_nil(list);
 	list = (union cell *) ATOM(nil);
 	/* get variable term on global stack */
-	for (next = a->next; next; a = next, next = a->next) {
-		if (a->size == 0)
+	for (next = rec->next; next; rec = next, next = rec->next) {
+		if (rec->size == 0)
 			break;
 
-		tmp = copy_to_global(a);
+		tmp = copy_to_global(rec);
 		HP[0].val = __cons();
 		HP[1].celp = tmp;
 		HP[2].celp = list;
 		list = HP;
 		HP += 3;
-		freeAssoc(prev, a);
+		freeAssoc(prev, rec);
 	}
 
 	return pl_unify(bag, list);
