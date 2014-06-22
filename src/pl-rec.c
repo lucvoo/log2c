@@ -600,7 +600,6 @@ int pl_findall_record(union cell *t)
 int pl_findall_collect(union cell *bag)
 {
 	union cell *list;			/* list to construct */
-	union cell *tmp;
 	struct record *rec, *next;
 
 	if (!(rec = findall_recs))
@@ -610,6 +609,8 @@ int pl_findall_collect(union cell *bag)
 	list = (union cell *) ATOM(nil);
 	/* get variable term on global stack */
 	for (next = rec->next; next; rec = next, next = rec->next) {
+		union cell *tmp;
+
 		if (rec->size == 0)
 			break;
 
