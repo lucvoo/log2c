@@ -4,16 +4,68 @@
   (In fact each backtracking point would need to be a function entry point ...)
   What is done for Mercury?
 * use a mechanism to search for libraries/moduels in others directories
-* Add bagof/3 & setof/3
-* Add the new predicates of ISO Cor2
-* Add the new arithmetic functions of ISO Cor2
 * Partly undo the "trad" part:
 	- to have access to the generated virtual instructions
 	- to move all the C code formating out of the prolog code and use C macros instead
 * Add tests! (maybe even use plunit)
 * Add indexing support!
 * type testing on argument: pred(A) :- atom(A), ... % the atom(A) should really belong to the compilation of the head like a sort of generic getatom abd should be part of the 1st level indexation
-* macro/expand meta predicates like maplist in order to avoid the (repeated) cost of doing dynamic call()
-
+* macro/expand meta predicates like maplist in order to avoid the cost of doing multiple predicate lookups
+* It would be nice to have another tag for closures, it would make all meta predicates quite cheaper (no more multiple predicate lookups)
+* Add bagof/3 & setof/3
+* Add compare/3
+* Add the new predicates of ISO Cor2
+	- subsumes_term/2
+	- callable/1
+	- acyclic_term/1
+	- compare/3
+	- keysort/2
+	- false/0
+* Add defined but unimplemnted arithmetic functions
+	- (/)/2 vs. (//)/2
+	- **/2
+	- <</2 & >>/2
+	- (\)/2, (/\)/2, (\/)/2, xor/2
+	- abs/1
+	- min/2, max/2
+	- rem/2
+	- sign/1
+* Add missing ISO arithmetic functions
+	- copysign/2
+	- round/1, float/1
+	- float_fractional_part/1, float_integer_part/1
+	- floor/1, ceiling/1, truncate/1
+	- sqrt/1
+	- log/1, exp/1
+* Add the new arithmetic functions of ISO Cor2
+	- (div)/2
+	- (+)/1 !
+	- (^)/2
+	- sin/1, cos/1, tan/1
+	- asin/1, acos/1, atan2/2
+	- pi/0
+* Add other SWI prolog arithmetic functions 
+	- gcd/2
+	- integer/1
+	- ceil/1
+	- hyperbolic trigonometric functions
+	- ln/1 (= log/1), log10/1
+	- e/0, epsilon/0, cputime/0
+	- lgamma/1
+	- erf/1, erfc/1
+* Add support for random numbers:
+	- random/1 as a new arithmetic function (returning an integer in [0, N[))
+	- random_float/0 as a new arithmetic function (returning a float in interval [0.0, 1.0[)
+	- random/1 (returning a float in interval [0.0, 1.0[)
+	- random/3 or random_beween/3 (returning an integer in the given open, resp. closed, interval)
+	- have a way to seed the random
+	- getrand/1 & setrand/1
+	- set_random/1 & random_property/1? (seed & state)
+	- random_bytes/1
+	- seed_random(+Seed:list(integer)), -State)
+* Add support for directive if/1, elif/1, else/0 & endif/0
+* Add support for Unicode as character set
+* Add support for specify the encoding of input/output (and certainly support, 'byte', latin-1 & utf-8).
 * PL_write() & friends PL_new_term_ref(), they shouldn't
 * Fix findall/4 (when not used for findall/3) (Probably the usual problem with computed goto's accross functions)
+* check the type/format of the export list for :- module(...) (they must be "predicate indicator")
