@@ -57,7 +57,9 @@ CLEAN	= ${TRASH} ${PLLIB} *.o
 all: ${PLLIB}
 
 ${PLLIB}: ${OBJS}
-	@ar rsu $@ ${OBJS}
+	@rm -f $@
+	@echo 'AR	$@'
+	@ar cr $@ ${OBJS}
 
 ########################################################################
 # Dependencies

@@ -41,10 +41,13 @@ PLC	= plc
 	@$(CC) -MM $(CFLAGS) $*.c | sed "/: /s/[^\.]*/&.s &/" > $@
 
 %.o: %.c ${$*.dep}
+	@echo 'CC	$@'
 	@$(CC) $(CFLAGS) -c $*.c -o $*.o
 %.s: %.c ${$*.dep}
+	@echo 'CC	$@'
 	@$(CC) $(CFLAGS) -S $*.c -o $*.s
 %.i: %.c ${$*.dep}
+	@echo 'CPP	$@'
 	@$(CC) $(CFLAGS) -E $*.c -dD | grep -v '^[ ]*$$' > $*.i
 %.so: %.c ${$*.dep}
 	@$(CC) $(CFLAGS) -fpic -shared -Wl,-soname,$*.so -o $@ $(filter %.c,$^)
