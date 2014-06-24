@@ -1,5 +1,10 @@
 * Of course make it able to bootstrap again (now on X86-64).
+* Replace all the computed goto's by real function calls?
+  It would not only need that every clause is written in its own function, but every parts of every clause would be a function.
+  (In fact each backtracking point would need to be a function entry point ...)
+  What is done for Mercury?
 * use a mechanism to search for libraries/moduels in others directories
+* Add bagof/3 & setof/3
 * Add the new predicates of ISO Cor2
 * Add the new arithmetic functions of ISO Cor2
 * Partly undo the "trad" part:
@@ -9,3 +14,6 @@
 * Add indexing support!
 * type testing on argument: pred(A) :- atom(A), ... % the atom(A) should really belong to the compilation of the head like a sort of generic getatom abd should be part of the 1st level indexation
 * macro/expand meta predicates like maplist in order to avoid the (repeated) cost of doing dynamic call()
+
+* PL_write() & friends PL_new_term_ref(), they shouldn't
+* Fix findall/4 (when not used for findall/3) (Probably the usual problem with computed goto's accross functions)

@@ -597,9 +597,8 @@ int pl_findall_record(union cell *t)
 	succeed;
 }
 
-int pl_findall_collect(union cell *bag)
+int pl_findall_collect(union cell *bag, union cell *tail)
 {
-	union cell *tail = new_atom(ATOM(nil));
 	struct record *rec, *next;
 
 	/* get variable term on global stack */

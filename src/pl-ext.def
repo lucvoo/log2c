@@ -158,7 +158,7 @@ DET('$recorded_all',2,pl_recorded_all)
 DET('$erase_records',1,pl_erase_records)
 DET('$findall_start',0,pl_findall_start)
 DET('$findall_record',1,pl_findall_record)
-DET('$findall_collect',1,pl_findall_collect)
+DET('$findall_collect',2,pl_findall_collect)
 DET(copy_term,2,pl_copy_term)
 
 // pl-sys.c

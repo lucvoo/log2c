@@ -281,6 +281,7 @@ do_directive(use_module(M, _)) :-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 meta_pred(maplist/3, 1).
+meta_pred(findall/4, 2).
 meta_pred(findall/3, 2).
 meta_pred(bagof/3, 2).
 meta_pred(setof/3, 2).
