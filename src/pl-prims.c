@@ -22,21 +22,6 @@ void PL_halt(int status)
 	exit(status);
 }
 
-int PL_lengthList(union cell *l)
-{
-	int n = 0;
-	Deref(l);
-
-	while (is_cons(l)) {
-		n++;
-		l = deref(l + 2);
-	}
-	if (is_nil(l))
-		return n;
-	else
-		return -1;
-}
-
 int pl_between(union cell *low, union cell *high, union cell *n, enum control *ctrl)
 {
 	int l, h, i;

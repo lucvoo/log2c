@@ -58,6 +58,21 @@ loop:
 	return n;
 }
 
+int PL_lengthList(union cell *l)
+{
+	union cell *tail;
+	int n;
+
+	n = PL_list_tail(l, &tail);
+
+	if (is_nil(tail))
+		return n;
+	else if (is_var(tail))
+		return -1;
+	else
+		return -2;
+}
+
 int pl_is_list(union cell *l)
 {
 	return PL_is_cons(l);
@@ -65,22 +80,21 @@ int pl_is_list(union cell *l)
 
 int pl_proper_list(union cell *l)
 {
-	Deref(l);
-
-	while (is_cons(l))
-		l = deref(l + 2);
-
-	return is_nil(l);
+	if (PL_lengthList(l) >= 0)
+		return 1;
+	else
+		return 0;
 }
 
 int pl_partial_list(union cell *l)
 {
-	Deref(l);
+	union cell *tail;
 
-	while (is_cons(l))
-		l = deref(l + 2);
-
-	return is_var(l);
+	PL_list_tail(l, &tail);
+	if (is_var(tail))
+		return 1;
+	else
+		return 0;
 }
 
 int pl_memberchk(union cell *e, union cell *l)
@@ -96,43 +110,47 @@ int pl_memberchk(union cell *e, union cell *l)
 	fail;
 }
 
-int pl_length(union cell *list, union cell *l)
+/**
+	$length(+List:list, -Len:integer) is det
+	$length(?List:list, +Len:integer) is semidet
+*/
+
+int pl_length(union cell *list, union cell *len)
 {
-	int m;
-	Deref(list);
+	union cell *tail;
+	int n, m;
 
-	if (PL_get_intg(l, &m)) {
-		int n = m;
+	n = PL_list_tail(list, &tail);
 
-		while (is_cons(list) && n > 0) {
-			n--;
-			list = deref(list + 2);
-		}
+	if (PL_get_intg(len, &m)) {
+		int o = m - n;
 
-		if (n == 0 && is_nil(list))
-			succeed;
-		else if (!is_var(list) || n < 0)
+		if (o < 0)
 			fail;
-		else			// var(list) && n>= 0
-		{
-			union cell *c;
-			list->celp = HP;
-			trail(list);
-			c = HP;
-			HP += (2 * n);
-			while (c < HP) {
-				c[0].val = __cons();
-				c[1].val = __var();
-				c += 2;
-			}		// POST : c==HP
-			HP[0].val = __nil();
-			HP++;
+
+		if (o == 0 && is_nil(tail))
 			succeed;
+
+		if (!is_var(tail))
+			fail;
+
+		tail->celp = HP;
+		trail(tail);
+
+		tail = HP;
+		HP += (2 * o + 1);
+
+		while (o--) {
+			tail[0].val = __cons();
+			tail[1].val = __var();
+			tail += 2;
 		}
-	} else if (PL_is_var(l)) {
-		int n = PL_lengthList(list);
-		if (n >= 0)
-			return PL_unify_intg(l, n);
+		tail[0].val = __nil();
+
+		succeed;
+	} else if (PL_is_var(len)) {
+		if (is_nil(tail))
+			return PL_unify_intg(len, n);
 	}
 
 	fail;
