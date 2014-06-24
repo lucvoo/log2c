@@ -8,6 +8,56 @@
 #include "Prolog.h"
 #include <stdlib.h>			// for qsort()
 
+
+/**
+  Calculate the length of the given list and return the tail,
+  while doing a cycle detection.
+  cfr. Brent's algorithm: http://en.wikipedia.org/wiki/Cycle_detection#Brent.27s_algorithm
+
+  We can have the following, depending on te type of the tail:
+  - []		proper list
+  - Var		partial list
+  - [_|_]	a cycle is detected, the returned length is meaningless
+  - otherwise	malformed list
+
+  @return the length of the proper part of the list
+*/
+
+int PL_list_tail(union cell *l, union cell **tail)
+{
+	unsigned long steps = 0;
+	unsigned long limit = 2;
+	union cell *turtle = 0;
+	int n = 0;
+
+loop:
+	switch (get_tag(l)) {
+	case ref_tag:
+		l = l->celp;
+		goto loop;
+	case fun_tag:
+		n++;
+
+		steps++;
+		if (l == turtle)	// the rabbit reach the turtle!
+			break;		// -> cycle detected
+		if (steps == limit) {
+			limit *= 2;
+			steps = 0;
+			turtle = l;	// teleport the turtle
+		}
+
+		l = l + 2;
+		goto loop;
+
+	default:
+		break;
+	}
+
+	*tail = l;
+	return n;
+}
+
 int pl_is_list(union cell *l)
 {
 	return PL_is_cons(l);
