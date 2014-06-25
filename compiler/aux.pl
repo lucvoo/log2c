@@ -113,6 +113,12 @@ preds_C_(F/N) :-
 	foreign_pred(F/N, _, _).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%!	file_type(+File, -Type) is semidet
+%
+%	Open File, return the corresponding Stream
+%	and return the 'type' of the file:
+%	- 'module(M, X)' is the file begins with a module directive
+%	- 'user' otherwise
 file_type(F, T) :-
 	file_base_name(F, Name),
 	file_name_extension(Base, Ext, Name),
@@ -123,10 +129,9 @@ file_type(F, T) :-
 	;
 		warning('~w : may not be a Prolog file', [F])
 	),
-	open(F, read, S),
-	set_input(S),
+	open(F, read, S, [alias(src)]),
 	stream_property(S, position(P)),
-	read(R),
+	read(S, R),
 	(   
 		R= (:-module(M, L))
 	->
@@ -147,8 +152,7 @@ file_type(F, T) :-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 read_module(L) :-
-	current_input(S),
-	readclauses_(S, C, []),
+	readclauses_(src, C, []),
 	flag(current_module, M, M),
 	(   
 		M==system
@@ -161,8 +165,7 @@ read_module(L) :-
 		L=C
 	;
 		L=[ (:-use_module(system))|C]
-	),
-	set_input(user_input).
+	).
 
 readclauses([], O, O) :- !.
 readclauses([F|Q], I, O) :-
