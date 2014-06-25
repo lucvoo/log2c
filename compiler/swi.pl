@@ -10,7 +10,6 @@
 		'$mangle'/2,
 		'$recorded_all'/2,
 		hpjw/2,
-		map/2,
 		report/1
 	]).
 
@@ -56,14 +55,6 @@ hex_digit(V, D) :-
 hex_digit(V, D) :-
 	between(10, 15, V),
 	D is V+ (65-10).
-
-
-:- meta_predicate map(1, +).
-
-map(G, [E|T]) :-
-	call(G, E),
-	map(G, T).
-map(_, []).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

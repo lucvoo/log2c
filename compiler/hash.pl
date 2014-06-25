@@ -43,10 +43,10 @@ hash_atom_([A|Q], HS, V) :-
 			   
 hash_atom_vec(V, HS, N) :-
 	V=..[vec|L],
-	map(hash:hash_atom_list, L),
+	maplist(hash:hash_atom_list, L),
 	nl,
 	format('struct atom *PL__atoms[]=\n{\n'),
-	map(hash:hash_atom_tab, L),
+	maplist(hash:hash_atom_tab, L),
 	format('};\nint PL__atoms_hash_size = ~d;\n', [HS]),
 	format('int PL__atoms_count = ~d;\n\n', [N]).
 
@@ -91,10 +91,10 @@ hash_fun_([F/N|Q], HS, V) :-
 			   
 hash_fun_vec(V, HS, N) :-
 	V=..[vec|L],
-	map(hash:hash_fun_list, L),
+	maplist(hash:hash_fun_list, L),
 	nl,
 	format('struct functor *PL__funs[~d]=\n{\n', [HS]),
-	map(hash:hash_fun_tab, L),
+	maplist(hash:hash_fun_tab, L),
 	format('};\nint PL__funs_hash_size = ~d;\n', [HS]),
 	format('int PL__funs_count = ~d;\n\n', [N]).
 
@@ -126,7 +126,7 @@ init_hash_jmps :-
 	'$recorded_all'(export_pred, Ppub),
 	findall(P, find_pred(P), Pall_),
 	sort(Pall_, Pall),
-	map(util:decl_pred, Pall),
+	maplist(util:decl_pred, Pall),
 	nl,
 	flag(jmps_pub_hsize, Hp, Hp),
 	hash_jmp(Hp, Ppub, 'JMP_pub'),
@@ -158,10 +158,10 @@ hash_jmp_([F/N|Q], HS, V) :-
 			   
 hash_jmp_vec(V, T) :-
 	V=..[vec|L],
-	map(hash:hash_jmp_list(T), L),
+	maplist(hash:hash_jmp_list(T), L),
 	nl,
 	format('static struct jmp *~w_tab[]=\n{\n', [T]),
-	map(hash:hash_jmp_tab(T), L),
+	maplist(hash:hash_jmp_tab(T), L),
 	format('};\n\n').
 
 
@@ -191,10 +191,10 @@ hash_jmp_tab(T, [E|_]) :-
 
 init_hash_mods(N) :-
 	need_modules(M),
-	map(util:include_module, M),
+	maplist(util:include_module, M),
 	select(N, M, M_),
 	Ms=[user|M_],
-	map(hash:decl_mod, Ms),
+	maplist(hash:decl_mod, Ms),
 	nl,
 	flag(mods_hsize, HS, HS),
 	fill(HS, [], L),
@@ -217,10 +217,10 @@ hash_mods_([A|Q], HS, V) :-
 hash_mods_vec(V) :-
 	V=..[vec|L],
 	length(L, N),
-	map(hash:hash_mods_list, L),
+	maplist(hash:hash_mods_list, L),
 	nl,
 	format('struct modules *PL__modules[]=\n{\n'),
-	map(hash:hash_mods_tab, L),
+	maplist(hash:hash_mods_tab, L),
 	format('};\nint PL__modules_hash_size = ~d;\n\n', [N]).
 
 hash_mods_list([]).

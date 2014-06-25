@@ -6,32 +6,27 @@
 /************************************************************************/
 
 :- module('$apply', [
-		checklist/2,
-		map/2,
+		maplist/2,
 		maplist/3,
 		sublist/3
 	]).
 
-%% FIXME : meta_predicate ...
 
+:- meta_predicate maplist(1, ?).
+maplist(G, [A|X]) :-
+	call(G, A),
+	maplist(G, X).
+maplist(_, []).
+
+
+:- meta_predicate maplist(2, ?, ?).
 maplist(G, [A|X], [B|Y]) :-
 	call(G, A, B),
 	maplist(G, X, Y).
 maplist(_, [], []).
 
 
-checklist(G, [A|X]) :-
-	call(G, A),
-	checklist(G, X).
-checklist(_, []).
-
-%% same as checklist/2 (shorter name).
-map(G, [A|X]) :-
-	call(G, A),
-	map(G, X).
-map(_, []).
-
-
+:- meta_predicate sublist(1, +, ?).
 sublist(G, [A|X], R) :-
 	call(G, A, B), !,
 	R=[B|Y],

@@ -141,7 +141,7 @@ anf_module(La, Lf, Lp) :-
 	format(h, '#ifndef MODULE~w_H_\n', [Mm]),
 	format(h, '#define MODULE~w_H_\n\n', [Mm]),
 	used_modules(Ms),
-	map(util:include_module, Ms),
+	maplist(util:include_module, Ms),
 	nl,
 	decl_atoms(La),
 	decl_funs(Lf),
@@ -172,7 +172,7 @@ init_preds([]).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 decl_export_mod(export(X, L)) :-
 	flag(current_module, M, M),
-	map(util:decl_exp_mod(M, X), L).
+	maplist(util:decl_exp_mod(M, X), L).
 
 decl_exp_mod(M, X, P) :-
 	map_pred(P, M, Pm),
@@ -184,7 +184,7 @@ decl_preds(X) :-
 	'$recorded_all'(export_pred, P),
 	append(X, P, T),
 	sort(T, L),
-	map(util:decl_pred, L),
+	maplist(util:decl_pred, L),
 	nl.
 
 decl_pred(P) :-
@@ -195,7 +195,7 @@ decl_pred(P) :-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 decl_atoms(As) :-
-	map(util:decl_atoms_, As),
+	maplist(util:decl_atoms_, As),
 	nl(h).
 decl_atoms_(A) :-
 	map_atom(A, Am),
@@ -203,7 +203,7 @@ decl_atoms_(A) :-
 	format(mod, '~q.\n', [atoms(A)]).
 
 decl_funs(Fs) :-
-	map(util:decl_funs_, Fs),
+	maplist(util:decl_funs_, Fs),
 	nl(h).
 
 decl_funs_(F/N) :-
@@ -280,12 +280,12 @@ do_directive(use_module(M, _)) :-
 	do_directive(use_module(M)).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+meta_pred(maplist/2, 1).
 meta_pred(maplist/3, 1).
 meta_pred(findall/4, 2).
 meta_pred(findall/3, 2).
 meta_pred(bagof/3, 2).
 meta_pred(setof/3, 2).
-meta_pred(map/2, 1).
 meta_pred(mapi/3, 2).
 meta_pred(mapl/3, 1).
 meta_pred(mapl/4, 1).

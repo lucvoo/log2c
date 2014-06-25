@@ -354,12 +354,12 @@ anf(A, F, P) :-
 		M==system
 	->
 		foreign_preds(Fps),
-		map(aux:anf_rec_pred, Fps)
+		maplist(aux:anf_rec_pred, Fps)
 	;
 		true
 	),
 	recorded(used_modules, Ms),
-	map(aux:anf_rec_atom, Ms),
+	maplist(aux:anf_rec_atom, Ms),
 	anf_rec_import,
 	anf_get_atom(A),
 	anf_get_fun(F),

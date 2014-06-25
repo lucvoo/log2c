@@ -26,7 +26,7 @@
 
 check_export(X1, L) :-
 	flag(current_module, M, M),
-	map(modules:check_export1(M, L), X1),
+	maplist(modules:check_export1(M, L), X1),
 	(
 		M==system
 	->
@@ -39,7 +39,7 @@ check_export(X1, L) :-
 
 check_export(X1, L, Xm) :-
 	flag(current_module, M, M),
-	map(modules:check_export1(M, L), X1),
+	maplist(modules:check_export1(M, L), X1),
 	(
 		M==system
 	->
@@ -178,10 +178,10 @@ check_import(U, _X) :-
 	del(module_export),
 	used_modules(Us),
 	format(mod, 'use_module(~q).\n', [Us]),
-	map(modules:rec_x, U).
+	maplist(modules:rec_x, U).
 
 rec_x(use(M, L)) :-
-	map(modules:rec_export(M), L).
+	maplist(modules:rec_export(M), L).
 
 rec_export(M, X) :-
 	(
@@ -194,7 +194,7 @@ rec_export(M, X) :-
 	).
 
 exp_x(export(_, L)) :-
-	map(modules:export_pred, L).
+	maplist(modules:export_pred, L).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 import_from_module(F, M) :-
