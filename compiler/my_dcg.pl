@@ -48,7 +48,6 @@ dgc(reset_fvar, 1).
 dgc(std_cmp, 3).
 dgc(std_eq, 3).
 dgc(type, 3).
-dgc(unify_intg, 2).
 dgc(unify_var, 2).
 dgc(str_eq, 3).
 dgc(type, 3).

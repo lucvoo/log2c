@@ -326,16 +326,6 @@ unify_var(X, Y) :+
 	+> g('  trail(a1);'),
 	+> g('}').
 
-unify_intg(X, I) :+
-	+> g('{ union cell *a1; int i'),
-	+> new_indent(2),
-	code_Assign(a1, X),
-	code_M(i, I),
-	+> new_indent(-2),
-	+> g('  PL_put_integer(a1,i);'),
-	+> g('  trail(a1);'),
-	+> g('}').
-
 
 decl(0, []) :+
 	+> g('{').

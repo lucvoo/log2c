@@ -138,8 +138,6 @@ comp_sub_module(M, F) :-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 module_path(M, F) :-
 	module_extension('.mod', M, F).
-module_source(M, F) :-
-	module_extension('.pl', M, F).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 used_modules(L) :-
