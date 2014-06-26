@@ -150,7 +150,7 @@ inline static void PL_put_float(union cell *v, double N)
 
 inline static void PL_put_atom(union cell *v, struct atom *A)
 {
-	v->celp = &(A->atom);
+	v->celp = &(A->cell);
 	return;
 }
 

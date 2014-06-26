@@ -15,7 +15,7 @@ inline static struct atom *add_atom(const char *s, hash_t H, hash_t h)
 	struct atom *a;
 
 	a = NEW(*a);
-	a->atom.val = MK_CELL(ato_tag, a);
+	a->cell.val = MK_CELL(ato_tag, a);
 	a->name = s;
 	a->hash = H;
 	a->next = PL__atoms[h];

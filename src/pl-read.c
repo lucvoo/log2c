@@ -215,7 +215,7 @@ static void clear_var_list(void)
 static union cell *bind_vars(int single)
 {
 	struct var *v = varl_first;
-	union cell *l = &(ATOM(nil)->atom);
+	union cell *l = new_atom(ATOM(nil));
 
 	if (!v)
 		return l;

@@ -71,7 +71,7 @@ inline static int SetAtom(struct prolog_flag *f, struct atom *val, int lock, str
 	if (f->addr.atom)
 		*(f->addr.atom) = val;
 	else
-		f->val.celp = &(val->atom);
+		f->val.celp = &(val->cell);
 	succeed;
 }
 

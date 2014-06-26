@@ -43,7 +43,7 @@
 
 #define	MK_TAG(T)	(((unsigned long)(T))<<TAG_POS)
 #define MK_CELL(T,V)	(MK_TAG(T)+(unsigned long) (V))
-#define new_atom(A)	(&((A)->atom))
+#define new_atom(A)	(&((A)->cell))
 #define __cons()	__fun(FUN(dot,2))
 #define __nil()		__atom(ATOM(nil))
 
@@ -151,7 +151,7 @@ inline static union cell *new_cons(void)
 
 inline static int isatom(struct atom *A, union cell *addr)
 {
-	return addr == &(A->atom);	// atoms are unique !
+	return addr == &(A->cell);	// atoms are unique !
 }
 
 inline static int isintg(long N, union cell *addr)

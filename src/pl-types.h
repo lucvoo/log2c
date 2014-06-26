@@ -57,7 +57,7 @@ union cell {
 };
 
 struct atom {
-	union cell atom;
+	union cell cell;
 	const char *name;
 	hash_t hash;
 	struct atom *next;
