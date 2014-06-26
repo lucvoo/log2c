@@ -32,7 +32,7 @@ inline static struct module *lookup_module(struct atom *name)
 	return 0;
 }
 
-inline static void *lookup_proc(struct module * module, struct atom *functor, int arity)
+inline static void *lookup_proc(struct module *module, struct atom *functor, int arity)
 {
 	hash_t h;
 	struct jmp *j;
@@ -55,7 +55,7 @@ inline static void *lookup_proc(struct module * module, struct atom *functor, in
 	PL_warning("%s/%d lookup_proc : no such procedure", functor->name, arity);
 }
 
-inline static union cell *strip_module(union cell *term, struct module ** module)
+inline static union cell *strip_module(union cell *term, struct module **module)
 {
 	union cell *m = 0;
 	union cell *t;
@@ -81,7 +81,7 @@ inline static union cell *strip_module(union cell *term, struct module ** module
 	PL_warning(" : strip_module : illegal module:term specification");
 }
 
-void *PL_call(union cell *clos, int extra, union cell ** args)
+void *PL_call(union cell *clos, int extra, union cell **args)
 {
 	union cell *t;
 	struct atom *name;

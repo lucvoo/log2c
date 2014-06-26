@@ -22,7 +22,7 @@ struct ubuffer {
 	char *end;
 };
 
-inline static void PL_add_ubs(struct ubuffer * b, int c)
+inline static void PL_add_ubs(struct ubuffer *b, int c)
 {
 	if (b->ptr == b->end) {
 		size_t size = (b->end - b->base) + 256;
@@ -34,7 +34,7 @@ inline static void PL_add_ubs(struct ubuffer * b, int c)
 	*(b->ptr)++ = c;
 }
 
-inline static void PL_add_x_ubs(struct ubuffer * b, const char *s, size_t n)
+inline static void PL_add_x_ubs(struct ubuffer *b, const char *s, size_t n)
 {
 	if ((b->end - b->ptr) <= n) {
 		size_t size = (b->end - b->base) + round_to_power(n + 1);
@@ -47,14 +47,14 @@ inline static void PL_add_x_ubs(struct ubuffer * b, const char *s, size_t n)
 	b->ptr += n;
 }
 
-inline static char *PL_base_ubs(struct ubuffer * b)
+inline static char *PL_base_ubs(struct ubuffer *b)
 {
 	PL_add_ubs(b, '\0');
 	(b->ptr)--;
 	return b->base;
 }
 
-inline static void PL_clear_ubs(struct ubuffer * b)
+inline static void PL_clear_ubs(struct ubuffer *b)
 {
 	b->ptr = b->base;
 }
@@ -63,8 +63,8 @@ inline static void PL_clear_ubs(struct ubuffer * b)
 /* Ring Buffers                                                       */
 /**********************************************************************/
 
-void PL_free_ubs(struct ubuffer * b);
-void PL_init_ubs(struct ubuffer * ubs);
+void PL_free_ubs(struct ubuffer *b);
+void PL_init_ubs(struct ubuffer *ubs);
 struct ubuffer *PL_find_ubs(unsigned flags);
 void PL_lost_ubs(unsigned flags);
 

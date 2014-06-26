@@ -67,54 +67,54 @@ inline static unsigned long __atom(struct atom *A)
 	return (unsigned long) new_atom(A);
 }
 
-inline static int is_ref(union cell * c)
+inline static int is_ref(union cell *c)
 {
 	return get_tag(c) == ref_tag;
 }
 
-inline static int is_var(union cell * c)
+inline static int is_var(union cell *c)
 {
 	return c->val == __var();
 }
 
-inline static int is_atom(union cell * c)
+inline static int is_atom(union cell *c)
 {
 	return get_tag(c) == ato_tag;
 }
 
-inline static int is_intg(union cell * c)
+inline static int is_intg(union cell *c)
 {
 	return get_tag(c) == int_tag;
 }
 
-inline static int is_flt(union cell * c)
+inline static int is_flt(union cell *c)
 {
 	return get_tag(c) == flt_tag;
 }
 
-inline static int is_number(union cell * c)
+inline static int is_number(union cell *c)
 {
 	int tag = get_tag(c);
 	return tag == int_tag || tag == flt_tag;
 }
 
-inline static int is_atomic(union cell * c)
+inline static int is_atomic(union cell *c)
 {
 	int tag = get_tag(c);
 	return tag == ato_tag || tag == int_tag || tag == flt_tag;
 }
 
-inline static int is_fun(union cell * c)
+inline static int is_fun(union cell *c)
 {
 	return get_tag(c) == fun_tag;
 }
 
-inline static int is_term(union cell * c)
+inline static int is_term(union cell *c)
 {
 	return is_fun(c);
 }
 
-inline static union cell * new_intg(long N)
+inline static union cell *new_intg(long N)
 {
 	HP->val = __intg(N);
 	return HP++;
@@ -122,18 +122,18 @@ inline static union cell * new_intg(long N)
 
 union cell *new_flt(double r);
 
-inline static union cell * new_var(void)
+inline static union cell *new_var(void)
 {
 	HP->val = __var();
 	return HP++;
 }
 
-inline static union cell * new_void(void)
+inline static union cell *new_void(void)
 {
 	return new_var();
 }					// FIXME : put void var in local stack
 
-inline static union cell * new_struct(struct functor *F, int N)
+inline static union cell *new_struct(struct functor *F, int N)
 {
 	register typeof(HP) old_HP;
 
@@ -144,34 +144,34 @@ inline static union cell * new_struct(struct functor *F, int N)
 	return old_HP;
 }
 
-inline static union cell * new_cons(void)
+inline static union cell *new_cons(void)
 {
 	return new_struct(FUN(dot, 2), 2);
 }
 
-inline static int isatom(struct atom *A, union cell * addr)
+inline static int isatom(struct atom *A, union cell *addr)
 {
 	return addr == &(A->atom);	// atoms are unique !
 }
 
-inline static int isintg(long N, union cell * addr)
+inline static int isintg(long N, union cell *addr)
 {
 	return addr->val == __intg(N);
 }
 
-inline static int isflt(double r, union cell * addr)
+inline static int isflt(double r, union cell *addr)
 {
 	return get_flt(addr) == r;
 }
 
-inline static int isfun(struct functor *F, union cell * addr)
+inline static int isfun(struct functor *F, union cell *addr)
 {
 	return addr->val == __fun(F);
 }
 
-union cell *deref_dbg(union cell * addr);
+union cell *deref_dbg(union cell *addr);
 
-inline static union cell * deref(union cell * addr)
+inline static union cell *deref(union cell *addr)
 #if 1
 {
 	union cell *p = addr;
@@ -190,21 +190,21 @@ inline static union cell * deref(union cell * addr)
 
 #define Deref(addr)	while (get_tag(addr)==ref_tag) addr=addr->celp
 
-inline static void mkref(union cell * v, union cell c)
+inline static void mkref(union cell *v, union cell c)
 {
 	*v = c;
 
 	return;
 }
 
-inline static void mkrefp(union cell * v, union cell * c)
+inline static void mkrefp(union cell *v, union cell *c)
 {
 	v->celp = c;
 
 	return;
 }
 
-inline static void trail(union cell * addr)
+inline static void trail(union cell *addr)
 {
 	if (addr < (BTP + 3)->celp)
 		*(TP++) = addr;
@@ -212,7 +212,7 @@ inline static void trail(union cell * addr)
 	return;
 }
 
-inline static void reset(register union cell ** a1)
+inline static void reset(register union cell **a1)
 {
 	register union cell **tp;
 
@@ -246,7 +246,7 @@ inline static unsigned long round_to_power(unsigned long n)
 }
 
 // 0 and -1 are never a valid value
-inline static hash_t SimpleHashValue(union cell * key)
+inline static hash_t SimpleHashValue(union cell *key)
 {
 debut:
 	switch (get_tag(key))		// get the hash value if the key is OK

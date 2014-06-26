@@ -198,7 +198,7 @@ inline static void alt_2(void)
 	FP = FP->stk;
 }
 
-inline static void unify_var(union cell * a1, union cell * a2)
+inline static void unify_var(union cell *a1, union cell *a2)
 {
 	mkrefp(a1, a2);
 	trail(a1);

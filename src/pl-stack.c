@@ -40,7 +40,7 @@ static struct stack stacks[] = {
 
 #define NBR_STKS	(sizeof(stacks)/sizeof(stacks[0]))
 
-static void expand_stack(struct stack * s)
+static void expand_stack(struct stack *s)
 {
 	int new_size;
 

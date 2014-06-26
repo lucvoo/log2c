@@ -13,7 +13,7 @@ int PL_next_goal(void)
 	return 0;
 }
 
-int pl_unify(register union cell * d1, register union cell * d2)
+int pl_unify(register union cell *d1, register union cell *d2)
 {
 	d1 = deref(d1);
 
@@ -97,7 +97,7 @@ KO:	return 0;
 }
 
 // FIXME : add floating number
-int PL_eval_(union cell * c, int *n)
+int PL_eval_(union cell *c, int *n)
 {
 	int n2;				//, n2;
 
@@ -173,7 +173,7 @@ debut:
 	fail;				// Suppress compiler warning
 }
 
-int PL_can_unify(union cell * a, union cell * b)
+int PL_can_unify(union cell *a, union cell *b)
 {
 	int r;
 	struct mark m;
@@ -183,7 +183,7 @@ int PL_can_unify(union cell * a, union cell * b)
 	return r;
 }
 
-int PL_not_unify(union cell * a, union cell * b)
+int PL_not_unify(union cell *a, union cell *b)
 {
 	return !PL_can_unify(a, b);
 }

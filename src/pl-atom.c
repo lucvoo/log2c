@@ -43,7 +43,7 @@ struct atom *PL_new_atom(const char *s)
 	return add_atom(copy, H, h);
 }
 
-int pl_current_atom(union cell * c, enum control *ctrl)
+int pl_current_atom(union cell *c, enum control *ctrl)
 {
 	struct atom *atom;
 	hash_t h;

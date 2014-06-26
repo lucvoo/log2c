@@ -12,7 +12,7 @@
 
 static union cell *base;
 
-inline static void rtrail(union cell * ref)
+inline static void rtrail(union cell *ref)
 {
 	HP->celp = ref;
 	HP++;
@@ -34,7 +34,7 @@ struct reclist {
 #define hash_recs_size	256
 static struct reclist *records[hash_recs_size];
 
-static union cell *Copy2Heap(union cell * addr, union cell * c)
+static union cell *Copy2Heap(union cell *addr, union cell *c)
 {
 debut:
 	switch (get_tag(c)) {
@@ -89,7 +89,7 @@ debut:
 	return 0;
 }
 
-inline static struct record *copy_to_heap(union cell * c)
+inline static struct record *copy_to_heap(union cell *c)
 {
 	struct record *record;
 	union cell **tr;
@@ -130,7 +130,7 @@ inline static union cell *copy_to_global(struct record *record)
 
 #define Trail(T)	*TP++=T
 
-static inline int unify_static_2(register union cell * s, register union cell * t)
+static inline int unify_static_2(register union cell *s, register union cell *t)
 {
 	s = deref(s);
 
@@ -181,7 +181,7 @@ OK:	return 1;
 KO:	return 0;
 }
 
-static inline int unify_static_1(register union cell * s, register union cell * t)
+static inline int unify_static_1(register union cell *s, register union cell *t)
 {
 	s = deref(s);
 
@@ -271,7 +271,7 @@ static inline int try_unify_static(union cell *s, union cell *t)
 })								\
 
 
-inline static struct reclist *lookup_recl__old(union cell * key)
+inline static struct reclist *lookup_recl__old(union cell *key)
 {
 	hash_t h;
 	struct reclist *rl;
@@ -291,7 +291,7 @@ inline static struct reclist *lookup_recl__old(union cell * key)
 	return rl;
 }
 
-inline static struct reclist *lookup_recl__(union cell * key, int h)
+inline static struct reclist *lookup_recl__(union cell *key, int h)
 {
 	struct reclist *rl;
 
@@ -302,7 +302,7 @@ inline static struct reclist *lookup_recl__(union cell * key, int h)
 	return 0;
 }
 
-inline static struct reclist *add_recl__(union cell * key, int h)
+inline static struct reclist *add_recl__(union cell *key, int h)
 {
 	struct reclist *rl;
 
@@ -325,7 +325,7 @@ inline static struct reclist *lookup_recl(union cell *key, int h)
 	return rl;
 }
 
-static int pl_recordaz(union cell * key, union cell * term, union cell * ref, int az)
+static int pl_recordaz(union cell *key, union cell *term, union cell *ref, int az)
 {
 	struct reclist *rl;
 	struct record *r;
@@ -359,29 +359,29 @@ static int pl_recordaz(union cell * key, union cell * term, union cell * ref, in
 	succeed;
 }
 
-int pl_recorda(union cell * k, union cell * t, union cell * ref)
+int pl_recorda(union cell *k, union cell *t, union cell *ref)
 {
 	return pl_recordaz(k, t, ref, 'a');
 }
 
-int pl_recorda_2(union cell * k, union cell * t)
+int pl_recorda_2(union cell *k, union cell *t)
 {
 	union cell *ref = PL_new_term_ref();
 	return pl_recordaz(k, t, ref, 'a');
 }
 
-int pl_recordz(union cell * k, union cell * t, union cell * ref)
+int pl_recordz(union cell *k, union cell *t, union cell *ref)
 {
 	return pl_recordaz(k, t, ref, 'z');
 }
 
-int pl_recordz_2(union cell * k, union cell * t)
+int pl_recordz_2(union cell *k, union cell *t)
 {
 	union cell *ref = PL_new_term_ref();
 	return pl_recordaz(k, t, ref, 'z');
 }
 
-int pl_recorded(union cell * key, union cell * term, union cell * ref, enum control *ctrl)
+int pl_recorded(union cell *key, union cell *term, union cell *ref, enum control *ctrl)
 {
 	struct reclist *rl;
 	struct record *r, **ctxt;
@@ -422,13 +422,13 @@ int pl_recorded(union cell * key, union cell * term, union cell * ref, enum cont
 	fail;
 }
 
-int pl_recorded_2(union cell * key, union cell * term, enum control *ctrl)
+int pl_recorded_2(union cell *key, union cell *term, enum control *ctrl)
 {
 	union cell *ref = PL_new_term_ref();
 	return pl_recorded(key, term, ref, ctrl);
 }
 
-int pl_current_key(union cell * c, enum control *ctrl)
+int pl_current_key(union cell *c, enum control *ctrl)
 {
 	struct reclist *recl;
 	hash_t h;
@@ -502,7 +502,7 @@ inline static int Erase_rec(struct record *rec)
 
 }
 
-int pl_erase(union cell * ref)
+int pl_erase(union cell *ref)
 {
 	struct record *rec;
 
@@ -518,7 +518,7 @@ int pl_erase(union cell * ref)
 /* Specialized predicates                                             */
 /**********************************************************************/
 
-int pl_recorded_all(union cell * key, union cell * list)
+int pl_recorded_all(union cell *key, union cell *list)
 {
 	struct reclist *rl;
 	struct record *r;
@@ -634,7 +634,7 @@ int pl_findall_collect(union cell *bag)
 // optimized for ground term
 // ( can be ineficient on deep unground tree
 //   since the ground test will be redone at each node ).
-static int CopyTerm(union cell * addr, union cell * c)
+static int CopyTerm(union cell *addr, union cell *c)
 {
 debut:
 	switch (get_tag(c)) {

@@ -37,6 +37,6 @@ hash_t PL_hpjw_2(const char *x, const char *y)	// From Dragon book, p436
 }
 
 hash_t PL_mult_hash(int x)
-{					// uses a const close to golden ratio * pow(2,32)
+{					// uses a const close to golden ratio *pow(2,32)
 	return ((hash_t) x) * 2654435767UL;
 }

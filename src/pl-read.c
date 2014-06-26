@@ -632,7 +632,7 @@ case_iso:		UnGetc(c);
 				UnGetc(c);
 				goto intg;
 			}
-			val = val * base + digit;
+			val = val *base + digit;
 		}
 	} else if (c == '.')		// floating number
 	{
@@ -939,9 +939,9 @@ error:
 /* PARSER                                                             */
 /**********************************************************************/
 
-static int read_term(struct stream *S, int max, const char *stop, struct node * node);
+static int read_term(struct stream *S, int max, const char *stop, struct node *node);
 
-static inline void mk_unary(struct atom *atom, struct node * arg, struct node * node_out)
+static inline void mk_unary(struct atom *atom, struct node *arg, struct node *node_out)
 {
 	if (atom == ATOM(minus) && is_number(&arg->cell)) {
 		union cell *c = &arg->cell;
@@ -961,7 +961,7 @@ static inline void mk_unary(struct atom *atom, struct node * arg, struct node * 
 	}
 }
 
-static inline void mk_binary(struct atom *atom, struct node * left, struct node * right, struct node * node_out)
+static inline void mk_binary(struct atom *atom, struct node *left, struct node *right, struct node *node_out)
 {
 	struct functor *fun = PL_new_functor(atom, 2);
 	union cell *addr = new_struct(fun, 2);
@@ -971,7 +971,7 @@ static inline void mk_binary(struct atom *atom, struct node * left, struct node 
 	node_out->cell.celp = addr;
 }
 
-static union cell *read_fun(struct stream *S, struct atom *functor, int level, struct node * node_out)
+static union cell *read_fun(struct stream *S, struct atom *functor, int level, struct node *node_out)
 {
 	struct node elem;
 	union cell *addr;
@@ -1000,7 +1000,7 @@ static union cell *read_fun(struct stream *S, struct atom *functor, int level, s
 	}
 }
 
-static int read_list(struct stream *S, struct node * node_out)
+static int read_list(struct stream *S, struct node *node_out)
 {
 	union cell *addr;
 	struct node elem;
@@ -1035,7 +1035,7 @@ loop:
 	}
 }
 
-static inline int read_term_a(struct stream *S, int max, const char *stop, struct node * node_out)
+static inline int read_term_a(struct stream *S, int max, const char *stop, struct node *node_out)
 {
 	int type, prec;
 	struct atom *atom = token.tok_val.atom;
@@ -1065,7 +1065,7 @@ static inline int read_term_a(struct stream *S, int max, const char *stop, struc
 	}
 }
 
-static inline int read_term_t_(struct stream *S, int max, const char *stop, struct node node_l, struct node * node_out)
+static inline int read_term_t_(struct stream *S, int max, const char *stop, struct node node_l, struct node *node_out)
 {
 
 loop:
@@ -1143,7 +1143,7 @@ postfix:				mk_unary(atom, &node_l, &node_l);
 }
 
 // POST: node->prec <= max
-static int read_term(struct stream *S, int max, const char *stop, struct node * node)
+static int read_term(struct stream *S, int max, const char *stop, struct node *node)
 {
 	struct node node_s;
 	int tok;

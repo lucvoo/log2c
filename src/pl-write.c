@@ -145,7 +145,7 @@ inline static int PutToken(struct stream *S, const char *s)
 
 //#####################################################################
 
-static int WriteQuoted(struct stream *S, const char *s, int quote, const struct write_option * opt)
+static int WriteQuoted(struct stream *S, const char *s, int quote, const struct write_option *opt)
 {
 	char c;
 
@@ -207,7 +207,7 @@ static int WriteQuoted(struct stream *S, const char *s, int quote, const struct 
 	succeed;
 }
 
-static int WriteAtom(struct stream *S, struct atom *a, const struct write_option * opt)
+static int WriteAtom(struct stream *S, struct atom *a, const struct write_option *opt)
 {
 	if (Options(OPT_QUOT) && NeedQuote(a))
 		WriteQuoted(S, PL_atom_chars(a), '\'', opt);
@@ -217,7 +217,7 @@ static int WriteAtom(struct stream *S, struct atom *a, const struct write_option
 	succeed;
 }
 
-inline static void WritePrimitive(struct stream *S, union cell *t, const struct write_option * opt)
+inline static void WritePrimitive(struct stream *S, union cell *t, const struct write_option *opt)
 {
 	char buf[33];
 
@@ -278,7 +278,7 @@ static int priorityOperator(struct atom *atom)
 }
 
 // FIXME : stuff picked from SWI-Prolog
-static int WriteTerm(struct stream *S, union cell *t, int prec, int depth, const struct write_option * opt)
+static int WriteTerm(struct stream *S, union cell *t, int prec, int depth, const struct write_option *opt)
 {
 	struct atom *functor;
 	int arity;
@@ -642,7 +642,7 @@ int pl_warn(const char *fmt)
 
 #include "pl-option.h"
 
-static int get_options(union cell *Options, struct write_option * options, const char *pred)
+static int get_options(union cell *Options, struct write_option *options, const char *pred)
 {
 	static int opt_quoted;
 	static int opt_char_esc;

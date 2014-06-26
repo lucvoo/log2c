@@ -17,6 +17,6 @@ int PL_lengthList(union cell *l);
 int PL_unify_list_codes(union cell *l, const char *s);
 int pl_std_cmp(union cell *t1, union cell *t2);
 int pl_std_eq(union cell *t1, union cell *t2);
-int pl_struct_eq(union cell * t1, union cell * t2);
+int pl_struct_eq(union cell *t1, union cell *t2);
 
 #endif

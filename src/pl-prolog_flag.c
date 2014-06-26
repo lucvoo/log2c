@@ -61,7 +61,7 @@ inline static struct prolog_flag *lookup_pflag(struct atom *key, int new)
 		return 0;		// inexistant flag
 }
 
-inline static int SetAtom(struct prolog_flag *f, struct atom *val, int lock, struct atom ** addr)
+inline static int SetAtom(struct prolog_flag *f, struct atom *val, int lock, struct atom **addr)
 {
 	f->type = T_ATOM;
 	if (lock)
@@ -75,7 +75,7 @@ inline static int SetAtom(struct prolog_flag *f, struct atom *val, int lock, str
 	succeed;
 }
 
-inline static int Setpf_atom(const char *key, struct atom *val, int lock, struct atom ** addr)
+inline static int Setpf_atom(const char *key, struct atom *val, int lock, struct atom **addr)
 {
 	struct prolog_flag *f;
 
@@ -85,7 +85,7 @@ inline static int Setpf_atom(const char *key, struct atom *val, int lock, struct
 		fail;
 }
 
-inline static int Setpf_str(const char *key, const char *val, int lock, struct atom ** addr)
+inline static int Setpf_str(const char *key, const char *val, int lock, struct atom **addr)
 {
 	return Setpf_atom(key, PL_new_atom(val), lock, addr);
 }

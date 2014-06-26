@@ -186,7 +186,7 @@ int PL_get_chars(union cell *term, const char **s, unsigned flags)
 	succeed;
 }
 
-int PL_get_name_arity(union cell *t, struct atom ** name, int *arity)
+int PL_get_name_arity(union cell *t, struct atom **name, int *arity)
 {
 	Deref(t);
 
@@ -205,7 +205,7 @@ int PL_get_name_arity(union cell *t, struct atom ** name, int *arity)
 	fail;
 }
 
-int PL_get_functor(union cell *t, struct functor ** f)
+int PL_get_functor(union cell *t, struct functor **f)
 {
 	Deref(t);
 
@@ -250,7 +250,7 @@ int PL_get_list(union cell *l, union cell *h, union cell *t)
 	fail;
 }
 
-int PL_get_list_(union cell *l, union cell ** h, union cell ** t)
+int PL_get_list_(union cell *l, union cell **h, union cell **t)
 {
 	Deref(l);
 

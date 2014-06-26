@@ -8,6 +8,6 @@
 #ifndef	PL_READ_H_
 #define PL_READ_H_
 
-int pl_read(union cell * term);
+int pl_read(union cell *term);
 
 #endif

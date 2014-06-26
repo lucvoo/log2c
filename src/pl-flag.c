@@ -21,7 +21,7 @@ struct flag {
 
 static struct flag *flags[hash_flags_size];
 
-inline static struct flag *lookup_flag(union cell * key)
+inline static struct flag *lookup_flag(union cell *key)
 {
 	hash_t h;
 	struct flag *f;
@@ -57,7 +57,7 @@ debut:
 	return f;
 }
 
-int pl_flag(union cell * key, union cell * old, union cell * new)
+int pl_flag(union cell *key, union cell *old, union cell *new)
 {
 	struct flag *f;
 	union cell *tmp;
@@ -83,7 +83,7 @@ int pl_flag(union cell * key, union cell * old, union cell * new)
 		PL_warning("flag/3: value should be an atom, integer or expression");
 }
 
-int pl_current_flag(union cell * c, enum control *ctrl)
+int pl_current_flag(union cell *c, enum control *ctrl)
 {
 	struct flag *flag;
 	hash_t h;

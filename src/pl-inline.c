@@ -18,7 +18,7 @@
 #include "pl-string.h"
 
 #include <stdio.h>
-union cell *deref_dbg(union cell * addr)
+union cell *deref_dbg(union cell *addr)
 {
 	union cell *p = addr;
 

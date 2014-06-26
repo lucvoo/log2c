@@ -112,7 +112,7 @@ inline static int list_to_array(union cell *list)
 		return -1;
 }
 
-inline static union cell *array_to_list(union cell ** array, int n, int rem_dup)
+inline static union cell *array_to_list(union cell **array, int n, int rem_dup)
 {
 	union cell *l = HP;
 	union cell *last;

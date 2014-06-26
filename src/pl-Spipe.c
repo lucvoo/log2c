@@ -51,7 +51,7 @@ static int Sclose_pipe(struct stream *S)
 	return wstatus;		// FIXME : is this adequate ??
 }
 
-static int open_pipe(const char *cmd, enum stream_mode mode, pid_t * pid_p)
+static int open_pipe(const char *cmd, enum stream_mode mode, pid_t *pid_p)
 {
 	int fd[2];
 	int child_fd, parent_fd, std_fd;

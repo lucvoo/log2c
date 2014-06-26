@@ -37,7 +37,7 @@ int PL_lengthList(union cell *l)
 		return -1;
 }
 
-int pl_between(union cell * low, union cell * high, union cell * n, enum control *ctrl)
+int pl_between(union cell *low, union cell *high, union cell *n, enum control *ctrl)
 {
 	int l, h, i;
 	int *ctxt;
@@ -75,7 +75,7 @@ int pl_between(union cell * low, union cell * high, union cell * n, enum control
 	}
 }
 
-int pl_plus(union cell * d1, union cell * d2, union cell * d3)
+int pl_plus(union cell *d1, union cell *d2, union cell *d3)
 {
 	long a, b, c;
 
@@ -93,7 +93,7 @@ int pl_plus(union cell * d1, union cell * d2, union cell * d3)
 	PL_warning("plus/3 : instantiation fault");
 }
 
-int pl_ground(union cell * d)
+int pl_ground(union cell *d)
 {
 debut:
 	switch (get_tag(d)) {
@@ -121,12 +121,12 @@ debut:
 	return 0;			// Suppress warning
 }
 
-int pl_unground(union cell * d)
+int pl_unground(union cell *d)
 {
 	return !pl_ground(d);
 }
 
-static int term_variables(union cell * c, int n)
+static int term_variables(union cell *c, int n)
 {
 debut:
 
@@ -165,7 +165,7 @@ end:
 	return n;
 }
 
-int pl_term_variables(union cell * t, union cell * fv)
+int pl_term_variables(union cell *t, union cell *fv)
 {
 	int n;
 	union cell *l = HP;
@@ -541,7 +541,7 @@ loop:
 	fail;				// Suppress compiler warning
 }
 
-static int struct_eq(union cell * t1, union cell * t2)
+static int struct_eq(union cell *t1, union cell *t2)
 {
 	Deref(t1);
 	Deref(t2);
@@ -593,7 +593,7 @@ loop:
 	succeed;
 }
 
-int pl_struct_eq(union cell * t1, union cell * t2)
+int pl_struct_eq(union cell *t1, union cell *t2)
 {
 	union cell *old_HP = HP;
 	int rval;
@@ -770,7 +770,7 @@ int pl_hpjw(union cell *str, union cell *h_val)
 	return PL_unify_integer(h_val, h);
 }
 
-static int PL_HashTerm(union cell *term, hash_t * hval)
+static int PL_HashTerm(union cell *term, hash_t *hval)
 {
 	while (1)
 		switch (get_tag(term)) {
@@ -833,7 +833,7 @@ int pl_repeat(enum control *ctrl)
 	retry;
 }
 
-static int NumberVars(union cell * c, struct functor *functor, int start)
+static int NumberVars(union cell *c, struct functor *functor, int start)
 {
 	while (1)
 		switch (get_tag(c)) {

@@ -12,14 +12,14 @@ static unsigned int current_buffer_no;
 static struct ubuffer ring_buffers[PL_MAX_RING_BUF];
 static struct ubuffer discardable_buffer;
 
-void PL_init_ubs(struct ubuffer * ubs)
+void PL_init_ubs(struct ubuffer *ubs)
 {
 	char *s = malloc(240);		// FIXME : test if fail
 	ubs->ptr = ubs->base = s;
 	ubs->end = s + 240;
 }
 
-void PL_free_ubs(struct ubuffer * b)
+void PL_free_ubs(struct ubuffer *b)
 {
 	free(b->base);
 }
