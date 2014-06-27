@@ -25,7 +25,10 @@ void PL_halt(int status)
 int pl_between(union cell *low, union cell *high, union cell *n, enum control *ctrl)
 {
 	long l, h, i;
-	long *ctxt;
+	struct {
+		long i;
+		long h;
+	} *ctxt;
 
 	switch (GetCtrl(ctrl)) {
 	case FIRST_CALL:
@@ -41,19 +44,19 @@ int pl_between(union cell *low, union cell *high, union cell *n, enum control *c
 		PL_unify_intg(n, l);
 		if (l == h)
 			succeed;
-		ctxt = AllocCtxt(long);
-		*ctxt = l;
+		ctxt = AllocCtxt(*ctxt);
+		ctxt->i = l;
+		ctxt->h = h;
 		PL_retry(ctxt);
 
 	case NEXT_CALL:
 		ctxt = GetCtxt(ctrl);
-		i = *ctxt + 1;		// n is variable
+		i = ctxt->i + 1;
 		PL_put_intg(n, i);
 		trail(n);
-		PL_get_long(high, &h);
-		if (i == h)
+		if (i == ctxt->h)
 			succeed;
-		*ctxt = i;
+		ctxt->i = i;
 		retry;
 	default:
 		succeed;
