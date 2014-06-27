@@ -337,7 +337,7 @@ static int WriteTerm(struct stream *S, union cell *t, int prec, int depth, const
 				int n;
 
 				Get_arg(1, t, arg);
-				if (PL_get_integer(arg, &n) && n >= 0) {
+				if (PL_get_intg(arg, &n) && n >= 0) {
 					int i = n % 26;
 					int j = n / 26;
 

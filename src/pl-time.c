@@ -155,7 +155,7 @@ int pl_sleep(union cell *t)
 {
 	int sec;
 
-	if (PL_get_integer(t, &sec)) {
+	if (PL_get_intg(t, &sec)) {
 		sleep(sec);
 		succeed;
 	} else {			// FIXME : error msg

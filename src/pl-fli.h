@@ -171,7 +171,7 @@ inline static void PL_put_atom_chars(union cell *t, const char *s)
 
 //######################################################################
 
-inline static int PL_get_integer(union cell *c, int *n)
+inline static int PL_get_intg(union cell *c, int *n)
 {
 debut:
 	switch (get_tag(c)) {
@@ -185,8 +185,6 @@ debut:
 		fail;
 	}
 }
-
-#define PL_get_intg(c,n)	PL_get_integer(c,n)
 
 inline static int PL_get_long(union cell *c, long *n)
 {

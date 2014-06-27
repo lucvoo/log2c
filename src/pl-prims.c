@@ -29,9 +29,9 @@ int pl_between(union cell *low, union cell *high, union cell *n, enum control *c
 
 	switch (GetCtrl(ctrl)) {
 	case FIRST_CALL:
-		if (!PL_get_integer(low, &l) || !PL_get_integer(high, &h))
+		if (!PL_get_intg(low, &l) || !PL_get_intg(high, &h))
 			PL_warning("between/3: instantiation fault");
-		if (PL_get_integer(n, &i)) {
+		if (PL_get_intg(n, &i)) {
 			try((l <= i && i <= h));
 			succeed;
 		} else if (!PL_is_var(n))
@@ -50,7 +50,7 @@ int pl_between(union cell *low, union cell *high, union cell *n, enum control *c
 		i = *ctxt + 1;		// n is variable
 		PL_put_intg(n, i);
 		trail(n);
-		PL_get_integer(high, &h);
+		PL_get_intg(high, &h);
 		if (i == h)
 			succeed;
 		*ctxt = i;
@@ -280,7 +280,7 @@ int pl_atom_char(union cell *c, union cell *ascii)
 			return PL_unify_intg(ascii, s[0]);
 		else
 			PL_warning("atom_char/2: not a single char atom");
-	} else if (PL_get_integer(ascii, &n) && 0 < n && n < 256) {
+	} else if (PL_get_intg(ascii, &n) && 0 < n && n < 256) {
 		if (n > 0 && n < 256)
 			return PL_unify_atom(c, PL_char_to_atom(n));
 		else
@@ -321,7 +321,7 @@ int pl_functor(union cell *t, union cell *f, union cell *a)
 	if (PL_is_atomic(t))
 		return pl_unify(f, t) && PL_unify_intg(a, 0);
 
-	try(PL_get_integer(a, &arity));
+	try(PL_get_intg(a, &arity));
 
 	if (arity == 0 && PL_is_atomic(f))
 		return pl_unify(t, f);
@@ -697,7 +697,7 @@ int pl_halt(union cell *stat)
 {
 	int n;
 
-	if (!PL_get_integer(stat, &n))
+	if (!PL_get_intg(stat, &n))
 		n = 1;
 
 	PL_halt(n);
@@ -715,9 +715,9 @@ int pl_arg(union cell *n, union cell *term, union cell *arg)
 	if (!PL_get_name_arity(term, &name, &arity))
 		PL_warning("arg/3: second argument in not a term");
 
-	if (PL_get_integer(n, &idx) && idx > 0 && idx <= arity)
+	if (PL_get_intg(n, &idx) && idx > 0 && idx <= arity)
 #else
-	if (PL_get_integer(n, &idx) && idx > 0)
+	if (PL_get_intg(n, &idx) && idx > 0)
 #endif
 		return pl_unify(arg, deref(term) + idx);
 	else
@@ -729,7 +729,7 @@ int pl_setarg(union cell *n, union cell *term, union cell *value)
 	int arity, argn;
 	struct atom *name;
 
-	if (!PL_get_integer(n, &argn) || !PL_get_name_arity(term, &name, &arity))
+	if (!PL_get_intg(n, &argn) || !PL_get_name_arity(term, &name, &arity))
 		PL_warning("setarg/3: instantiation fault");
 
 	if (argn < 1 || argn > arity)

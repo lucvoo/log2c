@@ -116,7 +116,7 @@ static int do_format(const char *fmt, union cell *argv, struct stream *S)
 					arg = (arg == DEFAULT ? *fmt - '0' : arg * 10 + *fmt - '0');
 			} else if (*fmt == '*') {
 				NEED_ARG;
-				if (PL_get_integer(argv, &arg) && arg >= 0) {
+				if (PL_get_intg(argv, &arg) && arg >= 0) {
 					SHIFT;
 				} else
 					ERROR("no or negative integer for `*' argument");
@@ -142,7 +142,7 @@ static int do_format(const char *fmt, union cell *argv, struct stream *S)
 					int c;	/* ascii */
 
 					NEED_ARG;
-					if (PL_get_integer(argv, &c) && c >= 0 && c <= 255) {
+					if (PL_get_intg(argv, &c) && c >= 0 && c <= 255) {
 						int times = (arg == DEFAULT ? 1 : arg);
 
 						SHIFT;
@@ -163,7 +163,7 @@ static int do_format(const char *fmt, union cell *argv, struct stream *S)
 					char *s;
 
 					NEED_ARG;
-					if (!PL_get_integer(argv, &i))
+					if (!PL_get_intg(argv, &i))
 						ERROR1("illegal argument to ~%c", *fmt);
 					SHIFT;
 					if (arg == DEFAULT)
@@ -360,7 +360,7 @@ int pl_int_to_atom3(union cell *num, union cell *base, union cell *atom)
 	int b;
 	char *s = buf + sizeof(buf);
 
-	if (!PL_get_long(num, &n) || !PL_get_integer(base, &b))
+	if (!PL_get_long(num, &n) || !PL_get_intg(base, &b))
 		PL_warning("int_to_atom/3: instantiation fault");
 
 	*--s = '\0';

@@ -147,7 +147,7 @@ int pl_op(union cell *precedence, union cell *type, union cell *operator)
 
 	if (!(op = PL_get_atom(operator)) ||
 	    !(a_t = PL_get_atom(type)) ||
-	    !PL_get_integer(precedence, &prec) ||
+	    !PL_get_intg(precedence, &prec) ||
 	    prec < 0 || prec > 1200 || !(t = OperatorAtom2Type(a_t)))
 		fail;
 
@@ -192,7 +192,7 @@ int pl_current_op(union cell *precedence, union cell *type, union cell *operator
 			fail;
 	}
 
-	if (!PL_get_integer(precedence, &prec)) {
+	if (!PL_get_intg(precedence, &prec)) {
 		if (PL_is_var(precedence))
 			prec = 0;
 		else
