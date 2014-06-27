@@ -158,7 +158,7 @@ code_user(I) :+
 	check_import(Us, Xs),
 	flag(current_module, M, M),
 	maplist(export_user_preds, P),
-	init_module(P, Q, Xs),
+	init_module(P, Q, [], Xs),
 	code_Q(Q),
 	code_P(P),
 	code_fin.
@@ -170,7 +170,7 @@ code_module(I, X) :+
 	get_exports(Us, Xs),
 	check_import(Us, Xs),
 	check_export(X, P, Xs),
-	init_module(P, [], Xs),
+	init_module(P, [], X, Xs),
 	code_P(P),
 	flag(current_module, M, M),
 	(
@@ -182,15 +182,15 @@ code_module(I, X) :+
 	),
 	code_fin.
 
-init_module(P, Q, X) :-
+init_module(P, Q, X, Xs) :-
 	del(undef_pred),
-	a_n_f(P, Q, La, Lf, Lp),
+	a_n_f(P, Q, X, La, Lf, Lp),
 	anf_module(La, Lf, Lp),
 	flag(current_module, M, M),
 	map_atom(M, Mod),
 	used_modules(Ms),
 	maplist(decl_import_mod, Ms),
-	maplist(decl_export_mod, X),
+	maplist(decl_export_mod, Xs),
 	nl,
 	format('\nvoid module_~w(void)\n{\n', [Mod]),
 	format('  //if (&&backtrack==0) return;\n\n').

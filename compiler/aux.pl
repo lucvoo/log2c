@@ -6,7 +6,7 @@
 /************************************************************************/
 
 :- module(aux, [
-		a_n_f/5,
+		a_n_f/6,
 		comm/1,
 		comm/2,
 		comm/3,
@@ -335,7 +335,7 @@ to_list(not(A), I, O) :-
 to_list(E, [E|O], O).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-a_n_f(G, Q, A, F, P) :-
+a_n_f(G, Q, X, A, F, P) :-
 	flag(current_module, M, M),
 	(   
 		M=0
@@ -344,8 +344,9 @@ a_n_f(G, Q, A, F, P) :-
 	;
 		anf_rec_atom(M)
 	),
-	anf2([cl([], Q)]),
-	anf1(G),
+	anf_clause(cl([], Q)),
+	maplist(anf_pred, G),
+	maplist(anf_rec_fun, X),
 	anf(A, F, P).
 
 anf(A, F, P) :-
@@ -373,69 +374,47 @@ anf_rec_import :-
 anf_rec_import.
 
 
-anf1([]) :- !.
-anf1([pr(F, N, L)|Q]) :-
+anf_pred(pr(F, N, L)) :-
 	anf_rec_pred(F/N),
-	anf2(L),
-	anf1(Q).
+	maplist(anf_clause, L).
 
-anf2([]) :- !.
-anf2([cl(H, G)|Q]) :-
+anf_clause(cl(H, G)) :-
+	maplist(anf_elem,H),
 	to_list(G, L),
-	anf3(L),
-	anf3(H),
-	anf2(Q), !.
+	maplist(anf_goal, L).
 
-anf3([]) :- !.
-anf3([E|Q]) :-
-	atom(E), !,
-	anf_rec_atom(E),
-	anf3(Q).
-anf3([E|Q]) :-
-	(   
-		var(E)
-	;
-		
-		integer(E)
-	;
-		float(E)
-	), !,
-	anf3(Q).
-anf3([E|Q]) :-
-	anf4(E),
-	anf3(Q).
+anf_goal(E) :-
+	compound(E), !,
+	%% We do not record the goal's atoms & functors, only the ones in their arguments
+	E=..[_|L],
+	maplist(anf_elem, L).
+anf_goal(_).
 
-anf4(E) :-
+anf_elem(E) :-
+	compound(E), !,
 	functor(E, F, N),
+	anf_rec_fun(F, N),
 	E=..[F|L],
-	anf_rec_fun(F/N),
-	anf3(L), !.
-anf4(_).
+	maplist(anf_elem, L).
+anf_elem(E) :-
+	atom(E), !,
+	anf_rec_atom(E).
+anf_elem(_).
 
 
 anf_rec_atom(A) :-
 	recorda(anf_rec_atom, A).
 
-anf_rec_fun(F) :-
-	(   
-		fail
-	->
-		true
-	;
-		recorda(anf_rec_fun, F)
-	),
-	F=A/_,
-	anf_rec_atom(A).
+anf_rec_fun(F/N) :-
+	anf_rec_fun(F, N).
+anf_rec_fun(F, N) :-
+	recorda(anf_rec_fun, F/N),
+	anf_rec_atom(F).	%% FIXME: Needed? can be done at collect time
 
 anf_rec_pred(P) :-
-	(   
-		fail
-	->
-		true
-	;
-		recorda(anf_rec_pred, P)
-	),
-	anf_rec_fun(P).
+	recorda(anf_rec_pred, P),
+	anf_rec_fun(P),		%% FIXME: Why de we really need that?
+	true.
 
 
 anf_get_erase(K, S) :-
