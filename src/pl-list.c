@@ -202,6 +202,13 @@ inline static union cell *array_to_list(union cell **array, int n, int rem_dup)
 	return l;
 }
 
+static void PL_qsort(union cell *array[], size_t n, int (*fun)(const union cell *, const union cell *))
+{
+	int (*cmp)(const void *, const void *) = (void*) fun;
+
+	qsort(array, n, sizeof(union cell*), cmp);
+}
+
 inline static int PL_sort(union cell *list, union cell *sorted, int rem_dup)
 {
 	union cell **array = (union cell **) SHP;
@@ -215,7 +222,7 @@ inline static int PL_sort(union cell *list, union cell *sorted, int rem_dup)
 		PL_warning("%s/2: first_argument is not a proper list", rem_dup ? "sort" : "msort");
 
 	if (n != 0)
-		qsort(array, n, sizeof(union cell *), pl_std_cmp);
+		PL_qsort(array, n, pl_std_cmp);
 
 	l = array_to_list(array, n, rem_dup);
 	return pl_unify(l, sorted);
