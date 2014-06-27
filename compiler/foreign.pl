@@ -14,8 +14,8 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-foreign_pred(P/I, C, D) :-
-	foreign_pred_builtin(P, I, C, D).
+foreign_pred(PI, C, D) :-
+	foreign_pred_builtin(PI, C, D).
 foreign_pred(PI, C, D) :-
 	recorded(reg_foreign, reg_foreign(PI, C, D)).
 
