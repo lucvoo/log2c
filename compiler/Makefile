@@ -42,9 +42,13 @@ ${PLC}: ${SRC} pl-ext.pl
 	pl -o $@ -c plc.pl
 
 pl-ext.pl: ${src_dir}/pl-ext.def ${src_dir}/pl-ext.h
-	echo ":- module('$*',[ foreign_pred_builtin/3 ])." > $@
-	echo >> $@
-	gcc -E -P -x c-header -DPL ${src_dir}/pl-ext.h | grep -v "^[ ]*$$" >> $@
+	@echo "GEN	$@"
+	@echo "%% Automatically generated from $<"	> $@
+	@echo "%% !!! DO NOT EDIT !!!"			>> $@
+	@echo						>> $@
+	@echo ":- module('$*', [foreign_pred_builtin/3])." >> $@
+	@echo						>> $@
+	@gcc -E -P -x c-header -DPL ${src_dir}/pl-ext.h	>> $@
 
 ########################################################################
 # Dependencies
