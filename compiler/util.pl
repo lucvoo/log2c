@@ -165,7 +165,7 @@ init_args :-
 init_preds([F|Q]) :-
 	recorda(preds, F),
 	map_pred(F, Pm),
-	format(h, 'extern void PRED~w;\n', Pm),
+	format(h, 'extern unsigned int PRED~w;\n', Pm),
 	init_preds(Q).
 init_preds([]).
 
@@ -190,7 +190,7 @@ decl_preds(X) :-
 decl_pred(P) :-
 	import_from_module(P, M),
 	map_pred(P, M, Pm),
-	format(h, 'extern void PRED~w;\n', Pm).
+	format(h, 'extern unsigned int PRED~w;\n', Pm).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
