@@ -48,7 +48,7 @@ int pl_between(union cell *low, union cell *high, union cell *n, enum control *c
 	case NEXT_CALL:
 		ctxt = GetCtxt(ctrl);
 		i = *ctxt + 1;		// n is variable
-		PL_put_integer(n, i);
+		PL_put_intg(n, i);
 		trail(n);
 		PL_get_integer(high, &h);
 		if (i == h)

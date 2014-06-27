@@ -122,7 +122,7 @@ loop_arity:				// INV: f is instantiated;
 	for (; h < PL__funs_hash_size; fun = PL__funs[++h])
 		for (; fun; fun = fun->next)
 			if (fun->functor == get_atom(f)) {
-				PL_put_integer(n, fun->arity);
+				PL_put_intg(n, fun->arity);
 				trail(n);
 				ctxt->hash = h;
 				ctxt->fun = fun->next;
@@ -149,7 +149,7 @@ loop_all:				// INV: f is a variable
 		for (; fun; fun = fun->next) {
 			PL_put_atom(f, fun->functor);
 			trail(f);
-			PL_put_integer(n, fun->arity);
+			PL_put_intg(n, fun->arity);
 			trail(n);
 			ctxt->hash = h;
 			ctxt->fun = fun->next;

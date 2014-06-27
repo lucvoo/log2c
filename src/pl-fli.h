@@ -136,7 +136,7 @@ inline static void PL_put_var(union cell *t)
 	mkrefp(t, new_var());
 }
 
-inline static void PL_put_integer(union cell *v, long N)
+inline static void PL_put_intg(union cell *v, long N)
 {
 	v->val = __intg(N);
 	return;

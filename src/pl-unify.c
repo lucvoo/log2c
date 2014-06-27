@@ -107,7 +107,7 @@ debut:
 		c = c->celp;
 		goto debut;
 	case var_tag:
-		PL_put_integer(c, i);
+		PL_put_intg(c, i);
 		trail(c);
 		succeed;
 	case int_tag:

@@ -27,7 +27,7 @@ static int PL_unify_ip(union cell *Ip, const struct in_addr *addr)
 	if (is_var(Ip)) {
 		union cell *f = new_struct(FUN(_ip, 4), 4);
 		for (i = 0; i < 4; i++) {
-			PL_put_integer(f + 1 + i, a[3 - i]);
+			PL_put_intg(f + 1 + i, a[3 - i]);
 		}
 		mkrefp(Ip, f);
 		trail(Ip);

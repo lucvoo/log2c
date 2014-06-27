@@ -51,7 +51,7 @@ void pl_exit(int);
 	{ if (isintg(N,arg)) ;		\
 	  else				\
 	  if (is_var(arg))		\
-	    { PL_put_integer(arg,N);	\
+	    { PL_put_intg(arg,N);	\
 	      trail(arg);		\
 	    }				\
 	  else 				\
