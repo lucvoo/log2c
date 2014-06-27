@@ -24,14 +24,14 @@ void PL_halt(int status)
 
 int pl_between(union cell *low, union cell *high, union cell *n, enum control *ctrl)
 {
-	int l, h, i;
-	int *ctxt;
+	long l, h, i;
+	long *ctxt;
 
 	switch (GetCtrl(ctrl)) {
 	case FIRST_CALL:
-		if (!PL_get_intg(low, &l) || !PL_get_intg(high, &h))
+		if (!PL_get_long(low, &l) || !PL_get_long(high, &h))
 			PL_warning("between/3: instantiation fault");
-		if (PL_get_intg(n, &i)) {
+		if (PL_get_long(n, &i)) {
 			try((l <= i && i <= h));
 			succeed;
 		} else if (!PL_is_var(n))
@@ -41,7 +41,7 @@ int pl_between(union cell *low, union cell *high, union cell *n, enum control *c
 		PL_unify_intg(n, l);
 		if (l == h)
 			succeed;
-		ctxt = AllocCtxt(int);
+		ctxt = AllocCtxt(long);
 		*ctxt = l;
 		PL_retry(ctxt);
 
@@ -50,7 +50,7 @@ int pl_between(union cell *low, union cell *high, union cell *n, enum control *c
 		i = *ctxt + 1;		// n is variable
 		PL_put_intg(n, i);
 		trail(n);
-		PL_get_intg(high, &h);
+		PL_get_long(high, &h);
 		if (i == h)
 			succeed;
 		*ctxt = i;
