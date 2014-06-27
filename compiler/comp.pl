@@ -130,7 +130,7 @@ code_anf(N) :-
 
 link(Name) :-
 	need_modules(Ms),
-	maplist(aux:module_extension(o), Ms, Mso_),
+	maplist(module_extension(o), Ms, Mso_),
 	sort(Mso_, Mso),
 	concat_atom(Ms, ' ', L),
 	concat_atom(Mso, ' ', Lo),
@@ -157,7 +157,7 @@ code_user(I) :+
 	get_exports(Us, Xs),
 	check_import(Us, Xs),
 	flag(current_module, M, M),
-	maplist(aux:export_user_preds, P),
+	maplist(export_user_preds, P),
 	init_module(P, Q, Xs),
 	code_Q(Q),
 	code_P(P),
@@ -189,8 +189,8 @@ init_module(P, Q, X) :-
 	flag(current_module, M, M),
 	map_atom(M, Mod),
 	used_modules(Ms),
-	maplist(util:decl_import_mod, Ms),
-	maplist(util:decl_export_mod, X),
+	maplist(decl_import_mod, Ms),
+	maplist(decl_export_mod, X),
 	nl,
 	format('\nvoid module_~w(void)\n{\n', [Mod]),
 	format('  //if (&&backtrack==0) return;\n\n').
@@ -202,7 +202,7 @@ init_hash(La, Lf, Lp) :-
 	findall(F, functors(F), Bf),
 	append(La, Ba, Ca),
 	append(Lf, Bf, F),
-	maplist(comp:get_atom_from_fun, F, Af),
+	maplist(get_atom_from_fun, F, Af),
 	append(Ca, Af, A),
 	sort(A, Sa),
 	sort(F, Sf),
@@ -325,8 +325,9 @@ code_FPr_det([F, N, C]) :+
 	+> nl, !.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 code_C(F, N, cl(La, G), T) :+
-	maplist(trans:trans, La, Lt),
+	maplist(trans, La, Lt),
 	trans_term(G, Gt),
 	vars(Lt, Gt, R),
 	label(F, N, Li),
@@ -506,4 +507,17 @@ fin(first) :+
 fin(middle) :+
 	+> restore.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Not used but could be used for an interactive loop
+code_binding(Bs) :+
+	+> g0('\n\n#ifdef\tINTERACTIVE'),
+	+> g0('const char *PL_freevar[] =\n{'),
+	mapl(binding, Bs),
+	+> g0('};\n'),
+	+> g0('int PL_nbr_fv = sizeof(PL_freevar)/sizeof(PL_freevar[0]);'),
+	+> g0('#endif\n\n').
+
+binding(N=var(_, I)) :+
+	J is I-1,
+	+> g0('  [~w] "~w",', [J, N]).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
