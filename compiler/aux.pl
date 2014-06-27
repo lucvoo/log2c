@@ -25,8 +25,6 @@
 		fl/1,
 		fl_/1,
 		flag2/3,
-		foreign_pred/3,
-		foreign_preds/1,
 		fun/4,
 		g/1,
 		g/2,
@@ -53,16 +51,10 @@
 	]).
 
 :- use_module(errmsg).
+:- use_module(foreign).
 :- use_module(map_name).
-:- use_module('pl-ext').
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-foreign_pred(P/I, C, D) :-
-	foreign_pred_builtin(P, I, C, D).
-foreign_pred(PI, C, D) :-
-	recorded(reg_foreign, reg_foreign(PI, C, D)).
-
 
 ndet_pred(T, L) :-
 	findall(R, ndet_p(T, R), Lt),
@@ -98,14 +90,6 @@ det_p(spec, Np) :-
 det_p(functor, Np) :-
 	det_p(F, _, _),
 	Np=F.
-
-
-foreign_preds(L) :-
-	findall(P, preds_C_(P), Lt),
-	sort(Lt, L).
-
-preds_C_(F/N) :-
-	foreign_pred(F/N, _, _).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %!	file_type(+File, -Type) is semidet

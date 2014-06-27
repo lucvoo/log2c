@@ -20,7 +20,7 @@
 	]).
 
 :- use_module(aux).
-:- use_module('pl-ext').
+:- use_module(foreign).
 :- use_module(errmsg).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

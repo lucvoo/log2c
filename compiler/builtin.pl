@@ -12,7 +12,7 @@
 :- use_module(aux).
 :- use_module(map_name).
 :- use_module(atoms).
-:- use_module('pl-ext').
+:- use_module(foreign).
 :- use_module(code).
 
 :- op(1200, xfx, :+).
