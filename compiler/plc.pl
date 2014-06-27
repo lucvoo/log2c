@@ -15,12 +15,6 @@ term_expansion(I, O) :-
 
 :- use_module(comp).
 
-%% These one are only indirectly used
-:- use_module([aux, vars, builtin, trad, atoms, map_name, hash]).
-:- use_module([modules, trans]).
-:- use_module(code).
-:- use_module(util).
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 compile(F) :-

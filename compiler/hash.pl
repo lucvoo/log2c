@@ -13,7 +13,10 @@
 		init_hash_mods/1
 	]).
 
-:- use_module([atoms, map_name, aux, modules, util]).
+:- use_module(atoms).
+:- use_module(map_name).
+:- use_module(aux).			%% For noescape/2
+:- use_module(modules).
 
 %% initalize default hash-table size.
 init_hash :-
