@@ -52,7 +52,7 @@ inline static unsigned long __intg(long N)
 	return MK_CELL(int_tag, VAL_MASK & N);
 }
 
-inline static unsigned long __fun(struct functor *F)
+inline static unsigned long __fun(const struct functor *F)
 {
 	return MK_CELL(fun_tag, F);
 }
@@ -62,54 +62,54 @@ inline static unsigned long __var(void)
 	return MK_CELL(var_tag, 0);
 }
 
-inline static unsigned long __atom(struct atom *A)
+inline static unsigned long __atom(const struct atom *A)
 {
 	return (unsigned long) new_atom(A);
 }
 
-inline static int is_ref(union cell *c)
+inline static int is_ref(const union cell *c)
 {
 	return get_tag(c) == ref_tag;
 }
 
-inline static int is_var(union cell *c)
+inline static int is_var(const union cell *c)
 {
 	return c->val == __var();
 }
 
-inline static int is_atom(union cell *c)
+inline static int is_atom(const union cell *c)
 {
 	return get_tag(c) == ato_tag;
 }
 
-inline static int is_intg(union cell *c)
+inline static int is_intg(const union cell *c)
 {
 	return get_tag(c) == int_tag;
 }
 
-inline static int is_flt(union cell *c)
+inline static int is_flt(const union cell *c)
 {
 	return get_tag(c) == flt_tag;
 }
 
-inline static int is_number(union cell *c)
+inline static int is_number(const union cell *c)
 {
 	int tag = get_tag(c);
 	return tag == int_tag || tag == flt_tag;
 }
 
-inline static int is_atomic(union cell *c)
+inline static int is_atomic(const union cell *c)
 {
 	int tag = get_tag(c);
 	return tag == ato_tag || tag == int_tag || tag == flt_tag;
 }
 
-inline static int is_fun(union cell *c)
+inline static int is_fun(const union cell *c)
 {
 	return get_tag(c) == fun_tag;
 }
 
-inline static int is_term(union cell *c)
+inline static int is_term(const union cell *c)
 {
 	return is_fun(c);
 }
@@ -133,7 +133,7 @@ inline static union cell *new_void(void)
 	return new_var();
 }					// FIXME : put void var in local stack
 
-inline static union cell *new_struct(struct functor *F, int N)
+inline static union cell *new_struct(const struct functor *F, int N)
 {
 	typeof(HP) old_HP;
 
@@ -149,22 +149,22 @@ inline static union cell *new_cons(void)
 	return new_struct(FUN(dot, 2), 2);
 }
 
-inline static int isatom(struct atom *A, union cell *addr)
+inline static int isatom(const struct atom *A, const union cell *addr)
 {
 	return addr == &(A->cell);	// atoms are unique !
 }
 
-inline static int isintg(long N, union cell *addr)
+inline static int isintg(long N, const union cell *addr)
 {
 	return addr->val == __intg(N);
 }
 
-inline static int isflt(double r, union cell *addr)
+inline static int isflt(double r, const union cell *addr)
 {
 	return get_flt(addr) == r;
 }
 
-inline static int isfun(struct functor *F, union cell *addr)
+inline static int isfun(const struct functor *F, const union cell *addr)
 {
 	return addr->val == __fun(F);
 }
@@ -246,7 +246,7 @@ inline static unsigned long round_to_power(unsigned long n)
 }
 
 // 0 and -1 are never a valid value
-inline static hash_t SimpleHashValue(union cell *key)
+inline static hash_t SimpleHashValue(const union cell *key)
 {
 debut:
 	switch (get_tag(key))		// get the hash value if the key is OK

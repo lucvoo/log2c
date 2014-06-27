@@ -40,90 +40,90 @@ void PL_put_list(union cell *l);
                  *             ATOMS            *
                  *******************************/
 
-inline static const char *PL_atom_chars(struct atom *a)
+inline static const char *PL_atom_chars(const struct atom *a)
 {
 	return a->name;
 }
 
-inline static struct atom *PL_functor_name(struct functor *f)
+inline static const struct atom *PL_functor_name(const struct functor *f)
 {
 	return f->functor;
 }
 
-inline static int PL_functor_arity(struct functor *f)
+inline static int PL_functor_arity(const struct functor *f)
 {
 	return f->arity;
 }
 
 //######################################################################
 
-inline static int PL_is_var(union cell *c)
+inline static int PL_is_var(const union cell *c)
 {
 	return __isVar(Val(c));
 }
 
-inline static int PL_is_integer(union cell *c)
+inline static int PL_is_integer(const union cell *c)
 {
 	return __isInteger(Val(c));
 }
 
-inline static int PL_is_number(union cell *c)
+inline static int PL_is_number(const union cell *c)
 {
 	return __isNumber(Val(c));
 }
 
-inline static int PL_is_atom(union cell *c)
+inline static int PL_is_atom(const union cell *c)
 {
 	return __isAtom(Val(c));
 }
 
-inline static int PL_is_atomic(union cell *c)
+inline static int PL_is_atomic(const union cell *c)
 {
 	return __isAtomic(Val(c));
 }
 
-inline static int PL_is_term(union cell *c)
+inline static int PL_is_term(const union cell *c)
 {
 	return __isTerm(Val(c));
 }
 
-inline static int PL_is_struct(union cell *c)
+inline static int PL_is_struct(const union cell *c)
 {
 	return __isStruct(Val(c));
 }
 
-inline static int PL_is_functor(union cell *t, struct functor *f)
+inline static int PL_is_functor(union cell *t, const struct functor *f)
 {
 	return f == get_fun(deref(t));
 }
 
-inline static int PL_is_list(union cell *c)
+inline static int PL_is_list(const union cell *c)
 {
 	return __isList(Val(c));
 }
 
-inline static int PL_is_cons(union cell *c)
+inline static int PL_is_cons(const union cell *c)
 {
 	return __isCons(Val(c));
 }
 
-inline static int PL_get_nil(union cell *c)
+inline static int PL_get_nil(const union cell *c)
 {
 	return __isNil(Val(c));
 }
 
 // The next ones must be deref
-inline static int is_cons(union cell *c)
+inline static int is_cons(const union cell *c)
 {
 	return __isCons(c->val);
 }
 
-inline static int is_nil(union cell *c)
+inline static int is_nil(const union cell *c)
 {
 	return __isNil(c->val);
 }
 
-inline static int is_list(union cell *c)
+inline static int is_list(const union cell *c)
 {
 	return __isList(c->val);
 }
@@ -171,7 +171,7 @@ inline static void PL_put_atom_chars(union cell *t, const char *s)
 
 //######################################################################
 
-inline static int PL_get_intg(union cell *c, int *n)
+inline static int PL_get_intg(const union cell *c, int *n)
 {
 debut:
 	switch (get_tag(c)) {
@@ -186,7 +186,7 @@ debut:
 	}
 }
 
-inline static int PL_get_long(union cell *c, long *n)
+inline static int PL_get_long(const union cell *c, long *n)
 {
 debut:
 	switch (get_tag(c)) {
@@ -201,7 +201,7 @@ debut:
 	}
 }
 
-inline static int PL_get_flt(union cell *c, double *d)
+inline static int PL_get_flt(const union cell *c, double *d)
 {
 debut:
 	switch (get_tag(c)) {
@@ -216,7 +216,7 @@ debut:
 	}
 }
 
-inline static int PL_get_pointer(union cell *c, void **ptr)
+inline static int PL_get_pointer(const union cell *c, void **ptr)
 {
 debut:
 	switch (get_tag(c)) {
@@ -231,7 +231,7 @@ debut:
 	}
 }
 
-inline static struct atom *PL_get_atom(union cell *c)
+inline static struct atom *PL_get_atom(const union cell *c)
 {
 debut:
 	switch (get_tag(c)) {
@@ -245,7 +245,7 @@ debut:
 	}
 }
 
-inline static int PL_get_atom_chars(union cell *c, const char **s)
+inline static int PL_get_atom_chars(const union cell *c, const char **s)
 {
 debut:
 	switch (get_tag(c)) {
