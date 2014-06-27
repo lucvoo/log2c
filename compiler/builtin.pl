@@ -75,6 +75,8 @@ inline(var(X)) :+
 	type(var, X, is_var).
 inline(nonvar(X)) :+
 	type(nonvar, X, '!is_var').
+inline(callable(X)) :+
+	type(callable, X, is_callable).
 inline(compound(X)) :+
 	type(compound, X, is_fun).
 inline(simple(X)) :+

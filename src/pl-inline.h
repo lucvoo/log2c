@@ -114,6 +114,11 @@ inline static int is_term(const union cell *c)
 	return is_fun(c);
 }
 
+inline static int is_callable(const union cell *c)
+{
+	return is_callable(c) || is_atom(c);
+}
+
 inline static union cell *new_intg(long N)
 {
 	HP->val = __intg(N);

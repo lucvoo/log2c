@@ -16,7 +16,6 @@
 * Add compare/3
 * Add the new predicates of ISO Cor2
 	- subsumes_term/2
-	- callable/1
 	- acyclic_term/1
 	- compare/3
 	- keysort/2
