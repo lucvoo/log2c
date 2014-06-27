@@ -415,7 +415,7 @@ inline static int cmp_flt(double d1, double d2)
 	return (d1 < d2) ? -1 : ((d1 == d2) ? 0 : 1);
 }
 
-inline static int cmp_addr(void *a1, void *a2)
+inline static int cmp_addr(const void *a1, const void *a2)
 {
 	return (a1 < a2) ? -1 : ((a1 == a2) ? 0 : 1);
 }
@@ -425,7 +425,7 @@ inline static int cmp_intg(int i1, int i2)
 	return (i1 < i2) ? -1 : ((i1 == i2) ? 0 : 1);
 }
 
-int pl_std_cmp(union cell *t1, union cell *t2)
+int pl_std_cmp(const union cell *t1, const union cell *t2)
 {
 loop:
 	Deref(t2);
