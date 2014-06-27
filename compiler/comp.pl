@@ -193,7 +193,7 @@ init_module(P, Q, X) :-
 	maplist(util:decl_export_mod, X),
 	nl,
 	format('\nvoid module_~w(void)\n{\n', [Mod]),
-	format('  if (&&backtrack==0) return;\n\n').
+	format('  //if (&&backtrack==0) return;\n\n').
 
 get_atom_from_fun(A/_, A).
 

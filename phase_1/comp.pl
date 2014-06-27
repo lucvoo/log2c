@@ -193,13 +193,13 @@ init_module(P, Q, X) :-
 	maplist(decl_export_mod, X),
 	nl,
 	format('\nvoid module_~w(void)\n{\n', [Mod]),
-	format('  if (&&backtrack==0) return;\n\n').
+	format('  //if (&&backtrack==0) return;\n\n').
 
 get_atom_from_fun(A/_, A).
 
 init_hash(La, Lf, Lp) :-
 	findall(A, atoms(A), Ba),
-	findall(F, functors(B), Bf),
+	findall(F, functors(F), Bf),
 	append(La, Ba, Ca),
 	append(Lf, Bf, F),
 	maplist(get_atom_from_fun, F, Af),
