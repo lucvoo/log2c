@@ -13,6 +13,7 @@
 :- use_module([modules, trans]).
 :- use_module(code).
 :- use_module(util).
+:- use_module(errmsg).
 
 :- op(1200, xfx, :+).
 :- op(900, fy, +>).

@@ -8,7 +8,8 @@
 :- module(arith, [
 		map_arith_op/2
 	]).
-:- use_module([map_name, aux]).
+:- use_module(map_name).
+:- use_module(errmsg).
 
 map_arith_op(O, N) :-
 	O=F/A,

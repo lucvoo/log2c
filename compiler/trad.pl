@@ -11,6 +11,7 @@
 
 :- use_module([aux, addr, atoms, map_name]).
 :- use_module(modules).
+:- use_module(errmsg).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 trad([call_(F, N, L), fl(L), restore|Q]) :-

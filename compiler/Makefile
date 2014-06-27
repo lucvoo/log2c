@@ -11,6 +11,7 @@ SRC = \
 	builtin.pl \
 	code.pl \
 	comp.pl \
+	errmsg.pl \
 	hash.pl \
 	map_name.pl \
 	modules.pl \
