@@ -16,7 +16,6 @@
 		comp_C/1,
 		del/1,
 		del_all/0,
-		det_pred/2,
 		export_pred/1,
 		exported/1,
 		f/1,
@@ -41,7 +40,6 @@
 		module_extension/3,
 		msg_pred_not_def/1,
 		msg_pred_not_used/1,
-		ndet_pred/2,
 		new_indent/1,
 		noescape/2,
 		read_all/2,
@@ -53,43 +51,6 @@
 :- use_module(errmsg).
 :- use_module(foreign).
 :- use_module(map_name).
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-ndet_pred(T, L) :-
-	findall(R, ndet_p(T, R), Lt),
-	list_to_set(Lt, L).
-
-ndet_p(F, N, C) :-
-	foreign_pred(F/N, C, ndet).
-
-ndet_p(full, Np) :-
-	ndet_p(F, N, C),
-	Np=[F, N, C].
-ndet_p(spec, Np) :-
-	ndet_p(F, N, _),
-	Np=F/N.
-ndet_p(functor, Np) :-
-	ndet_p(F, _, _),
-	Np=F.
-
-
-det_pred(T, L) :-
-	findall(R, det_p(T, R), Lt),
-	list_to_set(Lt, L).
-
-det_p(F, N, C) :-
-	foreign_pred(F/N, C, det).
-
-det_p(full, Np) :-
-	det_p(F, N, C),
-	Np=[F, N, C].
-det_p(spec, Np) :-
-	det_p(F, N, _),
-	Np=F/N.
-det_p(functor, Np) :-
-	det_p(F, _, _),
-	Np=F.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %!	file_type(+File, -Type) is semidet

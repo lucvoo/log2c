@@ -14,6 +14,7 @@
 :- use_module(code).
 :- use_module(util).
 :- use_module(errmsg).
+:- use_module(foreign).
 
 :- op(1200, xfx, :+).
 :- op(900, fy, +>).
@@ -255,9 +256,9 @@ code__Pr(pr(F, A, [C|Q])) :+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 code_FPr :+
-	ndet_pred(full, Ln),
+	foreign_preds(full,ndet, Ln),
 	mapl(code_FPr_ndet, Ln),
-	det_pred(full, Ld),
+	foreign_preds(full, det, Ld),
 	mapl(code_FPr_det, Ld).
 
 code_FPr_ndet([F, N, C]) :+

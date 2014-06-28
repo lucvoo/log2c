@@ -12,6 +12,7 @@ SRC = \
 	code.pl \
 	comp.pl \
 	errmsg.pl \
+	foreign.pl \
 	hash.pl \
 	map_name.pl \
 	modules.pl \
