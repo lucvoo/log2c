@@ -38,8 +38,6 @@
 		mapli/5,
 		merge_to_set/3,
 		module_filename/3,
-		msg_pred_not_def/1,
-		msg_pred_not_used/1,
 		new_indent/1,
 		noescape/2,
 		read_all/2,
@@ -174,18 +172,6 @@ merge_to_set(L1, L2, S) :-
 	list_to_set(L1, S1),
 	list_to_set(L2, S2),
 	union(S1, S2, S).
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-msg_pred_not_def(_).
-msg_pred_not_used([]).
-msg_pred_not_used([P]) :-
-	warning('unused predicate : ~w ', [[P]]),
-	warning('no code generated for this'),
-	format(user_error, '\n', []).
-msg_pred_not_used(Lp) :-
-	warning('unused predicates : ~w ', [Lp]),
-	warning('no code generated for these'),
-	format(user_error, '\n', []).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 noescape(F, Fs) :-
