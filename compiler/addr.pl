@@ -9,7 +9,7 @@
 		addr/2,
 		mem_arg/2
 	]).
-:- use_module(atoms).
+:- use_module(map_name).
 
 %%%%%%%%
 addr(atom(A), R) :-

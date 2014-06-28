@@ -13,7 +13,6 @@
 		init_hash_mods/1
 	]).
 
-:- use_module(atoms).
 :- use_module(map_name).
 :- use_module(aux).			%% For noescape/2
 :- use_module(modules).

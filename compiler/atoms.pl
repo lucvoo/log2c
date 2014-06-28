@@ -7,13 +7,8 @@
 
 :- module(atoms, [
 		atoms/1,
-		functors/1,
-		map_atom/2
+		functors/1
 	]).
-
-
-map_atom(A, N) :-
-	'$mangle'(A, N).
 
 
 atoms('$VAR').

@@ -26,7 +26,7 @@
 	]).
 
 :- use_module(aux).
-:- use_module([map_name, atoms, modules]).
+:- use_module([map_name, modules]).
 :- use_module(errmsg).
 
 :- op(1200, xfx, :+).
