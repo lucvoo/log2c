@@ -351,10 +351,6 @@ comm(H, A, B) :-
 comm(H, A) :-
 	map_name_v(A, Na),
 	format('/* ~w(~w) */\n', [H, Na]), !.
-comm(curr_C) :-
-	flag(curr_C, C, C),
-	getlabel(C, Lab),
-	comm(Lab).
 comm(H) :-
 	format('/* ~w */\n', [H]), !.
 
