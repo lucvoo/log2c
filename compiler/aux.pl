@@ -36,7 +36,6 @@
 		mapl/4,
 		mapli/4,
 		mapli/5,
-		merge_to_set/3,
 		module_filename/3,
 		new_indent/1,
 		noescape/2,
@@ -166,12 +165,6 @@ del(K) :-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 new_indent(N) :-
 	flag(indent, O, O+N).
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-merge_to_set(L1, L2, S) :-
-	list_to_set(L1, S1),
-	list_to_set(L2, S2),
-	union(S1, S2, S).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 noescape(F, Fs) :-
