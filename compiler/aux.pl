@@ -19,7 +19,6 @@
 		getlabel1/3,
 		label/2,
 		label/3,
-		mapl/4,
 		mapli/4,
 		mapli/5,
 		module_filename/3,
@@ -400,12 +399,7 @@ getlabel1(F, A, L) :-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-:- meta_predicate mapl(3, +, ?, ?), mapli(+, 4, +, ?), mapli(+, 4, +, ?, ?).
-
-mapl(_, [], L, L).
-mapl(G, [E|Q], I, O) :-
-	call(G, E, I, T),
-	mapl(G, Q, T, O).
+:- meta_predicate mapli(+, 4, +, ?), mapli(+, 4, +, ?, ?).
 
 mapli(N, G, I, L) :-
 	mapli(N, G, I, L, []).

@@ -37,10 +37,10 @@ dgc(decl, 2).
 dgc(decl_, 2).
 dgc(fin, 1).
 dgc(find_fv_, 1).
+dgc(foldl, 2).
 dgc(function, 2).
 dgc(function_, 1).
 dgc(inline, 1).
-dgc(mapl, 2).
 dgc(mapli, 3).
 dgc(mapllist, 3).
 dgc(off_, 2).

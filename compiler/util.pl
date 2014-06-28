@@ -288,8 +288,7 @@ meta_pred(findall/3, 2).
 meta_pred(bagof/3, 2).
 meta_pred(setof/3, 2).
 meta_pred(mapi/3, 2).
-meta_pred(mapl/3, 1).
-meta_pred(mapl/4, 1).
+meta_pred(foldl/4, 1).
 meta_pred(mapli/4, 2).
 meta_pred(mapli/5, 2).
 meta_pred(call/1, 1).
