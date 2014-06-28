@@ -30,7 +30,7 @@ code_Assign(V, E) :+
 	+> assign(X, V), !.
 code_Assign(V, E) :+
 	E=fun(F, Nf, A),
-	mapli(0, code_U, A, L),
+	mapli(code_U, A, L),
 	+> assign(struct(F, Nf, L), V).
 
 code_AssignD(V, E) :+
@@ -38,7 +38,7 @@ code_AssignD(V, E) :+
 	+> assignD(X, V), !.
 code_AssignD(V, E) :+
 	E=fun(F, Nf, A),
-	mapli(0, code_U, A, L),
+	mapli(code_U, A, L),
 	+> assignD(struct(F, Nf, L), V).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -135,7 +135,7 @@ code_U(I, E) :+
 	+> u(X, I), !.
 code_U(I, E) :+
 	E=fun(F, N, A),
-	mapli(0, code_U, A, L),
+	mapli(code_U, A, L),
 	+> u(struct(F, N, L), I).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -145,7 +145,7 @@ code_UA(I, E) :+
 	+> get_(I, X), !.
 code_UA(I, E) :+
 	E=fun(F, Nf, A),
-	mapli(0, code_U, A, L),
+	mapli(code_U, A, L),
 	+> get_(I, struct(F, Nf, L)).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -154,5 +154,5 @@ code_Arg(I, E) :+
 	+> load_(I, X), !.
 code_Arg(I, E) :+
 	E=fun(F, Nf, A),
-	mapli(0, code_U, A, L),
+	mapli(code_U, A, L),
 	+> load_(I, struct(F, Nf, L)).

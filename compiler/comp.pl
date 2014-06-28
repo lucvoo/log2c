@@ -372,7 +372,7 @@ code_C(F, N, cl(La, G), T) :+
 	getlabel1(F, N, Lo),
 	btinit(T, Lo, N),
 	+> pushenv(T, R, N),
-	mapli(0, code_UA, Lt),
+	mapli(code_UA, Lt),
 	+> flag(arg, _, fp4),
 	code_G(Gt),
 	fin(T),
@@ -477,7 +477,7 @@ code_call(G, L) :+
 	;
 		Arg=A
 	),
-	mapli(0, code_Arg, Arg),
+	mapli(code_Arg, Arg),
 	+> call_(F, N, L).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

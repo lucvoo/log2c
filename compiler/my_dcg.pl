@@ -41,7 +41,7 @@ dgc(foldl, 2).
 dgc(function, 2).
 dgc(function_, 1).
 dgc(inline, 1).
-dgc(mapli, 3).
+dgc(mapli, 2).
 dgc(mapllist, 3).
 dgc(off_, 2).
 dgc(reset_fvar, 1).

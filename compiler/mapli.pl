@@ -6,19 +6,19 @@
 /************************************************************************/
 
 :- module(mapli, [
-		mapli/4,
-		mapli/5
+		mapli/3,
+		mapli/4
 	]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-:- meta_predicate mapli(+, 4, +, ?), mapli(+, 4, +, ?, ?).
+:- meta_predicate mapli(4, +, ?), mapli(4, +, ?, ?).
 
-mapli(N, G, I, O) :-
-	'$mapli'(I, G, N, O, []).
+mapli(G, I, O) :-
+	'$mapli'(I, G, 0, O, []).
 
-mapli(N, G, I, O, T) :-
-	'$mapli'(I, G, N, O, T).
+mapli(G, I, O, T) :-
+	'$mapli'(I, G, 0, O, T).
 
 
 :- meta_predicate '$mapli'(+, 4, +, ?, ?).
