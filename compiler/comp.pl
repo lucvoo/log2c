@@ -17,6 +17,7 @@
 :- use_module(foreign).
 :- use_module(codefmt).
 :- use_module(labels).
+:- use_module(mapli).
 
 :- op(1200, xfx, :+).
 :- op(900, fy, +>).

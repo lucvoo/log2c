@@ -19,6 +19,7 @@
 :- use_module(errmsg).
 :- use_module(vars).
 :- use_module(arith).
+:- use_module(mapli).
 
 :- op(1200, xfx, :+).
 :- op(900, fy, +>).

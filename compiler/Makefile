@@ -17,6 +17,7 @@ SRC = \
 	hash.pl \
 	labels.pl \
 	map_name.pl \
+	mapli.pl \
 	modules.pl \
 	my_dcg.pl \
 	swi.pl \

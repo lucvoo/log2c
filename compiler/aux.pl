@@ -15,8 +15,6 @@
 		file_type/2,
 		flag2/3,
 		fun/4,
-		mapli/4,
-		mapli/5,
 		module_filename/3,
 		noescape/2,
 		read_all/2,
@@ -360,19 +358,6 @@ exported(P) :-
 fun(T, F, N, A) :-
 	T=..[F|A],
 	length(A, N).
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-:- meta_predicate mapli(+, 4, +, ?), mapli(+, 4, +, ?, ?).
-
-mapli(N, G, I, L) :-
-	mapli(N, G, I, L, []).
-
-mapli(_, _, [], L, L).
-mapli(N, G, [E|Q], I, O) :-
-	succ(N, M),
-	call(G, M, E, I, T),
-	mapli(M, G, Q, T, O).
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %! module_base(+Module, -Basename) is det
