@@ -134,7 +134,7 @@ check_query(_L, _Q) :-
 
 anf_module(La, Lf, Lp) :-
 	flag(current_module, M, M),
-	module_extension(h, M, H),
+	module_filename(h, M, H),
 	format('#include <Prolog.h>\n'),
 	format('#include <pl-trad.h>\n\n', []),
 	format('#include "~w"~n~n', [H]),
@@ -298,5 +298,5 @@ meta_pred(P, I) :-
 	recorded(meta_pred, meta_pred(P, I)).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 include_module(M) :-
-	module_extension(h, M, H),
+	module_filename(h, M, H),
 	format('#include "~w"\n', [H]).

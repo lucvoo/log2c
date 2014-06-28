@@ -55,7 +55,7 @@ comp_module(Mod, Export) :-
 		delete_file(Fm),
 		halt(1)
 	;
-		module_extension(o, Mod, _Fo),
+		module_filename(o, Mod, _Fo),
 		(
 			true
 		->
@@ -89,9 +89,9 @@ comp_user :-
 	% delete_file(File_mod).
 
 open_files(Name, C, H, M) :-
-	module_extension(c, Name, C),
-	module_extension(mod, Name, M),
-	module_extension(h, Name, H),
+	module_filename(c, Name, C),
+	module_filename(mod, Name, M),
+	module_filename(h, Name, H),
 	open(C, write, _, [alias(c)]),
 	open(M, write, _, [alias(mod)]),
 	open(H, write, _, [alias(h)]).
@@ -102,7 +102,7 @@ close_h :-
 
 link_file(Name) :-
 	flag(input_file, _, Name),
-	module_extension('lnk.c', Name, File_Lnk),
+	module_filename('lnk.c', Name, File_Lnk),
 	open(File_Lnk, write, _, [alias(lnk)]),
 	set_output(lnk),
 	format('#include <Prolog.h>\n#include <pl-trad.h>\n\n'),
@@ -132,7 +132,7 @@ code_anf(N) :-
 
 link(Name) :-
 	need_modules(Ms),
-	maplist(module_extension(o), Ms, Mso_),
+	maplist(module_filename(o), Ms, Mso_),
 	sort(Mso_, Mso),
 	concat_atom(Ms, ' ', L),
 	concat_atom(Mso, ' ', Lo),

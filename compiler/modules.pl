@@ -138,7 +138,7 @@ comp_sub_module(M, F) :-
 	recorda(module_compiled, M).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 module_path(M, F) :-
-	module_extension('.mod', M, F).
+	module_filename('.mod', M, F).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 used_modules(L) :-

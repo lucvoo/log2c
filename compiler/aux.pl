@@ -37,7 +37,7 @@
 		mapli/4,
 		mapli/5,
 		merge_to_set/3,
-		module_extension/3,
+		module_filename/3,
 		msg_pred_not_def/1,
 		msg_pred_not_used/1,
 		new_indent/1,
@@ -76,7 +76,7 @@ file_type(F, T) :-
 		R= (:-module(M, L))
 	->
 		(   
-			module_extension(pl, M, Name)
+			module_filename(pl, M, Name)
 		->
 			true
 		;
@@ -534,12 +534,24 @@ mapli(N, G, [E|Q], I, O) :-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-module_extension(X, M, F) :-
-	concat($, R, M), !,
-	file_name_extension(R, X, F).
-module_extension(X, M, F) :-
-	M=user, !,
-	flag(input_file, I, I),
-	file_name_extension(I, X, F).
-module_extension(X, M, F) :-
-	file_name_extension(M, X, F).
+%! module_base(+Module, -Basename) is det
+%
+% Return the basename corresponding to a module.
+module_basename(user, B) :-
+	!,
+	flag(input_file, B, B).
+module_basename(M, B) :-
+	(
+		concat($, R, M)
+	->
+		B = R
+	;
+		B = M
+	).
+
+%! module_filename(+Extension, +Module, -Basename) is det
+%
+% Return the filename corresponding to a module.
+module_filename(X, M, F) :-
+	module_basename(M, B),
+	file_name_extension(B, X, F).
