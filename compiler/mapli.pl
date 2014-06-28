@@ -14,12 +14,18 @@
 
 :- meta_predicate mapli(+, 4, +, ?), mapli(+, 4, +, ?, ?).
 
-mapli(N, G, I, L) :-
-	mapli(N, G, I, L, []).
+mapli(N, G, I, O) :-
+	'$mapli'(I, G, N, O, []).
 
-mapli(_, _, [], L, L).
-mapli(N, G, [E|Q], I, O) :-
+mapli(N, G, I, O, T) :-
+	'$mapli'(I, G, N, O, T).
+
+
+:- meta_predicate '$mapli'(+, 4, +, ?, ?).
+
+'$mapli'([], _, _, T, T).
+'$mapli'([E|I], G, N, O, T) :-
 	succ(N, M),
-	call(G, M, E, I, T),
-	mapli(M, G, Q, T, O).
+	call(G, M, E, O, OT),
+	'$mapli'(I, G, M, OT, T).
 
