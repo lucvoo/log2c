@@ -6,7 +6,6 @@
 /************************************************************************/
 
 :- module(modules, [
-		check_export/2,
 		check_export/3,
 		check_import/2,
 		check_module/1,
@@ -24,19 +23,6 @@
 :- use_module(errmsg).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-check_export(X1, L) :-
-	flag(current_module, M, M),
-	maplist(modules:check_export1(M, L), X1),
-	(
-		M==system
-	->
-		foreign_preds(X2),
-		append(X1, X2, Xs)
-	;
-		Xs=X1
-	),
-	export_pred(Xs).
 
 check_export(X1, L, Xm) :-
 	flag(current_module, M, M),

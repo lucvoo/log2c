@@ -7,7 +7,6 @@
 
 :- module(aux, [
 		a_n_f/6,
-		comp_C/1,
 		del/1,
 		del_all/0,
 		export_pred/1,
@@ -313,21 +312,6 @@ read_x_(X) :-
 	;
 		read_x_(X)
 	).
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-comp_C(F) :-
-	concat_atom(['make ', F], Make),
-	format(user_error, '~a\n', Make),
-	shell(Make, R), !,
-	(   
-		R=0
-	->
-		true
-	;
-		flag(error, E, E+1),
-		format(user_error, '\n[ Compilation failed ]\n', []),
-		fail
-	).
-		   
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 flag2(K, V1, V2) :-
 	(   

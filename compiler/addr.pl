@@ -7,7 +7,6 @@
 
 :- module(addr, [
 		addr/2,
-		addr_arg/2,
 		mem_arg/2
 	]).
 :- use_module(atoms).
@@ -40,7 +39,3 @@ mem_arg_(arg, N, A) :-
 	concat_atom(['PL_ARG(', N, ')'], A).
 mem_arg_(fp4, N, A) :-
 	concat_atom(['FP[', N, '+4].celp'], A).
-
-addr_arg(N, A) :-
-	mem_arg(N, M),
-	concat_atom(['&(', M, ')'], A).

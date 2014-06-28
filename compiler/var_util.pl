@@ -6,12 +6,8 @@
 /************************************************************************/
 
 :- module(var_util, [
-		add_v/3,
-		list_to_set_v/2,
 		member_v/2,
-		memberchk_v/2,
-		subtract_v/3,
-		union_v/3
+		subtract_v/3
 	]).
 
 
@@ -36,35 +32,3 @@ subtract_v([E|Q], D, O) :-
 	),
 	subtract_v(Q, D, Qo).
 subtract_v([], _, []).
-
-
-list_to_set_v([E|Q], L) :-
-	(
-		memberchk_v(E, Q)
-	->
-		L=Qo
-	;
-		L=[E|Qo]
-	),
-	list_to_set_v(Q, Qo).
-list_to_set_v([], []).
-
-
-union_v([], U, U).
-union_v([A|Q], I, O) :-
-	(
-		memberchk_v(A, I)
-	->
-		union_v(Q, I, O)
-	;
-		union_v(Q, [A|I], O)
-	).
-
-add_v(V, I, O) :-
-	(
-		memberchk_v(V, I)
-	->
-		I=O
-	;
-		O=[V|I]
-	).

@@ -9,14 +9,9 @@
 		'$erase_records'/1,
 		'$mangle'/2,
 		'$recorded_all'/2,
-		hpjw/2,
-		report/1
+		hpjw/2
 	]).
 
-
-report(T) :-
-	write(user_error, T),
-	put(user_error, '\n').
 
 
 '$recorded_all'(K, L) :-
