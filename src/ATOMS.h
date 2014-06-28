@@ -29,6 +29,7 @@
 #define ATOM_divide 		 ATOM___2F
 #define ATOM_dot 		 ATOM___2E
 #define ATOM_doublestar 	 ATOM___2A_2A
+#define ATOM_functor 		 ATOM___24functor
 #define ATOM_grammar 		 ATOM___2D_2D_3E
 #define ATOM_hat 		 ATOM___5E
 #define ATOM_ifthen 		 ATOM___2D_3E
@@ -149,6 +150,7 @@ extern struct atom ATOM_div;
 extern struct atom ATOM_divide;
 extern struct atom ATOM_dot;
 extern struct atom ATOM_doublestar;
+extern struct atom ATOM_functor;
 extern struct atom ATOM_grammar;
 extern struct atom ATOM_hat;
 extern struct atom ATOM_ifthen;
@@ -178,6 +180,7 @@ extern struct atom ATOM_univ;
 #define FUN_div_2 		 FUN___2F_2F_2
 #define FUN_divide_2 		 FUN___2F_2
 #define FUN_dot_2 		 FUN___2E_2
+#define FUN_functor_4 		 FUN___24functor_4
 #define FUN_minus_1 		 FUN___2D_1
 #define FUN_minus_2 		 FUN___2D_2
 #define FUN_module_2 		 FUN___3A_2
@@ -205,6 +208,7 @@ extern struct functor FUN_curl_1;
 extern struct functor FUN_div_2;
 extern struct functor FUN_divide_2;
 extern struct functor FUN_dot_2;
+extern struct functor FUN_functor_4;
 extern struct functor FUN_minus_1;
 extern struct functor FUN_minus_2;
 extern struct functor FUN_module_2;

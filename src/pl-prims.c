@@ -336,6 +336,41 @@ int pl_functor(union cell *t, union cell *f, union cell *a)
 		fail;
 }
 
+/** pl_functor4(+Term, ?Name, ?Arity, ?Args)
+ *
+*/
+int pl_functor4(union cell *t, union cell *f, union cell *n, union cell *l)
+{
+	struct atom *name;
+	union cell *args;
+	unsigned int arity;
+
+	t = deref(t);
+	if (is_fun(t)) {
+		struct functor *fun = get_fun(t);
+		name = fun->functor;
+		arity = fun->arity;
+	} else if (is_atom(t)) {
+		name = get_atom(t);
+		arity = 0;
+	} else
+		fail;
+
+	if (!PL_unify_atom(f, name))
+		fail;
+	if (!PL_unify_intg(n, arity))
+		fail;
+
+	args = HP;
+	for (; arity--;) {
+		HP[0].val = __cons();
+		HP[1].celp = deref(++t);
+		HP += 2;
+	}
+	(HP++)->val = __nil();
+	return pl_unify(l, args);
+}
+
 int pl_univ(union cell *t, union cell *l)
 {
 	int arity;
