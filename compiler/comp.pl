@@ -16,6 +16,7 @@
 :- use_module(errmsg).
 :- use_module(foreign).
 :- use_module(codefmt).
+:- use_module(labels).
 
 :- op(1200, xfx, :+).
 :- op(900, fy, +>).
@@ -23,6 +24,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 init_all :-
 	init_hash,
+	del_labels,
 	del_all.
 
 

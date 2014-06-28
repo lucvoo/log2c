@@ -15,10 +15,6 @@
 		file_type/2,
 		flag2/3,
 		fun/4,
-		getlabel/2,
-		getlabel1/3,
-		label/2,
-		label/3,
 		mapli/4,
 		mapli/5,
 		module_filename/3,
@@ -122,7 +118,6 @@ read_Pr(T, _, [T|O], O).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 del_all :-
-	del_labels,
 	'$erase_records'(code),
 	'$erase_records'(vars_list),
 	'$erase_records'(directive),
@@ -133,14 +128,6 @@ del_all :-
 	'$erase_records'(used_modules),
 	'$erase_records'(module_compiled),
 	flag(indent, _, 0).
-
-del_labels :-
-	current_flag(K),
-	atom(K),
-	concat(label_, _, K),
-	flag(K, _, 0),
-	fail.
-del_labels.
 
 del(K) :-
 	'$erase_records'(K).
@@ -373,30 +360,6 @@ exported(P) :-
 fun(T, F, N, A) :-
 	T=..[F|A],
 	length(A, N).
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-label(F, A, Label) :-
-	map_fun(F/A, Fm),
-	label(Fm, Label).
-label(Fm, Label) :-
-	concat(Fm, '_', Base),
-	concat(label_, Base, Key),
-	flag(Key, Old, Old+1),
-	succ(Old, New),
-	concat(Base, New, Label).
-getlabel(Fm, L) :-
-	concat(Fm, '_', Base),
-	concat(label_, Base, Key),
-	flag(Key, N, N),
-	concat(Base, N, L).
-getlabel1(F, A, L) :-
-	map_fun(F/A, Fm),
-	concat(Fm, '_', Base),
-	concat(label_, Base, Key),
-	flag(Key, N, N),
-	succ(N, M),
-	concat(Base, M, L).
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 :- meta_predicate mapli(+, 4, +, ?), mapli(+, 4, +, ?, ?).

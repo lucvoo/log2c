@@ -15,6 +15,7 @@ SRC = \
 	errmsg.pl \
 	foreign.pl \
 	hash.pl \
+	labels.pl \
 	map_name.pl \
 	modules.pl \
 	my_dcg.pl \
