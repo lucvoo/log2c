@@ -14,6 +14,7 @@
 :- use_module(atoms).
 :- use_module(foreign).
 :- use_module(code).
+:- use_module(codefmt).
 
 :- op(1200, xfx, :+).
 :- op(900, fy, +>).

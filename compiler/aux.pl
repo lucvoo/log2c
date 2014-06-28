@@ -7,28 +7,14 @@
 
 :- module(aux, [
 		a_n_f/6,
-		comm/1,
-		comm/2,
-		comm/3,
-		comm/4,
-		comm/5,
-		comm_pred/2,
 		comp_C/1,
 		del/1,
 		del_all/0,
 		export_pred/1,
 		exported/1,
-		f/1,
-		f/2,
 		file_type/2,
-		fl/1,
-		fl_/1,
 		flag2/3,
 		fun/4,
-		g/1,
-		g/2,
-		g0/1,
-		g0/2,
 		getlabel/2,
 		getlabel1/3,
 		label/2,
@@ -37,7 +23,6 @@
 		mapli/4,
 		mapli/5,
 		module_filename/3,
-		new_indent/1,
 		noescape/2,
 		read_all/2,
 		read_export/2,
@@ -148,8 +133,7 @@ del_all :-
 	'$erase_records'(export_pred),
 	'$erase_records'(used_modules),
 	'$erase_records'(module_compiled),
-	flag(indent, _, 0),
-	new_indent(0).
+	flag(indent, _, 0).
 
 del_labels :-
 	current_flag(K),
@@ -161,10 +145,6 @@ del_labels.
 
 del(K) :-
 	'$erase_records'(K).
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-new_indent(N) :-
-	flag(indent, O, O+N).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 noescape(F, Fs) :-
@@ -305,59 +285,6 @@ anf_get_pred(P) :-
 	anf_get_erase(anf_rec_pred, P).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-fl_(L) :-
-	fl(L).
-fl(L) :-
-	format('~w:\n', [L]).
-g(F, A) :-
-	put(9),
-	flag(indent, N, N),
-	tab(N),
-	format(F, A),
-	nl.
-g(F) :-
-	g(F, []).
-g0(F, A) :-
-	format(F, A),
-	nl.
-g0(F) :-
-	format(F),
-	nl.
-f(F, A) :-
-	tab(9),
-	flag(indent, N, N),
-	tab(N),
-	format(F, A).
-f(F) :-
-	f(F, []).
-
-
-comm(H, A, B, C, D) :-
-	map_name_v(A, Na),
-	map_name_v(B, Nb),
-	map_name_v(C, Nc),
-	map_name_v(D, Nd),
-	format('/* ~w(~w,~w,~w,~w) */\n', [H, Na, Nb, Nc, Nd]), !.
-comm(H, A, B, C) :-
-	map_name_v(A, Na),
-	map_name_v(B, Nb),
-	map_name_v(C, Nc),
-	format('/* ~w(~w,~w,~w) */\n', [H, Na, Nb, Nc]), !.
-comm(H, A, B) :-
-	map_name_v(A, Na),
-	map_name_v(B, Nb),
-	format('/* ~w(~w,~w) */\n', [H, Na, Nb]), !.
-comm(H, A) :-
-	map_name_v(A, Na),
-	format('/* ~w(~w) */\n', [H, Na]), !.
-comm(H) :-
-	format('/* ~w */\n', [H]), !.
-
-comm_pred(F, N) :-
-	format('/* code for ~w/~w */\n', [F, N]).
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Read all terms of file 'F' and put it in list 'L'
 
 read_all(F, L) :-
@@ -471,24 +398,6 @@ getlabel1(F, A, L) :-
 	succ(N, M),
 	concat(Base, M, L).
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-map_name_v(var(_, N), M) :-
-	concat('_var_', N, M).
-map_name_v(atom(E), E).
-map_name_v(intg(E), E).
-map_name_v(flt(E), E).
-%% map_name_v(string(E),E).
-map_name_v(fun(F, _, A), M) :-
-	maplist_map_name_v(A, X),
-	M=..[F|X].
-map_name_v(E, E) :-
-	atomic(E).
-
-maplist_map_name_v([], []).
-maplist_map_name_v([A|X], [B|Y]) :-
-	map_name_v(A, B),
-	maplist_map_name_v(X, Y).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 :- meta_predicate mapl(3, +, ?, ?), mapli(+, 4, +, ?), mapli(+, 4, +, ?, ?).

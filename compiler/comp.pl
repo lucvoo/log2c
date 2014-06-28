@@ -15,6 +15,7 @@
 :- use_module(util).
 :- use_module(errmsg).
 :- use_module(foreign).
+:- use_module(codefmt).
 
 :- op(1200, xfx, :+).
 :- op(900, fy, +>).

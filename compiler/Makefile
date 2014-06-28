@@ -10,6 +10,7 @@ SRC = \
 	aux.pl \
 	builtin.pl \
 	code.pl \
+	codefmt.pl \
 	comp.pl \
 	errmsg.pl \
 	foreign.pl \
