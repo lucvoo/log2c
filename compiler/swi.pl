@@ -7,6 +7,7 @@
 
 :- module(swi, [
 		'$erase_records'/1,
+		'$functor'/4,
 		'$mangle'/2,
 		'$recorded_all'/2,
 		hpjw/2
@@ -69,3 +70,8 @@ hpjw([C|L], S, H) :-
 		H2 = H1
 	),
 	hpjw(L, H2, H).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+'$functor'(T, F, N, As) :-
+	functor(T, F, N),
+	T =.. [F|As].
