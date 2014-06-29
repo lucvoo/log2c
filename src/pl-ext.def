@@ -29,8 +29,6 @@ DET(exists_directory,1,pl_exists_directory)
 // pl-flag.c
 DET(flag,3,pl_flag)
 NDET(current_flag,1,pl_current_flag)
-NDET('$flag2',3,pl_flag_2)
-DET('$set_flag2',3,pl_set_flag_2)
 
 // pl-fmt.c
 DET(format,2,pl_format)
