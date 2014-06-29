@@ -14,7 +14,6 @@
 		file_type/2,
 		flag2/3,
 		module_filename/3,
-		noescape/2,
 		read_all/2,
 		read_export/2,
 		read_module/1,
@@ -126,21 +125,6 @@ del_all :-
 
 del(K) :-
 	'$erase_records'(K).
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-noescape(F, Fs) :-
-	atom_codes(F, L),
-	noescape_(L, Ls),
-	atom_codes(Fs, Ls).
-noescape_([], []).
-noescape_([92|Q], [92, 92|R]) :-
-	noescape_(Q, R).
-noescape_([34|Q], [92, 34|R]) :-
-	noescape_(Q, R).
-noescape_([10|Q], [92, 110|R]) :-
-	noescape_(Q, R).
-noescape_([E|Q], [E|R]) :-
-	noescape_(Q, R).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 to_list(T, R) :-

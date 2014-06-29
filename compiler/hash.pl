@@ -14,7 +14,6 @@
 	]).
 
 :- use_module(map_name).
-:- use_module(aux).			%% For noescape/2
 :- use_module(modules).
 
 %% initalize default hash-table size.
@@ -252,3 +251,17 @@ fill(N, E, L) :-
 fill([], _).
 fill([E|Q], E) :-
 	fill(Q, E).
+/****************************************************************/
+noescape(F, Fs) :-
+	atom_codes(F, L),
+	noescape_(L, Ls),
+	atom_codes(Fs, Ls).
+noescape_([], []).
+noescape_([92|Q], [92, 92|R]) :-
+	noescape_(Q, R).
+noescape_([34|Q], [92, 34|R]) :-
+	noescape_(Q, R).
+noescape_([10|Q], [92, 110|R]) :-
+	noescape_(Q, R).
+noescape_([E|Q], [E|R]) :-
+	noescape_(Q, R).
