@@ -10,104 +10,15 @@
 		del_all/0,
 		export_pred/1,
 		exported/1,
-		file_type/2,
 		flag2/3,
 		module_filename/3,
 		read_all/2,
 		read_export/2,
-		read_module/1,
 		to_list/2
 	]).
 
 :- use_module(errmsg).
 :- use_module(foreign).
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%!	file_type(+File, -Type) is semidet
-%
-%	Open File, return the corresponding Stream
-%	and return the 'type' of the file:
-%	- 'module(M, X)' is the file begins with a module directive
-%	- 'user' otherwise
-file_type(F, T) :-
-	file_base_name(F, Name),
-	file_name_extension(Base, Ext, Name),
-	(   
-		Ext==pl
-	->
-		true
-	;
-		warning('~w : may not be a Prolog file', [F])
-	),
-	open(F, read, S, [alias(src)]),
-	stream_property(S, position(P)),
-	read(S, R),
-	(   
-		R= (:-module(M, L))
-	->
-		(   
-			module_filename(pl, M, Name)
-		->
-			true
-		;
-			warning('file (~w) and module (~w) do not match', [F, M])
-		),
-		T=module(M, L)
-	;
-		set_stream_position(S, P),
-		T=user
-	),
-	flag(input_file, _, Base).
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-read_module(L) :-
-	readclauses_(src, C, []),
-	flag(current_module, M, M),
-	(   
-		M==system
-	->
-		L=C
-	;
-		
-		concat($, _, M)
-	->
-		L=C
-	;
-		L=[ (:-use_module(system))|C]
-	).
-
-readclauses([], O, O) :- !.
-readclauses([F|Q], I, O) :-
-	readclauses(F, I, T),
-	readclauses(Q, T, O), !.
-readclauses(F, I, O) :-
-	open(F, read, S, []),
-	readclauses_(S, I, O),
-	close(S).
-
-readclauses_(S, I, O) :-
-	read_term(S, T, [variable_names(V)]),
-	(   
-		T==end_of_file
-	->
-		I=O
-	;
-		expand_term(T, Tx),
-		read_Pr(Tx, V, I, Tmp),
-		readclauses_(S, Tmp, O)
-	), !.
-
-read_Pr((main:-Q), V, I, O) :-
-	read_Pr((:-main(Q, V)), V, I, O).
-read_Pr((:-consult(F)), _, I, O) :-
-	readclauses(F, I, O).
-read_Pr((:-include(F)), _, I, O) :-
-	readclauses(F, I, O).
-read_Pr((:-op(P, T, N)), _, [ (:-op(P, T, N))|O], O) :-
-	op(P, T, N).
-
-read_Pr(T, _, [T|O], O).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 del_all :-

@@ -18,6 +18,7 @@
 :- use_module(codefmt).
 :- use_module(labels).
 :- use_module(mapli).
+:- use_module(input).
 
 :- op(1200, xfx, :+).
 :- op(900, fy, +>).

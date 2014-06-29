@@ -15,6 +15,7 @@ SRC = \
 	errmsg.pl \
 	foreign.pl \
 	hash.pl \
+	input.pl \
 	labels.pl \
 	map_name.pl \
 	mapli.pl \
