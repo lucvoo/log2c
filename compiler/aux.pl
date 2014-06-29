@@ -7,7 +7,6 @@
 
 :- module(aux, [
 		a_n_f/6,
-		del/1,
 		del_all/0,
 		export_pred/1,
 		exported/1,
@@ -122,9 +121,6 @@ del_all :-
 	'$erase_records'(used_modules),
 	'$erase_records'(module_compiled),
 	flag(indent, _, 0).
-
-del(K) :-
-	'$erase_records'(K).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 to_list(T, R) :-

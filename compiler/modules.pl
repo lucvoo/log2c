@@ -61,7 +61,7 @@ export_user_preds(pr(F, N, _)) :-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 read_mods(M, A, F, P) :-
-	del(need_module),
+	'$erase_records'(need_module),
 	read_mod(M, A, [], F, [], P, []).
 
 read_mod([], A, A, F, F, P, P).
@@ -161,7 +161,7 @@ need_modules(Ms) :-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 check_import(U, _X) :-
-	del(module_export),
+	'$erase_records'(module_export),
 	used_modules(Us),
 	format(mod, 'use_module(~q).\n', [Us]),
 	maplist(modules:rec_x, U).

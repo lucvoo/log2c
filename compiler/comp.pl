@@ -189,7 +189,7 @@ code_module(I, X) :+
 	code_fin.
 
 init_module(P, Q, X, Xs) :-
-	del(undef_pred),
+	'$erase_records'(undef_pred),
 	a_n_f(P, Q, X, La, Lf, Lp),
 	anf_module(La, Lf, Lp),
 	flag(current_module, M, M),
@@ -377,7 +377,7 @@ code_C(F, N, cl(La, G), T) :+
 	code_G(Gt),
 	fin(T),
 	+> nl,
-	del(vars_list).
+	'$erase_records'(vars_list).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 reset_fvar(E) :+
@@ -491,7 +491,7 @@ code_Q(Q) :-
 	T=[init, comm('code for query'), pushenv(L)|Tq],
 	code_G(Qt, Tq, [halt_, failed]),
 	trad(T),
-	del(vars_list).
+	'$erase_records'(vars_list).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 btinit(first, L, N) :+
