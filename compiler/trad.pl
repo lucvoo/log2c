@@ -9,7 +9,7 @@
 		trad/1
 	]).
 
-:- use_module([aux, addr, map_name]).
+:- use_module([addr, map_name]).
 :- use_module(modules).
 :- use_module(errmsg).
 :- use_module(codefmt).

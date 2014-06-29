@@ -23,7 +23,6 @@
 
 :- use_module(errmsg).
 :- use_module(foreign).
-:- use_module(map_name).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %!	file_type(+File, -Type) is semidet

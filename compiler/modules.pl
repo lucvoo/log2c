@@ -12,7 +12,6 @@
 		export_user_preds/1,
 		get_exports/2,
 		import_from_module/2,
-		module_path/2,
 		need_modules/1,
 		read_mods/4,
 		used_modules/1

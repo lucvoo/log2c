@@ -9,11 +9,9 @@
 		inline/3
 	]).
 
-:- use_module(aux).
 :- use_module(map_name).
 :- use_module(foreign).
 :- use_module(code).
-:- use_module(codefmt).
 
 :- op(1200, xfx, :+).
 :- op(900, fy, +>).

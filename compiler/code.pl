@@ -15,7 +15,6 @@
 		code_X/2
 	]).
 
-:- use_module(aux).
 :- use_module(errmsg).
 :- use_module(vars).
 :- use_module(arith).

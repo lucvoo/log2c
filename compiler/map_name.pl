@@ -13,7 +13,6 @@
 		map_pred/3
 	]).
 
-:- use_module([atoms]).
 
 map_atom(A, N) :-
 	'$mangle'(A, N).
