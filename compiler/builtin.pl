@@ -276,7 +276,7 @@ inline(apply(Clos, Args)) :+
 	+> g('}').
 
 inline(Call) :+
-	fun(Call, call, N, [Clos|Arg]),
+	'$functor'(Call, call, N, [Clos|Arg]),
 	(
 		Clos=fun(:, 2, _)
 	->
@@ -307,7 +307,7 @@ inline(Call) :+
 
 
 inline(T) :+
-	fun(T, F, N, A),
+	'$functor'(T, F, N, A),
 	foreign_pred(F/N, C, det), !,
 	decl(N, Aa),
 	+> new_indent(2),

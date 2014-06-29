@@ -462,7 +462,7 @@ code_G_or(G, F, L_, L) :+
 
 
 code_call(G, L) :+
-	fun(G, F, N, A),
+	'$functor'(G, F, N, A),
 	check_module(F/N),
 	flag(curr_C, C, C),
 	getlabel(C, Lab),

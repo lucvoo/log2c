@@ -12,11 +12,6 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fun(T, F, N, A) :-
-	compound(T),
-	functor(T, F, N),
-	T=..[F|A].
-
 %%%%%%%%
 trans_term((A, B), (X, Y)) :-
 	trans_term(A, X),
@@ -55,6 +50,7 @@ trans(A, X) :-
 trans(A, A) :-
 	var(A).
 trans(T, X) :-
-	fun(T, F, N, A),
+	compound(T),
+	'$functor'(T, F, N, A),
 	maplist(trans:trans, A, At),
 	X=fun(F, N, At).

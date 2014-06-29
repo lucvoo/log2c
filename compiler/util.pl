@@ -92,7 +92,7 @@ sortCls_([C|Q], I, O) :-
 
 
 getC((H:-B), cl(F, N, A, B)) :- !,
-	fun(H, F, N, A).
+	'$functor'(H, F, N, A).
 getC((:-main(Q, V)), q(V, Q)) :- !.
 getC((:-D), '') :- !,
 	(
@@ -100,11 +100,11 @@ getC((:-D), '') :- !,
 	->
 		true
 	;
-		fun(D, F, N, _),
+		'$functor'(D, F, N, _),
 		warning('unknow directive : ~w/~w', [F, N])
 	).
 getC(H, cl(F, N, A, true)) :-
-	fun(H, F, N, A).
+	'$functor'(H, F, N, A).
 
 insertC('', L, L).
 insertC(q(V, Q), I, O) :-

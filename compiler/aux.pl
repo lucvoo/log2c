@@ -13,7 +13,6 @@
 		exported/1,
 		file_type/2,
 		flag2/3,
-		fun/4,
 		module_filename/3,
 		noescape/2,
 		read_all/2,
@@ -338,10 +337,6 @@ map_recorda(K, [A|Q]) :-
 
 exported(P) :-
 	recorded(export_pred, P).
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-fun(T, F, N, A) :-
-	T=..[F|A],
-	length(A, N).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %! module_base(+Module, -Basename) is det
