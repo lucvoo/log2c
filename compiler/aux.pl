@@ -8,7 +8,6 @@
 :- module(aux, [
 		del_all/0,
 		export_pred/1,
-		flag2/3,
 		read_all/2,
 		read_export/2
 	]).
@@ -74,21 +73,6 @@ read_x_(X) :-
 	;
 		read_x_(X)
 	).
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-flag2(K, V1, V2) :-
-	(   
-		var(V1),
-		var(V2)
-	->
-		W1=V1,
-		W2=V2
-	;
-		true
-	),
-	concat(K, '_1', K1),
-	flag(K1, W1, V1),
-	concat(K, '_2', K2),
-	flag(K2, W2, V2).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 export_pred(Xs) :-
 	format(mod, 'export(~q).\n', [Xs]),
