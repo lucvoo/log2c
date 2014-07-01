@@ -11,5 +11,6 @@
 #include "pl-types.h"
 
 hash_t PL_hash_str(const char *x);
+hash_t PL_hash_mem(const void *x, unsigned int n);
 
 #endif
