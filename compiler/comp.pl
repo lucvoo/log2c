@@ -15,7 +15,6 @@
 :- use_module(util).
 :- use_module(errmsg).
 :- use_module(foreign).
-:- use_module(codefmt).
 :- use_module(labels).
 :- use_module(mapli).
 :- use_module(input).
@@ -256,11 +255,11 @@ set_meta(F, A) :-
 	).
 
 code_Pr(pr(F, A, [C])) :+
-	comm_pred(F, A),
+	format('/* code for ~w/~w */\n', [F, A]),
 	set_meta(F, A),
 	code_C(F, A, C, single).
 code_Pr(pr(F, A, [C|Q])) :+
-	comm_pred(F, A),
+	format('/* code for ~w/~w */\n', [F, A]),
 	set_meta(F, A),
 	code_C(F, A, C, first),
 	code__Pr(pr(F, A, Q)).
