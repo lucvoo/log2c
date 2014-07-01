@@ -85,7 +85,8 @@ comp_module(Mod, Export) :-
 
 
 comp_user :-
-	flag(current_module, _, user),
+	Mod = user,
+	flag(current_module, _, Mod),
 	read_module(Li),
 	flag(input_file, Name, Name),
 	open_files(Name, _Fc, _Fm, _Fh),
