@@ -19,7 +19,6 @@
 		used_modules/1
 	]).
 
-:- use_module(aux).
 :- use_module(foreign).
 :- use_module(errmsg).
 
@@ -239,3 +238,49 @@ module_basename(M, B) :-
 module_filename(X, M, F) :-
 	module_basename(M, B),
 	file_name_extension(B, X, F).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Read all terms of file 'F' and put it in list 'L'
+
+read_all(F, L) :-
+	current_input(Old),
+	open(F, read, N),
+	set_input(N),
+	read_all_(L),
+	close(N),
+	set_input(Old).
+
+read_all_(L) :-
+	read(T),
+	(   
+		T==end_of_file
+	->
+		L=[]
+	;
+		read_all_(Q),
+		L=[Tx|Q],
+		expand_term(T, Tx)
+	).
+
+read_export(F, X) :-
+	current_input(Old),
+	open(F, read, N),
+	set_input(N),
+	read_x_(X),
+	close(N),
+	set_input(Old).
+
+read_x_(X) :-
+	read(T),
+	(   
+		T==end_of_file
+	->
+		fail
+	;
+		
+		T=export(X)
+	->
+		true
+	;
+		read_x_(X)
+	).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
