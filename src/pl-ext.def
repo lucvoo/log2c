@@ -124,7 +124,7 @@ DET(hash_term,2,pl_hash_term)
 NDET(repeat,0,pl_repeat)
 DET(numbervars,4,pl_numbervars)
 
-DET(hpjw,2,pl_hpjw)
+DET('$hash',2,pl_hash)
 
 // pl-proc.c
 

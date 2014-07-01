@@ -9,7 +9,8 @@
 #include <stdint.h>
 
 
-hash_t PL_hpjw(const char *x)		// From Dragon book, p436
+// From Dragon book, p436
+hash_t PL_hash_str(const char *x)
 {
 	const unsigned char *s = (const void *)x;
 	unsigned int c;

@@ -31,7 +31,7 @@ struct atom *PL_new_atom(const char *s)
 	struct atom *a;
 	const char *copy;
 
-	H = PL_hpjw(s);
+	H = PL_hash_str(s);
 	h = H % PL__atoms_hash_size;
 
 	for (a = PL__atoms[h]; a != 0; a = a->next) {

@@ -10,7 +10,7 @@
 		'$functor'/4,
 		'$mangle'/2,
 		'$recorded_all'/2,
-		hpjw/2
+		'$hash'/2
 	]).
 
 
@@ -54,7 +54,7 @@ hex_digit(V, D) :-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-hpjw(A, H) :-
+'$hash'(A, H) :-
 	atom_codes(A, L),
 	hpjw(L, 0, H).
 

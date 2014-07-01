@@ -10,6 +10,6 @@
 
 #include "pl-types.h"
 
-hash_t PL_hpjw(const char *x);		// From Dragon book, p436
+hash_t PL_hash_str(const char *x);
 
 #endif

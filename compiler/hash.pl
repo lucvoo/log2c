@@ -37,7 +37,7 @@ init_hash_atoms(As) :-
 
 hash_atom_([], _, _).
 hash_atom_([A|Q], HS, V) :-
-	hpjw(A, H_),
+	'$hash'(A, H_),
 	H is H_ mod HS+1,
 	arg(H, V, E),
 	setarg(H, V, [A|E]),
@@ -64,7 +64,7 @@ hash_atom_list([A, B|Q]) :-
 print_atom_list(A, Nxt) :-
 	map_atom(A, Am),
 	noescape(A, As),
-	hpjw(A, H),
+	'$hash'(A, H),
 	format('struct atom ATOM_~w={ {MK_CELL(ato_tag, ATOM(~w))}, "~w" , ~w ,~w};\n', [Am, Am, As, H, Nxt]).
 
 hash_atom_tab([]) :-
@@ -85,7 +85,7 @@ init_hash_funs(Fs) :-
 
 hash_fun_([], _, _).
 hash_fun_([F/N|Q], HS, V) :-
-	hpjw(F, H_),
+	'$hash'(F, H_),
 	H is (H_+N)mod HS+1,
 	arg(H, V, E),
 	setarg(H, V, [F/N|E]),
@@ -152,7 +152,7 @@ hash_jmp(H, Ps, T) :-
 
 hash_jmp_([], _, _).
 hash_jmp_([F/N|Q], HS, V) :-
-	hpjw(F, H_),
+	'$hash'(F, H_),
 	H is (H_+N)mod HS+1,
 	arg(H, V, E),
 	setarg(H, V, [F/N|E]),
@@ -210,7 +210,7 @@ decl_mod(M) :-
 
 hash_mods_([], _, _).
 hash_mods_([A|Q], HS, V) :-
-	hpjw(A, H_),
+	'$hash'(A, H_),
 	H is H_ mod HS+1,
 	arg(H, V, E),
 	setarg(H, V, [A|E]),

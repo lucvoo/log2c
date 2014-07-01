@@ -780,7 +780,7 @@ int pl_setarg(union cell *n, union cell *term, union cell *value)
 	succeed;
 }
 
-int pl_hpjw(union cell *str, union cell *h_val)
+int pl_hash(union cell *str, union cell *h_val)
 {
 	hash_t h;
 	const char *s;
@@ -788,7 +788,7 @@ int pl_hpjw(union cell *str, union cell *h_val)
 	if (!PL_get_atom_chars(str, &s))
 		fail;
 
-	h = PL_hpjw(s);
+	h = PL_hash_str(s);
 
 	return PL_unify_intg(h_val, h);
 }
