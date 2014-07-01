@@ -56,13 +56,13 @@ make_ARGs(N, A) :-
 
 find_fvar(G, L) :-
 	to_list(G, Lg),
-	maplist(util:find_fv, Lg, Lv),
+	maplist(find_fv, Lg, Lv),
 	flatten(Lv, Lf),
 	sort(Lf, L).
 
 find_fv(G, L) :-
 	G=..[_|Lg],
-	maplist(util:find_fv_, Lg, L).
+	maplist(find_fv_, Lg, L).
 
 find_fv_(G, L) :-
 	find_fv_(G, L, []).
@@ -74,7 +74,7 @@ find_fv_(E) :+
 	+> E.
 find_fv_(E) :+
 	E=fun(_, _, A),
-	maplist(util:find_fv_, A, L),
+	maplist(find_fv_, A, L),
 	+> L.
 find_fv_(_) :+
 	true.
@@ -144,7 +144,7 @@ anf_module(La, Lf, Lp) :-
 	format(h, '#ifndef MODULE~w_H_\n', [Mm]),
 	format(h, '#define MODULE~w_H_\n\n', [Mm]),
 	used_modules(Ms),
-	maplist(util:include_module, Ms),
+	maplist(include_module, Ms),
 	nl,
 	decl_atoms(La),
 	decl_funs(Lf),
@@ -175,7 +175,7 @@ init_preds([]).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 decl_export_mod(export(X, L)) :-
 	flag(current_module, M, M),
-	maplist(util:decl_exp_mod(M, X), L).
+	maplist(decl_exp_mod(M, X), L).
 
 decl_exp_mod(M, X, P) :-
 	map_pred(P, M, Pm),
@@ -187,7 +187,7 @@ decl_preds(X) :-
 	'$recorded_all'(export_pred, P),
 	append(X, P, T),
 	sort(T, L),
-	maplist(util:decl_pred, L),
+	maplist(decl_pred, L),
 	nl.
 
 decl_pred(P) :-
@@ -198,7 +198,7 @@ decl_pred(P) :-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 decl_atoms(As) :-
-	maplist(util:decl_atoms_, As),
+	maplist(decl_atoms_, As),
 	nl(h),
 	format(mod, 'atoms(~q).\n', [As]).
 
@@ -207,7 +207,7 @@ decl_atoms_(A) :-
 	format(h, 'extern struct atom ATOM_~w;\n', [Am]).
 
 decl_funs(Fs) :-
-	maplist(util:decl_funs_, Fs),
+	maplist(decl_funs_, Fs),
 	nl(h),
 	format(mod, 'funs(~q).\n', [Fs]).
 

@@ -31,7 +31,7 @@ export_pred(Xs) :-
 
 check_export(X1, L, Xm) :-
 	flag(current_module, M, M),
-	maplist(modules:check_export1(M, L), X1),
+	maplist(check_export1(M, L), X1),
 	(
 		M==system
 	->
@@ -149,9 +149,9 @@ export_use_(T, S, L) :-
 get_exports(Lu, Lx) :-
 	used_modules(U),
 	exported_modules(X),
-	maplist(modules:get_xlist, U, Xs),
-	maplist(modules:prefix_export(Xs, use), U, Lu),
-	maplist(modules:prefix_export(Xs, export), X, Lx).
+	maplist(get_xlist, U, Xs),
+	maplist(prefix_export(Xs, use), U, Lu),
+	maplist(prefix_export(Xs, export), X, Lx).
 
 get_xlist(M, A) :-
 	comp_sub_module(M, F), !,
@@ -170,10 +170,10 @@ check_import(U, _X) :-
 	'$erase_records'(module_export),
 	used_modules(Us),
 	format(mod, 'use_module(~q).\n', [Us]),
-	maplist(modules:rec_x, U).
+	maplist(rec_x, U).
 
 rec_x(use(M, L)) :-
-	maplist(modules:rec_export(M), L).
+	maplist(rec_export(M), L).
 
 rec_export(M, X) :-
 	(
@@ -186,7 +186,7 @@ rec_export(M, X) :-
 	).
 
 exp_x(export(_, L)) :-
-	maplist(modules:export_pred, L).
+	maplist(export_pred, L).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 import_from_module(F, M) :-

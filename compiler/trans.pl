@@ -34,7 +34,7 @@ trans_term(\+A, \+X) :-
 	trans_term(A, X).
 trans_term(A, X) :-
 	A=..[F|La],
-	maplist(trans:trans, La, Lx),
+	maplist(trans, La, Lx),
 	X=..[F|Lx].
 
 %%%%%%%%
@@ -52,5 +52,5 @@ trans(A, A) :-
 trans(T, X) :-
 	compound(T),
 	'$functor'(T, F, N, A),
-	maplist(trans:trans, A, At),
+	maplist(trans, A, At),
 	X=fun(F, N, At).
