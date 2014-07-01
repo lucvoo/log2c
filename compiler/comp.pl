@@ -243,12 +243,10 @@ set_meta(F, A) :-
 
 code_Pr(pr(F, A, [C])) :+
 	comm_pred(F, A),
-	flag2(curr_P, F, A),
 	set_meta(F, A),
 	code_C(F, A, C, single).
 code_Pr(pr(F, A, [C|Q])) :+
 	comm_pred(F, A),
-	flag2(curr_P, F, A),
 	set_meta(F, A),
 	code_C(F, A, C, first),
 	code__Pr(pr(F, A, Q)).
