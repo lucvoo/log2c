@@ -7,6 +7,7 @@
 
 :- module(util, [
 		add_module/4,
+		a_n_f/6,
 		anf_module/3,
 		decl_atoms/1,
 		decl_export_mod/1,
@@ -22,12 +23,14 @@
 		init_preds/1,
 		make_ARGs/2,
 		make_f_args/2,
-		meta_pred/2
+		meta_pred/2,
+		to_list/2
 	]).
 
 :- use_module(aux).
 :- use_module([map_name, modules]).
 :- use_module(errmsg).
+:- use_module(foreign).
 
 :- op(1200, xfx, :+).
 :- op(900, fy, +>).
@@ -299,3 +302,126 @@ meta_pred(P, I) :-
 include_module(M) :-
 	module_filename(h, M, H),
 	format('#include "~w"\n', [H]).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+to_list(T, R) :-
+	to_list(T, R, []).
+
+to_list(A, I, O) :-
+	var(A), !,
+	I=[A|O].
+to_list((A, B), I, O) :-
+	to_list(A, I, T),
+	to_list(B, T, O).
+to_list((A;B), I, O) :-
+	to_list(A, I, T),
+	to_list(B, T, O).
+to_list((A| B), I, O) :-
+	to_list(A, I, T),
+	to_list(B, T, O).
+to_list((A->B), I, O) :-
+	to_list(A, I, T),
+	to_list(B, T, O).
+to_list((A*->B), I, O) :-
+	to_list(A, I, T),
+	to_list(B, T, O).
+to_list(\+A, I, O) :-
+	to_list(A, I, O).
+to_list(not(A), I, O) :-
+	to_list(A, I, O).
+to_list(E, [E|O], O).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+a_n_f(G, Q, X, A, F, P) :-
+	flag(current_module, M, M),
+	(   
+		M=0
+	->
+		true
+	;
+		anf_rec_atom(M)
+	),
+	anf_clause(cl([], Q)),
+	maplist(anf_pred, G),
+	maplist(anf_rec_fun, X),
+	anf(A, F, P).
+
+anf(A, F, P) :-
+	flag(current_module, M, M),
+	(   
+		M==system
+	->
+		foreign_preds(Fps),
+		maplist(anf_rec_pred, Fps)
+	;
+		true
+	),
+	recorded(used_modules, Ms),
+	maplist(anf_rec_atom, Ms),
+	anf_rec_import,
+	anf_get_atom(A),
+	anf_get_fun(F),
+	anf_get_pred(P).
+
+
+anf_rec_import :-
+	recorded(module_export, module_export(_, F/_)),
+	anf_rec_atom(F),
+	fail.
+anf_rec_import.
+
+
+anf_pred(pr(F, N, L)) :-
+	anf_rec_pred(F/N),
+	maplist(anf_clause, L).
+
+anf_clause(cl(H, G)) :-
+	maplist(anf_elem,H),
+	to_list(G, L),
+	maplist(anf_goal, L).
+
+anf_goal(E) :-
+	compound(E), !,
+	%% We do not record the goal's atoms & functors, only the ones in their arguments
+	E=..[_|L],
+	maplist(anf_elem, L).
+anf_goal(_).
+
+anf_elem(E) :-
+	compound(E), !,
+	functor(E, F, N),
+	anf_rec_fun(F, N),
+	E=..[F|L],
+	maplist(anf_elem, L).
+anf_elem(E) :-
+	atom(E), !,
+	anf_rec_atom(E).
+anf_elem(_).
+
+
+anf_rec_atom(A) :-
+	recorda(anf_rec_atom, A).
+
+anf_rec_fun(F/N) :-
+	anf_rec_fun(F, N).
+anf_rec_fun(F, N) :-
+	recorda(anf_rec_fun, F/N),
+	anf_rec_atom(F).	%% FIXME: Needed? can be done at collect time
+
+anf_rec_pred(P) :-
+	recorda(anf_rec_pred, P),
+	anf_rec_fun(P),		%% FIXME: Why de we really need that?
+	true.
+
+
+anf_get_erase(K, S) :-
+	'$recorded_all'(K, L),
+	sort(L, S),
+	'$erase_records'(K).
+
+anf_get_atom(A) :-
+	anf_get_erase(anf_rec_atom, A).
+anf_get_fun(F) :-
+	anf_get_erase(anf_rec_fun, F).
+anf_get_pred(P) :-
+	anf_get_erase(anf_rec_pred, P).
+
