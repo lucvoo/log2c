@@ -95,9 +95,9 @@ read_mod_([T|Q], Ia, Oa, If, Of, Ip, Op) :-
 	read_mod_(Q, Ta, Oa, Tf, Of, Tp, Op).
 
 read_mod__(atoms(A), Ia, Oa, F, F, P, P) :-
-	Ia=[A|Oa], !.
+	append(A, Oa, Ia), !.
 read_mod__(funs(F), A, A, If, Of, P, P) :-
-	If=[F|Of], !.
+	append(F, Of, If), !.
 read_mod__(export(P), A, A, F, F, Ip, Op) :-
 	append(P, Op, Ip), !.
 read_mod__(use_module(M), Ia, Oa, If, Of, Ip, Op) :-

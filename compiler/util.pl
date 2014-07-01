@@ -200,20 +200,21 @@ decl_pred(P) :-
 
 decl_atoms(As) :-
 	maplist(util:decl_atoms_, As),
-	nl(h).
+	nl(h),
+	format(mod, 'atoms(~q).\n', [As]).
+
 decl_atoms_(A) :-
 	map_atom(A, Am),
-	format(h, 'extern struct atom ATOM_~w;\n', [Am]),
-	format(mod, '~q.\n', [atoms(A)]).
+	format(h, 'extern struct atom ATOM_~w;\n', [Am]).
 
 decl_funs(Fs) :-
 	maplist(util:decl_funs_, Fs),
-	nl(h).
+	nl(h),
+	format(mod, 'funs(~q).\n', [Fs]).
 
 decl_funs_(F/N) :-
 	map_atom(F, Fm),
-	format(h, 'extern struct functor FUN_~w_~d;\n', [Fm, N]),
-	format(mod, '~q.\n', [funs(F/N)]).
+	format(h, 'extern struct functor FUN_~w_~d;\n', [Fm, N]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
