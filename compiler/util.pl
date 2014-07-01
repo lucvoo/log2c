@@ -27,7 +27,6 @@
 		to_list/2
 	]).
 
-:- use_module(aux).
 :- use_module([map_name, modules]).
 :- use_module(errmsg).
 :- use_module(foreign).

@@ -9,7 +9,7 @@
 		comp_file/1
 	]).
 
-:- use_module([aux, vars, builtin, trad, atoms, map_name, hash]).
+:- use_module([ vars, builtin, trad, atoms, map_name, hash]).
 :- use_module([modules, trans]).
 :- use_module(code).
 :- use_module(util).

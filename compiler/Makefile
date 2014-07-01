@@ -7,7 +7,6 @@ SRC = \
 	addr.pl \
 	arith.pl \
 	atoms.pl \
-	aux.pl \
 	builtin.pl \
 	code.pl \
 	codefmt.pl \
