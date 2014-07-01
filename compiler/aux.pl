@@ -6,7 +6,6 @@
 /************************************************************************/
 
 :- module(aux, [
-		del_all/0,
 		export_pred/1,
 		read_all/2,
 		read_export/2
@@ -14,19 +13,6 @@
 
 :- use_module(errmsg).
 :- use_module(foreign).
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-del_all :-
-	'$erase_records'(code),
-	'$erase_records'(vars_list),
-	'$erase_records'(directive),
-	'$erase_records'(curr_C),
-	'$erase_records'(indent),
-	'$erase_records'(preds),
-	'$erase_records'(export_pred),
-	'$erase_records'(used_modules),
-	'$erase_records'(module_compiled),
-	flag(indent, _, 0).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Read all terms of file 'F' and put it in list 'L'
