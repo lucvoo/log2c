@@ -10,8 +10,10 @@
 		check_import/2,
 		check_module/1,
 		export_user_preds/1,
+		exported/1,
 		get_exports/2,
 		import_from_module/2,
+		module_filename/3,
 		need_modules/1,
 		read_mods/4,
 		used_modules/1
@@ -206,3 +208,29 @@ check_module(F/N) :-
 	).
 	%% further compilation will fail but
 	%% we want message for other possible errors
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+exported(P) :-
+	recorded(export_pred, P).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%! module_base(+Module, -Basename) is det
+%
+% Return the basename corresponding to a module.
+module_basename(user, B) :-
+	!,
+	flag(input_file, B, B).
+module_basename(M, B) :-
+	(
+		concat($, R, M)
+	->
+		B = R
+	;
+		B = M
+	).
+
+%! module_filename(+Extension, +Module, -Basename) is det
+%
+% Return the filename corresponding to a module.
+module_filename(X, M, F) :-
+	module_basename(M, B),
+	file_name_extension(B, X, F).

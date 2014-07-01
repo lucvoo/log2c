@@ -8,9 +8,7 @@
 :- module(aux, [
 		del_all/0,
 		export_pred/1,
-		exported/1,
 		flag2/3,
-		module_filename/3,
 		read_all/2,
 		read_export/2
 	]).
@@ -100,28 +98,4 @@ map_recorda(K, [A|Q]) :-
 	recorda(K, A),
 	map_recorda(K, Q).
 
-exported(P) :-
-	recorded(export_pred, P).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%! module_base(+Module, -Basename) is det
-%
-% Return the basename corresponding to a module.
-module_basename(user, B) :-
-	!,
-	flag(input_file, B, B).
-module_basename(M, B) :-
-	(
-		concat($, R, M)
-	->
-		B = R
-	;
-		B = M
-	).
-
-%! module_filename(+Extension, +Module, -Basename) is det
-%
-% Return the filename corresponding to a module.
-module_filename(X, M, F) :-
-	module_basename(M, B),
-	file_name_extension(B, X, F).
