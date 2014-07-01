@@ -6,7 +6,6 @@
 /************************************************************************/
 
 :- module(aux, [
-		export_pred/1,
 		read_all/2,
 		read_export/2
 	]).
@@ -59,13 +58,4 @@ read_x_(X) :-
 	;
 		read_x_(X)
 	).
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-export_pred(Xs) :-
-	format(mod, 'export(~q).\n', [Xs]),
-	map_recorda(export_pred, Xs).
-map_recorda(_, []).
-map_recorda(K, [A|Q]) :-
-	recorda(K, A),
-	map_recorda(K, Q).
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

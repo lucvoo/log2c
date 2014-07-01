@@ -24,6 +24,11 @@
 :- use_module(errmsg).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+export_pred(Xs) :-
+	format(mod, 'export(~q).\n', [Xs]),
+	maplist(recorda(export_pred), Xs).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 check_export(X1, L, Xm) :-
 	flag(current_module, M, M),
