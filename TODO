@@ -71,3 +71,5 @@
 * PL_write() & friends PL_new_term_ref(), they shouldn't
 * Fix findall/4 (when not used for findall/3) (Probably the usual problem with computed goto's accross functions)
 * check the type/format of the export list for :- module(...) (they must be "predicate indicator")
+* Add support for ':- export(PI)'
+* Add support for ':- use_module/2'
