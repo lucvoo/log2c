@@ -141,17 +141,17 @@ code_U(I, E) :+
 
 code_UA(I, E) :+
 	code_X(E, X),
-	+> get_(I, X), !.
+	+> get(I, X), !.
 code_UA(I, E) :+
 	E=fun(F, Nf, A),
 	mapli(code_U, A, L),
-	+> get_(I, struct(F, Nf, L)).
+	+> get(I, struct(F, Nf, L)).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 code_Arg(I, E) :+
 	code_X(E, X),
-	+> load_(I, X), !.
+	+> load(I, X), !.
 code_Arg(I, E) :+
 	E=fun(F, Nf, A),
 	mapli(code_U, A, L),
-	+> load_(I, struct(F, Nf, L)).
+	+> load(I, struct(F, Nf, L)).

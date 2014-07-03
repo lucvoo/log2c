@@ -15,16 +15,16 @@
 :- use_module(codefmt).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-trad([call_(F, N, L), fl(L), restore|Q]) :-
+trad([vm_call(F, N, L), fl(L), restore|Q]) :-
 	execute(F, N), !,
 	trad(Q).
-trad([call_(F, N, L), fl(L), popenv|Q]) :-
+trad([vm_call(F, N, L), fl(L), popenv|Q]) :-
 	executend(F, N), !,
 	trad(Q).
-trad([call_(F, N, L), fl_(L), restore|Q]) :-
+trad([vm_call(F, N, L), fl_(L), restore|Q]) :-
 	execute(F, N), !,
 	trad([fl(L), restore|Q]).
-trad([call_(F, N, L), fl_(L), popenv|Q]) :-
+trad([vm_call(F, N, L), fl_(L), popenv|Q]) :-
 	executend(F, N), !,
 	trad([fl(L), popenv|Q]).
 trad([saveargs(S), pushenv(T, R, N)|Q]) :-
@@ -53,11 +53,11 @@ putref_t_m(V, I) :-
 	concat_atom(['putref_m(TMP_', I, ')'], V).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-load_(N, struct(F, Ar, L)) :-
-	comm(load_(struct)),
+load(N, struct(F, Ar, L)) :-
+	comm(load(struct)),
 	concat_atom(['PL_ARG(', N, ')'], Addr),
 	wrt__(struct(F, Ar, L), Addr).
-load_(N, E) :-
+load(N, E) :-
 	addr(E, A),
 	(
 		(
@@ -269,30 +269,30 @@ assignD(E, V) :-
 	).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-get_(N, atom(A)) :-
+get(N, atom(A)) :-
 	map_atom(A, Am),
 	mem_arg(N, Arg),
 	g('getatom(~w,ATOM(~w));', [Arg, Am]).
-get_(N, intg(I)) :-
+get(N, intg(I)) :-
 	mem_arg(N, Arg),
 	g('getintg(~w,~w);', [Arg, I]).
-get_(N, flt(I)) :-
+get(N, flt(I)) :-
 	mem_arg(N, Arg),
 	g('getflt(~w,~w);', [Arg, I]).
-get_(N, var(I)) :-
+get(N, var(I)) :-
 	mem_arg(N, Arg),
 	g('FP[~w].celp=~w;', [I, Arg]).
-get_(N, var_t(I)) :-
+get(N, var_t(I)) :-
 	mem_arg(N, Arg),
 	g('TMP_~w=~w;', [I, Arg]).
-get_(_, void).
-get_(N, ref(I)) :-
+get(_, void).
+get(N, ref(I)) :-
 	mem_arg(N, Arg),
 	g('if (!pl_unify(~w,FP[~w].celp)) goto backtrack;', [Arg, I]).
-get_(N, ref_t(I)) :-
+get(N, ref_t(I)) :-
 	mem_arg(N, Arg),
 	g('if (!pl_unify(~w,TMP_~w)) goto backtrack;', [Arg, I]).
-get_(N, struct(F, A, L)) :-
+get(N, struct(F, A, L)) :-
 	mem_arg(N, Arg),
 	comm(get_t(struct)),
 	unify(struct(F, A, L), Arg).
@@ -311,12 +311,9 @@ map_called(F, P) :-
 	).
 
 
-call_(F, N, L) :-
-	comm(call_, F, N),
+vm_call(F, N, L) :-
+	comm(call, F, N),
 	map_called(F/N, P),
-	call_(P, L).
-
-call_(P, L) :-
 	g('SP[1].cod= &&~w;', [L]),
 	g('SP[2].stk=FP;'),
 	g('FP=SP+2;'),
@@ -382,7 +379,7 @@ restore :-
 init :-
 	g('init(&&failed_query);').
 
-halt_ :-
+vm_halt :-
 	g0('\n\thalt_();\n').
 
 saveargs(N) :-
@@ -416,11 +413,11 @@ save_push(S, P, I, O) :-
 	save(S, L, O, T),
 	T=[P|Q].
 
-get_arg([get_(N, var(V))|Q], [get_(N, var(V))|T], O) :-
+get_arg([get(N, var(V))|Q], [get(N, var(V))|T], O) :-
 	get_arg(Q, T, O).
-get_arg([get_(N, var_t(V))|Q], [get_(N, var_t(V))|T], O) :-
+get_arg([get(N, var_t(V))|Q], [get(N, var_t(V))|T], O) :-
 	get_arg(Q, T, O).
-get_arg([get_(_, void)|Q], T, O) :-
+get_arg([get(_, void)|Q], T, O) :-
 	get_arg(Q, T, O).
 get_arg(Q, [], Q).
 
@@ -430,9 +427,9 @@ save(S, L, O, T) :-
 	save(S1, L, O, Q),
 	G=g('FP[4+~w].celp=PL_ARG(~w);', [S, S]),
 	(
-		member(get_(S, V), L)
+		member(get(S, V), L)
 	->
-		Q=[G, get_(S, V)|T]
+		Q=[G, get(S, V)|T]
 	;
 		Q=[G|T]
 	).

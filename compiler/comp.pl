@@ -490,7 +490,7 @@ code_call(G, L) :+
 		Arg=A
 	),
 	mapli(code_Arg, Arg),
-	+> call_(F, N, L).
+	+> vm_call(F, N, L).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 code_Q(Q) :-
@@ -501,7 +501,7 @@ code_Q(Q) :-
 	flag(curr_C, _, query),
 	label(query, _),
 	T=[init, comm('code for query'), pushenv(L)|Tq],
-	code_G(Qt, Tq, [halt_, failed]),
+	code_G(Qt, Tq, [vm_halt, failed]),
 	trad(T),
 	'$erase_records'(vars_list).
 
