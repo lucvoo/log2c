@@ -254,10 +254,6 @@ add_mod_(I, N, M, [A|X], [A|Y]) :-
 
 do_directive(export(_)) :-
 	warning('unsupported directive : use module/2').
-do_directive(import(M)) :-
-	do_directive(use_module(M)).
-do_directive(import(M, L)) :-
-	do_directive(use_module(M, L)).
 do_directive(index(_)).
 		%% FIXME : to implement
 do_directive((meta_predicate P)) :-
@@ -271,7 +267,7 @@ do_directive(op(P, T, N)) :-
 	op(P, T, N).
 do_directive(reexport(M)) :-
 	recorda(export_module, M),
-	recorda(use_module, M).
+	recorda(use_module, M).		%% FIXME: ?
 do_directive(reexport(M, _)) :-
 	do_directive(reexport(M)).
 do_directive(foreign(_, _)).
@@ -279,9 +275,20 @@ do_directive(foreign(_, _)).
 do_directive(foreign(P)) :-
 	do_directive(foreign(P, [])).
 do_directive(use_module(M)) :-
-	recorda(use_module, M).
-do_directive(use_module(M, _)) :-
-	do_directive(use_module(M)).
+	do_use_module(M).
+do_directive(use_module(M, Is)) :-
+	do_use_module(M, Is).
+
+do_use_module([]).
+do_use_module([M|Q]) :-
+	do_use_module(M, (*)),
+	do_use_module(Q).
+do_use_module(M) :-
+	do_use_module(M, (*)).
+
+do_use_module(M, Is) :-
+	Is = _,				%% FIXME: should process the imports
+	recorda(use_module, M).		%% FIXME: should compile the module if needed and then load the '.mod'
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 meta_pred(maplist/2, 1).
