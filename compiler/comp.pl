@@ -36,14 +36,8 @@ del_all :-
 	flag(indent, _, 0).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-init_all :-
-	init_hash,
-	del_labels,
-	del_all.
-
 
 comp_file(File) :-
-	init_all,
 	file_type(File, Name, Mod, Xs, S),
 	read_module(S, L),
 	flag(current_module, _, Mod),

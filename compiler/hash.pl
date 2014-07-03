@@ -6,7 +6,6 @@
 /************************************************************************/
 
 :- module(hash, [
-		init_hash/0,
 		init_hash_atoms/1,
 		init_hash_funs/1,
 		init_hash_jmps/0,
@@ -17,18 +16,10 @@
 :- use_module(modules).
 :- use_module(util).
 
-%% initalize default hash-table size.
-init_hash :-
-	flag(atoms_hsize, _, 2048),
-	flag(funs_hsize, _, 1024),
-	flag(jmps_all_hsize, _, 128),
-	flag(jmps_pub_hsize, _, 32),
-	flag(mods_hsize, _, 32).
-
 /****************************************************************/
 
 init_hash_atoms(As) :-
-	flag(atoms_hsize, HS, HS),
+	HS = 2048,
 	length(As, N),
 	fill(HS, [], L),
 	V=..[vec|L],
@@ -76,7 +67,7 @@ hash_atom_tab([E|_]) :-
 /****************************************************************/
 
 init_hash_funs(Fs) :-
-	flag(funs_hsize, HS, HS),
+	HS = 1024,
 	length(Fs, N),
 	fill(HS, [], L),
 	V=..[vec|L],
@@ -130,9 +121,9 @@ init_hash_jmps :-
 	sort(Pall_, Pall),
 	maplist(decl_pred, Pall),
 	nl,
-	flag(jmps_pub_hsize, Hp, Hp),
+	Hp = 32,
 	hash_jmp(Hp, Ppub, 'JMP_pub'),
-	flag(jmps_all_hsize, Ha, Ha),
+	Ha = 128,
 	hash_jmp(Ha, Pall, 'JMP_all'),
 	format('struct module module~w = { __FILE__, ATOM(~w), ', [Mm, Mm]),
 	format('{JMP_pub_tab, ~w}, {JMP_all_tab, ~w}};\n', [Hp, Ha]).
@@ -198,7 +189,7 @@ init_hash_mods(N) :-
 	Ms=[user|M_],
 	maplist(decl_mod, Ms),
 	nl,
-	flag(mods_hsize, HS, HS),
+	HS = 32,
 	fill(HS, [], L),
 	V=..[vec|L],
 	hash_mods_(Ms, HS, V),
