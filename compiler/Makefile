@@ -43,7 +43,7 @@ all_plc: ${PLC}
 ########################################################################
 
 ${PLC}: ${SRC} pl-ext.pl
-	pl -o $@ -c plc.pl
+	pl -q -o $@ -c plc.pl
 
 pl-ext.pl: ${src_dir}/pl-ext.def ${src_dir}/pl-ext.h
 	@echo "GEN	$@"
