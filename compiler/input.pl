@@ -6,20 +6,20 @@
 /************************************************************************/
 
 :- module(input, [
-		file_type/2,
-		read_module/1
+		file_type/3,
+		read_module/2
 	]).
 
 :- use_module(errmsg).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%!	file_type(+File, -Type) is semidet
+%!	file_type(+File, -Type, -Stream) is semidet
 %
 %	Open File, return the corresponding Stream
 %	and return the 'type' of the file:
 %	- 'module(M, X)' is the file begins with a module directive
 %	- 'user' otherwise
-file_type(F, T) :-
+file_type(F, T, S) :-
 	file_base_name(F, Name),
 	file_name_extension(Base, Ext, Name),
 	(   
@@ -29,7 +29,7 @@ file_type(F, T) :-
 	;
 		warning('~w : may not be a Prolog file', [F])
 	),
-	open(F, read, S, [alias(src)]),
+	open(F, read, S),
 	stream_property(S, position(P)),
 	read(S, R),
 	(   
@@ -51,8 +51,8 @@ file_type(F, T) :-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-read_module(L) :-
-	readclauses_(src, C, []),
+read_module(S, L) :-
+	readclauses_(S, C, []),
 	flag(current_module, M, M),
 	(   
 		M==system
