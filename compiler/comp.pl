@@ -42,17 +42,17 @@ init_all :-
 	del_all.
 
 
-comp_filetype(user, Name, S) :-
+comp_filetype(user, Xs, Name, S) :-
 	read_module(S, L),
-	comp_user(L, Name, user).
-comp_filetype(module(M, X), Name, S) :-
+	comp_user(L, Name, user, Xs).
+comp_filetype(M, X, Name, S) :-
 	read_module(S, L),
 	comp_module(L, Name, M, X).
 
 comp_file(File) :-
 	init_all,
-	file_type(File, Name, Type, S),
-	comp_filetype(Type, Name, S).
+	file_type(File, Name, Mod, Xs, S),
+	comp_filetype(Mod, Xs, Name, S).
 
 
 comp_module(L, Name, Mod, Export) :-
