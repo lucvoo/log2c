@@ -85,14 +85,7 @@ comp_module(L, Mod, Export) :-
 		delete_file(Fm),
 		halt(1)
 	;
-		module_filename(o, Mod, _Fo),
-		(
-			true
-		->
-			true
-		;
-			true
-		)
+		true
 	).
 
 
@@ -116,8 +109,6 @@ comp_user(L, Mod) :-
 	;
 		link_file(Name)
 	).
-	% delete_file(File_c),
-	% delete_file(File_mod).
 
 open_files(Name, C, H, M) :-
 	module_filename(c, Name, C),
