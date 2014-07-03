@@ -43,9 +43,11 @@ init_all :-
 
 
 comp_filetype(user, S) :-
-	comp_user(S, user).
+	read_module(S, L),
+	comp_user(L, user).
 comp_filetype(module(M, X), S) :-
-	comp_module(S, M, X).
+	read_module(S, L),
+	comp_module(L, M, X).
 
 comp_file(File) :-
 	init_all,
@@ -53,9 +55,8 @@ comp_file(File) :-
 	comp_filetype(Type, S).
 
 
-comp_module(S, Mod, Export) :-
+comp_module(L, Mod, Export) :-
 	flag(current_module, _, Mod),
-	read_module(S, L),
 	(
 		Mod==system
 	->
@@ -95,9 +96,8 @@ comp_module(S, Mod, Export) :-
 	).
 
 
-comp_user(S, Mod) :-
+comp_user(L, Mod) :-
 	flag(current_module, _, Mod),
-	read_module(S, L),
 	Li = [ (:-use_module(system))|L],
 
 	flag(input_file, Name, Name),
