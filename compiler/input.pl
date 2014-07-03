@@ -83,8 +83,8 @@ read_item((:-consult(F)), _, I, O) :-
 	read_files(F, I, O).
 read_item((:-include(F)), _, I, O) :-
 	read_files(F, I, O).
-read_item((:-Op), V, [Op|O], O) :-
-	Op = op(P, X, N),
+read_item((:-Op), _, [Op|O], O) :-
+	Op = op(_, _, _),
 	call(Op).
 
 read_item(T, _, [T|O], O).

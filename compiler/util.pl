@@ -83,20 +83,20 @@ find_fv_(_) :+
 
 get_preds(L, Lp) :-
 	flag(max_tmp, _, 0),
-	sortCls_(L, [], Lp), !.
+	sort_clauses(L, [], Lp), !.
 
-sortCls_([], L, L).
-sortCls_([C|Q], I, O) :-
-	getC(C, Ci),
+sort_clauses([], L, L).
+sort_clauses([C|Q], I, O) :-
+	get_clause(C, Ci),
 	max_tmp(C),
-	sortCls_(Q, I, IO),
-	insertC(Ci, IO, O).
+	sort_clauses(Q, I, IO),
+	insert_clause(Ci, IO, O).
 
 
-getC((H:-B), cl(F, N, A, B)) :- !,
+get_clause((H:-B), cl(F, N, A, B)) :- !,
 	'$functor'(H, F, N, A).
-getC((:-main(Q, V)), q(V, Q)) :- !.
-getC((:-D), '') :- !,
+get_clause((:-main(Q, V)), q(V, Q)) :- !.
+get_clause((:-D), '') :- !,
 	(
 		do_directive(D)
 	->
@@ -105,19 +105,19 @@ getC((:-D), '') :- !,
 		'$functor'(D, F, N, _),
 		warning('unknow directive : ~w/~w', [F, N])
 	).
-getC(H, cl(F, N, A, true)) :-
+get_clause(H, cl(F, N, A, true)) :-
 	'$functor'(H, F, N, A).
 
-insertC('', L, L).
-insertC(q(V, Q), I, O) :-
+insert_clause('', L, L).
+insert_clause(q(V, Q), I, O) :-
 	select(q(Lq), I, Is), !,
 	O=[q([cl(V, Q)|Lq])|Is].
-insertC(q(V, Q), I, O) :-
+insert_clause(q(V, Q), I, O) :-
 	O=[q([cl(V, Q)])|I].
-insertC(cl(F, N, A, B), I, O) :-
+insert_clause(cl(F, N, A, B), I, O) :-
 	select(pr(F, N, Lc), I, Is), !,
 	O=[pr(F, N, [cl(A, B)|Lc])|Is].
-insertC(cl(F, N, A, B), I, O) :-
+insert_clause(cl(F, N, A, B), I, O) :-
 	O=[pr(F, N, [cl(A, B)])|I].
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
