@@ -242,35 +242,29 @@ module_filename(X, M, F) :-
 %% Read all terms of file 'F' and put it in list 'L'
 
 read_all(F, L) :-
-	current_input(Old),
-	open(F, read, N),
-	set_input(N),
-	read_all_(L),
-	close(N),
-	set_input(Old).
+	open(F, read, S),
+	read_all_(S, L),
+	close(S).
 
-read_all_(L) :-
-	read(T),
+read_all_(S,L) :-
+	read(S,T),
 	(   
 		T==end_of_file
 	->
 		L=[]
 	;
-		read_all_(Q),
+		read_all_(S,Q),
 		L=[Tx|Q],
 		expand_term(T, Tx)
 	).
 
 read_export(F, X) :-
-	current_input(Old),
-	open(F, read, N),
-	set_input(N),
-	read_x_(X),
-	close(N),
-	set_input(Old).
+	open(F, read, S),
+	read_x_(S, X),
+	close(S).
 
-read_x_(X) :-
-	read(T),
+read_x_(S,X) :-
+	read(S,T),
 	(   
 		T==end_of_file
 	->
@@ -281,6 +275,6 @@ read_x_(X) :-
 	->
 		true
 	;
-		read_x_(X)
+		read_x_(S,X)
 	).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
