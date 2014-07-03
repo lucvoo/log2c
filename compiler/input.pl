@@ -52,20 +52,7 @@ file_type(F, T, S) :-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 read_module(S, L) :-
-	readclauses_(S, C, []),
-	flag(current_module, M, M),
-	(   
-		M==system
-	->
-		L=C
-	;
-		
-		concat($, _, M)
-	->
-		L=C
-	;
-		L=[ (:-use_module(system))|C]
-	).
+	readclauses_(S, L, []).
 
 readclauses([], O, O) :- !.
 readclauses([F|Q], I, O) :-
