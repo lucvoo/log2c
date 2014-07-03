@@ -42,20 +42,10 @@ init_all :-
 	del_all.
 
 
-comp_filetype(user, Xs, Name, S) :-
-	read_module(S, L),
-	comp_user(L, Name, user, Xs).
-comp_filetype(M, X, Name, S) :-
-	read_module(S, L),
-	comp_module(L, Name, M, X).
-
 comp_file(File) :-
 	init_all,
 	file_type(File, Name, Mod, Xs, S),
-	comp_filetype(Mod, Xs, Name, S).
-
-
-comp_module(L, Name, Mod, Export) :-
+	read_module(S, L),
 	flag(current_module, _, Mod),
 	(
 		Mod==system
@@ -71,42 +61,31 @@ comp_module(L, Name, Mod, Export) :-
 
 	open_files(Name, _Fc, Fm, _Fh),
 	set_output(c),
-	code_module(Li, Export, Lo), !,
-	trad(Lo),
-	nl,
+	(
+		Mod == user
+	->
+		code_user(Li)
+	;
+		code_module(Li, Xs, Lo),
+		trad(Lo),
+		nl
+	), !,
 	init_hash_jmps,
+	close(mod),
 	set_output(user_output),
 	close(c),
-	close_h,
-	close(mod),
 	(
+		Mod == user
+	->
+		link_file(Name)
+	;
+		close_h,
 		error_report
 	->
 		delete_file(Fm),
 		halt(1)
 	;
 		true
-	).
-
-
-comp_user(L, Name, Mod) :-
-	flag(current_module, _, Mod),
-	Li = [ (:-use_module(system))|L],
-
-	open_files(Name, _Fc, _Fm, _Fh),
-	set_output(c),
-	code_user(Li), !,
-	init_hash_jmps,
-	close(mod),
-	nl,
-	set_output(user_output),
-	close(c), !,
-	(
-		error_report
-	->
-		true
-	;
-		link_file(Name)
 	).
 
 open_files(Name, C, H, M) :-
