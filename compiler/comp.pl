@@ -42,20 +42,20 @@ init_all :-
 	del_all.
 
 
-comp_filetype(user, S) :-
+comp_filetype(user, Name, S) :-
 	read_module(S, L),
-	comp_user(L, user).
-comp_filetype(module(M, X), S) :-
+	comp_user(L, Name, user).
+comp_filetype(module(M, X), Name, S) :-
 	read_module(S, L),
-	comp_module(L, M, X).
+	comp_module(L, Name, M, X).
 
 comp_file(File) :-
 	init_all,
-	file_type(File, Type, S),
-	comp_filetype(Type, S).
+	file_type(File, Name, Type, S),
+	comp_filetype(Type, Name, S).
 
 
-comp_module(L, Mod, Export) :-
+comp_module(L, Name, Mod, Export) :-
 	flag(current_module, _, Mod),
 	(
 		Mod==system
@@ -69,7 +69,7 @@ comp_module(L, Mod, Export) :-
 		Li = [ (:-use_module(system))|L]
 	),
 
-	open_files(Mod, _Fc, Fm, _Fh),
+	open_files(Name, _Fc, Fm, _Fh),
 	set_output(c),
 	code_module(Li, Export, Lo), !,
 	trad(Lo),
@@ -89,11 +89,10 @@ comp_module(L, Mod, Export) :-
 	).
 
 
-comp_user(L, Mod) :-
+comp_user(L, Name, Mod) :-
 	flag(current_module, _, Mod),
 	Li = [ (:-use_module(system))|L],
 
-	flag(input_file, Name, Name),
 	open_files(Name, _Fc, _Fm, _Fh),
 	set_output(c),
 	code_user(Li), !,

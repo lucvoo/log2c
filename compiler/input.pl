@@ -6,7 +6,7 @@
 /************************************************************************/
 
 :- module(input, [
-		file_type/3,
+		file_type/4,
 		read_module/2
 	]).
 
@@ -19,7 +19,7 @@
 %	and return the 'type' of the file:
 %	- 'module(M, X)' is the file begins with a module directive
 %	- 'user' otherwise
-file_type(F, T, S) :-
+file_type(F, Fname, T, S) :-
 	file_base_name(F, Name),
 	file_name_extension(Base, Ext, Name),
 	(   
@@ -42,9 +42,11 @@ file_type(F, T, S) :-
 		%% ;
 		%% 	warning('file (~w) and module (~w) do not match', [F, M])
 		%% ),
+		Fname = M,
 		T=module(M, L)
 	;
 		set_stream_position(S, P),
+		Fname = Base,
 		T=user
 	),
 	flag(input_file, _, Base).
