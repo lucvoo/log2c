@@ -52,18 +52,20 @@ file_type(F, T, S) :-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 read_module(S, L) :-
-	readclauses_(S, L, []).
+	read_items(S, L, []), !.
 
-readclauses([], O, O) :- !.
-readclauses([F|Q], I, O) :-
-	readclauses(F, I, T),
-	readclauses(Q, T, O), !.
-readclauses(F, I, O) :-
+read_files([], O, O).
+read_files([F|Q], I, O) :-
+	read_file(F, I, T), !,
+	read_files(Q, T, O).
+read_files(F, I, O) :-
+	read_file(F, I, O).
+read_file(F, I, O) :-
 	open(F, read, S, []),
-	readclauses_(S, I, O),
+	read_items(S, I, O),
 	close(S).
 
-readclauses_(S, I, O) :-
+read_items(S, I, O) :-
 	read_term(S, T, [variable_names(V)]),
 	(   
 		T==end_of_file
@@ -71,19 +73,20 @@ readclauses_(S, I, O) :-
 		I=O
 	;
 		expand_term(T, Tx),
-		read_Pr(Tx, V, I, Tmp),
-		readclauses_(S, Tmp, O)
-	), !.
+		read_item(Tx, V, I, Tmp),
+		read_items(S, Tmp, O)
+	).
 
-read_Pr((main:-Q), V, I, O) :-
-	read_Pr((:-main(Q, V)), V, I, O).
-read_Pr((:-consult(F)), _, I, O) :-
-	readclauses(F, I, O).
-read_Pr((:-include(F)), _, I, O) :-
-	readclauses(F, I, O).
-read_Pr((:-op(P, T, N)), _, [ (:-op(P, T, N))|O], O) :-
-	op(P, T, N).
+read_item((main:-Q), V, I, O) :-
+	read_item((:-main(Q, V)), V, I, O).
+read_item((:-consult(F)), _, I, O) :-
+	read_files(F, I, O).
+read_item((:-include(F)), _, I, O) :-
+	read_files(F, I, O).
+read_item((:-Op), V, [Op|O], O) :-
+	Op = op(P, X, N),
+	call(Op).
 
-read_Pr(T, _, [T|O], O).
+read_item(T, _, [T|O], O).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
