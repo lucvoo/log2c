@@ -10,7 +10,6 @@
 		code_Assign/4,
 		code_AssignD/4,
 		code_M/4,
-		code_U/4,
 		code_UA/4,
 		code_X/2
 	]).

@@ -9,9 +9,7 @@
 		add_module/4,
 		a_n_f/6,
 		anf_module/3,
-		decl_atoms/1,
 		decl_export_mod/1,
-		decl_funs/1,
 		decl_import_mod/1,
 		decl_pred/1,
 		decl_preds/1,
@@ -19,12 +17,9 @@
 		get_preds/2,
 		get_query/3,
 		include_module/1,
-		init_jmp_tbl/2,
-		init_preds/1,
 		make_ARGs/2,
 		make_f_args/2,
-		meta_pred/2,
-		to_list/2
+		meta_pred/2
 	]).
 
 :- use_module([map_name, modules]).
