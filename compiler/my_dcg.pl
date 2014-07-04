@@ -20,9 +20,9 @@ dgc(code_Arg, 2).
 dgc(code_Assign, 2).
 dgc(code_AssignD, 2).
 dgc(code_C, 4).
-dgc(code_FPr, 0).
-dgc(code_FPr_det, 1).
-dgc(code_FPr_ndet, 1).
+dgc(code_FPr, 1).
+dgc(code_FPr_det, 2).
+dgc(code_FPr_ndet, 2).
 dgc(code_G, 1).
 dgc(code_G, 2).
 dgc(code_G_or, 4).

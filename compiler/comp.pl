@@ -157,7 +157,7 @@ code_module(Mod, I, X) :+
 	(
 		Mod == system
 	->
-		code_FPr
+		code_FPr(Mod)
 	;
 		true
 	),
@@ -232,13 +232,13 @@ code__Pr(pr(F, A, [C|Q])) :+
 	code__Pr(pr(F, A, Q)).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-code_FPr :+
+code_FPr(M) :+
 	foreign_preds(full,ndet, Ln),
-	foldl(code_FPr_ndet, Ln),
+	foldl(code_FPr_ndet(M), Ln),
 	foreign_preds(full, det, Ld),
-	foldl(code_FPr_det, Ld).
+	foldl(code_FPr_det(M), Ld).
 
-code_FPr_ndet(F/N-C) :+
+code_FPr_ndet(M, F/N-C) :+
 	+> comm_pred(F, N),
 	L is N+4,
 	L1 is L+1,
@@ -275,7 +275,7 @@ code_FPr_ndet(F/N-C) :+
 	+> g('                restore();'),
 	+> g('}\n'), !.
 
-code_FPr_det(F/N-C) :+
+code_FPr_det(M, F/N-C) :+
 	+> comm_pred(F, N),
 	+> flag(arg, _, arg),
 	flag(arg, _, arg),
