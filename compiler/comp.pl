@@ -23,19 +23,6 @@
 :- op(900, fy, +>).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-del_all :-
-	'$erase_records'(code),
-	'$erase_records'(vars_list),
-	'$erase_records'(directive),
-	'$erase_records'(curr_C),
-	'$erase_records'(indent),
-	'$erase_records'(preds),
-	'$erase_records'(export_pred),
-	'$erase_records'(used_modules),
-	'$erase_records'(module_compiled),
-	flag(indent, _, 0).
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 comp_file(File) :-
 	file_type(File, Name, Mod, Xs, S),
