@@ -22,8 +22,8 @@ foreign_pred(PI, C, D) :-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fpr_info(full, D, [F, N, C]) :-
-	foreign_pred(F/N, C, D).
+fpr_info(full, D, PI-C) :-
+	foreign_pred(PI, C, D).
 fpr_info(spec, D, PI) :-
 	foreign_pred(PI, _, D).
 fpr_info(functor, D, F) :-

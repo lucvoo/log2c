@@ -238,7 +238,7 @@ code_FPr :+
 	foreign_preds(full, det, Ld),
 	foldl(code_FPr_det, Ld).
 
-code_FPr_ndet([F, N, C]) :+
+code_FPr_ndet(F/N-C) :+
 	+> comm_pred(F, N),
 	L is N+4,
 	L1 is L+1,
@@ -275,7 +275,7 @@ code_FPr_ndet([F, N, C]) :+
 	+> g('                restore();'),
 	+> g('}\n'), !.
 
-code_FPr_det([F, N, C]) :+
+code_FPr_det(F/N-C) :+
 	+> comm_pred(F, N),
 	+> flag(arg, _, arg),
 	flag(arg, _, arg),
