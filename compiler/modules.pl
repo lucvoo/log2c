@@ -185,9 +185,6 @@ rec_export(M, X) :-
 		recorda(module_export, module_export(M, X))
 	).
 
-exp_x(export(_, L)) :-
-	maplist(export_pred, L).
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 import_from_module(F, M) :-
 	recorded(module_export, module_export(M, F)).

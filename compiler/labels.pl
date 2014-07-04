@@ -15,15 +15,6 @@
 :- use_module(map_name).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-del_labels :-
-	current_flag(K),
-	atom(K),
-	concat(label_, _, K),
-	flag(K, _, 0),
-	fail.
-del_labels.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 label(F, A, Label) :-
 	map_fun(F/A, Fm),

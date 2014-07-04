@@ -210,18 +210,6 @@ decl_funs_(F/N) :-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-init_jmp_tbl(import, M) :-
-	map_atom(M, Mm),
-	format('&module~w, ', Mm).
-
-init_jmp_tbl(pub, FN) :-
-	\+ exported(FN), !.
-init_jmp_tbl(_, F/N) :-
-	map_atom(F, Fm),
-	format('{ FUN(~w,~d), &&~w_~d_1}, ', [Fm, N, Fm, N]).
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 decl_import_mod(M) :-
 	map_atom(M, Mm),
 	format('extern struct module module~w;\n', Mm).

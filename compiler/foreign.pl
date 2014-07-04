@@ -8,7 +8,6 @@
 :- module(foreign, [
 		foreign_pred/3,
 		foreign_preds/1,
-		foreign_preds/2,
 		foreign_preds/3
 	]).
 
@@ -34,9 +33,6 @@ fpr_info(functor, D, F) :-
 foreign_preds(T, D, L) :-
 	findall(R, fpr_info(T, D, R), Lr),
 	sort(Lr, L).
-
-foreign_preds(D, L) :-
-	foreign_preds(spec, D, L).
 
 foreign_preds(L) :-
 	foreign_preds(spec, _, L).
