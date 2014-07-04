@@ -143,7 +143,7 @@ anf_module(La, Lf, Lp) :-
 	nl,
 	decl_atoms(La),
 	decl_funs(Lf),
-	maplist(init_pred,Lp),
+	maplist(init_pred(M),Lp),
 	init_args.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -160,9 +160,9 @@ init_args :-
 	),
 	nl.
 
-init_pred(F) :-
+init_pred(M, F) :-
 	recorda(preds, F),
-	map_pred(F, Pm),
+	map_pred(F, M, Pm),
 	format(h, 'extern unsigned int PRED~w;\n', Pm).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
