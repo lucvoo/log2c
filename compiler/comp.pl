@@ -42,15 +42,9 @@ comp_file(File) :-
 
 	open_files(Name, _Fc, Fm, _Fh),
 	set_output(c),
-	(
-		Mod == user
-	->
-		code_user(Li)
-	;
-		code_module(Li, Xs, Lo),
-		trad(Lo),
-		nl
-	), !,
+	code_module(Mod, Li, Xs, Lo, []), !,
+	trad(Lo),
+	nl,
 	init_hash_jmps,
 	close(mod),
 	set_output(user_output),
@@ -131,33 +125,37 @@ link(Name) :-
 		fail
 	).
 
-code_user(I) :-
-	code_user(I, T, []),
-	trad(T).
-code_user(I) :+
+code_module(Mod, I, X) :+
 	get_preds(I, Lpr),
-	get_query(Lpr, Q, P),
-	get_exports(Us, Xs),
-	check_import(Us, Xs),
-	flag(current_module, M, M),
-	maplist(export_user_preds, P),
-	init_module(P, Q, [], Xs),
-	code_Q(Q),
-	code_P(P),
-	code_fin.
-
-code_module(I, X, O) :-
-	code_module(I, X, O, []).
-code_module(I, X) :+
-	get_preds(I, P),
+	(
+		Mod == user
+	->
+		get_query(Lpr, Q, P)
+	;
+		P = Lpr,
+		Q = [] 
+	),
 	get_exports(Us, Xs),
 	check_import(Us, Xs),
 	check_export(X, P, Xs),
-	init_module(P, [], X, Xs),
-	code_P(P),
-	flag(current_module, M, M),
 	(
-		M==system
+		Mod == user
+	->
+		maplist(export_user_preds, P)
+	;
+		true
+	),
+	init_module(P, Q, X, Xs),
+	(
+		Mod == user
+	->
+		code_Q(Q)
+	;
+		true
+	),
+	code_P(P),
+	(
+		Mod == system
 	->
 		code_FPr
 	;
