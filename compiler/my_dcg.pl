@@ -19,7 +19,7 @@ dgc(btinit, 3).
 dgc(code_Arg, 2).
 dgc(code_Assign, 2).
 dgc(code_AssignD, 2).
-dgc(code_C, 4).
+dgc(code_C, 5).
 dgc(code_FPr, 1).
 dgc(code_FPr_det, 2).
 dgc(code_FPr_ndet, 2).
@@ -27,10 +27,10 @@ dgc(code_G, 1).
 dgc(code_G, 2).
 dgc(code_G_or, 4).
 dgc(code_M, 2).
-dgc(code_Pr, 1).
+dgc(code_Pr, 2).
 dgc(code_U, 2).
 dgc(code_UA, 2).
-dgc(code__Pr, 1).
+dgc(code__Pr, 2).
 dgc(code_call, 2).
 dgc(code_fin, 0).
 dgc(decl, 2).

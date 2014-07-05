@@ -145,7 +145,7 @@ code_module(Mod, I, X) :+
 	;
 		true
 	),
-	init_module(P, Q, X, Xs),
+	init_module(Mod, P, Q, X, Xs),
 	(
 		Mod == user
 	->
@@ -153,7 +153,7 @@ code_module(Mod, I, X) :+
 	;
 		true
 	),
-	maplist(code_P,P),
+	maplist(code_P(Mod),P),
 	(
 		Mod == system
 	->
@@ -163,11 +163,10 @@ code_module(Mod, I, X) :+
 	),
 	code_fin.
 
-init_module(P, Q, X, Xs) :-
+init_module(M, P, Q, X, Xs) :-
 	'$erase_records'(undef_pred),
 	a_n_f(P, Q, X, La, Lf, Lp),
 	anf_module(La, Lf, Lp),
-	flag(current_module, M, M),
 	map_atom(M, Mod),
 	used_modules(Ms),
 	maplist(decl_import_mod, Ms),
@@ -208,25 +207,25 @@ set_meta(F, A) :-
 	).
 
 
-code_P(P) :-
-	code_Pr(P, T, []),
+code_P(M, P) :-
+	code_Pr(M, P, T, []),
 	trad(T).
 
-code_Pr(pr(F, A, [C])) :+
+code_Pr(M, pr(F, A, [C])) :+
 	format('/* code for ~w/~w */\n', [F, A]),
 	set_meta(F, A),
-	code_C(F, A, C, single).
-code_Pr(pr(F, A, [C|Q])) :+
+	code_C(M, F, A, C, single).
+code_Pr(M, pr(F, A, [C|Q])) :+
 	format('/* code for ~w/~w */\n', [F, A]),
 	set_meta(F, A),
-	code_C(F, A, C, first),
-	code__Pr(pr(F, A, Q)).
+	code_C(M, F, A, C, first),
+	code__Pr(M, pr(F, A, Q)).
 
-code__Pr(pr(F, A, [C])) :+
-	code_C(F, A, C, last).
-code__Pr(pr(F, A, [C|Q])) :+
-	code_C(F, A, C, middle),
-	code__Pr(pr(F, A, Q)).
+code__Pr(M, pr(F, A, [C])) :+
+	code_C(M, F, A, C, last).
+code__Pr(M, pr(F, A, [C|Q])) :+
+	code_C(M, F, A, C, middle),
+	code__Pr(M, pr(F, A, Q)).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 code_FPr(M) :+
@@ -302,7 +301,7 @@ code_FPr_det(M, F/N-C) :+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-code_C(F, N, cl(La, G), T) :+
+code_C(M, F, N, cl(La, G), T) :+
 	maplist(trans, La, Lt),
 	trans_term(G, Gt),
 	vars(Lt, Gt, R),
