@@ -1,0 +1,1 @@
+* A = A 			%% this result in a self-reference, which is very bad
