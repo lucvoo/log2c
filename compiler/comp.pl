@@ -245,7 +245,7 @@ code_FPr_ndet(M, F/N-C) :+
 	flag(curr_C, _, Li),
 	label(Li, _),
 	+> fl(Li),
-	map_pred(F/N, Pm),
+	map_pred(F/N, M, Pm),
 	map_fun(F/N, Fm),
 	(
 		exported(F/N)
@@ -280,7 +280,7 @@ code_FPr_det(M, F/N-C) :+
 	flag(curr_C, _, Li),
 	label(Li, _),
 	+> fl(Li),
-	map_pred(F/N, Pm),
+	map_pred(F/N, M, Pm),
 	map_fun(F/N, Fm),
 	(
 		exported(F/N)
@@ -324,7 +324,7 @@ code_C(M, F, N, cl(La, G), T) :+
 			T==first
 		)
 	->
-		map_pred(F/N, Pm),
+		map_pred(F/N, M, Pm),
 		map_fun(F/N, Fm),
 		(
 			exported(F/N)
