@@ -153,7 +153,7 @@ code_module(Mod, I, X) :+
 	;
 		true
 	),
-	code_P(P),
+	maplist(code_P,P),
 	(
 		Mod == system
 	->
@@ -198,12 +198,6 @@ code_fin :+
 	+> format('}\n').
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-code_P([P|Q]) :-
-	code_Pr(P, T, []),
-	trad(T),
-	code_P(Q).
-code_P([]).
-
 set_meta(F, A) :-
 	(
 		recorded(meta, F/A)
@@ -212,6 +206,11 @@ set_meta(F, A) :-
 	;
 		flag(meta, _, false)
 	).
+
+
+code_P(P) :-
+	code_Pr(P, T, []),
+	trad(T).
 
 code_Pr(pr(F, A, [C])) :+
 	format('/* code for ~w/~w */\n', [F, A]),
