@@ -321,13 +321,7 @@ to_list(E, [E|O], O).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 a_n_f(G, Q, X, A, F, P) :-
 	flag(current_module, M, M),
-	(   
-		M=0
-	->
-		true
-	;
-		anf_rec_atom(M)
-	),
+	anf_rec_atom(M),
 	anf_clause(cl([], Q)),
 	maplist(anf_pred, G),
 	maplist(anf_rec_fun, X),
