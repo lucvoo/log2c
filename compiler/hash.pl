@@ -17,9 +17,22 @@
 :- use_module(util).
 
 /****************************************************************/
+hash_size(L, S) :-
+	length(L, N),
+	M is (N*3)//2, 
+	next_pow(M, 0, P),
+	S is (1 << P).
+next_pow(M, P, R)  :-
+	M < (1 << P), !,
+	R = P.
+next_pow(M, P, R)  :-
+	P1 is P+1,
+	next_pow(M, P1, R).
+
+/****************************************************************/
 
 init_hash_atoms(As) :-
-	HS = 2048,
+	hash_size(As, HS),
 	length(As, N),
 	fill(HS, [], L),
 	V=..[vec|L],
@@ -67,7 +80,7 @@ hash_atom_tab([E|_]) :-
 /****************************************************************/
 
 init_hash_funs(Fs) :-
-	HS = 1024,
+	hash_size(Fs, HS),
 	length(Fs, N),
 	fill(HS, [], L),
 	V=..[vec|L],
@@ -120,9 +133,9 @@ init_hash_jmps(M) :-
 	sort(Pall_, Pall),
 	maplist(decl_pred, Pall),
 	nl,
-	Hp = 32,
+	hash_size(Ppub, Hp),
 	hash_jmp(Hp, Ppub, 'JMP_pub'),
-	Ha = 128,
+	hash_size(Pall, Ha),
 	hash_jmp(Ha, Pall, 'JMP_all'),
 	format('struct module module~w = { __FILE__, ATOM(~w), ', [Mm, Mm]),
 	format('{JMP_pub_tab, ~w}, {JMP_all_tab, ~w}};\n', [Hp, Ha]).
@@ -188,7 +201,7 @@ init_hash_mods(N) :-
 	Ms=[user|M_],
 	maplist(decl_mod, Ms),
 	nl,
-	HS = 32,
+	hash_size(Ms, HS),
 	fill(HS, [], L),
 	V=..[vec|L],
 	hash_mods_(Ms, HS, V),
