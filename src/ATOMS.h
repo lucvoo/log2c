@@ -181,10 +181,12 @@ extern struct atom ATOM_univ;
 #define FUN_divide_2 		 FUN___2F_2
 #define FUN_dot_2 		 FUN___2E_2
 #define FUN_functor_4 		 FUN___24functor_4
+#define FUN_lshift_2 		 FUN___3C_3C_2
 #define FUN_minus_1 		 FUN___2D_1
 #define FUN_minus_2 		 FUN___2D_2
 #define FUN_module_2 		 FUN___3A_2
 #define FUN_plus_2 		 FUN___2B_2
+#define FUN_rshift_2 		 FUN___3E_3E_2
 #define FUN_star_2 		 FUN___2A_2
 #define FUN_str_pos_3 		 FUN___24stream__position_3
 #define FUN_unify_2 		 FUN___3D_2
@@ -209,10 +211,12 @@ extern struct functor FUN_div_2;
 extern struct functor FUN_divide_2;
 extern struct functor FUN_dot_2;
 extern struct functor FUN_functor_4;
+extern struct functor FUN_lshift_2;
 extern struct functor FUN_minus_1;
 extern struct functor FUN_minus_2;
 extern struct functor FUN_module_2;
 extern struct functor FUN_plus_2;
+extern struct functor FUN_rshift_2;
 extern struct functor FUN_star_2;
 extern struct functor FUN_str_pos_3;
 extern struct functor FUN_unify_2;

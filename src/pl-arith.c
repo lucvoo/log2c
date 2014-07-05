@@ -77,6 +77,18 @@ debut:
 					succeed;
 				} else
 					fail;
+			} else if (f == FUN(rshift, 2)) {
+				if (PL_eval_(c + 1, n) && PL_eval_(c + 2, &n2)) {
+					*n = *n >> n2;
+					succeed;
+				} else
+					fail;
+			} else if (f == FUN(lshift, 2)) {
+				if (PL_eval_(c + 1, n) && PL_eval_(c + 2, &n2)) {
+					*n = *n << n2;
+					succeed;
+				} else
+					fail;
 			} else
 				PL_warn("Unknow arithmetic operator: %s/%ld", FunName(f), FunArity(f));
 		}

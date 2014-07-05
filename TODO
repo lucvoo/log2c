@@ -26,7 +26,6 @@
 * Add defined but unimplemnted arithmetic functions
 	- (/)/2 vs. (//)/2
 	- **/2
-	- <</2 & >>/2
 	- (\)/2, (/\)/2, (\/)/2, xor/2
 	- abs/1
 	- min/2, max/2

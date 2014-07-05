@@ -148,7 +148,9 @@ functors((-)/2).
 functors((/)/2).
 functors((//)/2).
 functors((:)/2).
+functors((<<)/2).
 functors((=)/2).
+functors((>>)/2).
 functors((mod)/2).
 functors(alias/1).
 functors(dt/6).
