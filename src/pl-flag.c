@@ -60,17 +60,19 @@ debut:
 int pl_flag(union cell *key, union cell *old, union cell *new)
 {
 	struct flag *f;
-	union cell *tmp;
 	long n;
 
 	f = lookup_flag(key);
 	if (!f)
 		PL_warning("flag/3: illegal key");
 
-	tmp = PL_new_term_ref();
-	*tmp = f->val;
-	if (!pl_unify(old, tmp))
-		fail;
+	if (is_atom(&f->val)) {
+		if (!PL_unify_atom(old, get_atom(&f->val)))
+			fail;
+	} else {
+		if (!PL_unify_intg(old, get_intg(&f->val)))
+			fail;
+	}
 
 	new = deref(new);
 	if (is_atom(new)) {

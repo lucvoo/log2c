@@ -42,12 +42,6 @@ struct write_option {
 	enum write_flag flags;
 };
 
-inline static void Get_arg(int index, union cell *t, union cell *a)
-{
-	union cell *arg = deref(t) + index;
-	mkrefp(a, deref(arg));
-}
-
 // PRE : t is deref
 inline static char *varName(union cell *t)
 {
@@ -221,8 +215,6 @@ inline static void WritePrimitive(struct stream *S, union cell *t, const struct 
 {
 	char buf[33];
 
-	t = deref(t);
-
 	switch (get_tag(t)) {
 	case var_tag:
 		PutToken(S, varName(t));
@@ -306,25 +298,23 @@ static int WriteTerm(struct stream *S, union cell *t, int prec, int depth, const
 
 	if (!PL_get_name_arity(t, &functor, &arity)) {
 		WritePrimitive(S, t, opt);
-		succeed;
 	} else {
-		union cell *arg = PL_new_term_ref();
+		union cell *arg;
 
 		if (arity == 1) {
 			if (functor == ATOM(curl) &&	/* {a,b,c} */
 			    Options(OPT_CURL)) {
-				union cell *a = PL_new_term_ref();
+				union cell *a;
 
-				Get_arg(1, t, arg);
+				arg = deref(t + 1);
 				Putc(S, '{');
 				for (;;) {
 					if (!PL_is_functor(arg, FUN(comma, 2)))
 						break;
-					deref(arg);
-					Get_arg(1, arg, a);
+					a = deref(arg + 1);
 					WriteTerm(S, a, 999, depth + 1, opt);
 					Puts(S, ", ");
-					Get_arg(2, arg, arg);
+					arg = deref(arg + 2);
 				}
 				WriteTerm(S, arg, 999, depth + 1, opt);
 				Putc(S, '}');
@@ -336,7 +326,7 @@ static int WriteTerm(struct stream *S, union cell *t, int prec, int depth, const
 			    Options(OPT_NUMV)) {
 				int n;
 
-				Get_arg(1, t, arg);
+				arg = deref(t + 1);
 				if (PL_get_intg(arg, &n) && n >= 0) {
 					int i = n % 26;
 					int j = n / 26;
@@ -355,7 +345,7 @@ static int WriteTerm(struct stream *S, union cell *t, int prec, int depth, const
 			    Options(OPT_NAMV)) {
 				struct atom *a;
 
-				Get_arg(1, t, arg);
+				arg = deref(t + 1);
 				if ((a = PL_get_atom(arg))) {
 					struct write_option opt2;
 					memcpy(&opt2, opt, sizeof(struct write_option));
@@ -369,10 +359,10 @@ static int WriteTerm(struct stream *S, union cell *t, int prec, int depth, const
 
 			if (Options(OPT_OPS)) {	/* op <term> */
 				if (PL_is_op(OP_PREFIX, functor, &op_type, &op_pri)) {
-					union cell *arg = PL_new_term_ref();
+					union cell *arg;
 					int pri;
 
-					Get_arg(1, t, arg);
+					arg = deref(t + 1);
 					if (op_pri > prec)
 						PutOpenBrace(S);
 					WriteAtom(S, functor, opt);
@@ -389,10 +379,10 @@ static int WriteTerm(struct stream *S, union cell *t, int prec, int depth, const
 
 				/* <term> op */
 				if (PL_is_op(OP_POSTFIX, functor, &op_type, &op_pri)) {
-					union cell *arg = PL_new_term_ref();
+					union cell *arg;
 					int pri;
 
-					Get_arg(1, t, arg);
+					arg = deref(t + 1);
 					if (op_pri > prec)
 						PutOpenBrace(S);
 					if (op_type == OP_XF)
@@ -431,12 +421,12 @@ static int WriteTerm(struct stream *S, union cell *t, int prec, int depth, const
 
 			if (Options(OPT_OPS)) {	/* <term> op <term> */
 				if (PL_is_op(OP_INFIX, functor, &op_type, &op_pri)) {
-					union cell *a = PL_new_term_ref();
+					union cell *a;
 					int pri;
 
 					if (op_pri > prec)
 						PutOpenBrace(S);
-					Get_arg(1, t, a);
+					a = deref(t + 1);
 					if (op_type == OP_XFX || op_type == OP_XFY)
 						pri = op_pri - 1;
 					else
@@ -445,7 +435,7 @@ static int WriteTerm(struct stream *S, union cell *t, int prec, int depth, const
 					WriteAtom(S, functor, opt);
 					if (functor == ATOM(comma))
 						Putc(S, ' ');
-					Get_arg(2, t, a);
+					a = deref(t + 2);
 					if (op_type == OP_XFX || op_type == OP_YFX)
 						pri = op_pri - 1;
 					else

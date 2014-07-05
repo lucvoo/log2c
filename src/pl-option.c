@@ -12,25 +12,25 @@
 int PL_scan_options(union cell *options, struct pl_option_spec *spec)
 {
 	union cell *list = deref(options);
-	// union cell *head;
-	union cell *val = PL_new_term_ref();
+	union cell *val;
 	struct pl_option_spec *s = 0;
 
+	list = deref(list);
 	while (is_cons(list))		// loop trough the options list
 	{
+		union cell *e = deref(list+1);
 		struct atom *name;
 		int arity;
 
-		if (PL_get_name_arity(list + 1, &name, &arity)) {
+		if (PL_get_name_arity(e, &name, &arity)) {
 			if (arity == 0) {
-				PL_put_atom(val, ATOM(_true));
+				val =  &ATOM(_true)->cell;
 			} else if (arity == 1) {
-				PL_get_arg(1, list + 1, val);
+				val = e + 1;
 			} else if (arity == 2 && name == ATOM(unify)) {
-				union cell *head = deref(list + 1);
-				if (!(name = PL_get_atom(head + 1)))
+				if (!(name = PL_get_atom(e + 1)))
 					fail;
-				val = head + 2;
+				val = e + 2;
 			} else
 				fail;
 		} else
@@ -64,7 +64,6 @@ int PL_scan_options(union cell *options, struct pl_option_spec *spec)
 					fail;
 			case OPT_TERM:
 				*s->val.term = val;
-				val = PL_new_term_ref();
 				break;
 			default:
 				fail;

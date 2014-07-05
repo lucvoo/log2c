@@ -13,28 +13,6 @@
 #include "pl-fli.h"
 #include "pl-buffer.h"
 
-union cell *PL_new_term_refs(int n)
-{
-	union cell *r = HP;
-
-	for (; n > 0; n--)
-		HP[n].val = __var();
-
-	HP += n;
-
-	return r;
-}
-
-union cell *PL_new_term_ref(void)
-{
-	union cell *r = HP;
-
-	HP->val = __var();
-	HP++;
-
-	return r;
-}
-
 		 /*******************************
 		 *	       CONS-*		*
 		 *******************************/

@@ -29,8 +29,6 @@ int PL_get_tail(union cell *l, union cell *t);
 int PL_term_type(union cell *t);
 int PL_unify_arg(int index, union cell *t, union cell *a);
 int PL_unify_atom_chars(union cell *t, const char *chars);
-union cell *PL_new_term_ref(void);
-union cell *PL_new_term_refs(int n);
 void PL_cons_functor(union cell *h, struct functor *fd, ...);
 void PL_cons_list(union cell *l, union cell *head, union cell *tail);
 void PL_put_functor(union cell *t, struct functor *f);
