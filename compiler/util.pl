@@ -7,7 +7,7 @@
 
 :- module(util, [
 		add_module/4,
-		anf_module/3,
+		anf_module/4,
 		decl_export_mod/1,
 		decl_import_mod/1,
 		decl_pred/1,
@@ -128,9 +128,8 @@ check_query(_L, _Q) :-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-anf_module(P, Q, X) :-
-	a_n_f(P, Q, X, La, Lf, Lp),
-	flag(current_module, M, M),
+anf_module(M, P, Q, X) :-
+	a_n_f(M, P, Q, X, La, Lf, Lp),
 	module_filename(h, M, H),
 	format('#include <Prolog.h>\n'),
 	format('#include <pl-trad.h>\n\n', []),
@@ -319,24 +318,20 @@ to_list(not(A), I, O) :-
 to_list(E, [E|O], O).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-a_n_f(G, Q, X, A, F, P) :-
-	flag(current_module, M, M),
+a_n_f(M, G, Q, X, A, F, P) :-
 	anf_rec_atom(M),
 	anf_clause(cl([], Q)),
 	maplist(anf_pred, G),
 	maplist(anf_rec_fun, X),
+	anf_foreign(M),
 	anf(A, F, P).
 
+anf_foreign(system) :-
+	foreign_preds(Fps),
+	maplist(anf_rec_pred, Fps).
+anf_foreign(_).
+
 anf(A, F, P) :-
-	flag(current_module, M, M),
-	(   
-		M==system
-	->
-		foreign_preds(Fps),
-		maplist(anf_rec_pred, Fps)
-	;
-		true
-	),
 	recorded(used_modules, Ms),
 	maplist(anf_rec_atom, Ms),
 	anf_rec_import,

@@ -165,7 +165,7 @@ code_module(Mod, I, X) :+
 
 init_module(M, P, Q, X, Xs) :-
 	'$erase_records'(undef_pred),
-	anf_module(P, Q, X),
+	anf_module(M, P, Q, X),
 	map_atom(M, Mod),
 	used_modules(Ms),
 	maplist(decl_import_mod, Ms),
