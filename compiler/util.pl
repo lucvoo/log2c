@@ -7,7 +7,6 @@
 
 :- module(util, [
 		add_module/4,
-		a_n_f/6,
 		anf_module/3,
 		decl_export_mod/1,
 		decl_import_mod/1,
@@ -129,7 +128,8 @@ check_query(_L, _Q) :-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-anf_module(La, Lf, Lp) :-
+anf_module(P, Q, X) :-
+	a_n_f(P, Q, X, La, Lf, Lp),
 	flag(current_module, M, M),
 	module_filename(h, M, H),
 	format('#include <Prolog.h>\n'),
