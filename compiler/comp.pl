@@ -45,7 +45,7 @@ comp_file(File) :-
 	code_module(Mod, Li, Xs, Lo, []), !,
 	trad(Lo),
 	nl,
-	init_hash_jmps,
+	init_hash_jmps(Mod),
 	close(mod),
 	set_output(user_output),
 	close(c),

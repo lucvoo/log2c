@@ -8,7 +8,7 @@
 :- module(hash, [
 		init_hash_atoms/1,
 		init_hash_funs/1,
-		init_hash_jmps/0,
+		init_hash_jmps/1,
 		init_hash_mods/1
 	]).
 
@@ -113,8 +113,7 @@ hash_fun_tab([F/N|_]) :-
 
 /****************************************************************/
 
-init_hash_jmps :-
-	flag(current_module, M, M),
+init_hash_jmps(M) :-
 	map_atom(M, Mm),
 	'$recorded_all'(export_pred, Ppub),
 	findall(P, find_pred(P), Pall_),
