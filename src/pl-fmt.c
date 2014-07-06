@@ -12,55 +12,44 @@
 #include "pl-io.h"
 #include "pl-write.h"
 
-#define BUFSIZE 	10240
-#define DEFAULT 	(-1)
-#define SHIFT   	{ ++argv; }
-#define NEED_ARG	{ if (!argv->celp) \
-			  { ERROR("not enough arguments"); \
-			  } \
-			}
-#define ERROR(fmt)	PL_warning("format/2: " fmt)
-#define ERROR1(fmt, a)	PL_warning("format/2: " fmt, a)
+#define DEFAULT 	-1
 
-#define OUTSTRING(s)	Sputs(S,s)
-#define OUTCHR(c)	Sputc(S,c)
+#define GET_NEXT_ARG(argv)	\
+({	union cell *arg;	\
+	argv = deref(argv);	\
+	if (!is_cons(argv))	\
+		PL_warning("%s:%d: not enough arguments", __FUNCTION__, __LINE__); \
+	arg = argv + 1;		\
+	argv = argv + 2;	\
+	arg;			\
+})
 
-		/********************************
-		*       UTILITIES		*
-		********************************/
+/************************************************************************/
 
-static char digitname[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-	'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
-	'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
-	'u', 'v', 'w', 'x', 'y', 'z'
-};
-
-static char DigitName[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
-	'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
-	'U', 'V', 'W', 'X', 'Y', 'Z'
-};
-
-inline static char digitName(int n, int small)	// FIXME : check if overflow ???
+inline static char digit_name(unsigned int n, int small)	// FIXME : check if overflow ???
 {
-	return small ? digitname[n] : DigitName[n];
+	if (n < 10)
+		return n + '0';
+	if (small)
+		return n + 'a' - 10;
+	else
+		return n + 'A' - 10;
 }
 
-		/********************************
-		*       ACTUAL FORMATTING	*
-		********************************/
+/************************************************************************/
+/* Actual formatting
 
-/* format an integer according to a number of modifiers at various
-   radius. `split' is a boolean asking to put ',' between each group
-   of three digits (e.g. 67,567,288). `div' askes to divide the number
-   by radix^`div' before printing. `radix' is the radix used for
-   conversion. `n' is the number to be converted.
+   Format an integer according to a number of modifiers at various radius.
+   - `split' is a boolean asking to put ',' between each group of three digits (e.g. 67,567,288).
+   - `div' askes to divide the number by radix^`div' before printing.
+   - `radix' is the radix used for conversion.
+   - `n' is the number to be converted.
 
  ** Fri Aug 19 22:26:41 1988  jan@swivax.UUCP (Jan Wielemaker)
 */
-static char *formatInteger(int split, int div, int radix, int small, long int n)
+static void format_integer(struct stream *S, long int n, int split, int div, int radix, int small)
 {
-	static char tmp[100];
+	char tmp[100];
 	char *s = tmp + 99;
 	int before = (div == 0);
 	int digits = 0;
@@ -73,7 +62,7 @@ static char *formatInteger(int split, int div, int radix, int small, long int n)
 	}
 	if (n == 0 && div == 0) {
 		*--s = '0';
-		return s;
+		goto end;
 	}
 	while (n > 0 || div >= 0) {
 		if (div-- == 0 && !before) {
@@ -82,13 +71,14 @@ static char *formatInteger(int split, int div, int radix, int small, long int n)
 		}
 		if (split && before && (digits++ % 3) == 0 && digits != 1)
 			*--s = ',';
-		*--s = digitName((int)(n % radix), small);
+		*--s = digit_name(n % radix, small);
 		n /= radix;
 	}
 	if (negative)
 		*--s = '-';
 
-	return s;
+end:
+	Sputs(S, s);
 }
 
 inline static int update_column(int col, int c)
@@ -105,193 +95,165 @@ inline static int update_column(int col, int c)
 	}
 }
 
-static int do_format(const char *fmt, union cell *argv, struct stream *S)
+static int do_format(struct stream *S, const char *fmt, union cell *argv)
 {
-	while (*fmt) {
-		if (*fmt == '~') {
-			int arg = DEFAULT;	/* Numeric argument */
-			/* Get the numeric argument */
-			if (isDigit(*++fmt)) {
-				for (; isDigit(*fmt); fmt++)
-					arg = (arg == DEFAULT ? *fmt - '0' : arg * 10 + *fmt - '0');
-			} else if (*fmt == '*') {
-				NEED_ARG;
-				if (PL_get_intg(argv, &arg) && arg >= 0) {
-					SHIFT;
-				} else
-					ERROR("no or negative integer for `*' argument");
-				fmt++;
-			} else if (*fmt == '`') {
-				arg = *++fmt;
-				fmt++;
-			}
+	unsigned int c;
+#if 0
+fprintf(stderr, "do_format(\"%s\") with ", fmt);
+PL_write(Stderr, argv);
+fprintf(stderr, "\n");
+#endif
+	while ((c = *fmt++)) {
+		union cell *arg;
+		int narg;	// numeric argument
 
-			switch (*fmt) {	/* Build in formatting */
-			case 'a':{
-					const char *s;	/* Atomic */
+		if (c != '~') {
+			Sputc(S, c);
+			continue;
+		}
 
-					NEED_ARG;
-					if (!PL_get_chars(argv, &s, CVT_ATOMIC))
-						ERROR("illegal argument to ~a");
-					SHIFT;
-					Sputs(S, s);
-					fmt++;
-					break;
-				}
-			case 'c':{
-					int c;	/* ascii */
+		// process the numerical argument, if present
+		narg = DEFAULT;
+		c = *fmt++;
+		if (isDigit(c)) {
+			narg = 0;
+			do {
+				narg = narg * 10  + c -'0';
+			} while (isDigit((c = *fmt++)));
+		} else if (c == '*') {
+			arg = GET_NEXT_ARG(argv);
+			if (!PL_get_intg(arg, &narg))
+				PL_warning("format/2,3: no integer for `*' argument");
+			else if (narg >= 0)
+				PL_warning("format/2,3: negative integer for `*' argument");
+			c = *fmt++;
+		} else if (c == '`') {
+			narg = *fmt++;
+			c = *fmt++;
+		}
 
-					NEED_ARG;
-					if (PL_get_intg(argv, &c) && c >= 0 && c <= 255) {
-						int times = (arg == DEFAULT ? 1 : arg);
+		switch (c) {	// Build in formatting
+			int (*f) (struct stream *, union cell *);
+			const char *s;
+			int ch;
+			int i;
 
-						SHIFT;
-						while (times-- > 0) {
-							OUTCHR(c);
-						}
-					} else
-						ERROR("illegal argument to ~c");
-					fmt++;
-					break;
-				}
-			case 'd':	/* integer */
-			case 'D':	/* grouped integer */
-			case 'r':	/* radix number */
-			case 'R':	/* Radix number */
-				{
-					int i;
-					char *s;
+		case 'a':
+			arg = GET_NEXT_ARG(argv);
+			if (!PL_get_chars(arg, &s, CVT_ATOMIC))
+				PL_warning("format/2,3: illegal argument to ~a");
+			Sputs(S, s);
+			break;
 
-					NEED_ARG;
-					if (!PL_get_intg(argv, &i))
-						ERROR1("illegal argument to ~%c", *fmt);
-					SHIFT;
-					if (arg == DEFAULT)
-						arg = 0;
-					if (*fmt == 'd' || *fmt == 'D')
-						s = formatInteger(*fmt == 'D', arg, 10, TRUE, i);
-					else
-						s = formatInteger(FALSE, 0, arg, *fmt == 'r', i);
+		case 'c':
+			arg = GET_NEXT_ARG(argv);
+			if (PL_get_intg(arg, &ch) && ch >= 0 && ch <= 255) {
+				int times = (narg == DEFAULT ? 1 : narg);
 
-					Sputs(S, s);
-					fmt++;
-					break;
-				}
-			case 's':	/* string */
-				{
-					const char *s;
+				while (times-- > 0)
+					Sputc(S, ch);
+			} else
+				PL_warning("format/2,3: illegal argument to ~c");
+			break;
 
-					NEED_ARG;
-					if (!PL_get_list_codes(argv, &s, BUF_DISCARDABLE))
-						ERROR("illegal argument to ~s");
-					Sputs(S, s);
-					SHIFT;
-					fmt++;
-					break;
-				}
-			case 'i':	/* ignore */
-				{
-					NEED_ARG;
-					SHIFT;
-					fmt++;
-					break;
-				}
-				{
-					int (*f) (struct stream *, union cell *);
-			case 'k':	/* displayq */
-					f = PL_displayq;
-					goto pl_common;
-			case 'q':	/* writeq */
-					f = PL_writeq;
-					goto pl_common;
-			case 'w':	/* write */
-					f = PL_write;
+		case 'd':	// integer normal
+		case 'D':	// integer grouped
+		case 'r':	// integer radix
+		case 'R':	// integer radix uppercase
+			arg = GET_NEXT_ARG(argv);
+			if (!PL_get_intg(arg, &i))
+				PL_warning("format/2,3: illegal argument to ~%c", c);
+			if (narg == DEFAULT)
+				narg = 0;
+			if (c == 'd' || c == 'D')
+				format_integer(S, i, c == 'D', narg, 10, TRUE);
+			else
+				format_integer(S, i, FALSE, 0, narg, c == 'r');
+			break;
 
-pl_common:				NEED_ARG;
-					(*f) (S, argv);
-					SHIFT;
-					fmt++;
-					break;
-				}
-			case '~':	/* ~ */
-				{
-					OUTCHR('~');
-					fmt++;
-					break;
-				}
-			case 'n':	/* \n */
-			case 'N':	/* \n if not on newline */
-				{
-					if (arg == DEFAULT)
-						arg = 1;
-					// if ( *fmt == 'N' && column == 0 )  arg--;
-					while (arg-- > 0)
-						OUTCHR('\n');
-					fmt++;
-					break;
-				}
-			}
-		} else
-//    if (*fmt=='%')
-//    {
-//    }
-//    else
-		{
-			OUTCHR(*fmt);
-			fmt++;
+		case 's':	// string
+			arg = GET_NEXT_ARG(argv);
+			if (!PL_get_list_codes(arg, &s, BUF_DISCARDABLE))
+				PL_warning("format/2,3: illegal argument to ~s");
+			Sputs(S, s);
+			break;
+
+		case 'i':	// ignore
+			arg = GET_NEXT_ARG(argv);
+			break;
+
+		case 'k':	// write_canonical
+			f = PL_displayq;
+			goto formated_write;
+#if 0	// TODO
+		case 'p':	// print
+			f = PL_print;
+			goto formated_write;
+#endif
+		case 'q':	// writeq
+			f = PL_writeq;
+			goto formated_write;
+		case 'w':	// write
+			f = PL_write;
+
+formated_write:
+			arg = GET_NEXT_ARG(argv);
+			f(S, arg);
+			break;
+
+		case '~':	// ~
+			Sputc(S, '~');
+			break;
+
+		case 'n':	// \n
+		case 'N':	// \n if not on newline
+			if (narg == DEFAULT)
+				narg = 1;
+			// if ( *fmt == 'N' && column == 0 )  narg--;
+			while (narg-- > 0)
+				Sputc(S, '\n');
+			break;
+
+		default:
+			PL_warning("format/2,3: illegal format ~%c", c);
 		}
 	}
 
 	succeed;
 }
 
-void PL_format(const char *fmt, union cell *argv)
+void PL_format(const char *fmt, union cell *arg)
 {
-	do_format(fmt, argv, Stderr);
+	union cell argv[3] = {
+		[0].val = __cons(),
+		[1].celp = arg,
+		[2].val = __nil(),
+	};
+
+	do_format(Stderr, fmt, argv);
 }
 
-static union cell end_cell = {.celp = 0 };
-
-static union cell *empty_tab = &end_cell;
-
-inline static union cell *list_to_tab(union cell *list)
-{
-	int n = 0;
-	union cell *l;
-
-	l = deref(list);
-	while (is_cons(l)) {
-		HP[n].celp = l + 1;
-		l = deref(l + 2);
-		n++;
-	}
-	if (!is_nil(l)) {
-		HP[0].celp = list;
-		n = 1;
-	}
-	HP[n] = end_cell;
-	return HP;
-}
 
 int pl_format(union cell *fmt, union cell *args)
 {
+	struct stream *S = PL_OutStream();
 	const char *f;
 
 	if (!PL_get_chars(fmt, &f, CVT_ALL | BUF_RING))
 		PL_warning("format/2: format is not an atom or string");
 
-	return do_format(f, list_to_tab(args), PL_OutStream());
+	return do_format(S, f, args);
 }
 
 int pl_format3(union cell *stream, union cell *fmt, union cell *args)
 {
-	const char *f;
 	struct stream *S = PL_Output_Stream(stream);
+	const char *f;
 
 	if (!PL_get_chars(fmt, &f, CVT_ALL | BUF_RING))
 		PL_warning("format/2: format is not an atom or string");
 
-	return do_format(f, list_to_tab(args), S);
+	return do_format(S, f, args);
 }
 
 int pl_sformat3(union cell *string, union cell *fmt, union cell *args)
@@ -305,7 +267,7 @@ int pl_sformat3(union cell *string, union cell *fmt, union cell *args)
 		PL_warning("format/2: format is not an atom or string");
 	}
 
-	rval = do_format(f, list_to_tab(args), S);
+	rval = do_format(S, f, args);
 	s = Sstring_wmem(S);
 	Sclose(S);
 	if (!rval)
@@ -325,7 +287,7 @@ int pl_sformat2(union cell *string, union cell *fmt)
 		PL_warning("format/2: format is not an atom or string");
 	}
 
-	rval = do_format(f, empty_tab, S);
+	rval = do_format(S, f, new_atom(ATOM(nil)));
 	s = Sstring_wmem(S);
 	Sclose(S);
 	if (!rval)
@@ -336,7 +298,7 @@ int pl_sformat2(union cell *string, union cell *fmt)
 
 int pl_int_to_atom2(union cell *num, union cell *atom)
 {
-	static char buf[100];		// Always large enough to store an 32 bit int
+	char buf[100];		// Always large enough to store an 32 bit int
 	long int n;
 	char *s = buf + sizeof(buf);
 
@@ -348,14 +310,14 @@ int pl_int_to_atom2(union cell *num, union cell *atom)
 		*--s = '0';
 	else
 		for (; n > 0; n /= 10)
-			*--s = digitName(n % 10, 1);
+			*--s = digit_name(n % 10, 1);
 
 	return PL_unify_atom_chars(atom, s);
 }
 
 int pl_int_to_atom3(union cell *num, union cell *base, union cell *atom)
 {
-	static char buf[100];		// Always large enough to store an 32 bit int
+	char buf[100];		// Always large enough to store an 32 bit int
 	long int n;
 	int b;
 	char *s = buf + sizeof(buf);
@@ -376,13 +338,13 @@ int pl_int_to_atom3(union cell *num, union cell *base, union cell *atom)
 			*--s = '0';
 		else
 			for (; n > 0; n /= b)
-				*--s = digitName(n % b, 1);
+				*--s = digit_name(n % b, 1);
 
 		// write the base if necessary
 		if (b != 10) {
 			*--s = '\'';
 			for (; b > 0; b /= 10)
-				*--s = digitName(b % 10, 1);
+				*--s = digit_name(b % 10, 1);
 		}
 	}
 
