@@ -67,7 +67,6 @@
 * Add support for directive if/1, elif/1, else/0 & endif/0
 * Add support for Unicode as character set
 * Add support for specify the encoding of input/output (and certainly support, 'byte', latin-1 & utf-8).
-* Fix findall/4 (when not used for findall/3) (Probably the usual problem with computed goto's accross functions)
 * check the type/format of the export list for :- module(...) (they must be "predicate indicator")
 * Add support for ':- export(PI)'
 * Add support for ':- use_module/2'
