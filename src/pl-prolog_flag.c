@@ -231,6 +231,7 @@ int pl_prolog_flag_2(union cell *key, union cell *val)
 // #####################################################################
 
 #include "pl-init.h"
+#include <unistd.h>
 
 void PL_init_prolog_flag(void)
 {
@@ -239,10 +240,7 @@ void PL_init_prolog_flag(void)
 	Setpf_boo("char_conversion", FALSE, 0, &PL__status.char_conv);
 	Setpf_boo("debug", FALSE, 0, &PL__status.debug);
 	Setpf_str("double_quotes", "codes", 0, &PL__status.dbl_quotes);
-	if ((-3 / 2) == -2)
-		Setpf_str("integer_rounding_function", "down", 1, 0);
-	else
-		Setpf_str("integer_rounding_function", "toward_zero", 1, 0);
+	Setpf_str("integer_rounding_function", (-3 / 2) == -2 ? "down" : "toward_zero", 1, 0);
 	Setpf_int("max_arity", PL_MAX_INT, 1, 0);
 	Setpf_int("max_integer", PL_MAX_INT, 1, 0);
 	Setpf_int("min_integer", PL_MIN_INT, 1, 0);
@@ -251,12 +249,17 @@ void PL_init_prolog_flag(void)
 	Setpf_str("back_quotes", "codes", 0, &PL__status.bck_quotes);
 
 /* SWI flags (please, features, unknow, style_check, fileerrors) */
+	Setpf_int("address_bits", sizeof(void *)*8, 1, 0);
+#if defined(__APPLE__)
+	Setpf_boo("apple", TRUE, 1, 0);
+#endif
 	Setpf_str("arch", PL_ARCH, 1, 0);
-	Setpf_str("c_cc", CC, 1, 0);
-	Setpf_str("c_ldflags", C_LD_FLAGS, 1, 0);
-	Setpf_str("c_libs", C_LIBS, 1, 0);
-	Setpf_str("c_options", C_OPTIONS, 1, 0);
-	Setpf_str("c_staticlibs", C_STATIC_LIBS, 1, 0);
+//	Setpf_str("c_cc", CC, 1, 0);
+//	Setpf_str("c_ldflags", C_LD_FLAGS, 1, 0);
+//	Setpf_str("c_libs", C_LIBS, 1, 0);
+//	Setpf_str("c_options", C_OPTIONS, 1, 0);
+//	Setpf_str("c_staticlibs", C_STATIC_LIBS, 1, 0);
+//	Setpf_boo("open_shared_object", FALSE, 1, 0);
 	Setpf_boo("character_escapes", TRUE, 0, &PL__status.char_esc);
 	Setpf_str("compiled_at", __DATE__ ", " __TIME__, 1, 0);
 	Setpf_boo("dynamic_stacks", TRUE, 1, 0);
@@ -266,22 +269,19 @@ void PL_init_prolog_flag(void)
 	Setpf_boo("iso", FALSE, 1, &PL__status.iso);
 	Setpf_int("max_tagged_integer", PL_MAX_TAG_INT, 1, 0);
 	Setpf_int("min_tagged_integer", PL_MIN_TAG_INT, 1, 0);
-	Setpf_boo("open_shared_object", FALSE, 1, 0);
+	Setpf_int("pid", getpid(), 1, 0);
 	Setpf_boo("pipe", TRUE, 1, 0);
 	Setpf_boo("readline", FALSE, 1, 0);
 	Setpf_boo("report_error", TRUE, 0, &PL__status.rep_err);
 	Setpf_boo("tty_control", TRUE, 0, &PL__status.tty_ctrl);
-#if defined(__unix__) || defined(unix)
+#if defined(__unix__) || defined(unix) || defined(__APPLE__)
 	Setpf_boo("unix", TRUE, 1, 0);
-#else
-	Setpf_boo("unix", FALSE, 1, 0);
 #endif
 	Setpf_int("version", PL_VERSION, 1, 0);
 
 /* SWI flags : style_check */
 	Setpf_boo("discontiguous", FALSE, 0, &PL__status.discont);
 	Setpf_boo("dollar", FALSE, 0, &PL__status.dollar);
-	Setpf_boo("long_atom", TRUE, 0, &PL__status.long_atom);
 	Setpf_boo("singleton", TRUE, 0, &PL__status.singleton);
 
 /* SWI flags : fileerrors */

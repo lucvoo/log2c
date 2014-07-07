@@ -21,7 +21,6 @@ struct pl_status {
 	int file_err;
 	struct atom *float_fmt;
 	int iso;
-	int long_atom;
 	int nested_com;
 	int rep_err;
 	int singleton;
