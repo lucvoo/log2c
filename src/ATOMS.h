@@ -188,6 +188,7 @@ extern struct atom ATOM_univ;
 #define FUN_divide_2 		 FUN___2F_2
 #define FUN_dot_2 		 FUN___2E_2
 #define FUN_functor_4 		 FUN___24functor_4
+#define FUN_hat_2 		 FUN___5E_2
 #define FUN_lshift_2 		 FUN___3C_3C_2
 #define FUN_minus_1 		 FUN___2D_1
 #define FUN_minus_2 		 FUN___2D_2
@@ -218,6 +219,7 @@ extern struct functor FUN_div_2;
 extern struct functor FUN_divide_2;
 extern struct functor FUN_dot_2;
 extern struct functor FUN_functor_4;
+extern struct functor FUN_hat_2;
 extern struct functor FUN_lshift_2;
 extern struct functor FUN_minus_1;
 extern struct functor FUN_minus_2;

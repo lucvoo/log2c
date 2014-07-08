@@ -11,10 +11,12 @@
 // FIXME : add floating number
 int PL_eval_(union cell *c, long *n)
 {
-	long n2;				//, n2;
+	struct functor *f;
+	long r, n1, n2;
 
 debut:
 	switch (get_tag(c)) {
+
 	case ref_tag:
 		c = c->celp;
 		goto debut;
@@ -27,72 +29,48 @@ debut:
 	case int_tag:
 		*n = get_val(c);
 		return 1;
-	case fun_tag:{
-			struct functor *f = get_fun(c);	// FIXME : hash-table
-			if (f == FUN(plus, 2)) {
-				if (PL_eval_(c + 1, n) && PL_eval_(c + 2, &n2)) {
-					*n += n2;
-					succeed;
-				} else
-					fail;
-			} else if (f == FUN(minus, 2)) {
-				if (PL_eval_(c + 1, n) && PL_eval_(c + 2, &n2)) {
-					*n -= n2;
-					succeed;
-				} else
-					fail;
-			} else if (f == FUN(star, 2)) {
-				if (PL_eval_(c + 1, n) && PL_eval_(c + 2, &n2)) {
-					*n *= n2;
-					succeed;
-				} else
-					fail;
-			} else if (f == FUN(div, 2) || f == FUN(divide, 2)) {
-				if (PL_eval_(c + 1, n) && PL_eval_(c + 2, &n2)) {
-					*n /= n2;
-					succeed;
-				} else
-					fail;
-			} else if (f == FUN(minus, 1)) {
-				if (PL_eval_(c + 1, n)) {
-					*n = -*n;
-					succeed;
-				} else
-					fail;
-			} else if (f == FUN(_max, 2)) {
-				if (PL_eval_(c + 1, n) && PL_eval_(c + 2, &n2)) {
-					*n = ((*n > n2) ? *n : n2);
-					succeed;
-				} else
-					fail;
-			} else if (f == FUN(_min, 2)) {
-				if (PL_eval_(c + 1, n) && PL_eval_(c + 2, &n2)) {
-					*n = ((*n < n2) ? *n : n2);
-					succeed;
-				} else
-					fail;
-			} else if (f == FUN(_mod, 2)) {
-				if (PL_eval_(c + 1, n) && PL_eval_(c + 2, &n2)) {
-					*n = *n % n2;
-					succeed;
-				} else
-					fail;
-			} else if (f == FUN(rshift, 2)) {
-				if (PL_eval_(c + 1, n) && PL_eval_(c + 2, &n2)) {
-					*n = *n >> n2;
-					succeed;
-				} else
-					fail;
-			} else if (f == FUN(lshift, 2)) {
-				if (PL_eval_(c + 1, n) && PL_eval_(c + 2, &n2)) {
-					*n = *n << n2;
-					succeed;
-				} else
-					fail;
-			} else
-				PL_warn("Unknow arithmetic operator: %s/%ld", FunName(f), FunArity(f));
+	case fun_tag:
+		f = get_fun(c);
+		switch (f->arity) {
+		case 2:
+			PL_eval_(c + 2, &n2);
+		case 1:
+			PL_eval_(c + 1, &n1);
+			break;
 		}
-	}
 
-	fail;				// Suppress compiler warning
+		// FIXME : hash-table
+		if (f == FUN(plus, 2)) {
+			r = n1 + n2;
+		} else if (f == FUN(minus, 2)) {
+			r = n1 - n2;
+		} else if (f == FUN(star, 2)) {
+			r = n1 * n2;
+		} else if (f == FUN(div, 2)) {
+			r = n1 / n2;
+		} else if (f == FUN(divide, 2)) {
+			r = n1 / n2;		// Incorrect for negative numbers?
+		} else if (f == FUN(_mod, 2)) {
+			r = n1 % n2;
+		} else if (f == FUN(minus, 1)) {
+			r = -n1;
+		} else if (f == FUN(_max, 2)) {
+			r = ((n1 > n2) ? n1 : n2);
+		} else if (f == FUN(_min, 2)) {
+			r = ((n1 < n2) ? n1 : n2);
+		} else if (f == FUN(rshift, 2)) {
+			r = n1 >> n2;
+		} else if (f == FUN(lshift, 2)) {
+			r = n1 << n2;
+		} else {
+			PL_warn("Unknow arithmetic operator: %s/%ld", FunName(f), FunArity(f));
+			return 0;
+		}
+		*n = r;
+		return 1;
+
+	default:
+		PL_warn("Invalid arithmetic expression");
+		return 0;
+	}
 }
