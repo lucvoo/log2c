@@ -63,8 +63,10 @@ atoms(access).
 atoms(alias).
 atoms(append).
 atoms(at).
+atoms(atom).
 atoms(binary).
 atoms(bindvars).
+atoms(boolean).
 atoms(character_escapes).
 atoms(cpu_time).
 atoms(curly_notation).
@@ -83,6 +85,7 @@ atoms(fy).
 atoms(heap_stack).
 atoms(ignore_ops).
 atoms(input).
+atoms(integer).
 atoms(is).
 atoms(keep).
 atoms(list_notation).
