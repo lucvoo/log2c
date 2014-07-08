@@ -9,6 +9,17 @@
 #include "pl-fli.h"
 #include "pl-option.h"
 
+
+static int map_values(const struct pl_option_map *map, const struct atom *name)
+{
+	for (; map->name; map++) {
+		if (map->name == name)
+			return map->val;
+	}
+
+	return -1;
+}
+
 int PL_scan_options(union cell *options, struct pl_option_spec *spec)
 {
 	union cell *list = deref(options);
@@ -65,6 +76,14 @@ int PL_scan_options(union cell *options, struct pl_option_spec *spec)
 			if (!(a = PL_get_atom(val)))
 				fail;
 			*s->val.atom = a;
+			break;
+		case OPT_ATOMS:
+			name = PL_get_atom(val);
+			if (!name)
+				fail;
+			if ((i = map_values(s->map, name)) == -1)
+				fail;
+			*s->val.intg = i;
 			break;
 		case OPT_TERM:
 			*s->val.term = val;
