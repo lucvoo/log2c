@@ -182,7 +182,7 @@ static int PL_unify_prolog_flag(struct prolog_flag *f, union cell *term)
 	}
 }
 
-int pl_prolog_flag(union cell *key, union cell *old, union cell *new)
+int pl_prolog_flag(union cell *key, union cell *val)
 {
 	struct prolog_flag *f;
 	struct atom *k;
@@ -190,42 +190,59 @@ int pl_prolog_flag(union cell *key, union cell *old, union cell *new)
 	if (!(k = PL_get_atom(key)))
 		fail;
 
-	if ((f = lookup_pflag(k, 0))) {
-		if (!PL_unify_prolog_flag(f, old))
-			fail;
-	} else if (!is_var(deref(old)) || !(f = lookup_pflag(k, 1)))
+	if (!(f = lookup_pflag(k, 0)))
 		fail;
 
-	if (!new)
-		succeed;
+	if (!PL_unify_prolog_flag(f, val))
+		fail;
 
-	if (f->lock)
-		fail;			// flag is locked
+	succeed;
+}
 
-	new = deref(new);
-	switch (get_tag(new)) {
-	case ref_tag:
-		fail;			// impossible error
-	case ato_tag:
-		if (f->type == T_BOOL) {
-			if (isatom(ATOM(_true), new))
-				return SetInt(f, 1, 0, 0, T_BOOL);
-			else if (isatom(ATOM(_false), new))
-				return SetInt(f, 0, 0, 0, T_BOOL);
-			else
-				fail;
-		} else
-			return SetAtom(f, (struct atom *) new, 0, 0);
-	case int_tag:
-		return SetInt(f, get_val(new), 0, 0, T_INTG);
+int pl_current_prolog_flag(union cell *key, union cell *val, enum control *ctrl)
+{
+	struct prolog_flag *f;
+	unsigned int h;
+	struct {
+		unsigned int h;
+		struct prolog_flag *f;
+	} *ctxt;
+
+	switch (GetCtrl(ctrl)) {
+	case FIRST_CALL:
+		if (pl_prolog_flag(key, val))
+			succeed;
+
+		if (!is_var(key))
+			fail;
+
+		ctxt = AllocCtxt(*ctxt);
+		h = 0;
+		f = pl_flags[h];
+		break;
+	case NEXT_CALL:
+		ctxt = GetCtxt(ctrl);
+		h = ctxt->h;
+		f = ctxt->f;
+		break;
 	default:
 		fail;
 	}
-}
 
-int pl_prolog_flag_2(union cell *key, union cell *val)
-{
-	return pl_prolog_flag(key, val, 0);
+	for (; h < pl_flags_size; f = pl_flags[++h]) {
+		for (; f; f = f->next) {
+			if (PL_unify_prolog_flag(f, val)) {
+				PL_put_atom(key, f->key);
+				ctxt->h = h;
+				ctxt->f = f->next;
+				if (!f->next && h == (pl_flags_size-1)) // last element of last slot
+					succeed;
+				retry;
+			}
+		}
+	}
+
+	fail;				// Should nerver be reached
 }
 
 // #####################################################################
