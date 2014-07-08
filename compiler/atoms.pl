@@ -103,6 +103,8 @@ atoms(past).
 atoms(quiet).
 atoms(quoted).
 atoms(read).
+atoms(read_only).
+atoms(read_write).
 atoms(real_time).
 atoms(rem).
 atoms(reposition).

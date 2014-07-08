@@ -101,6 +101,8 @@ extern struct atom ATOM__past;
 extern struct atom ATOM__quiet;
 extern struct atom ATOM__quoted;
 extern struct atom ATOM__read;
+extern struct atom ATOM__read__only;
+extern struct atom ATOM__read__write;
 extern struct atom ATOM__real__time;
 extern struct atom ATOM__rem;
 extern struct atom ATOM__reposition;
