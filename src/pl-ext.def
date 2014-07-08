@@ -129,6 +129,7 @@ DET('$hash',2,pl_hash)
 // pl-proc.c
 
 // pl-prolog_flag.c
+DET(create_prolog_flag,3,pl_create_prolog_flag)
 NDET(current_prolog_flag,2,pl_current_prolog_flag)
 DET(prolog_flag,2,pl_prolog_flag)
 DET(set_prolog_flag,2,pl_set_prolog_flag)

@@ -14,6 +14,7 @@ struct pl_status PL__status;
 #define	pl_flags_size	16
 
 enum prolog_flag_type {
+	T_AUTO = -1,
 	T_NEW,
 	T_ATOM,
 	T_INTG,
@@ -63,6 +64,19 @@ static struct prolog_flag *pflag_lookup(struct atom *key, int new)
 		return 0;		// inexistant flag
 }
 
+
+static int pf_check_type(const struct prolog_flag *f, int type, int t)
+{
+	return ((type == T_AUTO || type == t) && (f->type == T_NEW || f->type == t));
+}
+
+static void pf_set_new_type(struct prolog_flag *f, int type)
+{
+	if (f->type == T_NEW) {
+		f->type = type;
+	}
+}
+
 static int pf_set_atom(struct prolog_flag *f, struct atom *val)
 {
 	if (f->addr.atom)
@@ -71,6 +85,12 @@ static int pf_set_atom(struct prolog_flag *f, struct atom *val)
 		f->val.atom = val;
 
 	succeed;
+}
+
+static int pf_set_new_atom(struct prolog_flag *f, struct atom *val)
+{
+	pf_set_new_type(f, T_ATOM);
+	return pf_set_atom(f, val);
 }
 
 static int pf_new_atom(const char *key, struct atom *val, int lock, struct atom **addr)
@@ -100,6 +120,17 @@ static int pf_set_int(struct prolog_flag *f, long val)
 	succeed;
 }
 
+static int pf_set_new_bool(struct prolog_flag *f, long val)
+{
+	pf_set_new_type(f, T_BOOL);
+	return pf_set_int(f, val);
+}
+
+static int pf_set_new_intg(struct prolog_flag *f, long val)
+{
+	pf_set_new_type(f, T_INTG);
+	return pf_set_int(f, val);
+}
 
 static int pf_new_int(const char *key, long val, int lock, int *addr, int type)
 {
@@ -240,6 +271,89 @@ int pl_current_prolog_flag(union cell *key, union cell *val, enum control *ctrl)
 	}
 
 	fail;				// Should nerver be reached
+}
+
+// #####################################################################
+
+extern int PL_create_prolog_flag(union cell *key, union cell *val, int lock, int type, int keep)
+{
+	struct prolog_flag *f;
+	struct atom *k;
+
+
+	if (!(k = PL_get_atom(key)))
+		fail;
+
+	if (!(f = pflag_lookup(k, 1)))
+		fail;
+
+	if (keep && f->type != T_NEW)
+		succeed;		// the flag already exists: we keep it
+	if (f->lock)
+		fail;			// the flag already exist and is locked/not changeable
+	if (f->type == T_NEW)
+		f->lock = lock;
+
+	val = deref(val);
+	switch (get_tag(val)) {
+	case ato_tag:
+		if (isatom(ATOM(_true), val) || isatom(ATOM(_on), val)) {
+			if (pf_check_type(f, type, T_BOOL))
+				return pf_set_new_bool(f, 1);
+		} else if (isatom(ATOM(_false), val) || isatom(ATOM(_off), val)) {
+			if (pf_check_type(f, type, T_BOOL))
+				return pf_set_new_bool(f, 0);
+		}
+
+		if (!pf_check_type(f, type, T_ATOM))
+			fail;
+		return pf_set_new_atom(f, get_atom(val));
+
+	case int_tag:
+		if (!pf_check_type(f, type, T_INTG))
+			fail;
+		return pf_set_new_intg(f, get_intg(val));
+	default:
+		fail;
+	}
+}
+
+
+#include "pl-option.h"
+
+static const struct pl_option_map map_lock[] = {
+	{ ATOM(_read__write), 0, },
+	{ ATOM(_read__only),  1, },
+	{ NULL }
+};
+static const struct pl_option_map map_type[] = {
+	{ ATOM(_boolean), T_BOOL, },
+	{ ATOM(_integer), T_INTG, },
+	{ ATOM(_atom),    T_ATOM, },
+//	{ ATOM(_float),   T_FLOAT, },
+//	{ ATOM(_term),    T_TERM, },
+	{ NULL }
+};
+static long opt_lock;
+static long opt_type;
+static int opt_keep;
+static struct pl_option_spec specs[] = {
+	{ ATOM(_access),	OPT_ATOMS, .val.intg = &opt_lock, .map = map_lock, },
+	{ ATOM(_type),		OPT_ATOMS, .val.intg = &opt_type, .map = map_type, },
+	{ ATOM(_keep),		OPT_BOOL,  .val.bool = &opt_keep, },
+	{ NULL }
+};
+
+int pl_create_prolog_flag(union cell *key, union cell *val, union cell *options)
+{
+	opt_lock = 0;
+	opt_type = T_AUTO;
+	opt_keep = 0;
+
+	if (!PL_scan_options(options, specs))
+		PL_warning("create_prolog_flag/3 : Illegal option list");
+
+	return PL_create_prolog_flag(key, val, opt_lock, opt_type, opt_keep);
 }
 
 // #####################################################################
