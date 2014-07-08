@@ -59,6 +59,7 @@ atoms(\=).
 atoms(\==).
 atoms(\=@=).
 atoms(^).
+atoms(access).
 atoms(alias).
 atoms(append).
 atoms(at).
@@ -83,6 +84,7 @@ atoms(heap_stack).
 atoms(ignore_ops).
 atoms(input).
 atoms(is).
+atoms(keep).
 atoms(list_notation).
 atoms(local_stack).
 atoms(mark).

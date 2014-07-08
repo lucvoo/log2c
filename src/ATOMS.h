@@ -60,6 +60,7 @@
 extern struct atom ATOM__;
 extern struct atom ATOM___2B_3E;
 extern struct atom ATOM___3A_2B;
+extern struct atom ATOM__access;
 extern struct atom ATOM__alias;
 extern struct atom ATOM__append;
 extern struct atom ATOM__at;
@@ -82,6 +83,7 @@ extern struct atom ATOM__heap__stack;
 extern struct atom ATOM__ignore__ops;
 extern struct atom ATOM__input;
 extern struct atom ATOM__is;
+extern struct atom ATOM__keep;
 extern struct atom ATOM__list__notation;
 extern struct atom ATOM__local__stack;
 extern struct atom ATOM__mark;
