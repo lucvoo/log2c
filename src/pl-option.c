@@ -15,9 +15,7 @@ int PL_scan_options(union cell *options, struct pl_option_spec *spec)
 	union cell *val;
 	struct pl_option_spec *s = 0;
 
-	list = deref(list);
-	while (is_cons(list))		// loop trough the options list
-	{
+	for (list = deref(list);  is_cons(list); list = deref(list + 2)) {		// loop trough the options list
 		union cell *e = deref(list+1);
 		struct atom *name;
 		int arity;
@@ -36,44 +34,44 @@ int PL_scan_options(union cell *options, struct pl_option_spec *spec)
 		} else
 			fail;
 
-		for (s = spec; s->name; s++)	// loop trough the option spec
-		{
-			if (s->name != name)
-				continue;
+		for (s = spec; s->name; s++) {
+			if (s->name == name)
+				break;
+		}
+		if (!s->name)
+			fail;
 
-			switch (s->type) {
-			case OPT_BOOL:
-				if (!(name = PL_get_atom(val)))
-					fail;
-				if (name == ATOM(_true) || name == ATOM(_on)) {
-					*s->val.bool = 1;
-				} else if (name == ATOM(_false) || name == ATOM(_off)) {
-					*s->val.bool = 0;
-				} else
-					fail;
-				break;
-			case OPT_INTG:
-				if (PL_get_long(val, s->val.intg))
-					break;
-				else
-					fail;
-			case OPT_ATOM:
-				if ((*s->val.atom = PL_get_atom(val)))
-					break;
-				else
-					fail;
-			case OPT_TERM:
-				*s->val.term = val;
-				break;
-			default:
+		switch (s->type) {
+		struct atom *a;
+		long i;
+
+		case OPT_BOOL:
+			if (!(a = PL_get_atom(val)))
 				fail;
-			}
-			goto loop_list;
-		}			// POST s->name==0
-		fail;
-
-loop_list:
-		list = deref(list + 2);
+			if (a == ATOM(_true) || a == ATOM(_on)) {
+				i = 1;
+			} else if (a == ATOM(_false) || a == ATOM(_off)) {
+				i = 0;
+			} else
+				fail;
+			*s->val.bool = i;
+			break;
+		case OPT_INTG:
+			if (!PL_get_long(val, &i))
+				fail;
+			*s->val.intg = i;
+			break;
+		case OPT_ATOM:
+			if (!(a = PL_get_atom(val)))
+				fail;
+			*s->val.atom = a;
+			break;
+		case OPT_TERM:
+			*s->val.term = val;
+			break;
+		default:
+			fail;
+		}
 	}
 
 	return is_nil(list);
