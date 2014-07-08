@@ -13,19 +13,20 @@ struct pl_status PL__status;
 
 #define	pl_flags_size	16
 
-enum prolog_flag_type { T_VOID, T_ATOM, T_INTG, T_BOOL };
+enum prolog_flag_type {
+	T_NEW,
+	T_ATOM,
+	T_INTG,
+	T_BOOL,
+};
 
-#define OFF	0
-#define ON	1
-
-#ifndef	TRUE
-#define FALSE	0
-#define TRUE	1
-#endif
 
 struct prolog_flag {
 	struct atom *key;
-	union cell val;
+	union {
+		struct atom *atom;
+		long intg;
+	} val;
 	union {
 		int *intg;
 		struct atom **atom;
@@ -37,7 +38,8 @@ struct prolog_flag {
 
 static struct prolog_flag *pl_flags[pl_flags_size];
 
-inline static struct prolog_flag *lookup_pflag(struct atom *key, int new)
+
+static struct prolog_flag *pflag_lookup(struct atom *key, int new)
 {
 	struct prolog_flag *f;
 	hash_t h;
@@ -53,7 +55,7 @@ inline static struct prolog_flag *lookup_pflag(struct atom *key, int new)
 		f->key = key;		// with this keys.
 		f->lock = 0;
 		f->addr.atom = 0;
-		f->type = T_VOID;
+		f->type = T_NEW;
 		f->next = pl_flags[h];	// insert this flag in the table
 		pl_flags[h] = f;
 		return f;
@@ -61,68 +63,64 @@ inline static struct prolog_flag *lookup_pflag(struct atom *key, int new)
 		return 0;		// inexistant flag
 }
 
-inline static int SetAtom(struct prolog_flag *f, struct atom *val, int lock, struct atom **addr)
+static int pf_set_atom(struct prolog_flag *f, struct atom *val)
 {
-	f->type = T_ATOM;
-	if (lock)
-		f->lock = 1;
-	if (addr)
-		f->addr.atom = addr;
 	if (f->addr.atom)
-		*(f->addr.atom) = val;
+		*f->addr.atom = val;
 	else
-		f->val.celp = &(val->cell);
+		f->val.atom = val;
+
 	succeed;
 }
 
-inline static int Setpf_atom(const char *key, struct atom *val, int lock, struct atom **addr)
+static int pf_new_atom(const char *key, struct atom *val, int lock, struct atom **addr)
 {
-	struct prolog_flag *f;
+	struct prolog_flag *f = pflag_lookup(PL_new_atom(key), 1);
 
-	if ((f = lookup_pflag(PL_new_atom(key), 1)))
-		return SetAtom(f, val, lock, addr);
-	else
-		fail;
+	f->lock = lock;
+	f->type = T_ATOM;
+	if (!addr)
+		addr = &f->val.atom;
+	f->addr.atom = addr;
+	return pf_set_atom(f, val);
 }
 
-inline static int Setpf_str(const char *key, const char *val, int lock, struct atom **addr)
+static int pf_new__str(const char *key, const char *val, int lock, struct atom **addr)
 {
-	return Setpf_atom(key, PL_new_atom(val), lock, addr);
+	return pf_new_atom(key, PL_new_atom(val), lock, addr);
 }
 
-inline static int SetInt(struct prolog_flag *f, long val, int lock, int *addr, int type)
+static int pf_set_int(struct prolog_flag *f, long val)
 {
-	f->type = type;
-	if (lock)
-		f->lock = 1;
-	if (addr)
-		f->addr.intg = addr;
 	if (f->addr.intg)
-		*(f->addr.intg) = val;
+		*f->addr.intg = val;	// int *!
 	else
-		f->val.val = __intg(val);
+		f->val.intg = val;	// long !
+
 	succeed;
 }
 
-inline static int Setpf_int(const char *key, long val, int lock, int *addr)
-{
-	struct prolog_flag *f;
 
-	if ((f = lookup_pflag(PL_new_atom(key), 1)))
-		return SetInt(f, val, lock, addr, T_INTG);
-	else
-		fail;
+static int pf_new_int(const char *key, long val, int lock, int *addr, int type)
+{
+	struct prolog_flag *f = pflag_lookup(PL_new_atom(key), 1);
+
+	f->lock = lock;
+	f->type = type;
+	f->addr.intg = addr;
+	return pf_set_int(f, val);
 }
 
-inline static int Setpf_boo(const char *key, long val, int lock, int *addr)
+static int pf_new_intg(const char *key, long val, int lock, int *addr)
 {
-	struct prolog_flag *f;
-
-	if ((f = lookup_pflag(PL_new_atom(key), 1)))
-		return SetInt(f, val, lock, addr, T_BOOL);
-	else
-		fail;
+	return pf_new_int(key, val, lock, addr, T_INTG);
 }
+
+static int pf_new_bool(const char *key, long val, int lock, int *addr)
+{
+	return pf_new_int(key, val, lock, addr, T_BOOL);
+}
+
 
 int pl_set_prolog_flag(union cell *key, union cell *new)
 {
@@ -132,7 +130,7 @@ int pl_set_prolog_flag(union cell *key, union cell *new)
 	if (!(k = PL_get_atom(key)))
 		fail;
 
-	if (!(f = lookup_pflag(k, 0)))
+	if (!(f = pflag_lookup(k, 0)))
 		fail;
 
 	if (f->lock)
@@ -140,20 +138,20 @@ int pl_set_prolog_flag(union cell *key, union cell *new)
 
 	new = deref(new);
 	switch (get_tag(new)) {
-	case ref_tag:
-		fail;			// impossible error
+	case int_tag:
+		if (f->type == T_INTG)
+			return pf_set_int(f, get_val(new));
+		fail;
 	case ato_tag:
 		if (f->type == T_BOOL) {
-			if (isatom(ATOM(_true), new))
-				return SetInt(f, TRUE, 0, 0, T_BOOL);
-			else if (isatom(ATOM(_false), new))
-				return SetInt(f, FALSE, 0, 0, T_BOOL);
-			else
-				fail;
-		} else
-			return SetAtom(f, get_atom(new), 0, 0);
-	case int_tag:
-		return SetInt(f, get_val(new), 0, 0, T_INTG);
+			if (isatom(ATOM(_true), new) || isatom(ATOM(_on), new)) {
+				return pf_set_int(f, 1);
+			} else if (isatom(ATOM(_false), new) || isatom(ATOM(_off), new)) {
+				return pf_set_int(f, 0);
+			}
+		}
+		if (f->type == T_ATOM)
+			return pf_set_atom(f, get_atom(new));
 	default:
 		fail;
 	}
@@ -162,21 +160,15 @@ int pl_set_prolog_flag(union cell *key, union cell *new)
 static int PL_unify_prolog_flag(struct prolog_flag *f, union cell *term)
 {
 	switch (f->type) {
-	case T_ATOM:{
-			struct atom *a = f->addr.atom ? *(f->addr.atom)
-				: (struct atom *) f->val.celp;
-			return PL_unify_atom(term, a);
-		}
-	case T_BOOL:{
-			int i = f->addr.intg ? *(f->addr.intg)
-				: f->val.tag_sval.val;
-			return PL_unify_bool(term, i);
-		}
-	case T_INTG:{
-			int i = f->addr.intg ? *(f->addr.intg)
-				: f->val.tag_sval.val;
-			return PL_unify_intg(term, i);
-		}
+	case T_ATOM:
+		return PL_unify_atom(term, f->addr.atom ? *f->addr.atom : f->val.atom);
+
+	case T_BOOL:
+		return PL_unify_bool(term, f->addr.intg ? *f->addr.intg : f->val.intg);
+
+	case T_INTG:
+		return PL_unify_intg(term, f->addr.intg ? *f->addr.intg : f->val.intg);
+
 	default:
 		fail;
 	}
@@ -190,7 +182,10 @@ int pl_prolog_flag(union cell *key, union cell *val)
 	if (!(k = PL_get_atom(key)))
 		fail;
 
-	if (!(f = lookup_pflag(k, 0)))
+	if (!(f = pflag_lookup(k, 0)))
+		fail;
+
+	if (f->type == T_NEW)
 		fail;
 
 	if (!PL_unify_prolog_flag(f, val))
@@ -231,6 +226,8 @@ int pl_current_prolog_flag(union cell *key, union cell *val, enum control *ctrl)
 
 	for (; h < pl_flags_size; f = pl_flags[++h]) {
 		for (; f; f = f->next) {
+			if (f->type == T_NEW)
+				continue;
 			if (PL_unify_prolog_flag(f, val)) {
 				PL_put_atom(key, f->key);
 				ctxt->h = h;
@@ -253,57 +250,57 @@ int pl_current_prolog_flag(union cell *key, union cell *val, enum control *ctrl)
 void PL_init_prolog_flag(void)
 {
 /* ISO prolog-flags */
-	Setpf_int("bounded", TRUE, 1, 0);
-	Setpf_boo("char_conversion", FALSE, 0, &PL__status.char_conv);
-	Setpf_boo("debug", FALSE, 0, &PL__status.debug);
-	Setpf_str("double_quotes", "codes", 0, &PL__status.dbl_quotes);
-	Setpf_str("integer_rounding_function", (-3 / 2) == -2 ? "down" : "toward_zero", 1, 0);
-	Setpf_int("max_arity", PL_MAX_INT, 1, 0);
-	Setpf_int("max_integer", PL_MAX_INT, 1, 0);
-	Setpf_int("min_integer", PL_MIN_INT, 1, 0);
-	Setpf_str("unknown", "fail", 1, 0);
+	pf_new_intg("bounded", 1, 1, 0);
+	pf_new_bool("char_conversion", 0, 0, &PL__status.char_conv);
+	pf_new_bool("debug", 0, 0, &PL__status.debug);
+	pf_new__str("double_quotes", "codes", 0, &PL__status.dbl_quotes);
+	pf_new__str("integer_rounding_function", (-3 / 2) == -2 ? "down" : "toward_zero", 1, 0);
+	pf_new_intg("max_arity", PL_MAX_INT, 1, 0);
+	pf_new_intg("max_integer", PL_MAX_INT, 1, 0);
+	pf_new_intg("min_integer", PL_MIN_INT, 1, 0);
+	pf_new__str("unknown", "fail", 1, 0);
 
-	Setpf_str("back_quotes", "codes", 0, &PL__status.bck_quotes);
+	pf_new__str("back_quotes", "codes", 0, &PL__status.bck_quotes);
 
 /* SWI flags (please, features, unknow, style_check, fileerrors) */
-	Setpf_int("address_bits", sizeof(void *)*8, 1, 0);
+	pf_new_intg("address_bits", sizeof(void *)*8, 1, 0);
 #if defined(__APPLE__)
-	Setpf_boo("apple", TRUE, 1, 0);
+	pf_new_bool("apple", 1, 1, 0);
 #endif
-	Setpf_str("arch", PL_ARCH, 1, 0);
-//	Setpf_str("c_cc", CC, 1, 0);
-//	Setpf_str("c_ldflags", C_LD_FLAGS, 1, 0);
-//	Setpf_str("c_libs", C_LIBS, 1, 0);
-//	Setpf_str("c_options", C_OPTIONS, 1, 0);
-//	Setpf_str("c_staticlibs", C_STATIC_LIBS, 1, 0);
-//	Setpf_boo("open_shared_object", FALSE, 1, 0);
-	Setpf_boo("character_escapes", TRUE, 0, &PL__status.char_esc);
-	Setpf_str("compiled_at", __DATE__ ", " __TIME__, 1, 0);
-	Setpf_boo("dynamic_stacks", TRUE, 1, 0);
-	Setpf_str("float_format", "%g", 0, &PL__status.float_fmt);
-	Setpf_boo("gc", FALSE, 1, 0);
-	Setpf_str("home", PL_HOME, 1, 0);
-	Setpf_boo("iso", FALSE, 1, &PL__status.iso);
-	Setpf_int("max_tagged_integer", PL_MAX_TAG_INT, 1, 0);
-	Setpf_int("min_tagged_integer", PL_MIN_TAG_INT, 1, 0);
-	Setpf_int("pid", getpid(), 1, 0);
-	Setpf_boo("pipe", TRUE, 1, 0);
-	Setpf_boo("readline", FALSE, 1, 0);
-	Setpf_boo("report_error", TRUE, 0, &PL__status.rep_err);
-	Setpf_boo("tty_control", TRUE, 0, &PL__status.tty_ctrl);
+	pf_new__str("arch", PL_ARCH, 1, 0);
+//	pf_new__str("c_cc", CC, 1, 0);
+//	pf_new__str("c_ldflags", C_LD_FLAGS, 1, 0);
+//	pf_new__str("c_libs", C_LIBS, 1, 0);
+//	pf_new__str("c_options", C_OPTIONS, 1, 0);
+//	pf_new__str("c_staticlibs", C_STATIC_LIBS, 1, 0);
+//	pf_new_bool("open_shared_object", 0, 1, 0);
+	pf_new_bool("character_escapes", 1, 0, &PL__status.char_esc);
+	pf_new__str("compiled_at", __DATE__ ", " __TIME__, 1, 0);
+	pf_new_bool("dynamic_stacks", 1, 1, 0);
+	pf_new__str("float_format", "%g", 0, &PL__status.float_fmt);
+	pf_new_bool("gc", 0, 1, 0);
+	pf_new__str("home", PL_HOME, 1, 0);
+	pf_new_bool("iso", 0, 1, &PL__status.iso);
+	pf_new_intg("max_tagged_integer", PL_MAX_TAG_INT, 1, 0);
+	pf_new_intg("min_tagged_integer", PL_MIN_TAG_INT, 1, 0);
+	pf_new_intg("pid", getpid(), 1, 0);
+	pf_new_bool("pipe", 1, 1, 0);
+	pf_new_bool("readline", 0, 1, 0);
+	pf_new_bool("report_error", 1, 0, &PL__status.rep_err);
+	pf_new_bool("tty_control", 1, 0, &PL__status.tty_ctrl);
 #if defined(__unix__) || defined(unix) || defined(__APPLE__)
-	Setpf_boo("unix", TRUE, 1, 0);
+	pf_new_bool("unix", 1, 1, 0);
 #endif
-	Setpf_int("version", PL_VERSION, 1, 0);
+	pf_new_intg("version", PL_VERSION, 1, 0);
 
 /* SWI flags : style_check */
-	Setpf_boo("discontiguous", FALSE, 0, &PL__status.discont);
-	Setpf_boo("dollar", FALSE, 0, &PL__status.dollar);
-	Setpf_boo("singleton", TRUE, 0, &PL__status.singleton);
+	pf_new_bool("discontiguous", 0, 0, &PL__status.discont);
+	pf_new_bool("dollar", 0, 0, &PL__status.dollar);
+	pf_new_bool("singleton", 1, 0, &PL__status.singleton);
 
 /* SWI flags : fileerrors */
-	Setpf_boo("file_error", FALSE, 0, &PL__status.file_err);
+	pf_new_bool("file_error", 0, 0, &PL__status.file_err);
 
 /* Own extension */
-	Setpf_int("nested_comment", TRUE, 0, &PL__status.nested_com);
+	pf_new_intg("nested_comment", 1, 0, &PL__status.nested_com);
 }
