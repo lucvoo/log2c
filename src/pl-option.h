@@ -8,14 +8,17 @@
 #ifndef PL_OPTIONS_H_
 #define PL_OPTIONS_H_
 
-enum pl_option_type { OPT_BOOL, OPT_INTG, OPT_ATOM, OPT_TERM };
+enum pl_option_type {
+	OPT_BOOL,
+	OPT_INTG,
+	OPT_ATOM,
+	OPT_TERM,
+};
 
 union pl_option_val {
 	long *intg;
 	int *bool;
-	const char **str;
 	struct atom **atom;
-	union cell *cell;
 	union cell **term;
 };
 
