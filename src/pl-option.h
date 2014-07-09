@@ -21,6 +21,7 @@ union pl_option_val {
 	int *bool;
 	struct atom **atom;
 	union cell **term;
+	unsigned long *flags;
 };
 
 struct pl_option_map {
@@ -35,6 +36,7 @@ struct pl_option_spec {
 	union {
 	const struct pl_option_map *map;	// optional null terminated array of ...
 	};
+	unsigned int shift;
 };
 
 extern

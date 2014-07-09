@@ -65,7 +65,13 @@ int PL_scan_options(union cell *options, struct pl_option_spec *spec)
 				i = 0;
 			} else
 				fail;
-			*s->val.bool = i;
+			if (s->shift)
+				if (i)
+					*s->val.flags |= s->shift;
+				else
+					*s->val.flags &= ~s->shift;
+			else
+				*s->val.bool = i;
 			break;
 		case OPT_INTG:
 			if (!PL_get_long(val, &i))
@@ -83,7 +89,10 @@ int PL_scan_options(union cell *options, struct pl_option_spec *spec)
 				fail;
 			if ((i = map_values(s->map, name)) == -1)
 				fail;
-			*s->val.intg = i;
+			if (s->shift)
+				*s->val.flags |= i * s->shift;
+			else
+				*s->val.intg = i;
 			break;
 		case OPT_TERM:
 			*s->val.term = val;
