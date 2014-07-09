@@ -52,8 +52,16 @@ debut:
 			r = n1 / n2;		// Incorrect for negative numbers?
 		} else if (f == FUN(_mod, 2)) {
 			r = n1 % n2;
+		} else if (f == FUN(_rem, 2)) {
+			r = n1 % n2;		// Incorrect for negative numbers?
 		} else if (f == FUN(minus, 1)) {
 			r = -n1;
+		} else if (f == FUN(plus, 1)) {
+			r = n1;
+		} else if (f == FUN(_sign, 1)) {
+			r = ((n1 < 0) ? -1 : (n1 == 0) ? 0 : -1);
+		} else if (f == FUN(_abs, 1)) {
+			r = ((n1 < 0) ? -n1 : n1);
 		} else if (f == FUN(_max, 2)) {
 			r = ((n1 > n2) ? n1 : n2);
 		} else if (f == FUN(_min, 2)) {
@@ -62,6 +70,25 @@ debut:
 			r = n1 >> n2;
 		} else if (f == FUN(lshift, 2)) {
 			r = n1 << n2;
+		} else if (f == FUN(bitand, 2)) {
+			r = n1 & n2;
+		} else if (f == FUN(bitor, 2)) {
+			r = n1 | n2;
+		} else if (f == FUN(_xor, 2)) {
+			r = n1 ^ n2;
+		} else if (f == FUN(backslash, 1)) {
+			r = ~n1;
+		} else if (f == FUN(hat, 2)) {
+			for (r = 1; n2--; )
+				r *= n1;
+		} else if (f == FUN(_gcd, 2)) {
+			while (n1 != n2) {
+				if (n1 > n2)
+					n1 = n1 - n2;
+				else
+					n2 = n2 - n1;
+			}
+			r = n1;
 		} else {
 			PL_warn("Unknow arithmetic operator: %s/%ld", FunName(f), FunArity(f));
 			return 0;
