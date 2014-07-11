@@ -681,7 +681,7 @@ int pl_concat(union cell *a1, union cell *a2, union cell *a3)
 	PL_warning("concat/3: instantiation fault(2)");
 }
 
-__inline__ int pl_concat_atom3(union cell *list, union cell *sep, union cell *atom)
+int pl_concat_atom3(union cell *list, union cell *sep, union cell *atom)
 {
 	struct ubuffer *b;
 	struct atom *a;
