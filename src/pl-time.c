@@ -24,20 +24,6 @@ void PL_init_time(void)
 	gettimeofday(&tv_last, 0);
 }
 
-static void cp_usage(void)
-{
-	ru_last.ru_utime.tv_sec = ru_now.ru_utime.tv_sec;
-	ru_last.ru_utime.tv_usec = ru_now.ru_utime.tv_usec;
-	ru_last.ru_stime.tv_sec = ru_now.ru_stime.tv_sec;
-	ru_last.ru_stime.tv_usec = ru_now.ru_stime.tv_usec;
-}
-
-static void cp_timev(void)
-{
-	tv_last.tv_sec = tv_now.tv_sec;
-	tv_last.tv_usec = tv_now.tv_usec;
-}
-
 int pl_statistics(union cell *key, union cell *pair)
 {
 	struct pl_stack_stat stack_stat;

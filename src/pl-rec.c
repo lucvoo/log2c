@@ -11,12 +11,6 @@
 #include "pl-fli.h"
 
 
-static void rtrail(union cell *ref)
-{
-	HP->celp = ref;
-	HP++;
-}
-
 struct record {
 	struct reclist *list;
 	struct record *next;
@@ -270,26 +264,6 @@ static int try_unify_static(union cell *s, union cell *t)
    h;								\
 })								\
 
-
-static struct reclist *lookup_recl__old(union cell *key)
-{
-	hash_t h;
-	struct reclist *rl;
-
-	h = HashFromKey(key, return 0);
-
-	for (rl = records[h]; rl != 0; rl = rl->next)
-		if (key->val == rl->key.val)
-			return rl;	// find rec_list.
-
-	rl = NEW(*rl);			// else create new flag
-	rl->key = *key;			// with this key.
-	rl->first = 0;
-	rl->last = 0;
-	rl->next = records[h];		// insert this recl in the table
-	records[h] = rl;
-	return rl;
-}
 
 static struct reclist *lookup_recl__(union cell *key, int h)
 {
