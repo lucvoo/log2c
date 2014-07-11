@@ -47,6 +47,11 @@ inline static void PL_add_x_ubs(struct ubuffer *b, const char *s, size_t n)
 	b->ptr += n;
 }
 
+inline static void PL_sub_x_ubs(struct ubuffer *b, size_t n)
+{
+	b->ptr -= n;
+}
+
 inline static char *PL_base_ubs(struct ubuffer *b)
 {
 	PL_add_ubs(b, '\0');
