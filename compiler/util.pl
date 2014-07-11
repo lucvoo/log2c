@@ -192,7 +192,7 @@ decl_pred(P) :-
 decl_atoms(As) :-
 	maplist(decl_atoms_, As),
 	nl(h),
-	format(mod, 'atoms(~q).\n', [As]).
+	format(mod, '\tatoms(~q),\n', [As]).
 
 decl_atoms_(A) :-
 	map_atom(A, Am),
@@ -201,7 +201,7 @@ decl_atoms_(A) :-
 decl_funs(Fs) :-
 	maplist(decl_funs_, Fs),
 	nl(h),
-	format(mod, 'funs(~q).\n', [Fs]).
+	format(mod, '\tfuns(~q)).\n', [Fs]).
 
 decl_funs_(F/N) :-
 	map_atom(F, Fm),

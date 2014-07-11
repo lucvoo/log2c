@@ -25,7 +25,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 export_pred(Xs) :-
-	format(mod, 'export(~q).\n', [Xs]),
+	format(mod, '\texport(~q),\n', [Xs]),
 	maplist(recorda(export_pred), Xs).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -67,6 +67,11 @@ export_user_preds(pr(F, N, _)) :-
 	recorda(module_export, module_export(user, F/N)).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+read_mod(F, T) :-
+	open(F, read, S),
+	read(S, T),
+	close(S).
+
 read_mods(M, A, F, P) :-
 	'$erase_records'(need_module),
 	read_mod(M, A, [], F, [], P, []).
@@ -85,25 +90,14 @@ read_mod(M, Ia, Oa, If, Of, Ip, Op) :-
 	;
 		recorda(need_module, M),
 		comp_sub_module(M, F),
-		read_all(F, L),
-		read_mod_(L, Ia, Oa, If, Of, Ip, Op)
+		read_mod(F, T),
+		T = module(Nm, use_module(Ms), export(Xs), atoms(As), funs(Fs)),
+		Nm = _, %% FIXME: verify Nm
+		append(Xs, Tp, Ip),
+		append(As, Ta, Ia),
+		append(Fs, Tf, If),
+		read_mod(Ms, Ta, Oa, Tf, Of, Tp, Op)	%% FIXME: why???
 	).
-
-read_mod_([], A, A, F, F, P, P).
-read_mod_([T|Q], Ia, Oa, If, Of, Ip, Op) :-
-	read_mod__(T, Ia, Ta, If, Tf, Ip, Tp),
-	read_mod_(Q, Ta, Oa, Tf, Of, Tp, Op).
-
-read_mod__(atoms(A), Ia, Oa, F, F, P, P) :-
-	append(A, Oa, Ia), !.
-read_mod__(funs(F), A, A, If, Of, P, P) :-
-	append(F, Of, If), !.
-read_mod__(export(P), A, A, F, F, Ip, Op) :-
-	append(P, Op, Ip), !.
-read_mod__(use_module(M), Ia, Oa, If, Of, Ip, Op) :-
-	read_mod(M, Ia, Oa, If, Of, Ip, Op), !.
-read_mod__(T, A, A, F, F, P, P) :-
-	recorda(module_info, T), !.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 load_mod([M|Q]) :-
@@ -154,6 +148,9 @@ export_use_(T, S, L) :-
 	recorda(S, L).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+read_export(F, X) :-
+	read_mod(F, module(_, _, export(X), _, _)).
+
 get_exports(Lu, Lx) :-
 	used_modules(U),
 	exported_modules(X),
@@ -177,7 +174,7 @@ need_modules(Ms) :-
 check_import(U, _X) :-
 	'$erase_records'(module_export),
 	used_modules(Us),
-	format(mod, 'use_module(~q).\n', [Us]),
+	format(mod, '\tuse_module(~q),\n', [Us]),
 	maplist(rec_x, U).
 
 rec_x(use(M, L)) :-
@@ -243,43 +240,4 @@ module_basename(M, B) :-
 module_filename(X, M, F) :-
 	module_basename(M, B),
 	file_name_extension(B, X, F).
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Read all terms of file 'F' and put it in list 'L'
-
-read_all(F, L) :-
-	open(F, read, S),
-	read_all_(S, L),
-	close(S).
-
-read_all_(S,L) :-
-	read(S,T),
-	(   
-		T==end_of_file
-	->
-		L=[]
-	;
-		read_all_(S,Q),
-		L=[Tx|Q],
-		expand_term(T, Tx)
-	).
-
-read_export(F, X) :-
-	open(F, read, S),
-	read_x_(S, X),
-	close(S).
-
-read_x_(S,X) :-
-	read(S,T),
-	(   
-		T==end_of_file
-	->
-		fail
-	;
-		
-		T=export(X)
-	->
-		true
-	;
-		read_x_(S,X)
-	).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -41,6 +41,7 @@ comp_file(File) :-
 	),
 
 	open_files(Name, _Fc, Fm, _Fh),
+	format(mod, 'module(~q,\n', [Mod]),
 	set_output(c),
 	code_module(Mod, Li, Xs, Lo, []), !,
 	trad(Lo),
