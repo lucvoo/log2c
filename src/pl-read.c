@@ -70,8 +70,7 @@ static int must_be_op;
 static int pushback[4];			// two char of look-ahead is enough
 static int *pbp = pushback;
 
-static					// inline
-int Getc(struct stream *S)
+static int Getc(struct stream *S)
 {
 	if (pbp > pushback)
 		return *--pbp;
@@ -79,8 +78,7 @@ int Getc(struct stream *S)
 		return Sgetc(S);
 }
 
-static					// inline
-int Peekc(struct stream *S)
+static int Peekc(struct stream *S)
 {
 	if (pbp > pushback)
 		return pbp[-1];
@@ -88,8 +86,7 @@ int Peekc(struct stream *S)
 		return Speekc(S);
 }
 
-static					// inline
-int UnGetc(int c)
+static int UnGetc(int c)
 {
 	*pbp++ = c;
 	return c;
@@ -118,8 +115,7 @@ static void SyntaxError(const char *msg)
 /* Utilities                                                          */
 /**********************************************************************/
 
-static					// inline
-int strip_C_comment(struct stream *S)
+static int strip_C_comment(struct stream *S)
 {
 	int c;
 
@@ -169,8 +165,7 @@ int strip_C_comment(struct stream *S)
 	}
 }
 
-static					// inline
-void strip_PL_comment(struct stream *S)
+static void strip_PL_comment(struct stream *S)
 {
 	int c;
 
@@ -237,7 +232,7 @@ static union cell *bind_vars(int single)
 	return l;
 }
 
-static inline void warn_singletons(void)
+static void warn_singletons(void)
 {
 	struct var *v = varl_first;
 	int n = 0;
@@ -312,17 +307,17 @@ static struct var *lookup_var(char *name)
 /* LEXER                                                              */
 /**********************************************************************/
 
-static inline int seeingString(struct stream *S)
+static int seeingString(struct stream *S)
 {
 	return StreamType(S) == ST_RMEM;
 }
 
-static inline int DigitVal(int c)
+static int DigitVal(int c)
 {
 	return PL__DigitValue[c];
 }
 
-static inline int hex_escape(struct stream *S)
+static int hex_escape(struct stream *S)
 {
 	int c;
 	int val;
@@ -347,8 +342,7 @@ static inline int hex_escape(struct stream *S)
 	return val;
 }
 
-static					// inline
-int oct_escape(struct stream *S, int c)
+static int oct_escape(struct stream *S, int c)
 {
 	int val;
 
@@ -366,8 +360,7 @@ int oct_escape(struct stream *S, int c)
 	return val;
 }
 
-static					// inline
-int read_quoted_char(struct stream *S)
+static int read_quoted_char(struct stream *S)
 {
 	int c;
 
@@ -443,8 +436,7 @@ int read_quoted_char(struct stream *S)
 	return c;
 }
 
-static					// inline
-char *read_quoted_string(struct stream *S, int quote)
+static char *read_quoted_string(struct stream *S, int quote)
 {
 	int c;
 	struct ubuffer *b = PL_find_ubs(BUF_DISCARDABLE);
@@ -520,7 +512,7 @@ char *read_quoted_string(struct stream *S, int quote)
 	}
 }
 
-static inline char *read_name(struct stream *S, int c)
+static char *read_name(struct stream *S, int c)
 // OK for non-quoted atoms and variables name
 {
 	struct ubuffer b;
@@ -533,7 +525,7 @@ static inline char *read_name(struct stream *S, int c)
 	return PL_base_ubs(&b);
 }
 
-static inline char *read_symbol(struct stream *S, int c)
+static char *read_symbol(struct stream *S, int c)
 {
 	struct ubuffer *b = PL_find_ubs(BUF_DISCARDABLE);
 
@@ -544,8 +536,7 @@ static inline char *read_symbol(struct stream *S, int c)
 	return PL_base_ubs(b);
 }
 
-static					// inline
-unsigned long str2long(char *str)
+static unsigned long str2long(char *str)
 {
 	unsigned long val = 0;
 
@@ -941,7 +932,7 @@ error:
 
 static int read_term(struct stream *S, int max, const char *stop, struct node *node);
 
-static inline void mk_unary(struct atom *atom, struct node *arg, struct node *node_out)
+static void mk_unary(struct atom *atom, struct node *arg, struct node *node_out)
 {
 	if (atom == ATOM(minus) && is_number(&arg->cell)) {
 		union cell *c = &arg->cell;
@@ -961,7 +952,7 @@ static inline void mk_unary(struct atom *atom, struct node *arg, struct node *no
 	}
 }
 
-static inline void mk_binary(struct atom *atom, struct node *left, struct node *right, struct node *node_out)
+static void mk_binary(struct atom *atom, struct node *left, struct node *right, struct node *node_out)
 {
 	struct functor *fun = PL_new_functor(atom, 2);
 	union cell *addr = new_struct(fun, 2);
@@ -1035,7 +1026,7 @@ loop:
 	}
 }
 
-static inline int read_term_a(struct stream *S, int max, const char *stop, struct node *node_out)
+static int read_term_a(struct stream *S, int max, const char *stop, struct node *node_out)
 {
 	int type, prec;
 	struct atom *atom = token.tok_val.atom;
@@ -1065,7 +1056,7 @@ static inline int read_term_a(struct stream *S, int max, const char *stop, struc
 	}
 }
 
-static inline int read_term_t_(struct stream *S, int max, const char *stop, struct node node_l, struct node *node_out)
+static int read_term_t_(struct stream *S, int max, const char *stop, struct node node_l, struct node *node_out)
 {
 
 loop:

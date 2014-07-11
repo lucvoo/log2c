@@ -43,7 +43,7 @@ struct write_option {
 };
 
 // PRE : t is deref
-inline static char *varName(union cell *t)
+static char *varName(union cell *t)
 {
 	long n;
 	char s;
@@ -63,7 +63,7 @@ inline static char *varName(union cell *t)
 
 //#####################################################################
 
-static inline int NeedQuote(struct atom *a)
+static int NeedQuote(struct atom *a)
 {
 	const char *s = PL_atom_chars(a);
 
@@ -106,14 +106,14 @@ static int Puts(struct stream *S, const char *str)
 	return !Serror(S);
 }
 
-inline static int Putc(struct stream *S, int c)
+static int Putc(struct stream *S, int c)
 {
 	lastc = c;
 
 	return Sputc(S, c);
 }
 
-inline static int PutOpenToken(struct stream *S, int c)
+static int PutOpenToken(struct stream *S, int c)
 {
 	if (lastc != -1 &&
 	    ((isAlphaNum_(lastc) && isAlphaNum_(c)) || (isSymbol(lastc) && isSymbol(c)) || c == '(')
@@ -124,12 +124,12 @@ inline static int PutOpenToken(struct stream *S, int c)
 	succeed;
 }
 
-inline static int PutOpenBrace(struct stream *S)
+static int PutOpenBrace(struct stream *S)
 {
 	return PutOpenToken(S, '(') && Putc(S, '(');
 }
 
-inline static int PutToken(struct stream *S, const char *s)
+static int PutToken(struct stream *S, const char *s)
 {
 	if (s[0])
 		return PutOpenToken(S, s[0]) && Puts(S, s);
@@ -211,7 +211,7 @@ static int WriteAtom(struct stream *S, struct atom *a, const struct write_option
 	succeed;
 }
 
-inline static void WritePrimitive(struct stream *S, union cell *t, const struct write_option *opt)
+static void WritePrimitive(struct stream *S, union cell *t, const struct write_option *opt)
 {
 	char buf[33];
 
@@ -464,7 +464,7 @@ static int WriteTerm(struct stream *S, union cell *t, int prec, int depth, const
 	succeed;
 }
 
-inline static int writeTerm(struct stream *S, union cell *t, int numvars, int quote, int display)
+static int writeTerm(struct stream *S, union cell *t, int numvars, int quote, int display)
 {
 	struct write_option opt;
 

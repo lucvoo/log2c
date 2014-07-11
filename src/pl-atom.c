@@ -10,7 +10,7 @@
 #include "pl-string.h"
 #include "pl-atom.h"
 
-inline static struct atom *add_atom(const char *s, hash_t H, hash_t h)
+static struct atom *add_atom(const char *s, hash_t H, hash_t h)
 {
 	struct atom *a;
 

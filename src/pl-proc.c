@@ -19,7 +19,7 @@ extern struct modules *PL__modules[];
 extern struct module module_system;
 extern int PL__modules_hash_size;
 
-inline static struct module *lookup_module(struct atom *name)
+static struct module *lookup_module(struct atom *name)
 {
 	hash_t h;
 	struct modules *m;
@@ -32,7 +32,7 @@ inline static struct module *lookup_module(struct atom *name)
 	return 0;
 }
 
-inline static void *lookup_proc(struct module *module, struct atom *functor, int arity)
+static void *lookup_proc(struct module *module, struct atom *functor, int arity)
 {
 	hash_t h;
 	struct jmp *j;
@@ -55,7 +55,7 @@ inline static void *lookup_proc(struct module *module, struct atom *functor, int
 	PL_warning("%s/%d lookup_proc : no such procedure", functor->name, arity);
 }
 
-inline static union cell *strip_module(union cell *term, struct module **module)
+static union cell *strip_module(union cell *term, struct module **module)
 {
 	union cell *m = 0;
 	union cell *t;

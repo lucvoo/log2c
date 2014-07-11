@@ -53,7 +53,7 @@ static void AddAlias(struct pl_file *f, struct atom *alias)
 	f->alias = alias;
 }
 
-inline static struct pl_file *GetAliasStream(struct atom *alias)
+static struct pl_file *GetAliasStream(struct atom *alias)
 {
 	int i;
 	struct pl_file *f = 0;

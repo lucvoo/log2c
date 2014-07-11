@@ -25,7 +25,7 @@ struct operator {
 
 static struct operator *operators[OP_HASH_SIZE];
 
-inline static struct op_type *get_op_type(struct atom *name, int fix)
+static struct op_type *get_op_type(struct atom *name, int fix)
 {
 	struct operator *op;
 
@@ -38,7 +38,7 @@ inline static struct op_type *get_op_type(struct atom *name, int fix)
 	return 0;
 }
 
-inline static struct operator *get_operator(struct atom *name)
+static struct operator *get_operator(struct atom *name)
 {
 	struct operator *op;
 
@@ -51,7 +51,7 @@ inline static struct operator *get_operator(struct atom *name)
 	return 0;
 }
 
-inline static int OperatorAtom2Type(struct atom *type)
+static int OperatorAtom2Type(struct atom *type)
 {
 	if (type == ATOM(_fx))
 		return OP_FX;
@@ -73,7 +73,7 @@ inline static int OperatorAtom2Type(struct atom *type)
 	return 0;
 }
 
-inline static struct atom *OperatorType2Atom(int type)
+static struct atom *OperatorType2Atom(int type)
 {
 	switch (type) {
 	case OP_FX:
@@ -97,7 +97,7 @@ inline static struct atom *OperatorType2Atom(int type)
 	}
 }
 
-inline static void add_operator(int precedence, int type, struct atom *operator)
+static void add_operator(int precedence, int type, struct atom *operator)
 {
 	struct operator *op;
 	hash_t h;

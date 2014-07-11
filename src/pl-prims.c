@@ -445,17 +445,17 @@ debut:
 		fail;
 }
 
-inline static int cmp_flt(double d1, double d2)
+static int cmp_flt(double d1, double d2)
 {
 	return (d1 < d2) ? -1 : ((d1 == d2) ? 0 : 1);
 }
 
-inline static int cmp_addr(const void *a1, const void *a2)
+static int cmp_addr(const void *a1, const void *a2)
 {
 	return (a1 < a2) ? -1 : ((a1 == a2) ? 0 : 1);
 }
 
-inline static int cmp_intg(int i1, int i2)
+static int cmp_intg(int i1, int i2)
 {
 	return (i1 < i2) ? -1 : ((i1 == i2) ? 0 : 1);
 }

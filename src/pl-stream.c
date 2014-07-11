@@ -16,11 +16,9 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-#define inline
-
 //#####################################################################
 
-inline static int Set_error(struct stream *S)
+static int Set_error(struct stream *S)
 {
 	S->flags |= SF_ERR;
 	S->ptr = S->end = S->base;
@@ -61,7 +59,7 @@ Sflag_t StreamFlags(struct stream *S)
 
 //#####################################################################
 
-inline static int S_update_pos(struct stream *S, int c)
+static int S_update_pos(struct stream *S, int c)
 {
 	struct stream_pos *p;
 

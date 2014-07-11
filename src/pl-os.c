@@ -135,7 +135,7 @@ static char *PL_GetHome(const char *user)
 
 // expand '~[user]' in pathname
 // return expanded path or null if error
-inline static char *ExpandTilde(const char *path)
+static char *ExpandTilde(const char *path)
 {
 	static char new_path[PATH_MAX + 1];
 	char *np = new_path;

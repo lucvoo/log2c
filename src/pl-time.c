@@ -24,7 +24,7 @@ void PL_init_time(void)
 	gettimeofday(&tv_last, 0);
 }
 
-inline static void cp_usage(void)
+static void cp_usage(void)
 {
 	ru_last.ru_utime.tv_sec = ru_now.ru_utime.tv_sec;
 	ru_last.ru_utime.tv_usec = ru_now.ru_utime.tv_usec;
@@ -32,7 +32,7 @@ inline static void cp_usage(void)
 	ru_last.ru_stime.tv_usec = ru_now.ru_stime.tv_usec;
 }
 
-inline static void cp_timev(void)
+static void cp_timev(void)
 {
 	tv_last.tv_sec = tv_now.tv_sec;
 	tv_last.tv_usec = tv_now.tv_usec;

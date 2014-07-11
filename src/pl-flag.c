@@ -21,7 +21,7 @@ struct flag {
 
 static struct flag *flags[hash_flags_size];
 
-inline static struct flag *lookup_flag(union cell *key)
+static struct flag *lookup_flag(union cell *key)
 {
 	hash_t h;
 	struct flag *f;

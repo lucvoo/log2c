@@ -26,7 +26,7 @@
 
 /************************************************************************/
 
-inline static char digit_name(unsigned int n, int small)	// FIXME : check if overflow ???
+static char digit_name(unsigned int n, int small)	// FIXME : check if overflow ???
 {
 	if (n < 10)
 		return n + '0';

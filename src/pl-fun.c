@@ -10,7 +10,7 @@
 #include "pl-string.h"
 #include "pl-fun.h"
 
-inline static struct functor *add_fun(struct atom *functor, int arity, hash_t h)
+static struct functor *add_fun(struct atom *functor, int arity, hash_t h)
 {
 	struct functor *f;
 
@@ -24,7 +24,7 @@ inline static struct functor *add_fun(struct atom *functor, int arity, hash_t h)
 	return f;
 }
 
-inline static int exist_fun(struct atom *functor, int arity)
+static int exist_fun(struct atom *functor, int arity)
 {
 	hash_t h;
 	struct functor *f;

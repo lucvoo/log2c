@@ -162,7 +162,7 @@ int pl_length(union cell *list, union cell *len)
 
 // Return length of the list; -1 if not a proper_list
 // Put the array in static_heap
-inline static int list_to_array(union cell *list)
+static int list_to_array(union cell *list)
 {
 	union cell *l;
 	int n = 0;
@@ -180,7 +180,7 @@ inline static int list_to_array(union cell *list)
 		return -1;
 }
 
-inline static union cell *array_to_list(union cell **array, int n, int rem_dup)
+static union cell *array_to_list(union cell **array, int n, int rem_dup)
 {
 	union cell *l = HP;
 	union cell *last;
@@ -209,7 +209,7 @@ static void PL_qsort(union cell *array[], size_t n, int (*fun)(const union cell 
 	qsort(array, n, sizeof(union cell*), cmp);
 }
 
-inline static int PL_sort(union cell *list, union cell *sorted, int rem_dup)
+static int PL_sort(union cell *list, union cell *sorted, int rem_dup)
 {
 	union cell **array = (union cell **) SHP;
 	union cell *l;

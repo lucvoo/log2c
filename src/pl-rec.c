@@ -11,7 +11,7 @@
 #include "pl-fli.h"
 
 
-inline static void rtrail(union cell *ref)
+static void rtrail(union cell *ref)
 {
 	HP->celp = ref;
 	HP++;
@@ -88,7 +88,7 @@ debut:
 	return 0;
 }
 
-inline static struct record *copy_to_heap(union cell *c)
+static struct record *copy_to_heap(union cell *c)
 {
 	union cell *base;
 	struct record *record;
@@ -104,7 +104,7 @@ inline static struct record *copy_to_heap(union cell *c)
 	return record;
 }
 
-inline static union cell *copy_to_global(struct record *record)
+static union cell *copy_to_global(struct record *record)
 {
 	int n, i;
 	union cell *c;
@@ -130,7 +130,7 @@ inline static union cell *copy_to_global(struct record *record)
 
 #define Trail(T)	*TP++=T
 
-static inline int unify_static_2(union cell *s, union cell *t)
+static int unify_static_2(union cell *s, union cell *t)
 {
 	s = deref(s);
 
@@ -181,7 +181,7 @@ OK:	return 1;
 KO:	return 0;
 }
 
-static inline int unify_static_1(union cell *s, union cell *t)
+static int unify_static_1(union cell *s, union cell *t)
 {
 	s = deref(s);
 
@@ -240,7 +240,7 @@ OK:	return 1;
 KO:	return 0;
 }
 
-static inline int try_unify_static(union cell *s, union cell *t)
+static int try_unify_static(union cell *s, union cell *t)
 {
 	union cell **tr = TP;
 	int r;
@@ -271,7 +271,7 @@ static inline int try_unify_static(union cell *s, union cell *t)
 })								\
 
 
-inline static struct reclist *lookup_recl__old(union cell *key)
+static struct reclist *lookup_recl__old(union cell *key)
 {
 	hash_t h;
 	struct reclist *rl;
@@ -291,7 +291,7 @@ inline static struct reclist *lookup_recl__old(union cell *key)
 	return rl;
 }
 
-inline static struct reclist *lookup_recl__(union cell *key, int h)
+static struct reclist *lookup_recl__(union cell *key, int h)
 {
 	struct reclist *rl;
 
@@ -302,7 +302,7 @@ inline static struct reclist *lookup_recl__(union cell *key, int h)
 	return 0;
 }
 
-inline static struct reclist *add_recl__(union cell *key, int h)
+static struct reclist *add_recl__(union cell *key, int h)
 {
 	struct reclist *rl;
 
@@ -315,7 +315,7 @@ inline static struct reclist *add_recl__(union cell *key, int h)
 	return rl;
 }
 
-inline static struct reclist *lookup_recl(union cell *key, int h)
+static struct reclist *lookup_recl(union cell *key, int h)
 {
 	struct reclist *rl;
 
@@ -467,12 +467,12 @@ int pl_current_key(union cell *c, enum control *ctrl)
 /* Stuff for erase/1                                                  */
 /**********************************************************************/
 
-inline static void free_record(struct record *r)
+static void free_record(struct record *r)
 {
 	(void)r;
 }					// FIXME : put it in the free list ??
 
-inline static int Erase_rec(struct record *rec)
+static int Erase_rec(struct record *rec)
 {
 	struct record *prev;
 	struct reclist *rl;
