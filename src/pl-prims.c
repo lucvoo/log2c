@@ -684,51 +684,61 @@ int pl_concat(union cell *a1, union cell *a2, union cell *a3)
 __inline__ int pl_concat_atom3(union cell *list, union cell *sep, union cell *atom)
 {
 	struct ubuffer *b;
-	const char *sp, *s;
+	struct atom *a;
+	const char *sp;
+	const char *s;
 	int splen;
 	union cell *l = deref(list);
 
-	if (sep) {
-		if (!PL_get_chars(sep, &sp, CVT_ATOMIC | BUF_RING))
-			PL_warning("concat_atom/3: illegal separator");
-		splen = strlen(sp);
-	} else
-		splen = 0;
+	if (!PL_get_chars(sep, &sp, CVT_ATOMIC | BUF_RING))
+		PL_warning("concat_atom/3: illegal separator");
+	splen = strlen(sp);
 
 	b = PL_find_ubs(BUF_DISCARDABLE);
 
-	if (sep)			// add the first element
-	{
-		if (is_cons(l) && PL_get_chars(l + 1, &s, CVT_ATOMIC)) {
-			PL_add_x_ubs(b, s, strlen(s));
-			l = deref(l + 2);
-		}
-	}
-	// add remaining elements
+	// add the elements and the separator
 	while (is_cons(l) && PL_get_chars(l + 1, &s, CVT_ATOMIC)) {
-		if (sep)		// with separator if needed
-			PL_add_x_ubs(b, sp, splen);
 		PL_add_x_ubs(b, s, strlen(s));
+		PL_add_x_ubs(b, sp, splen);
 		l = deref(l + 2);
 	}
 
-	if (is_nil(l)) {
-		struct atom *a;
+	if (!is_nil(l))
+		PL_warning("concat_atom/3: instantiation fault");
 
-		PL_add_ubs(b, '\0');
-		a = PL_new_atom(PL_base_ubs(b));
-		return PL_unify_atom(atom, a);
-	} else {
-		if (sep)
-			PL_warning("concat_atom/3: instantiation fault");
-		else
-			PL_warning("concat_atom/2: instantiation fault");
-	}
+	// remove the last separator
+	PL_sub_x_ubs(b, splen);
+
+
+	PL_add_ubs(b, '\0');
+	a = PL_new_atom(PL_base_ubs(b));
+	return PL_unify_atom(atom, a);
 }
 
 int pl_concat_atom2(union cell *list, union cell *atom)
 {
-	return pl_concat_atom3(list, 0, atom);
+	struct ubuffer *b;
+	struct atom *a;
+	const char *s;
+	union cell *l;
+
+
+	b = PL_find_ubs(BUF_DISCARDABLE);
+
+	// add elements
+	l = deref(list);
+	while (is_cons(l) && PL_get_chars(l + 1, &s, CVT_ATOMIC)) {
+		PL_add_x_ubs(b, s, strlen(s));
+		l = deref(l + 2);
+	}
+
+	if (!is_nil(l))
+		PL_warning("concat_atom/2: instantiation fault");
+
+
+	PL_add_ubs(b, '\0');
+	a = PL_new_atom(PL_base_ubs(b));
+	return PL_unify_atom(atom, a);
 }
 
 int pl_halt(union cell *stat)
