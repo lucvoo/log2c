@@ -89,6 +89,15 @@ read_item((:-Op), _, [Op|O], O) :-
 	Op = op(_, _, _),
 	call(Op).
 
-read_item(T, _, [T|O], O).
+read_item(T, _, [T|O], O)	:-
+	process_item(T).
+
+
+%%%%
+:- use_module(modules).
+process_item((:- use_module(M)))	:-
+	!,
+	load_mod(M).
+process_item(_).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

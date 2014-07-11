@@ -13,6 +13,7 @@
 		exported/1,
 		get_exports/2,
 		import_from_module/2,
+		load_mod/1,
 		module_filename/3,
 		need_modules/1,
 		read_mods/4,
@@ -105,6 +106,13 @@ read_mod__(T, A, A, F, F, P, P) :-
 	recorda(module_info, T), !.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+load_mod([M|Q]) :-
+	load_mod(M),
+	load_mod(Q).
+load_mod([]).
+load_mod(M)	:- 			%% FIXME: should take a file spec as argument
+	comp_sub_module(M, _).
+
 comp_sub_module(M, P) :-
 	recorded(module_compiled, M),
 	module_path(M, P).
