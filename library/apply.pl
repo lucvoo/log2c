@@ -7,6 +7,8 @@
 
 :- module('$apply', [
 		foldl/4,
+		exclude/3,
+		include/3,
 		maplist/2,
 		maplist/3,
 		sublist/3
@@ -33,11 +35,25 @@ maplist(G, [A|X], [B|Y]) :-
 maplist(_, [], []).
 
 
+:- meta_predicate include(1, +, ?).
+include(G, [A|X], R) :-
+	call(G, A), !,
+	R=[A|Y],
+	include(G, X, Y).
+include(G, [_|X], R) :-
+	include(G, X, R).
+include(_, [], []).
+
 :- meta_predicate sublist(1, +, ?).
-sublist(G, [A|X], R) :-
-	call(G, A, B), !,
-	R=[B|Y],
-	sublist(G, X, Y).
-sublist(G, [_|X], R) :-
-	sublist(G, X, R).
-sublist(_, [], []).
+sublist(G, I, O) :-
+	include(G, I, O).
+
+
+:- meta_predicate exclude(1, +, ?).
+exclude(G, [A|X], R) :-
+	call(G, A), !,
+	exclude(G, X, R).
+exclude(G, [A|X], R) :-
+	R=[A|Y],
+	exclude(G, X, Y).
+exclude(_, [], []).
