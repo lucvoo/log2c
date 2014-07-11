@@ -32,6 +32,9 @@ trans_term(not(A), not(X)) :-
 	trans_term(A, X).
 trans_term(\+A, \+X) :-
 	trans_term(A, X).
+trans_term((A = B), R) :-		%% not an optimization but to avoid mis-compilation of 'A = A' when A is a fresh var
+	A == B,
+	trans_term(true, R).
 trans_term(A, X) :-
 	A=..[F|La],
 	maplist(trans, La, Lx),
