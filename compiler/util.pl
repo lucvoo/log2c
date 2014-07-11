@@ -24,6 +24,7 @@
 :- use_module([map_name, modules]).
 :- use_module(errmsg).
 :- use_module(foreign).
+:- use_module(atoms).
 
 :- op(1200, xfx, :+).
 :- op(900, fy, +>).
@@ -189,21 +190,23 @@ decl_pred(P) :-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-decl_atoms(As) :-
-	maplist(decl_atoms_, As),
+decl_atoms(La) :-
+	exclude(atoms, La, As),
+	maplist(decl_atom, La), !,
 	nl(h),
 	format(mod, '\tatoms(~q),\n', [As]).
 
-decl_atoms_(A) :-
+decl_atom(A) :-
 	map_atom(A, Am),
 	format(h, 'extern struct atom ATOM_~w;\n', [Am]).
 
-decl_funs(Fs) :-
-	maplist(decl_funs_, Fs),
+decl_funs(Lf) :-
+	exclude(functors, Lf, Fs),
+	maplist(decl_fun, Lf), !,
 	nl(h),
 	format(mod, '\tfuns(~q)).\n', [Fs]).
 
-decl_funs_(F/N) :-
+decl_fun(F/N) :-
 	map_atom(F, Fm),
 	format(h, 'extern struct functor FUN_~w_~d;\n', [Fm, N]).
 
