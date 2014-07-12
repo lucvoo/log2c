@@ -108,9 +108,10 @@ static void add_operator(int precedence, int type, struct atom *operator)
 	if (op == 0) {
 		h = OperatorHashValue(operator);
 		op = NEW(*op);
+		op->operator= operator;
+		op->type[0].prec = op->type[1].prec = op->type[2].prec = 0;
 		op->next = operators[h];
 		operators[h] = op;
-		op->operator= operator;
 	}
 
 	op_t = &(op->type[(type >> 2) - 1]);
@@ -159,20 +160,50 @@ int pl_op(union cell *precedence, union cell *type, union cell *operator)
 int pl_current_op(union cell *precedence, union cell *type, union cell *operator, enum control *ctrl)
 {
 	struct operator *op;
-	int prec, t, fix;
-	struct atom *a_t;
-	struct atom *a_op;
+	int prec, fix;
+	struct atom *name;
 	struct {
 		int hash;
 		struct operator *op;
 		int fix;
+
+		struct atom *name;
+		int prec;
+		int type;
 	}     *ctxt;
 	int h;
-	struct op_type *op_t;
 
 	switch (GetCtrl(ctrl)) {
+	struct atom *a_t;
+	int t;
+
 	case FIRST_CALL:
+		if (!(name = PL_get_atom(operator))) {
+			if (PL_is_var(operator))
+				name = 0;
+			else
+				fail;
+		}
+
+		if (!PL_get_intg(precedence, &prec)) {
+			if (PL_is_var(precedence))
+				prec = 0;
+			else
+				fail;
+		}
+
+		if ((a_t = PL_get_atom(type))) {
+			if (!(t = OperatorAtom2Type(a_t)))
+				fail;
+		} else if (PL_is_var(type))
+			t = 0;
+		else
+			fail;
+
 		ctxt = AllocCtxt(*ctxt);
+		ctxt->name = name;
+		ctxt->prec = prec;
+		ctxt->type = t;
 		h = OP_HASH_SIZE - 1;
 		op = operators[h];
 		fix = 0;
@@ -187,52 +218,32 @@ int pl_current_op(union cell *precedence, union cell *type, union cell *operator
 		fail;
 	}
 
-	if (!(a_op = PL_get_atom(operator))) {
-		if (PL_is_var(operator))
-			a_op = 0;
-		else
-			fail;
-	}
-
-	if (!PL_get_intg(precedence, &prec)) {
-		if (PL_is_var(precedence))
-			prec = 0;
-		else
-			fail;
-	}
-
-	if ((a_t = PL_get_atom(type))) {
-		if (!(t = OperatorAtom2Type(a_t)))
-			fail;
-		else;
-	} else if (PL_is_var(type))
-		t = 0;
-	else
-		fail;
 
 	for (; h >= 0; op = operators[--h]) {
 		for (; op; op = op->next, fix = 0) {
-			if ((a_op && a_op != op->operator))
+			if ((ctxt->name && ctxt->name != op->operator))
 				continue;
-			else {
-				for (; fix < 3; fix++) {
-					op_t = &op->type[fix];
-					if ((op_t->prec == 0) ||
-					    (prec && prec != op_t->prec) || (t && t != op_t->type)
-						)
-						continue;
 
-					if (!PL_unify_atom(operator, op->operator) ||
-					    !PL_unify_atom(type, OperatorType2Atom(op_t->type)) ||
-					    !PL_unify_intg(precedence, op_t->prec)
-						)
-						fail;
+			for (; fix < 3; fix++) {
+				struct op_type *op_t = &op->type[fix];
 
-					ctxt->hash = h;
-					ctxt->op = op;
-					ctxt->fix = ++fix;
-					retry;
-				}
+				if (op_t->prec == 0)
+					continue;
+				if (ctxt->prec && ctxt->prec != op_t->prec)
+					continue;
+				if (ctxt->type && ctxt->type != op_t->type)
+					continue;
+
+				if (!PL_unify_atom(operator, op->operator) ||
+				    !PL_unify_atom(type, OperatorType2Atom(op_t->type)) ||
+				    !PL_unify_intg(precedence, op_t->prec)
+					)
+					fail;
+
+				ctxt->hash = h;
+				ctxt->op = op;
+				ctxt->fix = ++fix;
+				retry;
 			}
 		}
 	}
