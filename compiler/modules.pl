@@ -91,7 +91,7 @@ read_mod(M, Ia, Oa, If, Of, Ip, Op) :-
 		recorda(need_module, M),
 		comp_sub_module(M, F),
 		read_mod(F, T),
-		T = module(Nm, use_module(Ms), export(Xs), atoms(As), funs(Fs)),
+		T = module(Nm, use_module(Ms), export(Xs), ops(_), atoms(As), funs(Fs)),
 		Nm = _, %% FIXME: verify Nm
 		append(Xs, Tp, Ip),
 		append(As, Ta, Ia),
@@ -149,7 +149,7 @@ export_use_(T, S, L) :-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 read_export(F, X) :-
-	read_mod(F, module(_, _, export(X), _, _)).
+	read_mod(F, module(_, _, export(X), _, _, _)).
 
 get_exports(Lu, Lx) :-
 	used_modules(U),

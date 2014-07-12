@@ -146,6 +146,8 @@ code_module(Mod, I, X) :+
 	;
 		true
 	),
+	'$recorded_all'(export_ops, Ops),
+	format(mod, '\tops(~q),\n',  [Ops]),
 	init_module(Mod, P, Q, X, Xs),
 	(
 		Mod == user
