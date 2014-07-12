@@ -6,11 +6,11 @@
 /************************************************************************/
 
 :- module(code, [
-		code_Arg/4,
-		code_Assign/4,
-		code_AssignD/4,
-		code_M/4,
-		code_UA/4,
+		code_Arg//2,
+		code_Assign//2,
+		code_AssignD//2,
+		code_M//2,
+		code_UA//2,
 		code_X/2
 	]).
 
