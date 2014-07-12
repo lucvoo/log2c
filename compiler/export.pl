@@ -38,6 +38,10 @@ add_xs(PI) :-
 add_x(F/N) :-
 	valid_PI(F,N),
 	recordz(exported_pred, F/N).
+add_x(F//N) :-
+	valid_PI(F,N),
+	N2 is N+2,
+	recordz(exported_pred, F/N2).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
