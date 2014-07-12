@@ -25,6 +25,7 @@
 :- use_module(errmsg).
 :- use_module(foreign).
 :- use_module(atoms).
+:- use_module(export).
 
 :- op(1200, xfx, :+).
 :- op(900, fy, +>).
@@ -235,8 +236,8 @@ add_mod_(I, N, M, [A|X], [A|Y]) :-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-do_directive(export(_)) :-
-	warning('unsupported directive : use module/2').
+do_directive(export(Xs)) :-
+	export_add(Xs).
 do_directive(index(_)).
 		%% FIXME : to implement
 do_directive((meta_predicate P)) :-
