@@ -244,8 +244,6 @@ do_directive((meta_predicate P)) :-
 	recordz(meta, P).
 do_directive(module(_)) :-
 	warning('unsupported directive: module/1\n\tuse module/2').
-do_directive((module_transparent _)) :-
-	warning('unsupported directive: module_transparent/1\n\t\tuse ISO meta_predicate/1').
 do_directive(op(P, T, N)) :-
 	op(P, T, N).
 do_directive(reexport(M)) :-

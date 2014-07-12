@@ -93,7 +93,6 @@ atoms(local_stack).
 atoms(mark).
 atoms(max_depth).
 atoms(mod).
-atoms(module_transparent).
 atoms(namevars).
 atoms(none).
 atoms(not).

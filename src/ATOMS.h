@@ -91,7 +91,6 @@ extern struct atom ATOM__list__notation;
 extern struct atom ATOM__local__stack;
 extern struct atom ATOM__mark;
 extern struct atom ATOM__mod;
-extern struct atom ATOM__module__transparent;
 extern struct atom ATOM__max__depth;
 extern struct atom ATOM__namevars;
 extern struct atom ATOM__none;
