@@ -12,6 +12,7 @@ SRC = \
 	codefmt.pl \
 	comp.pl \
 	errmsg.pl \
+	export.pl \
 	foreign.pl \
 	hash.pl \
 	input.pl \
