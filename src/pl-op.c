@@ -253,6 +253,9 @@ int pl_current_op(union cell *precedence, union cell *type, union cell *operator
 
 void PL_init_ops(void)
 {
+	add_operator(200, OP_FY, ATOM(backslash));
+	add_operator(200, OP_FY, ATOM(minus));
+	add_operator(200, OP_FY, ATOM(plus));
 	add_operator(200, OP_XFX, ATOM(doublestar));
 	add_operator(200, OP_XFY, ATOM(hat));
 	add_operator(400, OP_YFX, ATOM(_mod));
@@ -263,9 +266,6 @@ void PL_init_ops(void)
 	add_operator(400, OP_YFX, ATOM(lshift));
 	add_operator(400, OP_YFX, ATOM(rshift));
 	add_operator(400, OP_YFX, ATOM(star));
-	add_operator(500, OP_FX, ATOM(backslash));
-	add_operator(500, OP_FX, ATOM(minus));
-	add_operator(500, OP_FX, ATOM(plus));
 	add_operator(500, OP_YFX, ATOM(and));
 	add_operator(500, OP_YFX, ATOM(minus));
 	add_operator(500, OP_YFX, ATOM(or));
@@ -289,14 +289,13 @@ void PL_init_ops(void)
 	add_operator(700, OP_XFX, ATOM(strick_equals));
 	add_operator(700, OP_XFX, ATOM(unify));
 	add_operator(700, OP_XFX, ATOM(univ));
-//  add_operator(900,OP_FY,ATOM(_not));
 	add_operator(900, OP_FY, ATOM(not_provable));
 	add_operator(900, OP_FY, ATOM(__2B_3E));
 	add_operator(1000, OP_XFY, ATOM(comma));
 	add_operator(1050, OP_XFY, ATOM(ifthen));
 	add_operator(1050, OP_XFY, ATOM(softcut));
-	add_operator(1100, OP_XFY, ATOM(bar));
 	add_operator(1100, OP_XFY, ATOM(semicolon));
+	add_operator(1105, OP_XFY, ATOM(bar));
 	add_operator(1200, OP_FX, ATOM(prove));
 	add_operator(1200, OP_XFX, ATOM(grammar));
 	add_operator(1200, OP_XFX, ATOM(prove));
