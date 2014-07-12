@@ -175,11 +175,13 @@ int pl_current_op(union cell *precedence, union cell *type, union cell *operator
 		ctxt = AllocCtxt(*ctxt);
 		h = OP_HASH_SIZE - 1;
 		op = operators[h];
+		fix = 0;
 		break;
 	case NEXT_CALL:
 		ctxt = GetCtxt(ctrl);
 		h = ctxt->hash;
 		op = ctxt->op;
+		fix = ctxt->fix;
 		break;
 	default:
 		fail;
@@ -209,11 +211,11 @@ int pl_current_op(union cell *precedence, union cell *type, union cell *operator
 		fail;
 
 	for (; h >= 0; op = operators[--h]) {
-		for (; op; op = op->next) {
+		for (; op; op = op->next, fix = 0) {
 			if ((a_op && a_op != op->operator))
 				continue;
 			else {
-				for (fix = 0; fix < 3; fix++) {
+				for (; fix < 3; fix++) {
 					op_t = &op->type[fix];
 					if ((op_t->prec == 0) ||
 					    (prec && prec != op_t->prec) || (t && t != op_t->type)
@@ -227,8 +229,8 @@ int pl_current_op(union cell *precedence, union cell *type, union cell *operator
 						fail;
 
 					ctxt->hash = h;
-					ctxt->op = op->next;
-					ctxt->fix = fix;
+					ctxt->op = op;
+					ctxt->fix = ++fix;
 					retry;
 				}
 			}
