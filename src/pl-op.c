@@ -163,11 +163,11 @@ int pl_current_op(union cell *precedence, union cell *type, union cell *operator
 	struct atom *a_t;
 	struct atom *a_op;
 	struct {
-		hash_t hash;
+		int hash;
 		struct operator *op;
 		int fix;
 	}     *ctxt;
-	hash_t h;
+	int h;
 	struct op_type *op_t;
 
 	switch (GetCtrl(ctrl)) {
