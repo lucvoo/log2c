@@ -301,5 +301,4 @@ void PL_init_ops(void)
 	add_operator(1200, OP_XFX, ATOM(grammar));
 	add_operator(1200, OP_XFX, ATOM(prove));
 	add_operator(1200, OP_XFX, ATOM(__3A_2B));
-	add_operator(1150, OP_FX, ATOM(_module__transparent));
 }
