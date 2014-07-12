@@ -6,11 +6,12 @@
 /************************************************************************/
 
 :- module(input, [
-		file_type/5,
+		file_type/4,
 		read_module/2
 	]).
 
 :- use_module(errmsg).
+:- use_module(export).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %!	file_type(+File, -Type, -Stream) is semidet
@@ -19,7 +20,7 @@
 %	and return the 'type' of the file:
 %	- 'module(M, X)' is the file begins with a module directive
 %	- 'user' otherwise
-file_type(F, Fname, M, Xs, S) :-
+file_type(F, Fname, M, S) :-
 	file_base_name(F, Name),
 	file_name_extension(Base, Ext, Name),
 	(   
@@ -42,14 +43,27 @@ file_type(F, Fname, M, Xs, S) :-
 		%% ;
 		%% 	warning('file (~w) and module (~w) do not match', [F, M])
 		%% ),
+		export_add(Xs),
 		Fname = M
 	;
 		set_stream_position(S, P),
 		Fname = Base,
 		M = user,
-		Xs = []
+		true
 	),
 	flag(input_file, _, Base).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+:- meta_predicate mapelems(1, ?).
+mapelems(G, [A|X]) :-
+	call(G, A),
+	mapelems(G, X).
+mapelems(_, []).
+mapelems(G, (A,X)) :-
+	call(G, A),
+	mapelems(G, X).
+mapelems(G, A) :-
+	call(G,A).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

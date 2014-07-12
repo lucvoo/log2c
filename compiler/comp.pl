@@ -18,6 +18,7 @@
 :- use_module(labels).
 :- use_module(mapli).
 :- use_module(input).
+:- use_module(export).
 
 :- op(1200, xfx, :+).
 :- op(900, fy, +>).
@@ -25,7 +26,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 comp_file(File) :-
-	file_type(File, Name, Mod, Xs, S),
+	file_type(File, Name, Mod, S),
 	read_module(S, L),
 	flag(current_module, _, Mod),
 	(
@@ -43,7 +44,7 @@ comp_file(File) :-
 	open_files(Name, _Fc, Fm, _Fh),
 	format(mod, 'module(~q,\n', [Mod]),
 	set_output(c),
-	code_module(Mod, Li, Xs, Lo, []), !,
+	code_module(Mod, Li, Lo, []), !,
 	trad(Lo),
 	nl,
 	init_hash_jmps(Mod),
@@ -126,7 +127,7 @@ link(Name) :-
 		fail
 	).
 
-code_module(Mod, I, X) :+
+code_module(Mod, I) :+
 	get_preds(I, Lpr),
 	(
 		Mod == user
@@ -138,6 +139,7 @@ code_module(Mod, I, X) :+
 	),
 	get_exports(Us, Xs),
 	check_import(Us, Xs),
+	export_get(X),
 	check_export(X, P, Xs),
 	(
 		Mod == user
