@@ -34,7 +34,11 @@ file_type(F, Fname, M, S) :-
 	stream_property(S, position(P)),
 	read(S, R),
 	(   
-		R= (:-module(M, Xs))
+		(
+			R = (:-module(M, Xs))
+		;
+			R = (:-module(M)), Xs = []
+		)
 	->
 		%% (   
 		%% 	module_filename(pl, M, Name)
